@@ -1,0 +1,156 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="IndexMaster.master.cs" Inherits="IndexMaster" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>TMU</title>
+     <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/ajaxtabs.css" rel="stylesheet" type="text/css" />
+    
+    <script src="../Scripts/ajaxtabs.js"></script>
+    <script src="../Scripts/jquery-1.4.1-vsdoc.js"></script>
+
+    <script src="../Scripts/jquery-1.4.1.js"></script>
+    <script src="../Scripts/jquery-1.4.1.min.js"></script>
+    <link href="../CSS/Ajaxcal.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/jquery-1.11.2.min.js"></script>
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
+    <link href="../dropdown_one.css" rel="stylesheet" />
+    <link href="../CSS/mainpage.css" rel="stylesheet" type="text/css" />  
+     <link href="../CSS/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/structure.css" rel="stylesheet" type="text/css" />
+   <link rel="shortcut icon" type="image/x-icon" href="../logo/Bg.jpg" />
+ 
+    <link href="../CSS/style.css" rel="stylesheet" />     
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+     <script type="text/javascript">
+         function NumberOnly() {
+             var AsciiValue = event.keyCode
+             if ((AsciiValue >= 48 && AsciiValue <= 57) || (AsciiValue == 8 || AsciiValue == 127))
+                 event.returnValue = true;
+             else
+                 event.returnValue = false;
+         }
+
+        </script>
+</head>
+<body >
+    <form id="form1" runat="server">
+    <div >
+    <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+    <tr> <td> 
+
+    <table cellpadding="0px" cellspacing="0px" style="width:100%">
+
+        <tr> <td style="height:2px;background-color:#ed7600"> </td></tr>
+
+    <tr> <td style="height:8px;background-color:White"> </td></tr>
+     
+    <tr> <td style="background-color:White"> 
+    <div id="wrapHeader"> 
+    <table cellpadding="0px" cellspacing="0px" > <tr> <td><asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" />   </td>  <td style="width:30px">  
+        <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
+        </td><td style="width:684px" align="center">
+    <br />   
+
+          </td> <td align="right"> 
+            <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+            <tr> <td> 
+        <asp:Image ID="imgProfile" runat="server" Width="100px"  Height="100px" ImageUrl="~/images/Counsllor.jpg" CssClass="imgcircle"/> </td> <td>&nbsp;&nbsp; Welcome:&nbsp;
+                 </td><td style="width:10px"></td>
+                 <td>&nbsp;&nbsp;
+                     <asp:Label ID="lblName" runat="server" Text=""></asp:Label>
+                 </td> </tr></table>  </td><td style="width:10px"></td>
+        <td>
+            <asp:ImageButton ID="ImageButton" runat="server" ImageUrl="~/images/logout.gif" Width="58" Height="22" border="0" OnClick="ImageButton_Click" />
+        </td>
+                                                 </tr></table>    
+    
+    </div>     
+    </td></tr>       
+    <tr> <td style="height:10px;background-color:White">        
+
+         </td></tr>
+    <tr> <td style="background-color:#ed7600">    
+    <div id="wrapMenu">    
+
+         <ul id="menu"  style="text-transform: uppercase; "  >  
+
+     <%--    <li> <asp:LinkButton ID="lnkAttendancedetail" runat="server" PostBackUrl="~/AttendenceDetail.aspx" Visible="false"> View Attendance</asp:LinkButton>
+	
+	</li>--%>
+<li style="margin-left:0px"><a href="Enquiry_Phone.aspx"><b>Phone Enquiry</b></a> </li>
+<li style="margin-left:0px"><a href="Enquiry.aspx"><b>ENquiry</b></a> </li>
+<li style="margin-left:0px"><a href="EnquiryList.aspx"><b>View Enquiry List</b></a> </li>
+<%--<li style="margin-left:0px"><a href="Application.aspx"><b>Application Form</b></a> </li>--%>
+
+   
+</ul>
+
+        <li class="dropdown" style="">
+            <a href="#" class="sf-with-ul" runat="server" id="liHR">HR<span class="sf-sub-indicator" runat="server" id="span3">»</span></a>
+            <ul class="dropdown-menu">
+                <li><a href="../Faculty/AttendenceNew.aspx" id="liAttendance" runat="server"><b>Attendance</b></a></li>
+                <li><a href="../Faculty/Leave.aspx" id="liLeave" runat="server"><b>Leave</b></a></li>
+                <li runat="server" id="lnkPaySlip"><a href="../Faculty/Payslipdetail.aspx"><b>Pay Slip</b></a></li>
+                <li runat="server" id="liMapFacultySubjects"><a href="../Enquiry/MapFacultySubject.aspx"><b>Faculty Subjects</b></a></li>
+
+            </ul>
+        </li>
+
+    </div>
+     </td></tr>
+     
+    <tr> <td class="leftBackground" style="height:100%;background-color:#eaf3b0"> 
+    <div id="wrap" > 
+     <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+        </div>
+    </td></tr>
+
+    <tr> <td style="height:40px"> </td></tr>
+
+    <tr>
+     <%--<td class="ffooterInner"> --%>
+        <td style="background-color:#ED7600"> 
+    <div id="wrapFooter" >
+    
+     <table cellpadding="0px" cellspacing="0px" style="width:100%; " >
+      <tr> <td style="height:19px"> </td></tr>
+      
+       <tr> <td > <div id="Div1">    
+      
+      <table cellpadding="0px" cellspacing="0px" style="width:100%">
+          <tr>
+          <td> 
+          <table cellpadding="0px" cellspacing="0px">
+                <tr>
+                    <td> <label> Company Name :</label></td>
+                    <td style="width:20px"> </td>
+                   <td>  <asp:Label ID="lblCompanyName" runat="server" Text=""></asp:Label> </td>
+                  <td style="width:50px"> </td><td><label>Employee ID</label> </td>
+                  <td style="width:20px"> </td> <td>  <asp:Label ID="lbluserid666" runat="server" Text=""></asp:Label></td>
+                  <td style="width:10px">  </td> <td>
+              <asp:LinkButton ID="lnkChangePassword" runat="server" PostBackUrl="change_password.aspx" Visible="false">Change Password</asp:LinkButton>  </td><td style="width:10px">  </td>          
+              <td></td></tr></table>   </td> <td align="right">   All right reserved By  : <a href="https://www.tmu.ac.in/" style="color:white; text-decoration:none" target="_blank"> Teerthanker Mahaveer University.</a> </td></tr> </table>
+     
+         </div> </td></tr></table>
+        
+     </div>
+    
+    </td></tr>
+
+    </table>
+        </td></tr></table>
+    </div>
+    </form>
+</body>
+</html>

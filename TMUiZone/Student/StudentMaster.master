@@ -1,0 +1,184 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="StudentMaster.master.cs" Inherits="Student_StudentMaster" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/ajaxtabs.css" rel="stylesheet" type="text/css" />
+    
+    <script src="../Scripts/ajaxtabs.js"></script>
+    <script src="../Scripts/jquery-1.4.1-vsdoc.js"></script>
+
+    <script src="../Scripts/jquery-1.4.1.js"></script>
+    <script src="../Scripts/jquery-1.4.1.min.js"></script>
+    <link href="../CSS/Ajaxcal.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/jquery-1.11.2.min.js"></script>
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        .navbar-default {
+    background-color: red;
+    border-color: red;
+}
+        .navbar-default .navbar-brand {
+    color: #777;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #5E5E5E;
+}
+    .modal
+    {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+    .loading
+    {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 5px solid #67CFF5;
+        width: 200px;
+        height: 100px;
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+    }
+        .hover1 {
+            background-color:red;
+        }
+</style>
+
+    <script type="text/javascript">
+        function NumberOnly() {
+            var AsciiValue = event.keyCode
+            if ((AsciiValue >= 48 && AsciiValue <= 57) || (AsciiValue == 8 || AsciiValue == 127))
+                event.returnValue = true;
+            else
+                event.returnValue = false;
+        }
+        $(document).ready(function () {
+           
+        });
+        </script>
+    <title></title>      
+    <asp:ContentPlaceHolder id="head" runat="server">
+       
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <asp:Panel Height="1000px" runat="server" ID="pnlmain">
+        <table width="100%" height="100%" >
+            <tr>
+                <td colspan="3" height="128px" >                 
+               <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background: #FFB106" background="images/TMU i Zone.jpg">
+                                            <tr>
+                                                <td width="70%" height="128">
+                                                    <a style="margin-left: 5px;">
+                                                        <img border="0" alt="" src="../images/1.jpg" style="border-width: 10px; float: left; width: 300px; height: 90px" />
+                                                    </a>
+                                                </td>
+                                                <td width="30%" valign="top">
+                                                    <table width="100%" border="0">
+                                                        <tr align="right">
+                                                            <td>
+                                                                <table width="100%" border="0">
+                                                                    <tr>
+                                                                        <td align="center"><a href="#" class="White" onclick="window.open('/Amizone/WebForms/support.htm','mywindow','width=300,height=150')">Help</a> | <a href="changePwd.aspx" class="White">Change Password</a></td>
+                                                                        <td width="25%" align="center"><a href="#">
+                                                                            <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/images/logout.gif" Width="58" Height="22" border="0" OnClick="ImageButton1_Click" /></a></td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="90" align="center" valign="middle"><span class="style1"><strong><span id="Span1">
+                                                                <div id="ProfileName" runat="server"></div>
+                                                            </span></strong>
+                                                                <br />
+                                                                <span id="Span2">
+                                                                    <div id="Currentdatetime" runat="server"></div>
+                                                                </span></span></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                  
+
+                                        </table>
+             </td>
+                
+            </tr>
+            <tr>
+                <td width="13%" valign="top" >
+                   
+                    <img border="0" alt="" src="../images/student image.jpg" style="border-width: 10px; float: left; width: 100%; height: 600px" />
+
+
+
+                </td>
+                <td width="1%" valign="top">
+                 <img src="../images/bg_sidebar_top.gif" width="5" />
+                 </td>
+                <td  width="85%" valign="top">
+                  <table width="100%">
+                     
+                      <tr>
+                          <td>
+                              <div class="row panel panel-success" style="height:55px;width:102%">
+                              <div class="panel-heading lead" style="height:55px;">
+                              <div class="row">
+                                     <a href="StudentDetailsView1.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Student Details</a>
+                                    <a href="StudentAttendance.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Student Attendance</a>
+                                    <a href="StudentGrievances.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Student Grievances</a>
+                                    <a href="StudentFeedback.aspx" id="StudentFeedback" style="font-size:15px" class="navbar-text navbar-left navbar-link">Student Feedback</a>
+                                    <a href="Mentorship.aspx?id='Mentorship'" id="Mentorship"  style="font-size:15px" class="navbar-text navbar-left navbar-link">Mentorship</a>
+                                    <a href="StudentAssignment.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Assignment</a>
+                                    <a href="FeeDetails.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Fee Details</a>
+                                    <a href="Events.aspx" style="font-size:15px" class="navbar-text navbar-left navbar-link">Events</a>
+                                
+                              </div>
+                              </div>
+                                  <div class="panel panel-body">
+                                      <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+                                  </div>
+                              </div>
+                          </td>
+                      </tr>
+                  </table>
+                   
+                        
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <table width="100%">
+                        <tr>
+                            <td align="center" bgcolor="#CCCCCC">Copyright ©2015 TMU
+                                        <br />
+                                Designed and Developed by Teerthanker Mahaveer University. esigned and Developed by Teerthanker Mahaveer University. 
+
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+    </asp:Panel>
+    </form>
+</body>
+</html>

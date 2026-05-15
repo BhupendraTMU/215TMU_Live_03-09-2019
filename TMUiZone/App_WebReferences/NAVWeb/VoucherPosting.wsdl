@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <schema elementFormDefault="qualified" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" xmlns="http://www.w3.org/2001/XMLSchema">
+      <element name="PostBankPayment">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="PostBankPayment_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="JVPosting">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="JVPosting_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ChangeUOM">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ChangeUOM_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="CreateJournalFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="postingDate" type="date" />
+            <element minOccurs="1" maxOccurs="1" name="docType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="aCType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="aCNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="exDocNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="debitAmt" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="balAccType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="balAccNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="dim1" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateJournalFee_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="DownloadToClientFileName">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="serverFileName" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="toFile" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DownloadToClientFileName_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportCustPaymentPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="tableNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportCustPaymentPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExportCustPaymentPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="custNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExportCustPaymentPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ImportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="tableNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="CreateJournalApplicationFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="jnBatchName" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="eNQNO" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="exDocNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="amt" type="decimal" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateJournalApplicationFee_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="boolean" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExportToExcelStudent">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExportToExcelStudent_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="StudentFine">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="fineAmount" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="txtRemarks" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="postingDate" type="date" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudentFine_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <message name="PostBankPayment">
+    <part name="parameters" element="tns:PostBankPayment" />
+  </message>
+  <message name="PostBankPayment_Result">
+    <part name="parameters" element="tns:PostBankPayment_Result" />
+  </message>
+  <message name="JVPosting">
+    <part name="parameters" element="tns:JVPosting" />
+  </message>
+  <message name="JVPosting_Result">
+    <part name="parameters" element="tns:JVPosting_Result" />
+  </message>
+  <message name="ChangeUOM">
+    <part name="parameters" element="tns:ChangeUOM" />
+  </message>
+  <message name="ChangeUOM_Result">
+    <part name="parameters" element="tns:ChangeUOM_Result" />
+  </message>
+  <message name="CreateJournalFee">
+    <part name="parameters" element="tns:CreateJournalFee" />
+  </message>
+  <message name="CreateJournalFee_Result">
+    <part name="parameters" element="tns:CreateJournalFee_Result" />
+  </message>
+  <message name="DownloadToClientFileName">
+    <part name="parameters" element="tns:DownloadToClientFileName" />
+  </message>
+  <message name="DownloadToClientFileName_Result">
+    <part name="parameters" element="tns:DownloadToClientFileName_Result" />
+  </message>
+  <message name="ImportCustPaymentPDF">
+    <part name="parameters" element="tns:ImportCustPaymentPDF" />
+  </message>
+  <message name="ImportCustPaymentPDF_Result">
+    <part name="parameters" element="tns:ImportCustPaymentPDF_Result" />
+  </message>
+  <message name="ExportCustPaymentPDF">
+    <part name="parameters" element="tns:ExportCustPaymentPDF" />
+  </message>
+  <message name="ExportCustPaymentPDF_Result">
+    <part name="parameters" element="tns:ExportCustPaymentPDF_Result" />
+  </message>
+  <message name="ImportPDF">
+    <part name="parameters" element="tns:ImportPDF" />
+  </message>
+  <message name="ImportPDF_Result">
+    <part name="parameters" element="tns:ImportPDF_Result" />
+  </message>
+  <message name="CreateJournalApplicationFee">
+    <part name="parameters" element="tns:CreateJournalApplicationFee" />
+  </message>
+  <message name="CreateJournalApplicationFee_Result">
+    <part name="parameters" element="tns:CreateJournalApplicationFee_Result" />
+  </message>
+  <message name="ExportToExcelStudent">
+    <part name="parameters" element="tns:ExportToExcelStudent" />
+  </message>
+  <message name="ExportToExcelStudent_Result">
+    <part name="parameters" element="tns:ExportToExcelStudent_Result" />
+  </message>
+  <message name="StudentFine">
+    <part name="parameters" element="tns:StudentFine" />
+  </message>
+  <message name="StudentFine_Result">
+    <part name="parameters" element="tns:StudentFine_Result" />
+  </message>
+  <portType name="VoucherPosting_Port">
+    <operation name="PostBankPayment">
+      <input name="PostBankPayment" message="tns:PostBankPayment" />
+      <output name="PostBankPayment_Result" message="tns:PostBankPayment_Result" />
+    </operation>
+    <operation name="JVPosting">
+      <input name="JVPosting" message="tns:JVPosting" />
+      <output name="JVPosting_Result" message="tns:JVPosting_Result" />
+    </operation>
+    <operation name="ChangeUOM">
+      <input name="ChangeUOM" message="tns:ChangeUOM" />
+      <output name="ChangeUOM_Result" message="tns:ChangeUOM_Result" />
+    </operation>
+    <operation name="CreateJournalFee">
+      <input name="CreateJournalFee" message="tns:CreateJournalFee" />
+      <output name="CreateJournalFee_Result" message="tns:CreateJournalFee_Result" />
+    </operation>
+    <operation name="DownloadToClientFileName">
+      <input name="DownloadToClientFileName" message="tns:DownloadToClientFileName" />
+      <output name="DownloadToClientFileName_Result" message="tns:DownloadToClientFileName_Result" />
+    </operation>
+    <operation name="ImportCustPaymentPDF">
+      <input name="ImportCustPaymentPDF" message="tns:ImportCustPaymentPDF" />
+      <output name="ImportCustPaymentPDF_Result" message="tns:ImportCustPaymentPDF_Result" />
+    </operation>
+    <operation name="ExportCustPaymentPDF">
+      <input name="ExportCustPaymentPDF" message="tns:ExportCustPaymentPDF" />
+      <output name="ExportCustPaymentPDF_Result" message="tns:ExportCustPaymentPDF_Result" />
+    </operation>
+    <operation name="ImportPDF">
+      <input name="ImportPDF" message="tns:ImportPDF" />
+      <output name="ImportPDF_Result" message="tns:ImportPDF_Result" />
+    </operation>
+    <operation name="CreateJournalApplicationFee">
+      <input name="CreateJournalApplicationFee" message="tns:CreateJournalApplicationFee" />
+      <output name="CreateJournalApplicationFee_Result" message="tns:CreateJournalApplicationFee_Result" />
+    </operation>
+    <operation name="ExportToExcelStudent">
+      <input name="ExportToExcelStudent" message="tns:ExportToExcelStudent" />
+      <output name="ExportToExcelStudent_Result" message="tns:ExportToExcelStudent_Result" />
+    </operation>
+    <operation name="StudentFine">
+      <input name="StudentFine" message="tns:StudentFine" />
+      <output name="StudentFine_Result" message="tns:StudentFine_Result" />
+    </operation>
+  </portType>
+  <binding name="VoucherPosting_Binding" type="tns:VoucherPosting_Port">
+    <binding transport="http://schemas.xmlsoap.org/soap/http" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    <operation name="PostBankPayment">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:PostBankPayment" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="PostBankPayment">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="PostBankPayment_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="JVPosting">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:JVPosting" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="JVPosting">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="JVPosting_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ChangeUOM">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ChangeUOM" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ChangeUOM">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ChangeUOM_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="CreateJournalFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:CreateJournalFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="CreateJournalFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="CreateJournalFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="DownloadToClientFileName">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:DownloadToClientFileName" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="DownloadToClientFileName">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="DownloadToClientFileName_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ImportCustPaymentPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ImportCustPaymentPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ImportCustPaymentPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ImportCustPaymentPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExportCustPaymentPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExportCustPaymentPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExportCustPaymentPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExportCustPaymentPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ImportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ImportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ImportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ImportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="CreateJournalApplicationFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:CreateJournalApplicationFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="CreateJournalApplicationFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="CreateJournalApplicationFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExportToExcelStudent">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExportToExcelStudent" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExportToExcelStudent">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExportToExcelStudent_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="StudentFine">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:StudentFine" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="StudentFine">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="StudentFine_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+  </binding>
+  <service name="VoucherPosting">
+    <port name="VoucherPosting_Port" binding="tns:VoucherPosting_Binding">
+      <address location="http://172.14.7.107:6047/TEST/WS/TMU/Codeunit/VoucherPosting" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    </port>
+  </service>
+</definitions>

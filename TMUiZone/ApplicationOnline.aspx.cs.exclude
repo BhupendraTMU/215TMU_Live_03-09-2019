@@ -1,0 +1,1415 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using DL;
+using PL;
+using System.IO;
+using System.Text;
+using System.Security.Cryptography;
+using System.Web.Mail;
+using paytm;
+using System.Web.Script.Serialization;
+
+using NAVWeb;
+using System.Net;
+
+public partial class ApplicationOnline : System.Web.UI.Page
+{
+    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+    DL.CommonDL cdl = new CommonDL();
+    ApplicationFormDL apdl = new ApplicationFormDL();
+    EnquiryDL edL = new EnquiryDL();
+    DataTable dtqualification = new DataTable();
+    byte[] Imgbytes = null;
+    Label lblDateOfSale = new Label();
+
+    //===========================PayUmoney=============
+    public string action1 = string.Empty;
+    public string hash1 = string.Empty;
+    public string txnid1 = string.Empty;
+    string TransId = "";
+    string FeeType = "REGISTRATION";
+
+
+    //================================================
+    public void WebserviceTest()
+    {       
+        VoucherPosting nvp = new VoucherPosting();
+        nvp.UseDefaultCredentials = true;
+        nvp.Url = "http://172.14.7.107:6047/TEST/WS/TMU/Codeunit/VoucherPosting";
+        nvp.Credentials=new NetworkCredential("shubham\\administrator", "abcd@1234");      
+        nvp.CreateJournalFee(System.DateTime.Now, 2, "abcd", 1, "ST/017005", "TestDocument", 100, 0, "402000010", "TMMC");
+
+    }
+    protected void Page_Load(object sender, EventArgs e)
+    {       
+        try
+        {
+           // WebserviceTest();
+            key.Value = ConfigurationManager.AppSettings["MERCHANT_KEY"];
+
+            if (string.IsNullOrEmpty(Request.Form["hash"]))
+            {
+                // submit.Visible = true;
+            }
+            else
+            {
+                //  submit.Visible = false;
+            }
+            Response.Write(Request.Form["hash"]);
+        }
+        catch (Exception ex)
+        {
+            Response.Write("<span style='color:red'>" + ex.Message + "</span>");
+        }
+        //=============================pAUMONEY//
+        if (!IsPostBack)
+        {
+            ddlBind();
+            bindDrpCourse();
+            RegistrationSteps();
+            string s = System.DateTime.Today.ToShortDateString();
+            lblDateOfSale.Text = s;
+            bindENqCourse();
+            BindDdlReligion();
+            BindDdlSubReligion();
+            BindDdlState();
+            BindDdlDistrict();
+            BindDdlCity();
+            txtMaximum.Text = "";
+            txtMarkObtained.Text = "";
+            txtPercentageOfMarks.Text = "";
+            txtDescription.Text = "";
+        }
+    }
+    public void BindDdlState()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetStateDdl();
+        ddlDomicile.DataSource = dt;
+        ddlDomicile.DataTextField = "Details";
+        ddlDomicile.DataValueField = "No_";
+        ddlDomicile.DataBind();
+
+        ddlPermState.DataSource = dt;
+        ddlPermState.DataTextField = "Details";
+        ddlPermState.DataValueField = "No_";
+        ddlPermState.DataBind();
+
+        ddlCorresState.DataSource = dt;
+        ddlCorresState.DataTextField = "Details";
+        ddlCorresState.DataValueField = "No_";
+        ddlCorresState.DataBind();
+
+    }
+    public void BindDdlDistrict()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetDistrictDdl();
+        ddlPermDistrict.DataSource = dt;
+        ddlPermDistrict.DataTextField = "Details";
+        ddlPermDistrict.DataValueField = "No_";
+        ddlPermDistrict.DataBind();
+
+        ddlCorresDistrict.DataSource = dt;
+        ddlCorresDistrict.DataTextField = "Details";
+        ddlCorresDistrict.DataValueField = "No_";
+        ddlCorresDistrict.DataBind();
+    }
+    public void BindDdlCity()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetCityDdl();
+        ddlPermCity.DataSource = dt;
+        ddlPermCity.DataTextField = "Details";
+        ddlPermCity.DataValueField = "No_";
+        ddlPermCity.DataBind();
+
+        ddlCorresCity.DataSource = dt;
+        ddlCorresCity.DataTextField = "Details";
+        ddlCorresCity.DataValueField = "No_";
+        ddlCorresCity.DataBind();
+    }
+    
+    public void BindDdlPermDistrict()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetDistrictDdl(ddlPermState.SelectedValue);
+        ddlPermDistrict.DataSource = dt;
+        ddlPermDistrict.DataTextField = "Details";
+        ddlPermDistrict.DataValueField = "No_";
+        ddlPermDistrict.DataBind();
+    }
+    public void BindDdlPermCity()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetCityDdl(ddlPermState.SelectedValue,ddlPermDistrict.SelectedValue);
+        ddlPermCity.DataSource = dt;
+        ddlPermCity.DataTextField = "Details";
+        ddlPermCity.DataValueField = "No_";
+        ddlPermCity.DataBind();        
+    }
+
+    public void BindDdlCorresDistrict()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetDistrictDdl(ddlCorresState.SelectedValue);
+        ddlCorresDistrict.DataSource = dt;
+        ddlCorresDistrict.DataTextField = "Details";
+        ddlCorresDistrict.DataValueField = "No_";
+        ddlCorresDistrict.DataBind();
+    }
+    public void BindDdlCorresCity()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetCityDdl(ddlCorresState.SelectedValue, ddlCorresDistrict.SelectedValue);
+        ddlCorresCity.DataSource = dt;
+        ddlCorresCity.DataTextField = "Details";
+        ddlCorresCity.DataValueField = "No_";
+        ddlCorresCity.DataBind();        
+    }
+
+    public void BindDdlReligion()
+    {
+        DataTable dt = new DataTable();
+        EnquiryDL objEnquiryDL = new EnquiryDL();
+        dt = objEnquiryDL.GetReligionDdl();
+        ddlReligion.DataSource = dt;
+        ddlReligion.DataTextField = "Details";
+        ddlReligion.DataValueField = "No_";
+        ddlReligion.DataBind();
+
+    }
+    public void ddlBind()
+    {
+        DataTable dt = new DataTable();
+        dt = edL.GetCategoryDdl("");//============================edit it
+        drpQuota.DataSource = dt;
+        drpQuota.DataTextField = "Details";
+        drpQuota.DataValueField = "No_";
+        drpQuota.DataBind();
+
+
+        DataTable dt1 = new DataTable();
+        dt1 = edL.GetGenderDdl();
+        drpGender.DataTextField = "Details";
+        drpGender.DataValueField = "No_";
+        drpGender.DataSource = dt1;
+        drpGender.DataBind();
+
+
+        DataTable dt3 = new DataTable();
+        dt3 = edL.GetNationalityDdl();
+        drpCitizen.DataTextField = "Details";
+        drpCitizen.DataValueField = "No_";
+        drpCitizen.DataSource = dt3;
+        drpCitizen.DataBind();
+
+        DataTable dt5 = new DataTable();
+        dt5 = apdl.GetAcademicYearDdl();
+        drpAcademicYear.DataTextField = "Details";
+        drpAcademicYear.DataValueField = "No_";
+        drpAcademicYear.DataSource = dt5;
+        drpAcademicYear.DataBind();
+
+        DataTable dt6 = new DataTable();
+        dt6 = edL.GetMediumInstructionDdl();
+        drpMedium.DataTextField = "Details";
+        drpMedium.DataValueField = "No_";
+        drpMedium.DataSource = dt6;
+        drpMedium.DataBind();
+    }
+    public void BindDdlCategory()
+    {
+        DataTable dt = new DataTable();
+        EnquiryDL objEnquiryDL = new EnquiryDL();
+        dt = objEnquiryDL.GetCategoryDdl(ddlReligion.SelectedValue);
+        drpQuota.DataSource = dt;
+        drpQuota.DataTextField = "Details";
+        drpQuota.DataValueField = "No_";
+        drpQuota.DataBind();
+
+    }
+    public void BindDdlSubReligion()
+    {
+        DataTable dt = new DataTable();
+        EnquiryDL objEnquiryDL = new EnquiryDL();
+        dt = objEnquiryDL.GetSubReligionDdl();
+        ddlSubReligion.DataSource = dt;
+        ddlSubReligion.DataTextField = "Details";
+        ddlSubReligion.DataValueField = "No_";
+        ddlSubReligion.DataBind();
+
+    }
+    public void Prequalification()
+    {
+        DataTable dt7 = new DataTable();
+        dt7 = apdl.GetPrequalificationDdl();
+        drpPrequalification.DataTextField = "Details";
+        drpPrequalification.DataValueField = "No_";
+        drpPrequalification.DataSource = dt7;
+        drpPrequalification.DataBind();
+
+        ddlExamination.DataTextField = "Details";
+        ddlExamination.DataValueField = "No_";
+        ddlExamination.DataSource = dt7;
+        ddlExamination.DataBind();
+
+        ddlExamination.DataBind();
+    }
+    protected void rblRegStep_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        RegistrationSteps();
+    }
+    public void RegistrationSteps()
+    {
+        lblMsg.Text = "";
+        if (rblRegStep.SelectedIndex == 0)
+        {
+            dvEnquiry.Visible = true;
+            dvApplication.Visible = false;
+            dvFamily.Visible = false;
+            dvAddress.Visible = false;
+            dvQualification.Visible = false;
+            dvAddress.Visible = false;
+        }
+        if (rblRegStep.SelectedIndex == 1)
+        {
+            dvEnquiry.Visible = false;
+            dvOTP.Visible = true;
+            dvAppDetails.Visible = false;
+            dvApplication.Visible = true;
+            dvFamily.Visible = false;
+            dvAddress.Visible = false;
+            dvQualification.Visible = false;
+        }
+        if (rblRegStep.SelectedIndex == 2)
+        {
+            dvEnquiry.Visible = false;
+            dvApplication.Visible = false;
+            dvFamily.Visible = false;
+            dvAddress.Visible = false;
+            dvQualification.Visible = false;
+        }
+        if (dvAppDetails.Visible == false)
+        {
+            btnSave.Visible = false;
+        }
+        else
+        {
+            btnSave.Visible = true;
+        }
+
+    }
+    protected void btnEnqNoGenerate_Click(object sender, EventArgs e)
+    {
+        lblMsg.Text = "";
+        if (txtEnqApplicantName.Text == "" || txtEnqMobileNo.Text == "" || ddlEnqCourse.SelectedIndex == 0)
+        {
+            lblMsg.Text = "Fill Name/Mobile No/Course..!";
+            return;
+        }
+        string EnquiryNoGen = apdl.SaveAndGenerateEnquiryForApplicant(txtEnqApplicantName.Text, ddlEnqCourse.SelectedValue, txtEnqMobileNo.Text, txtWhatsappNo.Text);
+
+        if (EnquiryNoGen.Length <= 15)
+        {
+           lblMsg.Text = "Your Enquiry No is :" + EnquiryNoGen + " ";
+            //Send Message//
+            //string EnqMsg = "Your Enquiry No is :" + EnquiryNoGen + " ";
+            SendMessage(txtEnqMobileNo.Text, lblMsg.Text);//Message 
+
+            lblMsg.Text = "Enquiry No has been sent to your Mobile No !";
+            //Send Message//
+            rblRegStep.SelectedIndex = 1;
+            if (rblRegStep.SelectedIndex == 1)
+            {
+                dvOTP.Visible = true;
+                dvEnquiry.Visible = false;
+                dvAppDetails.Visible = false;
+                dvApplication.Visible = true;
+                dvFamily.Visible = false;
+                dvAddress.Visible = false;
+                dvQualification.Visible = false;
+                txtAppEnquiryNo.Text = EnquiryNoGen;
+                txtAppMobileNo.Text = txtEnqMobileNo.Text;
+            }
+        }
+        else
+        {
+            lblMsg.Text = EnquiryNoGen;
+        }
+    }
+    public void SMS(String MobileNo, string Msg)
+    {
+        //  Website: http://www.universalsmsadvertising.com/     //  Username: 9837016352   //  Password: 9837016352 
+        // MobileNo = "91" + MobileNo;
+       // MobileNo = "91" + 9899906658;
+        string url = "http://www.universalsmsadvertising.com/universalsmsapi.php?user_name=9837016352&user_password=9837016352&mobile=" + MobileNo + "&sender_id=TMUniv&type=F&text=" + Msg + "";
+        System.Net.HttpWebRequest fr;
+        Uri targetURI = new Uri(url);
+        fr = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(targetURI);
+        if (fr.GetResponse().ContentLength > 0)
+        {
+            System.IO.StreamReader str = new System.IO.StreamReader(fr.GetResponse().GetResponseStream());
+            Response.Write(str.ReadToEnd());
+            str.Close();
+        }
+    }
+    protected void btnSendOTP_Click(object sender, EventArgs e)
+    {
+        lblOTPmasg.Text = "";
+        if (txtAppEnquiryNo.Text == "" || txtAppMobileNo.Text == "")
+        {
+            lblOTPmasg.Text = " Fill Enquiry No/Mobile No !!";
+            return;
+        }
+        string OTPGen = apdl.UpdateandGenerateOTPForApplicant(txtAppEnquiryNo.Text, txtAppMobileNo.Text);
+        string Msg = "Your OTP No is:" + OTPGen + " ";
+
+
+        if (OTPGen.Length <= 10 && OTPGen.Length > 1)
+        {
+            Boolean SendMsg = false;
+            SendMsg = SendMessage(txtAppMobileNo.Text, Msg);//Message 
+            if (SendMsg == true)
+            {
+               lblMsg.Text = "OTP has been sent to your Registered Mobile No !";
+                rblRegStep.SelectedIndex = 1;
+                if (rblRegStep.SelectedIndex == 1)
+                {
+                    dvOTP.Visible = true;
+                    dvEnquiry.Visible = false;
+                    dvAppDetails.Visible = false;
+                    dvApplication.Visible = true;
+                    dvFamily.Visible = false;
+                    dvAddress.Visible = false;
+                    dvQualification.Visible = false;
+                }
+            }
+            else
+            {
+                lblMsg.Text = "Something went wrong Try Again....";
+            }
+        }
+        else
+        {
+            lblMsg.Text = OTPGen;
+        }
+
+
+    }
+    public bool SendMessage(string MobileNo, string Message)
+    {
+        MobileNo = MobileNo.Substring(MobileNo.Length - 10, 10);
+        SMS(MobileNo, Message);
+        return true;
+
+    }
+    protected void btnValidateOTP_Click(object sender, EventArgs e)
+    {
+        Prequalification();
+        lblOTPmasg.Text = "";
+        if (txtAppEnquiryNo.Text == "" || txtAppMobileNo.Text == "" || txtOTP.Text == "")
+        {
+            lblOTPmasg.Text = " Fill Enquiry No/Mobile No/OTP !!";
+            return;
+        }
+        BindData();
+        if (lblMsg.Text == "")
+        {
+            rblRegStep.SelectedIndex = 1;
+            if (rblRegStep.SelectedIndex == 1)
+            {
+                dvEnquiry.Visible = false;
+                dvOTP.Visible = false;
+                dvAppDetails.Visible = true;
+                dvApplication.Visible = true;
+                dvFamily.Visible = true;
+                dvAddress.Visible = true;
+                dvQualification.Visible = true;
+
+            }
+            if (dvAppDetails.Visible == false)
+            {
+                btnSave.Visible = false;
+            }
+            else
+            {
+                btnSave.Visible = true;
+            }
+        }
+    }
+    public void bindENqCourse()
+    {
+        DataTable dt2 = new DataTable();
+        dt2 = edL.GetCourseDdl();
+        ddlEnqCourse.DataTextField = "Details";
+        ddlEnqCourse.DataValueField = "No_";
+        ddlEnqCourse.DataSource = dt2;
+        ddlEnqCourse.DataBind();
+
+    }
+    public void bindDrpCourse()
+    {
+        DataTable dt2 = new DataTable();
+        dt2 = edL.GetCourseDdl();
+        drpCourse.DataTextField = "Details";
+        drpCourse.DataValueField = "No_";
+        drpCourse.DataSource = dt2;
+        drpCourse.DataBind();
+    }
+
+    public void BindData()
+    {
+        hfApplicationNo.Value = "";
+        lblMsg.Text = "";
+        DataTable dtData = new DataTable();
+        dtData = apdl.GetDataAfterValidateOTP(txtAppEnquiryNo.Text, txtAppMobileNo.Text, txtOTP.Text);
+        if (dtData.Rows.Count > 0)
+        {
+            if (dtData.Rows[0]["Error"].ToString() == "")
+            {
+                hfApplicationNo.Value = dtData.Rows[0]["ApplicationNo"].ToString();
+                txtApplicantName.Text = dtData.Rows[0]["Applicant Name"].ToString();
+                if (dtData.Rows[0]["Academic Year"].ToString() != "")
+                {
+                    drpAcademicYear.SelectedValue = dtData.Rows[0]["Academic Year"].ToString();
+                }
+                drpCourse.SelectedValue = dtData.Rows[0]["Course Code"].ToString();
+                drpCourse.Enabled = false;
+                drpPrequalification.SelectedValue = dtData.Rows[0]["Prequalification"].ToString();
+                drpGender.SelectedValue = dtData.Rows[0]["Gender"].ToString();
+
+                if (dtData.Rows[0]["Medium of Instruction"].ToString() == "" || dtData.Rows[0]["Medium of Instruction"].ToString() == "0")
+                    drpMedium.SelectedValue = "";
+                else
+                    drpMedium.SelectedValue = dtData.Rows[0]["Medium of Instruction"].ToString();
+                txtPreviousInst.Text = dtData.Rows[0]["Name of the Previous Institute"].ToString();
+
+                DateTime dt = Convert.ToDateTime(dtData.Rows[0]["Date of Birth"]);
+                var text = dt.ToString("dd MMM yyyy");
+                if (text == "01 Jan 1753")
+                { txtYear.Text = ""; txtmonths.Text = ""; txtDOB.Text = ""; }
+                else
+                { txtDOB.Text = text; txtYear.Text = dtData.Rows[0]["Age"].ToString(); txtmonths.Text = dtData.Rows[0]["Months"].ToString(); }
+
+                txtFatherName.Text = dtData.Rows[0]["Father_s Name"].ToString();
+                txtMotherName.Text = dtData.Rows[0]["Mother_s Name"].ToString();
+                //Application--------Start--
+                txtAadharNo.Text = dtData.Rows[0]["Aadhar No_"].ToString();
+                txtEmailAddress.Text = dtData.Rows[0]["E-Mail Address"].ToString();
+                txtFacebookId.Text = dtData.Rows[0]["Facebook ID"].ToString();
+                //Application--------END--
+
+
+                DataSet ds = new DataSet();
+                ds = cdl.getApplicationCost(drpCourse.SelectedValue, drpQuota.SelectedItem.Text);
+                if (ds.Tables[0].Rows.Count > 0) { lblApplicationCost.Text = ds.Tables[0].Rows[0]["Application Cost"].ToString(); }
+                if (dtData.Rows[0]["ApplicationNo"].ToString() == "")
+                {
+                    drpCitizen.SelectedValue = dtData.Rows[0]["ApplicantStatus"].ToString();
+                    drpQuota.SelectedValue = dtData.Rows[0]["Category"].ToString();
+                }
+                else
+                {
+                    drpCitizen.SelectedValue = dtData.Rows[0]["Citizenship"].ToString();
+                    drpQuota.SelectedValue = dtData.Rows[0]["Category"].ToString();
+                    txtFatherQualification.Text = dtData.Rows[0]["Father_s Qualification"].ToString();
+                    txtFatherOccupation.Text = dtData.Rows[0]["Father_s Occupation"].ToString();
+                    txtFatherAnnualIncome.Text = dtData.Rows[0]["Father_s Annual Income"].ToString();
+                    txtMotherQualification.Text = dtData.Rows[0]["Mother_s Qualification"].ToString();
+                    txtMotherOccupation.Text = dtData.Rows[0]["Mother_s Occupation"].ToString();
+                    txtMotherAnnualIncome.Text = dtData.Rows[0]["Mother_s Annual Income"].ToString();
+                    //------------new add------18-04-2015--------------                   
+                    // txtParentContact.Text = dtData.Rows[0]["Parents Mobile Number"].ToString();
+
+                    ddlRegidanceStatus.SelectedValue = dtData.Rows[0]["Resident Status"].ToString();
+                    ddlMaritalStatus.SelectedValue = dtData.Rows[0]["Marital Status"].ToString();
+                    txtMotherTounge.Text = dtData.Rows[0]["Mother Tongue"].ToString();
+                    ddlReligion.SelectedValue = dtData.Rows[0]["Religion"].ToString();
+                    if (ddlReligion.SelectedValue.ToUpper() == "JAIN")
+                    {
+                        ddlSubReligion.Visible = true;
+                        lblSubReligionNotRequired.Visible = false;
+                    }
+                    else
+                    {
+                        ddlSubReligion.Visible = false;
+                        lblSubReligionNotRequired.Visible = true;
+                    }       
+        
+                    ddlSubReligion.SelectedValue = dtData.Rows[0]["Sub Religion"].ToString();
+                    txtParentContact.Text = dtData.Rows[0]["Parents Phone Number"].ToString();
+                    txtParentEmail.Text = dtData.Rows[0]["Parents Email Id"].ToString();
+                    ddlDisability.SelectedValue = dtData.Rows[0]["Disability"].ToString();
+                    ddlDomicile.SelectedValue = dtData.Rows[0]["State"].ToString();
+                    //------Address-----
+                    txtPermAddress.Text = dtData.Rows[0]["Address1"].ToString();
+                    ddlPermCity.SelectedValue = dtData.Rows[0]["City"].ToString();
+                    txtPermPinCode.Text = dtData.Rows[0]["Post Code"].ToString();
+                    ddlPermState.SelectedValue = dtData.Rows[0]["State"].ToString();
+                    ddlPermDistrict.SelectedValue = dtData.Rows[0]["District"].ToString();
+                    if (dtData.Rows[0]["Same As Permanent Address"].ToString() == "1")
+                    { chkSameAddress.Checked = true;
+                   
+                    }
+                    else { chkSameAddress.Checked = false; }
+
+                    txtCorresAddress.Text = dtData.Rows[0]["Address3"].ToString();
+                    ddlCorresCity.SelectedValue = dtData.Rows[0]["Cor City"].ToString();
+                    txtCorresPinCode.Text = dtData.Rows[0]["Cor Post Code"].ToString();
+                    ddlCorresState.SelectedValue = dtData.Rows[0]["Cor State"].ToString();
+                    ddlCorresDistrict.SelectedValue = dtData.Rows[0]["Cor District"].ToString();
+                    ChkAddress();
+                    if (dtData.Rows[0]["Record of Criminal Case"].ToString() == "1") { rblCase.SelectedValue = "1"; }
+                    else { rblCase.SelectedValue = "0"; }
+
+                    ViewState["StudentImage"] = (Byte[])dtData.Rows[0]["Applicant Image"];
+                    String Proc = "proc_GetImageByEnquiryId";
+                    imgApplicant.ImageUrl = "image.aspx?ImageID=" + txtAppEnquiryNo.Text + "&Proc=" + Proc + "";
+                    DataTable dtQual = new DataTable();
+                    dtQual = apdl.GetQualificationDataAfterValidateOTP(txtAppEnquiryNo.Text);
+                    grdQualification.DataSource = dtQual;
+                    grdQualification.DataBind();
+                    ViewState["Qualification"] = dtQual;
+
+
+                }
+            }
+            else
+            {
+                lblMsg.Text = dtData.Rows[0]["Error"].ToString();
+            }
+        }
+    }
+    protected void ddlReligion_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDdlCategory();
+        if (ddlReligion.SelectedValue == "JAIN")
+        {
+            ddlSubReligion.Visible = true;
+            lblSubReligionNotRequired.Visible = false;
+        }
+        else
+        {
+            ddlSubReligion.Visible = false;
+            lblSubReligionNotRequired.Visible = true;
+        }
+    }
+    protected void drpQuota_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        DataSet ds = new DataSet();
+        ds = cdl.getApplicationCost(drpCourse.SelectedValue, drpQuota.SelectedItem.Text);
+        if (ds.Tables[0].Rows.Count > 0)
+            lblApplicationCost.Text = ds.Tables[0].Rows[0]["Application Cost"].ToString();
+          //  lblApplicationCost.Text = "1"; //for testing
+    }
+    protected void btnAdd_Click(object sender, EventArgs e)
+    {
+        lblerror.Text = "";
+        if (ddlExamination.SelectedItem.Text == "-- Select --")
+            lblerror.Text = "please fill all the fields.";
+        else
+        {
+            if (grdQualification.Rows.Count > 0)
+            {
+                dtqualification = (DataTable)ViewState["Qualification"];
+                DataView dv = new DataView(dtqualification);
+                dv.RowFilter = "Qualification='" + ddlExamination.SelectedValue + "'";
+                //dt.DefaultView.RowFilter = "SubjectCode="+drpPrequalificationSubCode.SelectedItem.Text+"";
+                if (dv.Count > 0)
+                {
+                    lblerror.Text = "Qualification code already exist.";
+                }
+                else if (txtPercentageOfMarks.Text == "" && txtGrade.Text == "")
+                {
+                    lblerror.Text = "please fill % Marks or Grade.";
+                }
+                else
+                {
+                    dtqualification.Rows.Add(ddlExamination.SelectedValue, ddlExamination.SelectedItem.Text, txtDescription.Text, txtYearofPassing.Text, txtSchoolCollege.Text, txtNameOfBoardUniv.Text,
+                        txtMaximum.Text, txtMarkObtained.Text,Convert.ToDecimal(txtPercentageOfMarks.Text), txtGrade.Text, txtMediumOfInstruction.Text, txtDesciplineSubj.Text);
+                    grdQualification.DataSource = dtqualification;
+                    grdQualification.DataBind();
+                    blankTable();
+                }
+            }
+            else
+            {
+                if (txtPercentageOfMarks.Text == "" && txtGrade.Text == "")
+                {
+                    lblerror.Text = "please fill Percent or Marks.";
+                }
+                else
+                {
+                    dtqualification.Columns.AddRange(new DataColumn[12]{
+                    new DataColumn ("Qualification",typeof(int)),                    
+                    new DataColumn ("QualificationDesc",typeof(string)),
+                    new DataColumn ("Description",typeof(string)),
+                    new DataColumn ("YearOfPassing",typeof(string)),
+                    new DataColumn ("SchoolCollege",typeof(string)),
+                    new DataColumn ("BoardUniversity",typeof(string)),
+                    new DataColumn ("MaximumMarks",typeof(string)),
+                    new DataColumn ("MarksObtained",typeof(string)),                    
+                    new DataColumn ("PMarks",typeof(decimal)),
+                    new DataColumn ("Grade",typeof(string)),
+                    new DataColumn ("MOI",typeof(string)),
+                    new DataColumn ("DesciplineSubj",typeof(string))                    
+                    });
+                    dtqualification.Rows.Add(ddlExamination.SelectedValue, ddlExamination.SelectedItem.Text, txtDescription.Text, txtYearofPassing.Text, txtSchoolCollege.Text, txtNameOfBoardUniv.Text,
+                        txtMaximum.Text, txtMarkObtained.Text, Convert.ToDecimal(txtPercentageOfMarks.Text), txtGrade.Text, txtMediumOfInstruction.Text, txtDesciplineSubj.Text);
+                    grdQualification.DataSource = dtqualification;
+                    grdQualification.DataBind();
+                    ViewState["Qualification"] = dtqualification;
+                    blankTable();
+                }
+            }
+        }
+    }
+    public void blankTable()
+    {
+        ddlExamination.SelectedIndex = 0;
+        txtYearofPassing.Text = "";
+        txtSchoolCollege.Text = "";
+        txtNameOfBoardUniv.Text = "";
+        txtMaximum.Text = "";
+        txtMarkObtained.Text = "";
+        txtPercentageOfMarks.Text = "";
+        txtGrade.Text = "";
+        txtMediumOfInstruction.Text = "";
+        txtDesciplineSubj.Text = "";
+    }
+    public void blankValue()
+    {
+        drpCourse.SelectedIndex = 0;
+        txtAppEnquiryNo.Text = "";
+        txtApplicantName.Text = "";
+        drpGender.SelectedIndex = 0;
+        txtDOB.Text = "";
+        lblAge.Text = "";
+        lbmonths.Text = "";
+        txtFatherName.Text = "";
+        txtMotherName.Text = "";
+        drpAcademicYear.SelectedIndex = 0;
+        drpCitizen.SelectedIndex = 0;
+        drpPrequalification.SelectedIndex = 0;
+        txtPreviousInst.Text = "";
+        drpMedium.SelectedIndex = 0;
+        //chkHostelAcommodation.Checked = false;
+        drpQuota.SelectedIndex = 0;
+        lblApplicationCost.Text = "";
+        drpModeOfPayment.SelectedIndex = 0;
+        ViewState["Qualification"] = null;
+        dtqualification = (DataTable)ViewState["Qualification"];
+        grdQualification.DataSource = dtqualification;
+        grdQualification.DataBind();
+    }
+    protected void grdQualification_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        GridViewRow row = grdQualification.SelectedRow;
+        //row.RowIndex;
+        dtqualification = (DataTable)ViewState["Qualification"];
+        dtqualification.Rows[row.RowIndex].Delete();
+        dtqualification.AcceptChanges();
+        ViewState["Qualification"] = dtqualification;
+        grdQualification.DataSource = dtqualification;
+        grdQualification.DataBind();
+    }
+    protected void txtDOB_TextChanged(object sender, EventArgs e)
+    {
+        CalculateAge();
+    }
+    public void CalculateAge()
+    {
+        //DataTable dt = new DataTable();
+        //EnquiryDL objEnquiryDL = new EnquiryDL();
+        //if (txtDOB.Text != string.Empty)
+        //{
+        //    dt = objEnquiryDL.GetAge(txtDOB.Text, DateTime.Now.ToString("dd MMM yyyy"));
+        //    txtYear.Text = dt.Rows[0]["Years"].ToString();
+        //    txtmonths.Text = dt.Rows[0]["Months"].ToString();
+        //}
+        //if (Convert.ToInt32(txtYear.Text) < 17)
+        //{
+        //    //ScriptManager.RegisterClientScriptBlock(this, GetType(), "alertMessage", @"alert('Age is less than 17 years ! ')", true);
+        //}
+
+    }
+
+    protected void btnUpload_Click(object sender, EventArgs e)
+    {// byte[] Imgbytes = null;  //if (imgUpload.HasFile && imgUpload.PostedFile != null) //{ //    System.IO.Stream fs = imgUpload.PostedFile.InputStream;
+     //System.IO.BinaryReader br = new System.IO.BinaryReader(fs); // Imgbytes = br.ReadBytes((Int32)fs.Length); //svae 
+     // string base64String = Convert.ToBase64String(Imgbytes, 0, Imgbytes.Length); //    imgApplicant.ImageUrl = "data:image/png;base64," + base64String;
+     //  imgApplicant.Visible = true;  //    ViewState["StudentImage"] = Imgbytes; //} //string Id = "ENQ/16-17/0002";            
+     //imgApplicant.ImageUrl = "image.aspx?ImageID='" + Id + "'";  //imgApplicant.Visible = true;   
+    }
+    protected void btnSave_Click(object sender, EventArgs e)
+    {
+        lblerror.Text = "";
+        Imgbytes = (byte[])ViewState["StudentImage"];
+        if (imgUpload.HasFile && imgUpload.PostedFile != null)
+        {
+            System.IO.Stream fs = imgUpload.PostedFile.InputStream;
+            System.IO.BinaryReader br = new System.IO.BinaryReader(fs);
+            Imgbytes = br.ReadBytes((Int32)fs.Length); //svae
+            string base64String = Convert.ToBase64String(Imgbytes, 0, Imgbytes.Length);
+            imgApplicant.ImageUrl = "data:image/png;base64," + base64String;
+            imgApplicant.Visible = true;
+            ViewState["StudentImage"] = Imgbytes;
+        }
+        if (Imgbytes == null)
+        {
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Okay');", true);
+            return;
+        }
+        
+              
+       // if (grdQualification.Rows.Count < 1) //Comment on 28-02-2017  Qualification Not Mandatory  
+       // {
+           // ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error1', 'Okay');", true);
+           // return;
+      //  }
+      //  else
+      //  { //  dtqualification = (DataTable)ViewState["Qualification"];
+            // for(int i=0; i<grdQualification.Rows.Count;i++) //{//    if (dtqualification.Rows[i][""].ToString() != drpPrequalification.SelectedItem.Text)
+            //    { //        lblerror.Text = "Pre qualification not Added in Qualification Section !";  //    } //}
+      //  }
+        int HostelAcommodation = 0;
+        DateTime Cdate = Convert.ToDateTime("1 - 1 - 1753");
+
+        string dos = "1 - 1 - 1753";
+        if (!string.IsNullOrEmpty(lblDateOfSale.Text))
+            dos = lblDateOfSale.Text;
+        String dob = "1 - 1 - 1753";
+        if (!string.IsNullOrEmpty(txtDOB.Text))
+            dob = txtDOB.Text;
+        ;
+
+        decimal ApplicationCost = 0;
+        if (lblApplicationCost.Text != "")
+           ApplicationCost = Convert.ToDecimal(lblApplicationCost.Text);
+      //  lblApplicationCost.Text = "1"; //for testing
+        int age = 0;
+        if (txtYear.Text != "")
+            age = Convert.ToInt16(txtYear.Text);
+        int months = 0;
+        if (txtmonths.Text != "")
+            months = Convert.ToInt16(txtmonths.Text);
+
+        decimal fatherAnnualIncome = 0;
+        if (txtFatherAnnualIncome.Text != "")
+            fatherAnnualIncome = Convert.ToDecimal(txtFatherAnnualIncome.Text);
+        decimal motherAnnualIncome = 0;
+        if (txtMotherAnnualIncome.Text != "")
+            motherAnnualIncome = Convert.ToDecimal(txtMotherAnnualIncome.Text);
+
+
+        //=======================Update Enquiry====addRegistrationInformation=========Ashu==================             
+        string s = apdl.GetNextApplicationNo();
+        //================= insert into TMU$Application_ College===========================================
+        string AppNo = "Error";
+        int SameAsPermanentAddress = 0; string CorresAddress,CorresState,CorresDistrict,CorresCity,Correspincode;
+        if (chkSameAddress.Checked == true)
+        {
+            SameAsPermanentAddress = 1;
+            CorresAddress = txtPermAddress.Text;
+            CorresState = ddlPermState.SelectedValue;
+            BindDdlCorresDistrict();
+            CorresDistrict = ddlPermDistrict.SelectedValue;
+            BindDdlCorresCity();
+            CorresCity = ddlPermCity.SelectedValue;
+            Correspincode = txtPermPinCode.Text;
+        }
+        else
+        {
+            CorresAddress = txtCorresAddress.Text;
+            CorresState = ddlCorresState.SelectedValue;
+            CorresDistrict = ddlCorresDistrict.SelectedValue;
+            CorresCity = ddlCorresCity.SelectedValue;
+            Correspincode = txtCorresPinCode.Text;
+        }
+        AppNo = apdl.addRegistrationInformation(s, dos, txtAppEnquiryNo.Text, txtApplicantName.Text, drpCourse.SelectedValue.ToString(),
+        drpQuota.SelectedValue, Convert.ToInt16(drpGender.SelectedValue), Convert.ToDateTime(dob).ToString("MM-dd-yyyy"), age, months, txtFatherName.Text, txtMotherName.Text,
+        drpAcademicYear.SelectedItem.Text, drpCitizen.SelectedValue.ToString(), drpPrequalification.SelectedValue, txtPreviousInst.Text,
+        drpMedium.SelectedValue, HostelAcommodation, drpQuota.SelectedValue, ApplicationCost, drpModeOfPayment.SelectedItem.Text, Cdate, "", "",
+        txtAadharNo.Text, txtEmailAddress.Text, txtFacebookId.Text, txtFatherQualification.Text, txtFatherOccupation.Text, fatherAnnualIncome,
+        txtMotherQualification.Text, txtMotherOccupation.Text, motherAnnualIncome, hfApplicationNo.Value,
+        Convert.ToInt16(ddlRegidanceStatus.SelectedValue), Convert.ToInt16(ddlMaritalStatus.SelectedValue), txtMotherTounge.Text, ddlReligion.SelectedValue,
+        Convert.ToInt16(ddlDisability.SelectedValue), ddlDomicile.SelectedValue, Convert.ToInt16(rblCase.SelectedValue), txtPermAddress.Text, ddlPermCity.SelectedValue,
+        txtPermPinCode.Text, ddlPermState.SelectedValue, SameAsPermanentAddress, CorresAddress, CorresCity, Correspincode, CorresState, txtParentContact.Text, txtParentEmail.Text,Imgbytes,txtAppMobileNo.Text, ddlSubReligion.SelectedValue,ddlPermDistrict.SelectedValue,CorresDistrict);
+        //================== insert into TMU$Application Mark College======================================
+        string ResultQual = "Error";
+        if (AppNo != "Error")
+        {
+            dtqualification = (DataTable)ViewState["Qualification"];
+            if (dtqualification != null)
+            {
+                ResultQual = apdl.addQualificationInformation(dtqualification, txtAppEnquiryNo.Text, drpCourse.SelectedValue.ToString(), drpAcademicYear.SelectedItem.Text, drpQuota.SelectedItem.Text, drpMedium.SelectedItem.Text);
+            }
+            else
+            {
+                ResultQual = "Success";
+            }
+        }
+             
+        //====================Make Payment==========
+        if (ResultQual != "Error")
+        {
+            if (lblApplicationCost.Text == "") { lblApplicationCost.Text = "0"; }
+            if (Convert.ToDouble(lblApplicationCost.Text) <= 0) { lblMsg.Text = "Amount should be greater than 0"; return; }
+            else
+            {
+                Random RNo = new Random();
+                TransId = txtAppEnquiryNo.Text + RNo.Next(10000, 99999);
+                String sDate = DateTime.Now.ToString();
+                DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
+                String dy = datevalue.Day.ToString();
+                String mn = datevalue.Month.ToString();
+                String yy = datevalue.Year.ToString();
+                string date1 = mn + "/" + dy + "/" + yy;
+                string time1 = System.DateTime.Now.TimeOfDay.ToString();
+
+            }
+            if (rblpayment.SelectedValue == "PayUmoney")
+            {
+                PayUmoney();
+            }
+            else
+            {
+                Random RNo = new Random();
+                TransId = txtAppEnquiryNo.Text.Replace("/","--") + RNo.Next(10000, 99999);
+                //PaytmTest();
+                PaytmLive();
+            }
+        }
+        else
+        {
+            lblMsg.Text = "Error on Save .";
+            return;
+        }
+        Session["EnquiryNo"] = txtAppEnquiryNo.Text;
+        Session["Amount"] = lblApplicationCost.Text;
+        Session["Course"] = drpCourse.SelectedItem.Text;
+        Session["ApplicantName"] = txtApplicantName.Text;
+        Session["DOB"] = txtDOB.Text;
+        Session["FatherName"] = txtFatherName.Text;
+
+        //====================Make Payment==========
+    }
+
+    public string Generatehash512(string text)
+    {
+        byte[] message = Encoding.UTF8.GetBytes(text);
+        UnicodeEncoding UE = new UnicodeEncoding();
+        byte[] hashValue;
+        SHA512Managed hashString = new SHA512Managed();
+        string hex = "";
+        hashValue = hashString.ComputeHash(message);
+        foreach (byte x in hashValue)
+        {
+            hex += String.Format("{0:x2}", x);
+        }
+        return hex;
+    }
+    private string PreparePOSTForm(string url, System.Collections.Hashtable data)      // post form
+    {
+        string formID = "PostForm";
+        StringBuilder strForm = new StringBuilder();
+        strForm.Append("<form id=\"" + formID + "\" name=\"" + formID + "\" action=\"" + url + "\" method=\"POST\">");
+        foreach (System.Collections.DictionaryEntry key in data)
+        {
+            strForm.Append("<input type=\"hidden\" name=\"" + key.Key + "\" value=\"" + key.Value + "\">");
+        }
+        strForm.Append("</form>");
+        StringBuilder strScript = new StringBuilder();
+        strScript.Append("<script language='javascript'>");
+        strScript.Append("var v" + formID + " = document." + formID + ";");
+        strScript.Append("v" + formID + ".submit();");
+        strScript.Append("</script>");
+        return strForm.ToString() + strScript.ToString();
+    }
+
+
+    protected void submit_Click(object sender, EventArgs e) ////protected void btnSave_Click(object sender, EventArgs e)
+    {
+        //PayUmoney();
+    }
+    public void PayUmoney()
+    {
+        if (lblApplicationCost.Text == "") { lblApplicationCost.Text = "0"; }
+        if (Convert.ToDouble(lblApplicationCost.Text) <= 0) { lblMsg.Text = "Amount should be greater than 0"; return; }
+        else
+        {
+            Random RNo =new Random();
+            TransId = txtAppEnquiryNo.Text +RNo.Next(10000,99999);
+            String sDate = DateTime.Now.ToString();
+            DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
+            String dy = datevalue.Day.ToString();
+            String mn = datevalue.Month.ToString();
+            String yy = datevalue.Year.ToString();
+            string date1 = mn + "/" + dy + "/" + yy;
+            string time1 = System.DateTime.Now.TimeOfDay.ToString();
+
+        }
+        // end save record in database
+        try
+        {
+            string[] hashVarsSeq; string hash_string = string.Empty;
+            if (string.IsNullOrEmpty(Request.Form["txnid"])) // generating txnid
+            {
+                Random rnd = new Random();
+                string strHash = Generatehash512(rnd.ToString() + DateTime.Now);
+                txnid1 = TransId;
+            }
+            else
+            {
+                txnid1 = TransId;
+            }
+            if (string.IsNullOrEmpty(Request.Form["hash"])) // generating hash value
+            {
+                if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["MERCHANT_KEY"]) || string.IsNullOrEmpty(txnid1) || txtApplicantName.Text == "" || txtEmailAddress.Text == "")
+                {
+                    lblMsg.Text = "Error on Page";
+                    return;
+                }
+                else
+                {
+                    lblMsg.Text = "";
+                    hashVarsSeq = ConfigurationManager.AppSettings["hashSequence"].Split('|'); // spliting hash sequence from config
+                    hash_string = "";
+                    foreach (string hash_var in hashVarsSeq)
+                    {
+                        if (hash_var == "key")
+                        {
+                            hash_string = hash_string + ConfigurationManager.AppSettings["MERCHANT_KEY"];
+                            hash_string = hash_string + '|';
+                        }
+                        else if (hash_var == "txnid")
+                        {
+                            hash_string = hash_string + txnid1;
+                            hash_string = hash_string + '|';
+                        }
+                        else if (hash_var == "amount")
+                        {                            
+                            hash_string = hash_string + Convert.ToDecimal(lblApplicationCost.Text).ToString("g29");
+                            hash_string = hash_string + '|';
+                        }
+                        else if (hash_var == "productinfo")  //new code
+                        { 
+                            hash_string += "{\"paymentIdentifiers\":" + GetJson().ToString() + "}";
+                            hash_string = hash_string + '|';
+                        }
+
+                        else
+                        {
+                            if (hash_var == "firstname")
+                            {                                
+                                hash_string = hash_string + txtApplicantName.Text;
+                                hash_string = hash_string + '|';
+                            }
+                            else if (hash_var == "email")
+                            {                               
+                                hash_string = hash_string + txtEmailAddress.Text;
+                                hash_string = hash_string + '|';
+                            }
+                            else
+                            {
+                                hash_string = hash_string + (Request.Form[hash_var] != null ? Request.Form[hash_var] : "");// isset if else
+                                hash_string = hash_string + '|';
+                            }
+
+                        }
+                    }
+                    hash_string += ConfigurationManager.AppSettings["SALT"];
+                    hash1 = Generatehash512(hash_string).ToLower();
+                    action1 = ConfigurationManager.AppSettings["PAYU_BASE_URL"] + "/_payment";
+                }
+            }
+            else if (!string.IsNullOrEmpty(Request.Form["hash"]))
+            {
+                hash1 = Request.Form["hash"];
+                action1 = ConfigurationManager.AppSettings["PAYU_BASE_URL"] + "/_payment";
+            }
+            if (!string.IsNullOrEmpty(hash1))
+            {
+                hash.Value = hash1; txnid.Value = txnid1;
+                System.Collections.Hashtable data = new System.Collections.Hashtable(); // adding values in gash table for data post
+                data.Add("hash", hash.Value);
+                data.Add("txnid", txnid.Value);
+                data.Add("key", key.Value);
+                string AmountForm = Convert.ToDecimal(lblApplicationCost.Text.Trim()).ToString("g29");// eliminating trailing zeros
+                data.Add("amount", AmountForm);
+                data.Add("firstname", txtApplicantName.Text);
+                data.Add("email", txtEmailAddress.Text);
+                data.Add("phone", txtAppMobileNo.Text);
+                data.Add("productinfo", HttpUtility.HtmlEncode("{\"paymentIdentifiers\":" + GetJson().ToString() + "}"));  //-->new code gives checksum failed
+                data.Add("surl", Path.GetDirectoryName(HttpContext.Current.Request.Url.OriginalString) + "/surl.aspx");
+                //---------------Local--------------------
+                data.Add("furl", "http://localhost:7248/furl.aspx");      // data.Add("furl", Request.Form["furl"].Trim());//http://tmu.ac.in/feepay/furl.aspx
+                data.Add("lastname", "");
+                data.Add("curl", "http://localhost:7248/curl.aspx");      // data.Add("curl", Request.Form["curl"].Trim());//http://tmu.ac.in/feepay/curl.aspx
+                //---------------Local--------------------
+                ////---------------Live--------------------
+                //data.Add("furl", "http://172.0.1.105:82/furl.aspx");      // data.Add("furl", Request.Form["furl"].Trim());//http://tmu.ac.in/feepay/furl.aspx
+                //data.Add("lastname", "");
+                //data.Add("curl", "http://172.0.1.105:82/curl.aspx");      // data.Add("curl", Request.Form["curl"].Trim());//http://tmu.ac.in/feepay/curl.aspx
+                //---------------Live--------------------
+                data.Add("address1", "");
+                data.Add("address2", "");
+                data.Add("city", "");
+                data.Add("state", "");
+                data.Add("country", "");
+                data.Add("zipcode", "");
+                data.Add("udf1", "");
+                data.Add("udf2", "");
+                data.Add("udf3", "");
+                data.Add("udf4", "");
+                data.Add("udf5", "");
+                data.Add("pg", "");
+                data.Add("service_provider", "payu_paisa");                 //data.Add("service_provider", Request.Form["service_provider"].Trim());//payu_paisa
+                string strForm = PreparePOSTForm(action1, data);
+                Page.Controls.Add(new LiteralControl(strForm));
+            }
+            else
+            {
+                //no hash
+            }
+        }
+        catch (Exception ex)
+        {
+            lblMsg.Text = ex.Message;
+
+        }
+
+    }
+    public string GetJson()
+    {
+        System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+        List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+        Dictionary<string, object> row = null;
+        DataTable dtEmployee = new DataTable();
+        dtEmployee.Columns.Add("field", typeof(string));
+        dtEmployee.Columns.Add("value", typeof(string));
+        dtEmployee.Rows.Add("StudentName", txtApplicantName.Text);
+        dtEmployee.Rows.Add("Fee_Type", FeeType);
+        foreach (DataRow dr in dtEmployee.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dtEmployee.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);
+            }
+            rows.Add(row);
+        }
+        return serializer.Serialize(rows);
+    }
+    
+    protected void chkSameAddress_CheckedChanged(object sender, EventArgs e)
+    {
+        if (chkSameAddress.Checked == true)
+        {
+            BindCorState();
+            BindCorDistrict();
+            BindCorCity();
+            txtCorresAddress.Text = txtPermAddress.Text;
+            txtCorresPinCode.Text = txtPermPinCode.Text;
+            ddlCorresState.SelectedValue = ddlPermState.SelectedValue;
+            ddlCorresDistrict.SelectedValue = ddlPermDistrict.SelectedValue;
+            ddlCorresCity.SelectedValue = ddlPermCity.SelectedValue;
+
+            txtPermAddress.ReadOnly = true;
+            txtPermPinCode.ReadOnly = true;
+            ddlPermState.Enabled = false;
+            ddlPermDistrict.Enabled = false;
+            ddlPermCity.Enabled = false;       
+            txtCorresAddress.ReadOnly = true;
+            txtCorresPinCode.ReadOnly = true;
+            ddlCorresState.Enabled = false;
+            ddlCorresDistrict.Enabled = false;
+            ddlCorresCity.Enabled = false; 
+        }
+        else
+        {
+            txtPermAddress.ReadOnly = false;
+            txtPermPinCode.ReadOnly = false;
+            ddlPermState.Enabled = true;
+            ddlPermDistrict.Enabled = true;
+            ddlPermCity.Enabled = true;
+            //-----------------------------            
+            txtCorresAddress.ReadOnly = false;
+            txtCorresPinCode.ReadOnly = false;
+            ddlCorresState.Enabled = true;
+            ddlCorresDistrict.Enabled = true;
+            ddlCorresCity.Enabled = true;
+        }
+    }
+
+    public void BindCorState()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetStateDdl();
+        ddlCorresState.DataSource = dt;
+        ddlCorresState.DataTextField = "Details";
+        ddlCorresState.DataValueField = "No_";
+        ddlCorresState.DataBind();
+
+    }
+    public void BindCorDistrict()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetDistrictDdl();
+        ddlCorresDistrict.DataSource = dt;
+        ddlCorresDistrict.DataTextField = "Details";
+        ddlCorresDistrict.DataValueField = "No_";
+        ddlCorresDistrict.DataBind();
+    }
+    public void BindCorCity()
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetCityDdl();
+        ddlCorresCity.DataSource = dt;
+        ddlCorresCity.DataTextField = "Details";
+        ddlCorresCity.DataValueField = "No_";
+        ddlCorresCity.DataBind();
+    }
+
+    public void ChkAddress()
+    {
+        if (chkSameAddress.Checked == true)
+        {
+            txtPermAddress.ReadOnly = true;
+            txtPermPinCode.ReadOnly = true;
+            ddlPermState.Enabled = false;
+            ddlPermCity.Enabled = false;
+            //-----------------------------            
+            txtCorresAddress.ReadOnly = true;
+            txtCorresPinCode.ReadOnly = true;
+            ddlCorresState.Enabled = false;
+            ddlCorresCity.Enabled = false;
+
+        }
+        else
+        {
+            txtPermAddress.ReadOnly = false;
+            txtPermPinCode.ReadOnly = false;
+            ddlPermState.Enabled = true;
+            ddlPermCity.Enabled = true;
+            //-----------------------------            
+            txtCorresAddress.ReadOnly = false;
+            txtCorresPinCode.ReadOnly = false;
+            ddlCorresState.Enabled = true;
+            ddlCorresCity.Enabled = true;
+        }
+    }
+    public void PaytmLive()
+    {
+        //string orderid = "DCO44" + DateTime.Now.Ticks.ToString();
+        string orderid = TransId;
+        String merchantKey = "7v_qN#jfvvCiLSOB";            //Live                  // "tvo4V_UPQrYk@8Co";                            //Test
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("MID", "Teerth64420690832928");      //Live                  //parameters.Add("MID", "Teerth23597085988517");  //Test
+        parameters.Add("CHANNEL_ID", "WEB");
+        parameters.Add("INDUSTRY_TYPE_ID", "Education");    //Live                  //parameters.Add("INDUSTRY_TYPE_ID", "Retail");   //Test  
+        parameters.Add("WEBSITE", "Teerthankarweb");        //Live                  //parameters.Add("WEBSITE", "Tmuweb");            //Test
+       
+        parameters.Add("EMAIL", txtEmailAddress.Text);
+        parameters.Add("MOBILE_NO", txtAppMobileNo.Text);
+        parameters.Add("CUST_ID", txtAppEnquiryNo.Text.Replace("/", "").ToString());
+        parameters.Add("ORDER_ID", orderid);
+        parameters.Add("TXN_AMOUNT", lblApplicationCost.Text);       
+       // parameters.Add("CALLBACK_URL", Path.GetDirectoryName(HttpContext.Current.Request.Url.OriginalString) + "/PaytmTransactionStatus.aspx"); 
+
+       //parameters.Add("CALLBACK_URL", "http://localhost:25418/TMUiZone/PaytmTransactionStatus.aspx");
+       parameters.Add("CALLBACK_URL", "http://14.139.238.130:82/PaytmTransactionStatus.aspx");
+    
+        string checksum = CheckSum.generateCheckSum(merchantKey, parameters);
+        //string paytmURL = "https://pguat.paytm.com/oltp-web/processTransaction?orderid=" + orderid;//Test
+        string paytmURL = "https://secure.paytm.in/oltp-web/processTransaction?orderid=" + orderid;//Live
+
+        string outputHTML = "<html>";
+        outputHTML += "<head>";
+        outputHTML += "<title>Merchant Check Out Page</title>";
+        outputHTML += "</head>";
+        outputHTML += "<body>";
+        outputHTML += "<center><h1>Please do not refresh this page...</h1></center>";
+        outputHTML += "<form method='post' action='" + paytmURL + "' name='f1'>";
+        outputHTML += "<table border='1'>";
+        outputHTML += "<tbody>";
+        foreach (string key in parameters.Keys)
+        {
+            outputHTML += "<input type='hidden' name='" + key + "' value='" + parameters[key] + "'>";
+        }
+        outputHTML += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "'>";
+        outputHTML += "</tbody>";
+        outputHTML += "</table>";
+        outputHTML += "<script type='text/javascript'>";
+        outputHTML += "document.f1.submit();";
+        outputHTML += "</script>";
+        outputHTML += "</form>";
+        outputHTML += "</body>";
+        outputHTML += "</html>";
+        Response.Write(outputHTML);
+
+    }
+    public void PaytmTest()
+    {
+        //string orderid = "DCO44" + DateTime.Now.Ticks.ToString();
+        string orderid = TransId;
+        String merchantKey = "tvo4V_UPQrYk@8Co";            //Live                  // "tvo4V_UPQrYk@8Co";                            //Test
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("MID", "Teerth23597085988517");      //Live                  //parameters.Add("MID", "Teerth23597085988517");  //Test
+        parameters.Add("CHANNEL_ID", "WEB");
+        parameters.Add("INDUSTRY_TYPE_ID", "Retail");    //Live                  //parameters.Add("INDUSTRY_TYPE_ID", "Retail");   //Test  
+        parameters.Add("WEBSITE", "Tmuweb");        //Live                  //parameters.Add("WEBSITE", "Tmuweb");            //Test
+
+        parameters.Add("EMAIL", txtEmailAddress.Text);
+        parameters.Add("MOBILE_NO", txtAppMobileNo.Text);
+        parameters.Add("CUST_ID", txtAppEnquiryNo.Text.Replace("/", "").ToString());
+        parameters.Add("ORDER_ID", orderid);
+        parameters.Add("TXN_AMOUNT", lblApplicationCost.Text);
+        // parameters.Add("CALLBACK_URL", Path.GetDirectoryName(HttpContext.Current.Request.Url.OriginalString) + "/PaytmTransactionStatus.aspx"); 
+
+        parameters.Add("CALLBACK_URL", "http://localhost:7267/TMUiZone/PaytmTransactionStatus.aspx");
+        // parameters.Add("CALLBACK_URL", "http://14.139.238.130:82/PaytmTransactionStatus.aspx");
+
+        string checksum = CheckSum.generateCheckSum(merchantKey, parameters);
+        //string paytmURL = "https://pguat.paytm.com/oltp-web/processTransaction?orderid=" + orderid;//Test
+        string paytmURL = "https://secure.paytm.in/oltp-web/processTransaction?orderid=" + orderid;//Live
+
+        string outputHTML = "<html>";
+        outputHTML += "<head>";
+        outputHTML += "<title>Merchant Check Out Page</title>";
+        outputHTML += "</head>";
+        outputHTML += "<body>";
+        outputHTML += "<center><h1>Please do not refresh this page...</h1></center>";
+        outputHTML += "<form method='post' action='" + paytmURL + "' name='f1'>";
+        outputHTML += "<table border='1'>";
+        outputHTML += "<tbody>";
+        foreach (string key in parameters.Keys)
+        {
+            outputHTML += "<input type='hidden' name='" + key + "' value='" + parameters[key] + "'>";
+        }
+        outputHTML += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "'>";
+        outputHTML += "</tbody>";
+        outputHTML += "</table>";
+        outputHTML += "<script type='text/javascript'>";
+        outputHTML += "document.f1.submit();";
+        outputHTML += "</script>";
+        outputHTML += "</form>";
+        outputHTML += "</body>";
+        outputHTML += "</html>";
+        Response.Write(outputHTML);
+
+    }
+    public class DdlData
+    {
+        public string No_ { get; set; }
+        public string Details { get; set; }
+    }
+
+    [System.Web.Script.Services.ScriptMethod()]
+    [System.Web.Services.WebMethod]
+
+    public static List<DdlData> BindDistrict(string StateCode)
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+        dt = objCommonDL.GetDistrictDdl(StateCode);
+        List<DdlData> DistrictData = new List<DdlData>();
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            DistrictData.Add(new DdlData
+            {
+                No_ = dt.Rows[i]["No_"].ToString(),
+                Details = dt.Rows[i]["Details"].ToString(),
+            });
+        }
+        return DistrictData;
+    }
+    [System.Web.Script.Services.ScriptMethod()]
+    [System.Web.Services.WebMethod]
+    public static List<DdlData> BindCity(string StateCode,string DistrictCode)
+    {
+        DataTable dt = new DataTable();
+        CommonDL objCommonDL = new CommonDL();
+       // dt = objCommonDL.GetDistrictDdl(DistrictCode);
+        dt = objCommonDL.GetCityDdl(StateCode,DistrictCode);
+        List<DdlData> CityData = new List<DdlData>();
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            CityData.Add(new DdlData
+            {
+                No_ = dt.Rows[i]["No_"].ToString(),
+                Details = dt.Rows[i]["Details"].ToString(),
+            });
+        }
+        return CityData;
+    }
+    protected void ddlPermState_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDdlPermDistrict();
+    }
+    protected void ddlPermDistrict_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDdlPermCity();
+    }
+
+    protected void ddlCorresState_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDdlCorresDistrict();
+    }
+    protected void ddlCorresDistrict_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        BindDdlCorresCity();
+    }
+
+    protected void txtMarkObtained_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            if (Convert.ToInt32(txtMarkObtained.Text) > (Convert.ToInt32(txtMaximum.Text)))
+
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Obtained marks cannot be greater than maximum marks .')", true);
+                txtPercentageOfMarks.Text = "";
+                return;
+                
+            }
+            else
+            {
+
+                SqlCommand cmd = new SqlCommand("sp_getpercentage", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Maximum", txtMaximum.Text);
+                cmd.Parameters.AddWithValue("@Obtained", txtMarkObtained.Text);
+                con.Open();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                con.Close();
+                txtPercentageOfMarks.Text = dt.Rows[0]["Percentage"].ToString();
+            }
+        }
+        catch (Exception ex) { }
+
+
+
+    }
+  
+}

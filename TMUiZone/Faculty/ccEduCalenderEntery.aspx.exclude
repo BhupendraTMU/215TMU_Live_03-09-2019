@@ -1,0 +1,38 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ccEduCalenderEntery.aspx.cs" Inherits="EduCalenderEntery" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        
+    <table>
+        <tr><td colspan="2"><h3>Academic Calender</h3></td></tr>
+        <tr>
+            <td>Code</td>
+            <td>
+                <asp:DropDownList ID="CodeDropDownList" runat="server" AutoPostBack="True" OnSelectedIndexChanged="CodeDropDownList_SelectedIndexChanged"></asp:DropDownList></td>
+        </tr>
+          <tr>
+            <td>Academic Year</td>
+            <td>
+                <asp:DropDownList ID="drpAcademicYear" runat="server"></asp:DropDownList></td>
+        </tr>
+        <tr><td colspan="2">
+            <asp:GridView ID="EduGridView" runat="server" AutoGenerateColumns="False">
+                <Columns>
+                    <asp:BoundField DataField="Date" HeaderText="Date" />
+                    <asp:BoundField DataField="Day" HeaderText="Day" />
+                    <asp:BoundField DataField="Description" HeaderText="Description" />
+                </Columns>
+            </asp:GridView>
+            </td></tr>
+    </table>
+    </div>
+    </form>
+</body>
+</html>

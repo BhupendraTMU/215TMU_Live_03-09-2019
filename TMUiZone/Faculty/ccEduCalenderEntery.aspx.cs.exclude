@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
+public partial class EduCalenderEntery : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            bindcode();
+            bindAcademicYear();
+            bidgrid();
+        }
+    }
+    public void bidgrid()
+    {
+        using (SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        {
+            SqlCommand cmd = new SqlCommand("select convert(varchar(13),[Date],103)as [Date],FORMAT([Date],'dddd')AS  [Day],[Description] from [TMU$Edu Calendar Entry] where Code='" + CodeDropDownList.SelectedValue + "' and [Academic Year]='" + drpAcademicYear.SelectedValue + "'", Conn);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt1 = new DataTable();
+            da.Fill(dt1);
+            EduGridView.DataSource = dt1;
+            EduGridView.DataBind();
+        }
+    }
+
+    public void bindAcademicYear()
+    {
+        using (SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        {
+            SqlCommand cmd = new SqlCommand("proc_GetAcademicYear", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt1 = new DataTable();
+            da.Fill(dt1);
+            drpAcademicYear.DataSource = dt1;
+            drpAcademicYear.DataTextField = "Details";
+            drpAcademicYear.DataValueField = "No_";
+            drpAcademicYear.DataBind();
+        }
+    }
+    public void bindcode()
+    {
+         DataTable dt = new DataTable();
+
+         using (SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+         {
+             Conn.Open();
+             using (SqlDataAdapter a = new SqlDataAdapter("select Code from [TMU$Edu Calendar Entry]", Conn))
+             {
+                 a.Fill(dt); ;
+                 if (dt.Rows.Count > 0)
+                 {
+                     CodeDropDownList.DataSource = dt;
+                     CodeDropDownList.DataTextField = "Code";
+                     CodeDropDownList.DataValueField = "Code";
+                     CodeDropDownList.DataBind();
+                 }
+             }
+         }
+    }
+    protected void CodeDropDownList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        bindcode();
+        bindAcademicYear();
+        bidgrid();
+    }
+}

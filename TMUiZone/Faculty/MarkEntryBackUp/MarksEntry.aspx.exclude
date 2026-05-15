@@ -1,0 +1,1275 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" EnableEventValidation="false" CodeFile="MarksEntry.aspx.cs" Inherits="Faculty_MarksEntry" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $("[src*=plus]").live("click", function () {
+        $(this).closest("tr").after("<tr><td></td><td colspan = '999'>" + $(this).next().html() + "</td></tr>")
+        $(this).attr("src", "../images/minus.png");
+
+    });
+    $("[src*=minus]").live("click", function () {
+        $(this).attr("src", "../images/plus.png");
+        $(this).closest("tr").next().remove();
+    });
+</script>
+
+    <script type="text/javascript">
+
+
+        function callFunctions(i) {
+
+            table = document.getElementById("<%=grdpivot.ClientID %>");
+            tbody = table.tBodies[0];
+            var table, tbody, i, rowLen, row, j, colLen, cell, temp, cell1, row1, Totalvalue = 0;
+            var val = document.getElementById(i).value.toUpperCase();
+
+            var ret = i.replace('grdpivot_', '');
+
+            ret = ret.substring(0, ret.lastIndexOf("_") + 0);
+
+
+            var hiddenStatusFlag = document.getElementById(ret).value.toUpperCase();
+
+            var lastCharofTotal = i.substring(i.lastIndexOf('_') + 1);
+
+            row1 = tbody.rows[0];
+
+
+            if (val == "UFM" || val == "AB" || val == "DT" || val == "") {
+                document.getElementById(i).style.borderColor = '';
+                document.getElementById(i).innerText = val;
+            }
+            else if (val.match(/^\d+/)) {
+
+
+
+
+
+
+                //var totalval = document.getElementById('ContentPlaceHolder1_grdpivot_TotalMarks_' + lastCharofTotal).innerText;
+
+                //var total = parseFloat(totalval) + parseFloat(val);
+                if (parseFloat(hiddenStatusFlag) >= parseFloat(val)) {
+                    document.getElementById(i).value = parseFloat(val);
+                    document.getElementById(i).style.borderColor = '';
+
+                }
+                else {
+                    alert("You Can not Enter Greater than Maximum mark" + "(" + hiddenStatusFlag + ")");
+                    document.getElementById(i).value = '';
+                    document.getElementById(i).focus();
+                    document.getElementById(i).style.borderColor = 'red';
+                    return false;
+
+
+                }
+            }
+            else {
+                alert("Wrong Entry");
+                document.getElementById(i).value = '';
+                document.getElementById(i).focus();
+                document.getElementById(i).style.borderColor = 'red';
+                return false;
+
+
+            }
+            for (j = 0, colLen = row1.cells.length; j < colLen; j++) {
+                cell1 = row1.cells[j];
+                temp = document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).localName;
+                //alert('col success');
+                if (temp == 'input') {
+
+
+                    if (document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).value.toUpperCase() == 'DT' || document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).value.toUpperCase() == 'UFM' || document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).value.toUpperCase() == 'AB' || document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).value.toUpperCase() == '') {
+                        Totalvalue = parseFloat(Totalvalue) + 0;
+                    }
+                    else {
+
+                        Totalvalue = parseFloat(Totalvalue) + parseFloat(document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + lastCharofTotal).value);
+                    }
+
+
+                }
+            }
+            document.getElementById('ContentPlaceHolder1_grdpivot_TotalMarks_' + lastCharofTotal).innerText = Totalvalue.toFixed(2);
+
+
+        }
+
+</script>
+   
+       <script type="text/javascript">
+
+
+           function ManipulateGrid() {
+
+            
+
+               var table, tbody, i, rowLen, row, j, colLen, cell, temp, cell1, row1;
+               var col = [];
+
+               var status;
+               table = document.getElementById("<%=grdpivot.ClientID %>");
+               tbody = table.tBodies[0];
+               //tbody.rows.length
+               $(document).ajaxStart(function () {
+                   $('#wait').show();
+               });
+               for (i = 0, rowLen = tbody.rows.length - 2; i < rowLen ; i++) {
+
+                   col[i] = [];
+                   row = tbody.rows[i];
+                   row1 = tbody.rows[0];
+                   for (j = 0, colLen = row.cells.length; j < colLen; j++) {
+                       cell1 = row1.cells[j];
+                       cell = row.cells[j];
+
+                       temp = document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).localName;
+                       //alert('col success');
+                       if (temp == 'input') {
+                           col[i].push('' + cell1.innerText + ':' + document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).value);
+                       }
+                       else {
+                           col[i].push('' + cell1.innerText + ':' + document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).innerHTML);
+                       }
+                   }
+                   col[i] = '{' + col[i] + '}';
+
+                   col.push(col[i]);
+               }
+
+
+
+             
+
+               var rowdata = { string_rowdata: '[' + col + ']"' };
+               //alert(col[i]);
+
+               if (rowdata != '') {
+                   // NOW CALL THE WEB METHOD WITH THE PARAMETERS USING AJAX.
+                   $.ajax({
+                       type: 'POST',
+
+                       url: "MarksEntry.aspx/SavePivotData",
+                       data: JSON.stringify(rowdata),
+
+                       contentType: "application/json",
+                       dataType: 'json',
+                       success: function (response) {
+
+                           if (response.d == "All Success") {
+
+                               callFeedbackMessage('Success', 'Data saved Successfully');
+                               var id = '<%= btnShow.ClientID%>';
+                               $('#' + id).click();
+                               //return true;
+
+                           }
+
+                       },
+                       error: function (XMLHttpRequest, textStatus, errorThrown) {
+                           //alert(errorThrown);
+                           status = 'Error';
+                       }
+                   });
+               }
+               else { alert("Fields cannot be empty.") }
+           }
+
+
+           function ManipulateGridforSumbit() {
+
+
+               var table, tbody, i, rowLen, row, j, colLen, cell, temp, cell1, row1;
+               var col = [];
+
+               var status;
+               table = document.getElementById("<%=grdpivot.ClientID %>");
+               tbody = table.tBodies[0];
+               //validation
+
+
+
+
+               for (i = 0, rowLen = tbody.rows.length - 2; i < rowLen ; i++) {
+
+                   col[i] = [];
+                   row = tbody.rows[i];
+                   row1 = tbody.rows[0];
+                   for (j = 0, colLen = row.cells.length; j < colLen; j++) {
+                       cell1 = row1.cells[j];
+                       cell = row.cells[j];
+                       temp = document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).localName;
+
+                       if (temp == 'input') {
+                           if (document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).value == '') {
+                               alert('Blank data Can Not be Submitted.');
+                               document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).value = '';
+                               document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).style.borderColor = 'red';
+                               document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).focus();
+                               return false;
+
+                           }
+                       }
+
+                   }
+               }
+
+               $(document).ajaxStart(function () {
+                   $('#wait').show();
+               });
+
+               for (i = 0, rowLen = tbody.rows.length - 2; i < rowLen ; i++) {
+                   col[i] = [];
+                   row = tbody.rows[i];
+                   row1 = tbody.rows[0];
+                   for (j = 0, colLen = row.cells.length; j < colLen; j++) {
+                       cell1 = row1.cells[j];
+                       cell = row.cells[j];
+                       temp = document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).localName;
+                       //alert('col success');
+                       if (temp == 'input') {
+                           col[i].push('' + cell1.innerText + ':' + document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).value);
+                       }
+                       else {
+                           col[i].push('' + cell1.innerText + ':' + document.getElementById('ContentPlaceHolder1_grdpivot_' + cell1.innerText + '_' + i).innerHTML);
+                       }
+                   }
+                   col[i] = '{' + col[i] + '}';
+
+                   col.push(col[i]);
+
+               }
+               //alert(col);
+
+               var rowdata = { string_rowdata: '[' + col + ']"' };
+               //alert(col[i]);
+
+               if (rowdata != '') {
+                   // NOW CALL THE WEB METHOD WITH THE PARAMETERS USING AJAX.
+                   $.ajax({
+                       type: 'POST',
+
+                       url: "MarksEntry.aspx/SubmitPivotData",
+                       data: JSON.stringify(rowdata),
+                       contentType: "application/json",
+                       dataType: 'json',
+                       success: function (response) {
+                           if (response.d == "All Success") {
+
+                               callFeedbackMessage('Success', 'Data Submitted Successfully..');
+                               var id = '<%= btnShow.ClientID%>';
+                               $('#' + id).click();
+                               //return true;
+
+                           }
+
+                       },
+                       error: function (XMLHttpRequest, textStatus, errorThrown) {
+                           //alert(errorThrown);
+                           status = 'Error';
+                       }
+                   });
+               }
+               else { alert("Fields cannot be empty.") }
+           }
+
+
+
+</script>
+    <script type="text/javascript">
+
+        function OpenNewWindow() {
+
+            window.open('../Faculty/ReportMarksEntry.aspx'); return false;
+        }
+        function OpenNewWindow1() {
+
+            window.open('../Faculty/FacultyAwardlist.aspx'); return false;
+        }
+
+        function funChkEnterAndMaxMarksNested(thisId, thisvalue) {
+            var vtxtmark = thisId.id;
+
+            var vlblMaxMark = thisId.id.replace("grdtxtMarks", "grdlMaximummark");
+
+            var vlblValue = parseFloat(document.getElementById(vlblMaxMark).innerHTML);
+
+            if (thisvalue !== "") {
+
+                if (thisvalue == "UFM" || thisvalue == "AB" || thisvalue == "DT") {
+                    return true;
+                }
+
+                else if (parseFloat(thisvalue) > vlblValue) {
+                    alert("You can not enter Greater than maxmuim marks.");
+
+                    document.getElementById(vtxtmark).style.border = "1px solid #ec1414";
+                    document.getElementById(vtxtmark).focus();
+                    return;
+                }
+                else if (parseFloat(thisvalue) <= vlblValue) {
+                    return true;
+                }
+                else {
+                    alert("Marks could be enter Less than Maximuim Marks, AB, DT , UFM and Number only.");
+                    document.getElementById(vtxtmark).style.border = "1px solid #ec1414";
+                    document.getElementById(vtxtmark).focus();
+                    return;
+
+                }
+
+            }
+
+
+
+
+            return false;
+        }
+
+        function funChkEnterAndMaxMarksNestedSubmit(thisId, thisvalue) {
+
+            var vtxtmark = thisId.id;
+
+            var vlblMaxMark = thisId.id.replace("grdtxtMarks", "grdlMaximummark");
+
+            var vlblValue = parseFloat(document.getElementById(vlblMaxMark).innerHTML);
+
+            if (thisvalue !== "") {
+
+                if (thisvalue == "UFM" || thisvalue == "AB" || thisvalue == "DT") {
+                    return true;
+                }
+
+                else if (parseFloat(thisvalue) > vlblValue) {
+                    alert("You can not enter Greater than maxmuim marks.");
+
+                    document.getElementById(vtxtmark).style.border = "1px solid #ec1414";
+                    document.getElementById(vtxtmark).focus();
+                    return;
+                }
+                else if (parseFloat(thisvalue) <= vlblValue) {
+                    return true;
+                }
+                else {
+                    alert("Marks could be enter Less than Maximuim Marks, AB, DT , UFM and Number only.");
+
+                }
+
+            }
+
+
+
+
+            return false;
+        }
+
+        function funChkEnterAndMaxMarks(thisId) {
+
+            var vtxtmark = thisId.id;
+            var vlblMaxMark = thisId.id.replace("grdtxtMarks", "grdlMaximummark");
+
+            var vlblValue = parseFloat(document.getElementById(vlblMaxMark).innerHTML);
+            var vtxtValue = parseFloat(document.getElementById(vtxtmark).value);
+
+
+            if (vtxtValue !== "") {
+                if (vtxtValue > vlblValue) {
+
+                    //document.getElementById(vtxtmark).value = "";
+                    document.getElementById(vtxtmark).style.border = "1px solid #ec1414";
+                    document.getElementById(vtxtmark).focus();
+
+                }
+                else {
+                    document.getElementById(vtxtmark).style.border = "1px solid #fff";
+                }
+            }
+            else {
+                document.getElementById(vtxtmark).style.border = "1px solid #ec1414";
+            }
+
+            return false;
+            //ContentPlaceHolder1_grdViewmarksEntry_grdlMaximummark_0
+        }
+
+
+
+        function PrintDiv() {
+            //document.getElementById('PanelHeader').style.visibility = 'visible';
+            //alert("bhup");
+            var divToPrint = document.getElementById('printarea');
+            var popupWin = window.open('', '_blank', 'width=300,height=400,location=no,left=200px, margin:0mm');
+            popupWin.document.open();
+            popupWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</html>');
+            popupWin.document.close();
+        }
+        $(document).ready(function () {
+            $('[id$=pnlInbox]').hide();
+            $('[id$=pnlOutbox]').hide();
+        });
+        function ShowHide1() {
+            $('[id$=pnlOutbox]').slideToggle();
+            return false;
+        }
+        function ShowHide2() {
+            $('[id$=pnlInbox]').slideToggle();
+            return false;
+        }
+
+
+    </script>
+    <style type="text/css">
+        .upCase {
+            text-transform: uppercase;
+        }
+
+        .myTableClass tr th {
+            padding: 1px;
+        }
+
+        tr td {
+            padding: 1px;
+        }
+
+
+
+        .style1 {
+            height: 83px;
+        }
+
+        a.greenButton {
+            color: #000;
+            text-decoration: none;
+            margin: 20px;
+            padding: 10px 20px 10px 20px;
+            display: inline-block;
+        }
+
+            a.greenButton:hover {
+                background-color: #5078B3;
+            }
+
+        .modalbackground {
+            background-color: Gray;
+            filter: alpha(opacity=70);
+            opacity: 0.7;
+        }
+
+        .modalPopupWhite {
+            background-color: #ffffff;
+            border-width: 3px;
+            border-style: solid;
+            border-color: Gray;
+            padding: 3px;
+            width: 250px;
+        }
+
+        .modalprogress {
+            opacity: 0.7;
+            filter: alpha(opacity=60);
+            background-color: #ededed;
+        }
+
+        .btnaddmaincattt {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px 10px 20px;
+            display: inline-block;
+            font-weight: bold;
+            background-color: #5078B3;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .block1 {
+            visibility: visible;
+        }
+
+        .redBorder {
+            border: 1px solid red;
+        }
+
+        .loader {
+            position: fixed;
+            left: 45%;
+            top: 45%;
+            width: 100px;
+            height: 100px;
+            z-index: 9999;
+            background: url('../images/loader.gif') 50% 50% no-repeat rgb(249,249,249);
+        }
+
+        tr.spaceUnder {
+            padding-bottom: 5px;
+        }
+
+        .example-print {
+            display: none;
+        }
+
+        @media print {
+            .example-screen {
+                display: none;
+            }
+
+            .example-print {
+                display: block;
+            }
+        }
+
+
+        .example-print1 {
+            display: block;
+        }
+
+        @media print1 {
+            .example-screen {
+                display: block;
+            }
+
+            .example-print1 {
+                display: none;
+            }
+        }
+    </style>
+
+
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        .Grid td {
+            background-color: #A1DCF2;
+            color: black;
+            font-size: 10pt;
+            line-height: 200%;
+        }
+
+        .Grid th {
+            background-color: #3AC0F2;
+            color: White;
+            font-size: 10pt;
+            line-height: 200%;
+        }
+
+        .ChildGrid td {
+            background-color: #eee !important;
+            color: black;
+            font-size: 10pt;
+            line-height: 200%;
+        }
+
+        .ChildGrid th {
+            background-color: #6C6C6C !important;
+            color: White;
+            font-size: 10pt;
+            line-height: 200%;
+        }
+
+        .sendbtn {
+            display: block;
+            font-size: 26px;
+            padding: 3px 6px;
+        }
+    </style>
+
+
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+                    
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+
+ <div style="width: 100%; height: 600px; overflow: scroll">
+  
+    <asp:UpdatePanel ID="mrak" runat="server">
+        <ContentTemplate>
+ 
+            <fieldset class="boxBody">
+                <table cellpadding="0px" cellspacing="0px" width="99%">
+                    <tr>
+                        <td style="width: 25%">
+                            <asp:Label ID="Label1" runat="server"
+                                Text="Marks Entry" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"></asp:Label>
+                        </td>
+                        <td style="width: 25%">
+                            <asp:Label ID="lbltotalst" runat="server" Visible="false"></asp:Label><asp:Label ID="lblpresentst" runat="server" Visible="false"></asp:Label>
+                            <asp:Label ID="lblabsentst" runat="server" Visible="false"></asp:Label>
+                            <asp:Label ID="LblUFMCount" runat="server" Visible="false"></asp:Label>
+                           
+                        </td>
+
+                        <td style="width: 50%; text-align: right;visibility:hidden">
+                            <asp:ImageButton ID="Btnprint" runat="server" ImageUrl="~/images/pdf.jpg" OnClientClick="PrintDiv();" Width="40px" Height="30px" Visible="false"></asp:ImageButton>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+              <div class="col-lg-12">
+            <table width="100%">
+                <tr align="left" style="width: 100%; text-align: left">
+                    <td style="width: 200px; font: bold" colspan="10">EXAM TYPE : &nbsp&nbsp
+                           <asp:RadioButton ID="rdInternal" Text="Internal" Width="90px" Font-Bold="true" Checked="true" runat="server" GroupName="examtype"></asp:RadioButton>            
+                              <asp:RadioButton ID="rdExternal" Text="External" Width="90px" Font-Bold="true" runat="server" GroupName="examtype"></asp:RadioButton>
+                              <asp:CheckBox ID="rdOpen" Text="Open Elective" Width="120px" OnCheckedChanged="rdOpen_CheckedChanged" AutoPostBack="true" Font-Bold="true" runat="server" ></asp:CheckBox>
+
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+            <fieldset class="boxBodyInner">
+                 <asp:Panel ID="pnlMain" runat="server">
+                <table cellpadding="0px" cellspacing="0px" >
+                    <caption>
+                     
+                         <tr>
+                            <td>Academic Year  </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="drpAcademicYear" Width="100px" Height="20px" runat="server" AutoPostBack="true" OnSelectedIndexChanged="drpAcademicYear_SelectedIndexChanged"></asp:DropDownList>
+                            </td>
+                            <td style="width: 20px"></td>
+                            <td>Program
+                           <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ValidationGroup="g1" Display="Dynamic" ControlToValidate="drpCourse" InitialValue="" ErrorMessage="**" ForeColor="Red"></asp:RequiredFieldValidator>
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="drpCourse" runat="server" AutoPostBack="true" Height="20px" Width="150px" OnSelectedIndexChanged="drpCourse_SelectedIndexChanged">
+                                </asp:DropDownList>
+                            </td>
+                            <td style="width: 20px"></td>
+                            <td>Semester/Year
+                           <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ValidationGroup="g1" Display="Dynamic" ControlToValidate="drpSemester" InitialValue="" ErrorMessage="**"  ForeColor="Red"></asp:RequiredFieldValidator>
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="drpSemester" runat="server" AutoPostBack="true" Height="20px" OnSelectedIndexChanged="drpSemester_SelectedIndexChanged" Width="120px">
+                                </asp:DropDownList>
+                            </td>
+                            <td style="width: 20px"></td>
+                          <td>
+                                <label>Section  </label>
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="drpSection" runat="server" Enabled="false" Height="20px" Width="100px" >
+                                </asp:DropDownList>
+                            </td>
+
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:Button ID="btnShow" runat="server" CssClass="btn-sm btn-primary btn-block" 
+                                    ValidationGroup="g1" OnClick="btnShow_Click" Height="30px" Width="90px" Text="SHOW / BACK" />
+                                <asp:Button ID="btnResend" runat="server" CssClass="btn-sm btn-primary btn-block" Visible="false"
+                                    ValidationGroup="g1" OnClientClick="ManipulateGridforSumbit()"  Height="30px" Width="90px" Text="RESEND" />
+
+                            </td>
+                            <td style="width: 10px"></td>
+
+                            <td>
+                                <asp:Button ID="btnSave" runat="server" CssClass="btn-sm btn-primary btn-block" ValidationGroup="g1"
+                                    OnClick="btnSave_Click" Height="30px" Visible="false" Width="90px" />
+
+
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                   <asp:Button ID="BtnSubmit1" runat="server" CssClass="btn-sm btn-primary btn-block" ValidationGroup="g1" Text="Submit" Height="30px" Visible="false" Width="90px" OnClick="BtnSubmit1_Click" />
+
+                                <asp:Label ID="lblError" runat="server" ForeColor="Red"></asp:Label>
+                            </td>
+
+
+
+                        </tr>
+                          <tr>
+                            
+                           
+                            <td>
+                                <label>Group </label>
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="ddlGroup" Width="100px" Height="20px"  runat="server"></asp:DropDownList>
+                            </td>
+                            <td style="width: 20px"></td>
+                            <td>
+                                <label>Batch</label>
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="ddlBatch" Width="150px" Height="20px"  runat="server"></asp:DropDownList>
+                            </td>
+                            <td style="width: 10px"></td>
+                              <td>Course
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="ddlSubject" runat="server" AutoPostBack="true" OnTextChanged="ddlSubject_TextChanged" Height="20px" Width="120px">
+                                </asp:DropDownList>
+                            </td>
+                              <td style="width: 10px"></td>
+                              <div id="onetime" runat="server">
+
+                               <td>One Time Entry
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:CheckBox ID="chkPiv" runat="server"  Checked="false"  Height="20px" Width="120px">
+                                </asp:CheckBox>
+                                 
+                            </td>
+                              <td style="width: 10px"></td>
+                                  </div>
+                        </tr>
+                </table>
+                     </asp:Panel>
+                 <asp:Panel ID="pnlOpenElective" runat="server" Visible="false">
+
+ <tr style="width:100%">
+                            <td>Academic Year  </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="drpAcademicYear1" Width="100px" Height="20px" runat="server" OnTextChanged="drpAcademicYear1_TextChanged" AutoPostBack="true" ></asp:DropDownList>
+                            </td>
+        <td style="width: 10px"></td>
+                              <td>Course
+                            </td>
+                            <td style="width: 10px"></td>
+                            <td>
+                                <asp:DropDownList ID="ddlSubject1" runat="server" AutoPostBack="true"  Height="20px" Width="120px">
+                                </asp:DropDownList>
+                            </td>
+        <td style="width: 10px"></td>
+      
+     <td>
+                                <asp:Button ID="btnShow1" runat="server"  
+                                      Height="30px" Width="110px" Text="SHOW / BACK" OnClick="btnShow1_Click" />
+                             
+                            </td>
+      <asp:DropDownList ID="drpCourseOpen" runat="server" Visible="false" Height="20px" Width="120px"></asp:DropDownList>
+      <asp:LinkButton ID="lnkview" runat="server" OnClick="lnkview_Click" Text="View Main report"  Visible="false"></asp:LinkButton>
+ 
+   
+    
+     </tr>
+                 
+
+
+
+
+
+
+                     </asp:Panel>
+            </fieldset>
+             <div class="row" style="text-align:right;width:95%">
+                <asp:LinkButton ID="btnview" runat="server" OnClick="btnview_Click" Text="View Main report"  Visible="false"></asp:LinkButton>
+            </div>
+
+            <div class="row" style="text-align:right;width:95%">
+
+              <b> 
+                 <div class="row" style="text-align:left;width:90%"> <b> <asp:Label ID="lblMaxmark" BackColor="Yellow"  ForeColor="Red" Visible="false" runat="server"></asp:Label></b></div>
+                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+                  
+                   <asp:Label ID="LblInstruction" runat="server" Visible="false" Text="Note:Absent=(AB or ab) and UnFair-Means=(UFM or ufm)" ForeColor="Red"></asp:Label></b>
+            </div>
+           <div id="wait" style="display: none; width: 100%; height: 100%; top: 100px; left: 0px; position: fixed; z-index: 10000; text-align: center;">
+            <img src="../images/loader.gif" width="80" height="80" alt="Loading..." style="position: fixed; top: 50%; left: 50%;" />
+              </div>
+            <asp:panel runat="server" ID="PivotEntry" Visible="false">
+               
+
+           
+                    <asp:Gridview id="grdpivot" runat="server" BackColor="White"   EmptyDataText="There are no data records to display."  CssClass="myTableClass" AutoGenerateColumns="false" ShowFooter="true" BorderColor="#E7E7FF"  BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="100%" GridLines="Horizontal" OnRowDataBound="grdpivot_RowDataBound" >
+                 <AlternatingRowStyle BackColor="LightBlue"  />
+                 
+                <Columns>
+                 
+                    <asp:TemplateField Visible="false">
+                        <ItemTemplate>
+                            <asp:HiddenField ID="enabledisable" Visible="false" runat="server" Value='<%# Bind("txtMarksEnableDesable") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                   
+                </Columns>
+                <FooterStyle BackColor="#B5C7DE" ForeColor="LightBlue" />
+                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="LightBlue" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                        <RowStyle ForeColor="#4A3C8C" BackColor="LightBlue" CssClass="cssGridheaderfont" />
+                        <SelectedRowStyle BackColor="#88dde3" Font-Bold="True" ForeColor="#F7F7F7" />
+                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+            </asp:Gridview>
+              <div class="example-print1"  style="text-align:right">
+                    <%-- <asp:Button ID="" runat="server"  CssClass="btn btn-success" ValidationGroup="g1" Text="Save" Visible="false" OnClientClick="ManipulateGrid()"  OnClick="btnPivotSave_Click"  OnClick="btnPivotSave_Click" Height="30px" Width="90px" OnClick="BtnSaveBottom_Click" /></td>      --%>
+                      <asp:Button ID="btnPivotSave" runat="server"  CssClass="btn btn-warning" OnClientClick="ManipulateGrid()"   Text="Save" Height="30px" Width="90px"  />
+                         <asp:Button ID="btnPivotSubmit" runat="server"  CssClass="btn btn-warning" OnClientClick="ManipulateGridforSumbit()"   Text="Submit"  Height="30px" Width="90px"  />
+                    </div>
+                </asp:panel>
+            <asp:Panel  Visible="false" runat="server" id="MarkEntry">
+            <fieldset class="boxBodyInner">
+                <asp:GridView ID="grdmarktable" runat="server" AutoGenerateColumns="False" BackColor="White" ShowFooter="true" BorderColor="#E7E7FF" BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="100%"
+                    OnRowDataBound="grdmarktable_RowDataBound" DataKeyNames="DocumentNo,Subject Code,Subject Type,Status,ExamMethod,ExamGroup,MaxMarks,Exam Type"
+                     GridLines="Horizontal" EmptyDataText="There are no data records to display.">
+                    <AlternatingRowStyle BackColor="#F7F7F7" />
+                    <Columns>
+                        <asp:TemplateField ItemStyle-Width="2px">
+            <ItemTemplate>
+                <img alt="" style="cursor: pointer;visibility:hidden" src="../images/plus.png"  />
+                <asp:Panel ID="pnlOrders" runat="server" Style="display: none" BorderStyle="Double">
+                   <%-- bhupiii--%>
+                    
+                      <asp:GridView ID="grdViewmarksEntry1" DataKeyNames="Enrollment No" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" ShowFooter="true" BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="100%" GridLines="Horizontal" EmptyDataText="There are no data records to display." >
+                        <AlternatingRowStyle BackColor="#F7F7F7" />
+                        <Columns>
+                            <asp:TemplateField HeaderText="Sr. No.">
+                                <ItemTemplate>
+                                    <%# Container.DataItemIndex + 1 %>
+                                </ItemTemplate>
+                                <ItemStyle Width="3%" />
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Enrollment No" HeaderText="Enrollment No" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                            <asp:BoundField DataField="Student Name" HeaderText="Student Name" ItemStyle-CssClass="visible-lg" />
+                            <asp:BoundField DataField="AdmittedYear" HeaderText="Admitted Year" ItemStyle-CssClass="visible-lg" />
+                           
+
+                            <asp:BoundField DataField="ExamMethod" HeaderText="Method" ItemStyle-CssClass="visible-lg" />
+
+                            <asp:TemplateField HeaderText="Max. Marks" ItemStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+                                    <asp:Label ID="grdlMaximummark" runat="server" Text='<%#Eval("maxmark" ,"{0:N0}") %>'></asp:Label>
+                                    <asp:HiddenField ID="hfStatusL" runat="server" Value='<%#Eval("Status") %>' />
+
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField HeaderText="Marks"  ItemStyle-CssClass="visible-lg">
+                                <ItemTemplate>
+                                    <asp:TextBox ID="grdtxtMarks" runat="server" CssClass="form-control" Width="90%"  Enabled='<%# Bind("txtMarksEnableDesable") %>'
+                                        Text='<%# Eval("intMarks").ToString() == "-1.00" ? "" : Eval("intMarks").ToString() %>'
+                                        MaxLength="5" onchange ="return funChkEnterAndMaxMarksNested(this,this.value);"></asp:TextBox>
+                                     <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender1" runat="server" FilterMode="InvalidChars"
+                                                        InvalidChars="!@#$%^&*()_+[]\;':?}{|,/`"
+                                                        TargetControlID="grdtxtMarks">
+                                                    </asp:FilteredTextBoxExtender>
+                                     
+                                    <%--              <asp:TextBox ID="grdtxtMarks1" runat="server" CssClass="form-control" Width="50%" Enabled='<%# Bind("txtMarksEnableDesable") %>' 
+                                    Text='<%# Eval("intMarks").ToString() == "-1" ? "" : Eval("intMarks").ToString() %>'   
+                                    onkeypress="return isNumberKey(event)" MaxLength="3" onblur="return funChkEnterAndMaxMarks(this);"></asp:TextBox>--%>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Marks in words"  ItemStyle-CssClass="visible-lg">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblmarkinword" runat="server" Width="80%"
+                                        Text='<%# Bind("Word") %>'></asp:Label>
+
+                                    <%--              <asp:TextBox ID="grdtxtMarks1" runat="server" CssClass="form-control" Width="50%" Enabled='<%# Bind("txtMarksEnableDesable") %>' 
+                                    Text='<%# Eval("intMarks").ToString() == "-1" ? "" : Eval("intMarks").ToString() %>'   
+                                    onkeypress="return isNumberKey(event)" MaxLength="3" onblur="return funChkEnterAndMaxMarks(this);"></asp:TextBox>--%>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Remarks">
+                                <ItemTemplate>
+                                    <%--<asp:TextBox ID="txtRemarks" runat="server" Enabled='<%# Bind("ChkF") %>' Text='<%# Bind("Remarks") %>' MaxLength="100"  ></asp:TextBox>                                                --%>
+                                    <asp:TextBox ID="txtRemarks" runat="server" Enabled="false" Text='<%# Bind("Remarks") %>' MaxLength="100"></asp:TextBox>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField ItemStyle-Width="5%" HeaderStyle-CssClass="text-left" Visible="false" ItemStyle-CssClass="text-center">
+                                <HeaderTemplate>
+                                    <asp:CheckBox ID="ChlAll" Checked="true" AutoPostBack="true" runat="server" />
+
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="ChkD" runat="server" Checked="true" AutoPostBack="true" />
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                              <asp:TemplateField>
+            <FooterTemplate>
+               <table>
+                   <tr>
+                       <td style="text-align: center;margin:0;background-color:#B5C7DE;width:100px;border:0;">
+                            <asp:Button ID="btnSavedata" runat="server"  ValidationGroup="g1" CssClass="btn btn-success"
+                                    Height="30px"  Width="90px"  Text="Save" OnClick="btnSavedata_Click" />
+                       </td>
+                     
+                       <td style="text-align: center;margin:0;background-color:#B5C7DE;width:100px;border:0;"> 
+                        
+                            <asp:Button ID="BtnSubmitdata" runat="server"  CssClass="btn btn-success" ValidationGroup="g1" Text="Submit" Height="30px" Width="90px" OnClick="BtnSubmitdata_Click" /></td>
+
+                   </tr>
+               </table>
+              
+                  
+            </FooterTemplate>
+        </asp:TemplateField>
+                        </Columns>
+
+                        <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
+                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                        <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
+                        <SelectedRowStyle BackColor="#88dde3" Font-Bold="True" ForeColor="#F7F7F7" />
+                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                    </asp:GridView>
+                    
+                </asp:Panel>
+            </ItemTemplate>
+        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Sr.No.">
+                            <ItemTemplate>
+                                <%# Container.DataItemIndex + 1 %>
+                            </ItemTemplate>
+                            <ItemStyle Width="6%" />
+                        </asp:TemplateField>
+                        <%--<asp:TemplateField HeaderText="Group No">
+                            <ItemStyle Width="5%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblDocumentNo" runat="server" Text='<%#Eval("Group Document No_") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>--%>
+                        <asp:TemplateField HeaderText="Method">
+                            <ItemStyle Width="8%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblMethod" runat="server" Text='<%#Eval("ExamMethod") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <%--<asp:TemplateField HeaderText="Group">
+                            <ItemStyle Width="8%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblgroup" runat="server" Text='<%#Eval("ExamGroup") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>--%>
+
+
+                        <asp:TemplateField HeaderText="Program Code">
+                            <ItemStyle Width="17%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblCourseCode" runat="server" Text='<%#Eval("Course Code")+" :: "+Eval("CourseDescription") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Exam Type">
+                            <ItemStyle Width="8%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblExamType" runat="server" Text='<%#Eval("Exam") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Course Name">
+                            <ItemStyle Width="25%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblSubjectName" runat="server" Text='<%#Eval("Subject Code")+" :: "+Eval("Description") %>'></asp:Label>
+                                <asp:HiddenField ID="hfSubject" runat="server" Value='<%#Eval("Subject Code") %>' />
+                                <asp:HiddenField ID="hfStatus" runat="server" Value='<%#Eval("Status") %>' />
+                                <asp:HiddenField ID="hfMaxMarks" runat="server" Value='<%#Eval("MaxMarks") %>' />
+                                <asp:HiddenField ID="hfDocumentNo" runat="server" Value='<%#Eval("DocumentNo") %>' />
+                                <asp:HiddenField ID="grdlblgroup" runat="server" Value='<%#Eval("ExamGroup") %>' />
+                                <asp:HiddenField ID="grdlblDocumentNo" runat="server" Value='<%#Eval("Group Document No_") %>' />
+                                 <asp:HiddenField ID="grdlblclassication" runat="server" Value='<%#Eval("Classification") %>' />
+                                  <asp:HiddenField ID="HFExamType" runat="server" Value='<%#Eval("Exam Type") %>' />
+                                
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Subject Type">
+                            <ItemStyle Width="7%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblSubjectType" runat="server" Text='<%#Eval("Subject Type") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <%-- <asp:TemplateField HeaderText="Section">
+
+                            <ItemStyle Width="8%" />
+                            <ItemTemplate>
+                                <asp:Label ID="grdlblSection" runat="server" Text='<%#Eval("Section") %>'></asp:Label>
+
+                            </ItemTemplate>
+                        </asp:TemplateField>--%>
+                        <asp:TemplateField HeaderText="Semester/Year" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <asp:Label ID="lblSemester" runat="server" Text='<%#Eval("Semester") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Mark Entry Status" ItemStyle-Width="8%" HeaderStyle-CssClass="text-center" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:Label ID="lblStatus" runat="server" Text='<%#Eval("Statust") %>'></asp:Label>
+
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                         
+                       
+                         <asp:TemplateField HeaderText="Award List Status" ItemStyle-Width="8%" HeaderStyle-CssClass="text-center" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:Label ID="lblStatusALStatus" runat="server" Text='<%#Eval("ReportStatus") %>'></asp:Label>
+
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                         <asp:TemplateField HeaderText="MarkEntry">
+                            <ItemStyle Width="8%" />
+                            <ItemTemplate>
+                                <asp:LinkButton ID="btntblmarksshow" CssClass="btn-sm btn-primary btn-block"  OnClick="btntblmarksshow_Click" runat="server">Marks Entry</asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Report" >
+                            <ItemStyle Width="15%" />
+                            <ItemTemplate>
+                                <asp:LinkButton ID="btnReport"  Width="40%"  OnClick="btnReport_Click" Text="View" runat="server"></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                    <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
+                    <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                    <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                    <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
+
+                    <SelectedRowStyle BackColor="#88dde3" Font-Bold="True" ForeColor="#F7F7F7" />
+                    <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                    <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                    <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                    <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                </asp:GridView>
+                
+                <div id="printarea">
+                    <asp:Panel ID="PanelHeader"  class="example-print" runat="server">
+
+                        <div class="row">
+
+                            <asp:Label ID="LblTittle" runat="server" Font-Bold="true" Text="SUBJECT CODE:"></asp:Label>
+                            <asp:Label ID="LblValue" runat="server"></asp:Label><%--Text='<%#Eval("Statust") %>'--%>
+                        </div>
+                        <br />
+                        <center>
+                            <div class="row">
+                               
+                                <asp:Label ID="LblDesc" runat="server" Text='<%#Eval("Description") %>'></asp:Label>
+                            </div>
+                        </center>
+                        <br />
+                        <center>
+                            <div class="row">
+                                <asp:Label ID="LblMethod" runat="server" Text=""></asp:Label>(
+                                <asp:Label ID="LblOddEven" runat="server" Text='<%#Eval("ODDEven") %>'></asp:Label>)<%--Text='<%#Eval("Statust") %>'--%></div>
+                        </center>
+                        <br />
+                         <div class="row">
+
+                            <asp:Label ID="LblName" runat="server" Font-Bold="true" Text="SUBJECT NAME:"></asp:Label>
+                            <asp:Label ID="LblSubDesc" runat="server" ></asp:Label><%--Text='<%#Eval("Statust") %>'--%>
+                        </div>
+                    </asp:Panel>
+
+                    <asp:GridView ID="grdViewmarksEntry" DataKeyNames="Student No_" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" ShowFooter="true" BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="100%" GridLines="Horizontal" EmptyDataText="There are no data records to display." Visible="false">
+                        <AlternatingRowStyle BackColor="#F7F7F7" />
+                        <Columns>
+                            <asp:TemplateField HeaderText="Sr. No.">
+                                <ItemTemplate>
+                                    <%# Container.DataItemIndex + 1 %>
+                                </ItemTemplate>
+                                <ItemStyle Width="3%" />
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Enrollment No" HeaderText="Enrollment No" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                            <asp:BoundField DataField="Student Name" HeaderText="Student Name" ItemStyle-CssClass="visible-lg" />
+                            <asp:BoundField DataField="AdmittedYear" HeaderText="Admitted Year" ItemStyle-CssClass="visible-lg" />
+                            <%--<asp:BoundField DataField="Examgroup" HeaderText="Group" ItemStyle-CssClass="visible-lg" />--%>
+
+                            <asp:BoundField DataField="ExamMethod" HeaderText="Method" ItemStyle-CssClass="visible-lg" />
+
+                            <%--                        <asp:TemplateField ItemStyle-CssClass="visible-lg">
+                            <ItemTemplate>
+                                <asp:DropDownList ID="grdatted" CssClass="form-control"
+                                    OnSelectedIndexChanged="grdatted_SelectedIndexChanged"
+                                    AutoPostBack="true" runat="server" Enabled='<%# Bind("drpFT") %>'
+                                    SelectedValue='<%# Eval("Attendance Type") %>'>
+                                    <asp:ListItem Value="1" Text="Present"></asp:ListItem>
+                                    <asp:ListItem Value="2" Text="Absent"></asp:ListItem>
+                                    <asp:ListItem Value="3" Text="Detained"></asp:ListItem>
+                                    <asp:ListItem Value="4" Text="UFM"></asp:ListItem>
+                                    <asp:ListItem Value="5" Text="Disciplinary"></asp:ListItem>
+                                </asp:DropDownList>
+                            </ItemTemplate>
+                            <HeaderTemplate>Attendance</HeaderTemplate>
+                        </asp:TemplateField>--%>
+                            <asp:TemplateField HeaderText="Max. Marks" ItemStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+                                    <asp:Label ID="grdlMaximummark" runat="server" Text='<%#Eval("maxmark" ,"{0:N0}") %>'></asp:Label>
+                                    <asp:HiddenField ID="hfStatusL" runat="server" Value='<%#Eval("Status") %>' />
+                                         <asp:HiddenField ID="hfStudentNo" runat="server" Value='<%#Eval("[Student No_]") %>'/>
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                             <asp:TemplateField HeaderText="Weightage Obtained">
+                            <ItemTemplate>
+
+                                <asp:Label ID="grdtxtww" runat="server" Text='<%#Eval("Weighted Marks" ) %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Marks"  ItemStyle-CssClass="visible-lg">
+                                <ItemTemplate>
+                                    <asp:TextBox ID="grdtxtMarks" runat="server" CssClass="form-control" Width="90%"  Enabled='<%# Bind("txtMarksEnableDesable") %>'
+                                        Text='<%# Eval("intMarks").ToString() == "-1.00" ? "" : Eval("intMarks").ToString() %>'
+                                        MaxLength="5" onblur="return funChkEnterAndMaxMarks(this);"></asp:TextBox>
+                                     <asp:FilteredTextBoxExtender runat="server" FilterMode="InvalidChars"
+                                                        InvalidChars="!@#$%^&*()_+[]\;':?}{|,/`"
+                                                        TargetControlID="grdtxtMarks">
+                                                    </asp:FilteredTextBoxExtender>
+                                    <%--              <asp:TextBox ID="grdtxtMarks1" runat="server" CssClass="form-control" Width="50%" Enabled='<%# Bind("txtMarksEnableDesable") %>' 
+                                    Text='<%# Eval("intMarks").ToString() == "-1" ? "" : Eval("intMarks").ToString() %>'   
+                                    onkeypress="return isNumberKey(event)" MaxLength="3" onblur="return funChkEnterAndMaxMarks(this);"></asp:TextBox>--%>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Marks in words"  ItemStyle-CssClass="visible-lg">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblmarkinword" runat="server" Width="80%"
+                                        Text='<%# Bind("Word") %>'></asp:Label>
+
+                                    <%--              <asp:TextBox ID="grdtxtMarks1" runat="server" CssClass="form-control" Width="50%" Enabled='<%# Bind("txtMarksEnableDesable") %>' 
+                                    Text='<%# Eval("intMarks").ToString() == "-1" ? "" : Eval("intMarks").ToString() %>'   
+                                    onkeypress="return isNumberKey(event)" MaxLength="3" onblur="return funChkEnterAndMaxMarks(this);"></asp:TextBox>--%>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Remarks">
+                                <ItemTemplate>
+                                    <%--<asp:TextBox ID="txtRemarks" runat="server" Enabled='<%# Bind("ChkF") %>' Text='<%# Bind("Remarks") %>' MaxLength="100"  ></asp:TextBox>                                                --%>
+                                    <asp:TextBox ID="txtRemarks" runat="server" Enabled="false" Text='<%# Bind("Remarks") %>' MaxLength="100"></asp:TextBox>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField ItemStyle-Width="5%" HeaderStyle-CssClass="text-left" Visible="false" ItemStyle-CssClass="text-center">
+                                <HeaderTemplate>
+                                    <asp:CheckBox ID="ChlAll" Checked="true" AutoPostBack="true" runat="server" />
+
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="ChkD" runat="server" Checked="true" AutoPostBack="true" />
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                        <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
+                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                        <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
+                        <SelectedRowStyle BackColor="#88dde3" Font-Bold="True" ForeColor="#F7F7F7" />
+                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                    </asp:GridView>
+                    <br />
+                   
+
+                    <asp:Panel ID="Footer" class="example-print" runat="server">
+                        <br />
+                        <br />
+
+                        <table width="100%">
+                            <tr >
+                                <td style="width:30%"></td>
+                                <td style="width:30%" >
+                                     <asp:Label ID="Lbl" runat="server" Text="Date of Submission............"></asp:Label>
+                                </td
+                                <tdstyle="width:30%"></tdstyle="width:30%">
+                               
+
+                            </tr>
+                            <tr >
+                                <td style="width:30%"></td>
+                                <td >
+                                      <asp:Label ID="LblPresent" runat="server" Text="No Of Present"></asp:Label>(
+                                <asp:Label ID="LblNopresent" runat="server"></asp:Label>)
+                                </td>
+                                <td style="width:30%"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:30%"><asp:Label ID="LblSign" runat="server" Text="Sign Of Faculty:"></asp:Label></td>
+                                <td style="width:30%">
+                                      <asp:Label ID="LblAbsent" runat="server" Text="No Of Absent"></asp:Label>(
+                                <asp:Label ID="LblNoAbsent" runat="server"></asp:Label>)
+                                </td>
+                                <td style="width:30%;text-align:right"><asp:Label ID="Label2" runat="server" Text="Name/Signature/Hod/Coordinator"></asp:Label></td>
+                            </tr>
+                        </table>
+                     
+                        </asp:Panel>
+                </div>
+
+                 <div class="example-print1"  style="text-align:right">
+                    <%-- <asp:Button ID="" runat="server"  CssClass="btn btn-success" ValidationGroup="g1" Text="Save" Visible="false" Height="30px" Width="90px" OnClick="BtnSaveBottom_Click" /></td>      --%>
+                   
+
+
+                    
+                     
+                      <asp:Button ID="BtnSaveBottom" runat="server"  CssClass="btn-Success"   ValidationGroup="g1"  Text="Save" Height="30px" Width="90px" Visible="false" OnClick="BtnSaveBottom_Click" />
+                        
+                     
+                     
+                      <asp:Button ID="btnSubmit" runat="server"  CssClass="btn btn-warning" ValidationGroup="g1" Text="Submit"  Visible="false" OnClick="btnSubmit_Click" />
+           
+                    </div>
+                <br />
+                <asp:HiddenField ID="hf_AcademicYear" runat="server" />
+                <asp:HiddenField ID="hf_Course" runat="server" />
+                <asp:HiddenField ID="hf_SemYear" runat="server" />
+                <asp:HiddenField ID="hf_MaxMarks" runat="server" />
+                <asp:HiddenField ID="hf_ExamCriteria" runat="server" />
+                <asp:HiddenField ID="hf_DocumentNo" runat="server" />
+                <asp:HiddenField ID="hf_ExamGroup" runat="server" />
+                <asp:HiddenField ID="hf_ExamMethod" runat="server" />
+                <asp:HiddenField ID="hf_Status" runat="server" />
+                <asp:HiddenField ID="hf_SubjCode" runat="server" />
+                <asp:HiddenField ID="hf_SubjectType" runat="server" />
+                <asp:HiddenField ID="hf_Classification" runat="server" />
+                <asp:HiddenField ID="hf_ExamType" runat="server" />
+                <asp:HiddenField ID="hfExamType1" runat="server"  />
+                <asp:HiddenField ID="HfAwardlistStatus" runat="server"  />
+                <br />
+            </fieldset>
+                </asp:Panel>
+            <asp:Button ID="BtnHideQuotation" runat="server" Style="display: none" />
+            <asp:ModalPopupExtender runat="server" ID="ModalPopupMsg" TargetControlID="BtnHideQuotation"
+                PopupControlID="PanelQuotation" BackgroundCssClass="modalbackground" RepositionMode="RepositionOnWindowScroll"
+                PopupDragHandleControlID="PanelQuotation">
+            </asp:ModalPopupExtender>
+            <asp:Panel runat="server" ID="PanelQuotation" CssClass="modalPopupWhite">
+                <br />
+                <div id="divmsg" runat="server" style="text-align: center; color: Red; margin-bottom: 20px;">
+                </div>
+                <div style="clear: both">
+                </div>
+                <div style="text-align: center">
+                    <asp:Button ID="btncancelpopup" Text="Ok" OnClick="btncancelpopup_Click" runat="server" />
+                </div>
+            </asp:Panel>
+        </ContentTemplate>
+        <Triggers>
+            <asp:PostBackTrigger ControlID="Btnprint" />
+
+        </Triggers>
+    </asp:UpdatePanel>
+   </div>
+</asp:Content>
+
+

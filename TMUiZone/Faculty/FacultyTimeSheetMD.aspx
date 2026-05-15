@@ -1,0 +1,109 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" CodeFile="FacultyTimeSheetMD.aspx.cs" Inherits="Faculty_TimeSheetMD" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+     <style>
+        .Bold {
+            font-weight:bold;
+            background-color:#81C125;            
+        }
+        .Color {
+            background-color:#c1c1c1;
+            text-align:center;
+        }
+        .ForeColor {
+            border: 1px solid red;
+        }
+    </style>
+    
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+        <fieldset class="boxBody">
+ <asp:Label ID="Label1" runat="server" 
+            Text="Time Sheet" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+
+ </fieldset>
+    <fieldset class="boxBodyHeader"> 
+  
+ </fieldset>
+    <asp:UpdatePanel runat="server">
+        <ContentTemplate>
+
+     <fieldset class="boxBodyInner"> 
+    <br />
+    
+                <asp:CheckBox runat="server" ID="chkboxAsPrincipal" Visible="false" AutoPostBack="true" OnCheckedChanged="chkboxAsPrincipal_CheckedChanged" Text="Show more" />
+         <center>
+             <div>
+             <table id="RadioButton" runat="server" visible="false">
+                 <tr>
+                     <td>  <asp:RadioButton ID="rdbClassWise1"  runat="server" Text="Class Wise" AutoPostBack="true" GroupName="g" OnCheckedChanged="rdbClassWise1_CheckedChanged"/></td>
+                     <td style="width:10px"></td>
+                     <td><asp:RadioButton ID="rdbSubjectWise" runat="server" Text="Subject Wise" AutoPostBack="true"  GroupName="g" OnCheckedChanged="rdbFacultyWise_CheckedChanged"/></td>
+                     <td style="width:10px"></td>
+                     <td><asp:RadioButton ID="rdbFacultyWise" runat="server" Text="Faculty Wise" AutoPostBack="true"  GroupName="g" OnCheckedChanged="rdbFacultyWise_CheckedChanged"/></td>
+                     <td style="width:10px"></td>
+                     <td><asp:RadioButton ID="rdbDayWise" runat="server" Text="Day Wise" AutoPostBack="true"  GroupName="g" OnCheckedChanged="rdbDayWise_CheckedChanged"/></td>
+                    <td style="width:10px"></td>
+                      <td><asp:RadioButton ID="rdbLabPractical" runat="server" Text="Lab/Practical" AutoPostBack="true" GroupName="g" OnCheckedChanged="rdbLabPractical_CheckedChanged" /></td>
+                 </tr>
+             </table>
+                <table id="tblRoom" runat="server" visible="true">
+                    <tr>
+                        <td>
+                            Room No. :
+                            <asp:DropDownList ID="ddlRoom" runat="server" OnSelectedIndexChanged="ddlRoom_SelectedIndexChanged" AutoPostBack="true" >
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                </table>
+                 <br />
+             </div>
+         </center>
+         <div class="clearfix"></div>
+         <div id="facultyCourse" class="pull-right" runat="server">
+            <b style="font-weight:bold" ><asp:Label ID="lblCourse" runat="server" Text="Course:" ></asp:Label> </b>&nbsp;
+            <asp:DropDownList ID="drpCourseCode" AutoPostBack="true" Width="150px" runat="server" OnSelectedIndexChanged="drpCourseCode_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+         </div>        
+         <div id="DayNo" class="pull-right" runat="server" visible="false">
+                <b style="font-weight:bold" >Day:</b>&nbsp;
+                <asp:DropDownList ID="drpDayNo" AutoPostBack="true" Width="150px" runat="server"  OnSelectedIndexChanged="drpDayNo_SelectedIndexChanged" >
+                    <asp:ListItem Text="-- Select --" Value=""></asp:ListItem>
+                    <asp:ListItem Text="Monday" Value="1"></asp:ListItem>
+                    <asp:ListItem Text="Tuesday" Value="2"></asp:ListItem>
+                    <asp:ListItem Text="Wednesday" Value="3"></asp:ListItem>
+                    <asp:ListItem Text="Thursday" Value="4"></asp:ListItem>
+                    <asp:ListItem Text="Friday" Value="5"></asp:ListItem>
+                    <asp:ListItem Text="Saturday" Value="6"></asp:ListItem>
+                </asp:DropDownList>&nbsp;&nbsp;
+          </div>           
+         <div id="ClassWise" class="pull-right" runat="server" visible="false">
+                     <b style="font-weight:bold" >Semester/Year:</b>&nbsp;
+                     <asp:DropDownList ID="drpSemester" AutoPostBack="true" Width="150px" runat="server"  OnSelectedIndexChanged="drpSemester_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+                     <b style="font-weight:bold" >Section:</b>&nbsp;
+                     <asp:DropDownList ID="drpSection" AutoPostBack="true" Width="150px" runat="server"  OnSelectedIndexChanged="drpSection_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+             </div>
+         <div id="FacultyCode" class="pull-right" runat="server" visible="false">
+                     <b style="font-weight:bold" >Faculty:</b>&nbsp;
+                     <asp:DropDownList ID="drpFacultyCode" AutoPostBack="true" Width="150px" runat="server" OnSelectedIndexChanged="drpFacultyCode_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+         </div>
+          <div id="divSubject" class="pull-right" runat="server" visible="false">
+             <b style="font-weight:bold" >Subject:</b>&nbsp;
+             <asp:DropDownList ID="drpSubject" AutoPostBack="true" Width="150px" runat="server"  OnSelectedIndexChanged="drpSubject_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+         </div>   
+         <div id="PrincipalCourseCode" class="pull-right" runat="server" visible="false">
+             <b style="font-weight:bold" >Course:</b>&nbsp;
+             <asp:DropDownList ID="drpCourseCode1" AutoPostBack="true" Width="150px" runat="server"  OnSelectedIndexChanged="drpCourseCode1_SelectedIndexChanged" ></asp:DropDownList>&nbsp;&nbsp;
+             
+         </div>     
+                <div class="clearfix"></div>
+    <br />
+    <asp:Table ID="timeTable"  runat="server" CssClass="table table-bordered"></asp:Table>       
+
+            <asp:Table ID="tblFacultyDayWise"  runat="server" CssClass="table table-bordered"></asp:Table>   
+        </fieldset>
+
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</asp:Content>
+

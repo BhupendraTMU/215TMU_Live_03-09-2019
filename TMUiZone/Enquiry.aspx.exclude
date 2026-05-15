@@ -1,0 +1,641 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Enquiry.aspx.cs" Inherits="Enquiry" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
+
+    <script src="assets/vendor/js/ie-emulation-modes-warning.js"></script>
+    <link rel="stylesheet" href="assets/css/Ajaxcal.css" />
+    <link rel="stylesheet" href="assets/toastr/toastr.min.css" />
+    <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/vendor/css/my.css" rel="stylesheet" />
+
+    <!-- jquery: REQUIRED JQUERY FILE -->
+
+
+    <script src="jquery/jquery-3.2.1.min.js"></script>
+    <script src="select2/dist/js/select2.min.js"></script>
+
+    <link href='select2/dist/css/select2.min.css' rel='stylesheet' type='text/css' />
+    <script src="assets/plugins/jQuery-lib/2.0.3/jquery.min.js"></script>
+    <script src="assets/plugins/jquery-ui/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/toastr/toastr.min.js"></script>
+
+    <script src="jquery/jquery-3.2.1.min.js"></script>
+    <script src="select2/dist/js/select2.min.js"></script>
+
+    <link href='select2/dist/css/select2.min.css' rel='stylesheet' type='text/css' />
+
+    <script>
+
+
+
+        function Selector() {
+            $("#drpCountryCode").select2();
+        }
+
+    </script>
+
+    <script>
+        function customAlert(msgType, txtMSG) {
+            msgType = msgType.toUpperCase()
+
+            if (msgType == "S") {
+                showSuccess(txtMSG);
+                return false;
+            }
+
+            if (msgType == "W") {
+                showWarning(txtMSG);
+                return false;
+            }
+
+            if (msgType == "E") {
+                showError(txtMSG);
+                return false;
+            }
+
+            if (msgType == "I") {
+                showInfo(txtMSG);
+                return false;
+            }
+        }
+
+        //Tostr Notification implementation Start !!!!
+        //Success!!!
+        function showSuccess(msg) {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "positionClass": "toast-top-right"
+            }
+            toastr.success(msg, "Success");
+
+
+        }
+
+        //Information!!!
+        function showInfo(msg) {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "closeDuration": "60000"
+            }
+            toastr.info(msg, "Information");
+            return false;
+        }
+
+        //Warning!!!
+        function showWarning(msg) {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right"
+            }
+            toastr.warning(msg, "Warning");
+            return false;
+        }
+
+        //Error!!!
+        function showError(msg) {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right"
+            }
+            toastr.error(msg, "Error");
+            return false;
+        }
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+
+            return true;
+        }
+
+
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#drpCountryCode").change(function () {
+                var selectedText = $(this).find("option:selected").text();
+                var selectedValue = $(this).val();
+                //alert(selectedValue);
+                if (selectedValue == '+91') {
+                    $("#txtState").show();
+                    $("#txtcity").show();
+                }
+                else {
+                    $("#txtState").hide();
+                    $("#txtcity").hide();
+                }
+            });
+        });
+    </script>
+
+
+
+    <%--<link href="cs/Style.css" rel="stylesheet" type="text/css" />
+    <link href="cs/maincss.css" rel="stylesheet" type="text/css" />
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />--%>
+    <style type="text/css">
+        .mySlides {
+            display: none;
+        }
+
+        textarea {
+            font-size: 28px;
+        }
+
+
+        .modalPopup {
+            background-color: #FFB106;
+            border-radius: 5%;
+            border-width: 3px;
+            border-style: solid;
+            border-color: white;
+            padding: 3px;
+            width: 460px;
+        }
+
+        [type="checkbox"] {
+            vertical-align: middle;
+        }
+
+        login1 {
+            float: right;
+            display: block;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-color: white;
+        }
+
+        .modalPopup .header {
+            background-color: #2FBDF1;
+            height: 10px;
+            color: White;
+            line-height: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modalPopup .body {
+            min-height: 50px;
+            line-height: 10px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .modalPopup .footer {
+            padding: 3px;
+        }
+
+        .modalPopup .button {
+            height: 30px;
+            color: White;
+            line-height: 10px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: red;
+            border: 1px solid #5C5C5C;
+        }
+
+        .modalPopup td {
+            text-align: left;
+        }
+
+        .transbox {
+            /*width: 400px;
+            height: 180px;*/
+            /*margin: 30px 50px;*/
+            background-color: lightgray;
+            border: 1px solid pink;
+            /*opacity: 0.5;*/
+            /*filter: alpha(opacity=50);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;*/
+        }
+
+        .select2.select2-container {
+            width: 80px !important;
+        }
+
+        .select2-dropdown {
+            width: 280px !important;
+        }
+
+        .input-group-addon {
+            padding: 4px !important;
+        }
+
+        .btn-register {
+            width: 100%;
+        }
+
+        .txtbox {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .transbox {
+            width: 400px;
+            height: 180px;
+            margin: 30px 50px;
+            background-color: lightgrey;
+            border: 1px solid white;
+            opacity: 0.5;
+            filter: alpha(opacity=50);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .auto-style1 {
+            width: 692px;
+        }
+
+
+        .Container {
+            width: 96%;
+            margin: 0 auto;
+        }
+
+        .icon-class i.icon-name {
+            position: absolute;
+            margin-top: 9px;
+            padding: 0 10px 0;
+        }
+    </style>
+    <style>
+        .wrapper {
+            border: 1px solid #000;
+            display: inline-block;
+        }
+
+        input,
+        button {
+            background-color: transparent;
+            border: 0;
+        }
+
+
+            input[type=submit] {
+                background-color: transparent;
+                border: 0;
+            }
+
+            input[type=text] {
+                background-color: transparent;
+                border: 0;
+            }
+    </style>
+
+</head>
+<body onload="Selector()" class="enquiry_online">
+    <div class="col-md-12">
+        <div class="carousel slide carousel-fade" data-ride="carousel" data-interval="5000" data-pause="false">
+            <div class="carousel-inner" role="listbox">
+                <div class="item active"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row reg_header" style="margin: 0;">
+        <div class="col-md-2">
+            <img src="images/tmu_logo.png" class="reg_logo" height="60px" width="200px" />
+        </div>
+        <div class="col-md-10">
+        </div>
+    </div>
+
+    <div class="col-md-12" style="margin-top: 25px;">
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-5 ml_50">
+                <div class="row" style="margin: 0;">
+                    <div class="col-md-12 text-center top_heading_border">
+                        <h2 class="top_heading">Admission Open 2021</h2>
+                        <span></span>
+                    </div>
+                    <%-- <div class="enquiry_bg"></div>--%>
+                </div>
+
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+        <form id="form1" runat="server">
+            <div class="row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-5 ml_50">
+                    <div class="form-wizard-wrapper">
+                        <div class="form-wizard-wrapper-inner">
+                            <asp:ScriptManager ID="ScriptManager1" runat="server">
+                            </asp:ScriptManager>
+
+                            <asp:UpdatePanel  ID="tt" runat="server">
+                                <ContentTemplate>
+                                    <div id="divenq" runat="server" class="right_col_content border-box label-responsive" visible="true">
+                                        <div class="bg">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <%--<div class="input-group">--%>
+                                                    <%-- <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>--%>
+                                                    <asp:TextBox ID="txtUser" runat="server" placeholder="Enter Name* " class="form-control"></asp:TextBox>
+                                                    <%--</div>--%>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <%--<div class="input-group">--%>
+                                                    <%--<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>--%>
+                                                    <asp:TextBox ID="txtMail" runat="server" placeholder="Enter Email Address*" class="form-control"></asp:TextBox>
+                                                    <%--   </div>--%>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <%--<div class="input-group">--%>
+                                                    <%--<span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>--%>
+                                                    <asp:DropDownList ID='drpCountryCode' runat="server" Style="width: 35px;" class="form-control">
+                                                    </asp:DropDownList>
+                                                    <%-- </div>--%>
+                                                </div>
+                                                <div class="col-md-4">
+
+                                                    <asp:TextBox ID="txtMobile" runat="server" placeholder="Enter Mobile No*" class="form-control"></asp:TextBox>
+
+                                                    <%--<asp:TextBox ID="txtMobile" MaxLength="10" onkeypress="return isNumberKey(event)" runat="server" tyle="width: 50px;"  Height="28px" class="form-control" CssClass="wrapper" placeholder="Enter Mobile Number* "></asp:TextBox>--%>
+
+
+                                                    <asp:LinkButton ID="lnkVerify" runat="server" Font-Size="Smaller"  Text="Verify" OnClick="lnkVerify_Click"  class="form-control" BackColor="DarkCyan" ForeColor="White" CssClass="wrapper"></asp:LinkButton>
+                                                </div>
+                                                <%--<div class="col-md-1" style="vertical-align:middle">
+                                                    
+                                                   
+                                                </div>--%>
+
+                                                <div class="col-md-3">
+
+                                                    <asp:TextBox ID="txtOTP" runat="server" class="form-control" placeholder="Enter OTP* "></asp:TextBox>
+
+
+                                                </div>
+                                                <div class="col-md-3">
+
+                                                    <asp:DropDownList ID="drpGender" runat="server" class="form-control">
+                                                        <asp:ListItem Text="Gender" Selected="True"></asp:ListItem>
+                                                        <asp:ListItem Text="Male" Value="1"></asp:ListItem>
+                                                        <asp:ListItem Text="Female" Value="2"></asp:ListItem>
+
+                                                    </asp:DropDownList>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <%--<div class="input-group">--%>
+
+                                                    <%-- <span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>--%>
+                                                    <asp:DropDownList ID="txtState" runat="server" placeholder="Select State " AutoPostBack="true" class="form-control" OnSelectedIndexChanged="txtState_SelectedIndexChanged">
+                                                        <asp:ListItem Text="Select State*" Selected="True"></asp:ListItem>
+
+
+                                                    </asp:DropDownList>
+
+
+                                                    <%--  </div>--%>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <%--<div class="input-group">--%>
+                                                    <%--<span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>--%>
+                                                    <asp:DropDownList ID="txtcity" runat="server" placeholder=" Select City*" class="form-control">
+                                                        <asp:ListItem Text="Select City*" Selected="True"></asp:ListItem>
+
+                                                    </asp:DropDownList>
+
+                                                    <%--  </div>--%>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+
+                                                 <div class="col-md-6">
+
+                                                    <asp:DropDownList ID="ddlProgramType" runat="server"  AutoPostBack="true" OnSelectedIndexChanged="ddlProgramType_SelectedIndexChanged" class="form-control">
+
+                                                        <asp:ListItem Text="Select Program Type*" Selected="True"></asp:ListItem>
+                                                    </asp:DropDownList>
+
+
+                                                </div>
+                                                <div class="col-md-6">
+
+                                                    <asp:DropDownList ID="ddlStream" runat="server"  OnSelectedIndexChanged="ddlStream_SelectedIndexChanged" AutoPostBack="true" class="form-control">
+                                                        <asp:ListItem Text="Select Program*" Selected="True"></asp:ListItem>
+
+
+                                                    </asp:DropDownList>
+
+
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+
+                                                    <asp:DropDownList ID="ddlSpecialization" runat="server" class="form-control" placeholder="Enter Specialization">
+                                                        <asp:ListItem Text="Select Specialization*" Selected="True"></asp:ListItem>
+
+                                                    </asp:DropDownList>
+
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12" style="color: black">
+                                                    <input id="CheckBox1" type="checkbox" checked="checked" />&nbsp &nbsp I agree to receive information regarding my submitted enquiry by signing up on teerthanker mahaveer university, Moradabad *
+                        <!--<asp:CheckBox ID="chkagree" Width="565px" Height="30px" Style="font-size: 15px; stop-color: white;" MaxLength="20" Text="I agree to receive information regarding my submitted application by signing up on Invertis University, Bareilly *" runat="server" />-->
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <%--<input id="Button1" type="button" value="Register" class="btn btn-default btn-npf btn-register" />--%>
+                                                    <asp:Button ID="btnsubmit" runat="server" Text="REGISTER" OnClick="btnsubmit_Click" OnClientClick="return funUpdateValidation();" class="btn btn-default btn-npf btn-register" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <asp:Button ID="btnexist" OnClick="btnexist_Click" runat="server" CssClass="btn btn-default" Text="EXISTING USER ? LOGIN" />
+                                                    <%-- <input id="Button1" type="button" style="background-color:transparent;border:none;color:white" value="EXISTING USER ? LOGIN" class="btn btn-default" />--%>
+                                                    <%--<hr style="margin-bottom: 0;" />--%>
+                                                    <!--<asp:Button ID="btnExit" runat="server" Text="EXISTING USER ? LOGIN" Width="565px" Height="35px" Style="font-size: 15px; background-color: transparent; border: none; stop-color: white;" MaxLength="20" />-->
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div id="divlog" class="bg" runat="server" visible="false">
+
+                                        <div style="padding-left: 10%; padding-right: 10%">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <%--<div class="input-group">--%>
+                                                    <%--<span class="input-group-addon"><i class="glyphicon glyphicon-edit"></i></span>--%>
+                                                    <asp:TextBox ID="txtenno" runat="server" placeholder="Enter Enquiry No.*" MaxLength="20" class="form-control"></asp:TextBox>
+
+                                                    <%--</div>--%>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <%-- <div class="input-group">--%>
+
+                                                    <%-- <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>--%>
+                                                    <asp:TextBox ID="txtpassword" runat="server" placeholder="Enter Password*" Height="35px" MaxLength="20" TextMode="Password" class="form-control"></asp:TextBox>
+
+                                                    <%--  </div>--%>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+
+                                                    <asp:Button ID="btnlogin" runat="server" Text="Login" OnClick="btnlogin_Click" class="btn btn-default btn-npf btn-register" />
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+
+                                                    <asp:LinkButton ID="btnregistration" runat="server" Text="New Registration" OnClick="btnregistration_Click"></asp:LinkButton>
+
+                                                </div>
+
+
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+
+
+                                    <script>
+                                        function funUpdateValidation() {
+
+                                            // alert("asdfkjas")
+                                            var Euser = document.getElementById("txtUser").value;
+                                            var vMobileNo = document.getElementById("txtMobile").value;
+                                            var vEmail = document.getElementById("txtMail").value;
+
+                                            var vState = $('select[id$="txtState"] option:selected').val();
+                                            var vcity = $('select[id$="txtcity"] option:selected').val();
+
+
+                                            if (Euser == "") {
+
+                                                document.getElementById("txtUser").focus();
+                                                return false;
+                                            }
+
+                                            if (vMobileNo == "") {
+                                                document.getElementById("txtMobile").focus();
+                                                return false;
+                                            }
+
+                                            if (vMobileNo.length < 10) {
+                                                alert("Enter Valid Mobile No.");
+                                                return false;
+                                            }
+
+
+                                            if (vEmail == "") {
+                                                document.getElementById("txtMail").focus();
+
+                                                return false;
+                                            }
+
+                                            var reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                                            if (!reg.test(vEmail)) {
+                                                alert("Enter Valid Email Id.");
+                                                return false;
+
+                                            }
+
+
+
+                                            if (vState == "Select State*") {
+                                                alert("Select State.");
+                                                return false;
+                                            }
+                                            if (vcity == "") {
+
+                                                alert("Select City.");
+                                                return false;
+                                            }
+
+
+
+                                        }
+
+                                    </script>
+
+                                </ContentTemplate>
+                               <%-- <Triggers>
+                                    <asp:AsyncPostBackTrigger ControlID="lnkVerify" EventName="Click" />
+                                </Triggers>--%>
+                            </asp:UpdatePanel>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

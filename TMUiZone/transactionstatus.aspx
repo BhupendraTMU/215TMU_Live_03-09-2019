@@ -1,0 +1,109 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master.master" AutoEventWireup="true" CodeFile="transactionstatus.aspx.cs" Inherits="transactionstatus" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+     <div style=" float:left; width:750px; margin-left:20px;  min-height:201px; margin-top:1px; margin-bottom:10px; padding:21px;">
+    <div style="float:left; width:750px; height:500px; background-color:White;">
+    
+        
+        <div style="float:left; text-align:center; width:750px; color: #2e568e; font-family: Arial,sans-serif;font-size:30px; margin-top:11px; ">
+          <h2>   Payment Status</h2>
+        </div>
+        <%--<p style="Float:left; color: #153643; font-family: Arial,sans-serif; margin-bottom:21px; font-size: 16px; line-height: 20px;  padding:11px 51px 11px 51px;">Prices of the essential cooking ingredient have surged by over 140 per cent as of August 13 at the Nashik market when compared with Rs 15 per kg at the start of July, as per the National Horticultural Research and Development Foundation (NHRDF) data.</p>--%>
+
+        <div style="float:left; width:749px; ">
+            <div style="float:left; margin-left:61px; width:200px; height:351px;  border-top:2px solid #ee4c50; border-bottom:2px solid #ee4c50; ">
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Status:</b>               
+                </div>
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Transaction ID:</b>               
+                </div>
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Amount:  </b>               
+                </div>
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Order ID:</b>               
+                </div>
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Payment Mode:</b>               
+                </div>
+
+                   <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Payment Date:</b>               
+                </div>
+
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Bank Name:</b>               
+                </div>
+                <div style="float:left; padding-left:21px; margin-left:11px; background:#f7f7f7; width:200px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <b>Student ID:</b>               
+                </div>
+                
+                               
+            </div>
+
+            <div style="float:left; width:411px; height:351px;  border-top:2px solid #ee4c50; border-bottom:2px solid #ee4c50;">
+                
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    
+                    <asp:Panel ID="pnlSuccess" runat="server" Visible="False">
+                        <asp:Label ID="lblStatustext" runat="server" ForeColor="#009900" >Success</asp:Label>
+                  
+
+                    </asp:Panel>             
+                    <asp:Panel ID="pnlFalure" runat="server" Visible="False">
+                         <asp:Label ID="lblstatusfauluere" runat="server" ForeColor="Red">Failure     </asp:Label>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <img src="images/Delete-icon.png" height="10px" />
+                         </asp:Panel>
+                </div>
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lbltxtid" runat="server" Text=""></asp:Label>               
+                </div>
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                  <img src="icon/rupess.png" />  &nbsp;&nbsp;    <asp:Label ID="lblAmount" runat="server"></asp:Label>               
+                </div>
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lblOrderid" runat="server"></asp:Label>               
+                </div>
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lblPaymentMode" runat="server"></asp:Label>              
+                </div>
+                  <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lblPaymentDate" runat="server"></asp:Label>               
+                </div>
+
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lblBankName" runat="server"></asp:Label>               
+                </div>
+                <div style="float:left; padding-left:11px; margin-left:31px; margin-top:1px; width:350px; padding-top:10px; padding-bottom:10px; border-bottom:1px solid #e5e5e5;  font-family: Arial,sans-serif; font-size: 11px;">
+                    <asp:Label ID="lblAgentId" runat="server"></asp:Label>              
+                </div>
+                
+                
+                
+                
+                
+                
+            </div>
+        </div>
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:Label ID="lblStatusCode" runat="server" Visible="False"></asp:Label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:Label ID="lblStatus" runat="server" ForeColor="#009900" Visible="False"></asp:Label>  
+                  
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     
+        
+        
+    </div>
+   
+</div>
+
+
+
+</asp:Content>
+

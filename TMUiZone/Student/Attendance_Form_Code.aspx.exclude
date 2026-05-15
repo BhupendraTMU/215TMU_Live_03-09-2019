@@ -1,0 +1,15 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Attendance_Form_Code.aspx.cs" Inherits="Attendance_Form_Code" MasterPageFile="~/Faculty/IndexMaster.master" %>
+
+<%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
+
+<asp:Content ID="HeadContent" ContentPlaceHolderID="head" runat="server">
+    <title>Attendance Report</title>
+</asp:Content>
+
+<asp:Content ID="MainContent" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+    
+    <!-- Report Viewer Section -->
+    <h1 style="text-align:center">Attendance Report</h1>
+    <rsweb:ReportViewer ID="ReportViewer1" runat="server"></rsweb:ReportViewer>
+</asp:Content>

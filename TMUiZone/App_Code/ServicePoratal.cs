@@ -1,0 +1,5514 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.Text;
+
+using System.Data;
+using System.Data.SqlClient;
+using System.Web;
+
+
+using System.Collections;
+using System.Configuration;
+
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Drawing;
+using System.Web.SessionState;
+// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ServicePoratal" in code, svc and config file together.
+public class ServicePoratal : IServicePoratal
+{
+    public void DoWork()
+    {
+    }
+    SqlConnection Conn = null;
+    SqlConnection Con1 = null;
+    SqlCommand cmd;
+
+    public ServicePoratal()
+    {
+
+        try
+        {
+
+
+            Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
+            Conn.Open();
+            Con1 = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+
+        }
+        catch (Exception)
+        {
+
+        }
+
+    }
+
+
+    public SqlConnection Con
+    {
+        get
+        {
+            return Conn;
+        }
+    }
+
+    public void Connect()
+    {
+
+        if (Conn.State == ConnectionState.Closed)
+            Conn.Open();
+    }
+
+
+
+    public void DisConnect()
+    {
+        Conn.Close();
+    }
+
+    public SqlDataReader SHowCoupto(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Co_Leave_Upto where [Company Name]='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+
+    public SqlDataReader Show_Attendence(string userid, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No' and CompanyName='" + CompanyName + "' order by convert(varchar(250),Atte_Date,103) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_AttendenceWithDate(string userid, string curdate, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and convert(varchar(250),Atte_Date,103)='" + curdate + "' and CompanyName='" + CompanyName + "' and [Rejected Approval]='No' order by convert(date, Atte_Date,103) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_AttendenceWithDateBetween(string userid, string fDate, string Tdate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and convert(date, Atte_Date,103) >= '" + fDate + "' and convert(date, Atte_Date,103) <='" + Tdate + "' and CompanyName='" + companyName + "' order by convert(date, Atte_Date,103) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowCardChangedtimeAttend(string userid, string fDate, string Tdate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and convert(date, Atte_Date,103) >= '" + fDate + "' and convert(date, Atte_Date,103) <='" + Tdate + "' and CompanyName='" + companyName + "' and [Attendance Type]='card' and [Updated In Time]!='' and [Updated Out Time]!='' order by convert(date, Atte_Date,103) desc ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_AttendenceWithDateBetweenwithStatus(string userid, string fDate, string Tdate, string ApprovalStatus, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and convert(date, Atte_Date,103) >= '" + fDate + "' and convert(date, Atte_Date,103) <='" + Tdate + "' and CompanyName='" + companyName + "' and ApprovalStatus='" + ApprovalStatus + "' order by convert(date, Atte_Date,103) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_AttendenceWithDateBetweenwithRejected(string userid, string fDate, string Tdate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + userid + "' and convert(date, Atte_Date,103) >= '" + fDate + "' and convert(date, Atte_Date,103) <='" + Tdate + "' and [Rejected Approval]='Yes' and CompanyName='" + companyName + "' order by convert(date, Atte_Date,103) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+
+    public SqlDataReader Show_tblesetupforpriority(string Type, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tblesetupforpriority where Type='" + Type + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tblesetupforpriority1(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tblesetupforpriority where CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Detail_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Detail_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+
+        string s = "select  convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where (HODUserid='" + HODuserid + "'OR HODUserid1='" + HODuserid + "' ) and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status='Pending' and CountStatusHOD='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withdateVC(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+
+        string s = "select *,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where ((HODUserid='" + HODuserid + "'OR HODUserid1='" + HODuserid + "' ) and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No' ) OR Status='Recommend' and Company_Name='" + companyName + "' order by AutoNo desc";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_For_Admin_Datewise(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withdateUser(string UserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + UserID + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withdateUser(string UserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + UserID + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendce_Approval_Detail_withdateUserForAdmin(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where  convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Detail_withdateUser(string UserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + UserID + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Detail_withdateHR(string HRUserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HRUserID + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendce_Approval_Detail_withdateHR(string HRUserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HRUserID + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Detail_withdateHR(string HRUserID, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where HR_Userid='" + HRUserID + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Detail_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HODUserid='" + HODuserid + "' and convert(date,Create_Date,103) >= '" + fromDate + "' and convert(date,Create_Date,103) <='" + todate + "' and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Detail_withAll(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Detail_withdateForBlank(string Userid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where Userid='" + Userid + "' and convert(date,Create_Date,103) >= '" + fromDate + "' and convert(date,Create_Date,103) <='" + todate + "' and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Detail_withAllForBlank(string Userid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where Userid='" + Userid + "'  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Detail_withdateForHR(string Userid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HR_Userid='" + Userid + "' and convert(date,Create_Date,103) >= '" + fromDate + "' and convert(date,Create_Date,103) <='" + todate + "' and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Detail_withAllForHR(string Userid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HR_Userid='" + Userid + "' and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tblRembursment_Validation(string Department_Code, string Band_Code, string Expense_Code, string CompanyName, string Location_Code, string Grade_Code, string Branch_Code)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where Department_Code='" + Department_Code + "' and Band_Code='" + Band_Code + "' and Expense_Code='" + Expense_Code + "' and CompanyName='" + CompanyName + "' and Location_Code='" + Location_Code + "' and Grade_Code='" + Grade_Code + "' and Branch_Code ='" + Branch_Code + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_tblRembursment_ValidationINDVI(string Expense_Code, string CompanyName, string Applicable_UserID)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where Expense_Code='" + Expense_Code + "' and CompanyName='" + CompanyName + "' and  Applicable_UserID='" + Applicable_UserID + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+
+    //public SqlDataReader Show_tblRembursment_Validation( string Expense_Code, string CompanyName)
+    //{
+    //    Connect();
+
+    //    string s = "select * from tbl_reimbursment where Expense_Code='" + Expense_Code + "' and CompanyName='" + CompanyName + "' ";
+    //    cmd = new SqlCommand(s, Conn);
+    //    SqlDataReader dr = cmd.ExecuteReader();
+    //    return dr;
+    //}
+
+
+    //public SqlDataReader Show_tbl_reimbursmentsetupIndvidualuser_Validation( string CompanyName,string Applicable_UserID)
+    //{
+    //    Connect();
+
+    //    string s = "select * from tbl_reimbursmentsetupIndvidualuser where  CompanyName='" + CompanyName + "'  and Applicable_UserID='" + Applicable_UserID + "'";
+    //    cmd = new SqlCommand(s, Conn);
+    //    SqlDataReader dr = cmd.ExecuteReader();
+    //    return dr;
+    //}
+
+
+
+    public SqlDataReader Show_tblRembursment_ForEdit(string id)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tblRembursment_ForEditINDV(string id)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Reject_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Reject_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Reject_withdateVC(string fromDate, string todate, string companyName, string userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select * from tble_Leave_Approval where convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes' and Approvalbyid='" + userid + "' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Reject_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select  convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Reject_withdateHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Reject_withdateHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Reject_withdateHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Reject_withdateBlank_ForAdmin(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendence_Approval_Reject_withdateBlankAdmin(string fromDate, string todate, string companyName)
+    {
+
+        Connect();
+
+        string s = "select * from tbl_attendence where convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Reject_withdateBlank(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Reject_withdateBlank(string HODuserid, string fromDate, string todate, string companyName)
+    {
+
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Reject_withdateBlank(string HODuserid, string fromDate, string todate, string companyName)
+    {
+
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withdateVC(string userid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select * from tble_Leave_Approval where  Approvalbyid='" + userid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status='Approved' and Company_Name='" + companyName + "' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Resolved_withdate(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR  HODUserid1='" + HODuserid + "') and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_PreviouseDetail(string userid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + userid + "' and CompanyName='" + companyName + "' order by convert(date,ProfileUpdateDate,103) desc ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withdateByHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withdateByHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withdateByHR(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and CountStatusHR='Approved' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Resolved_withdateByUser_FOradmin(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where  convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendence_Approval_Resolved_withdateByUserAdmin(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Resolved_withdateByUser(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and convert(date,ProfileUpdateDate,103) >= '" + fromDate + "' and convert(date,ProfileUpdateDate,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withdateByUser(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and convert(date,Atte_Date,103) >= '" + fromDate + "' and convert(date,Atte_Date,103) <='" + todate + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withdateByUser(string HODuserid, string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + HODuserid + "' and convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and Status='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload ,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Detail_withUserIDVC(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+        string s = "select *,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload  from tble_Leave_Approval where ((HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No') OR Status='Recommend' and Company_Name='" + companyName + "' order by AutoNo desc";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_ForAdminwithuserid(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withUserIDUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + UserID + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserIDUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + UserID + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserIDUserAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withUserIDUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + UserID + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withUserIDHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HRUserID + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserIDHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HRUserID + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withUserIDHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where HR_Userid='" + HRUserID + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Rebursment_Approval_Detail_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HODUserid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Rebursment_Approval_Detail_withUserIDBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where Userid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Rebursment_Approval_Detail_withUserIDHR(string HR_Userid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HR_Userid='" + HR_Userid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ReimbursmentDetailwithcom_Userid(string Company_Name, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where Userid='" + Userid + "' and Company_Name='" + Company_Name + "'  and Status='Pending'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_ReimbursmentDetailwithcom_UseridDate(string Company_Name, string Userid, string fromDate, string ToDate, string status)
+    {
+        Connect();
+
+        string s = "select * from tble_claim_Apply where Userid='" + Userid + "' and Company_Name='" + Company_Name + "'  and Approval_Status='" + status + "' and  convert(date, Claim_Date,103) >= '" + fromDate + "' and convert(date, Claim_Date,103) <='" + ToDate + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowClaimAprstatuswithStatus(string Company_Name, string RM1, string fromDate, string ToDate, string status)
+    {
+        Connect();
+
+        string s = "select * from tble_claim_Apply where RM1='" + RM1 + "' and Company_Name='" + Company_Name + "'  and Approval_Status='" + status + "' and  convert(date, Approval_Date,103) >= '" + fromDate + "' and convert(date, Approval_Date,103) <='" + ToDate + "' or RM2='" + RM1 + "' and Company_Name='" + Company_Name + "'  and Approval_Status='" + status + "' and  convert(date, Approval_Date,103) >= '" + fromDate + "' and convert(date, Approval_Date,103) <='" + ToDate + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ReimbursmentDetailwithcom_UseridDateALL(string Company_Name, string Userid, string fromDate, string ToDate)
+    {
+        Connect();
+
+        string s = "select * from tble_claim_Apply where Userid='" + Userid + "' and Company_Name='" + Company_Name + "'  and  convert(date, Claim_Date,103) >= '" + fromDate + "' and convert(date, Claim_Date,103) <='" + ToDate + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowClaimAprStatusAll3(string Company_Name, string RM1, string fromDate, string ToDate)
+    {
+        Connect();
+
+        string s = "select * from tble_claim_Apply where RM1='" + RM1 + "' and Company_Name='" + Company_Name + "'  and  convert(date, Approval_Date,103) >= '" + fromDate + "' and convert(date, Approval_Date,103) <='" + ToDate + "' or RM2='" + RM1 + "' and Company_Name='" + Company_Name + "'  and  convert(date, Approval_Date,103) >= '" + fromDate + "' and convert(date, Approval_Date,103) <='" + ToDate + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_Rejected_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Rejected_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Rejected_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Rejected_withUserIDVC(string companyName, string Userid, string searchis)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (UPPER([UserID]) LIKE UPPER('%" + searchis + "%')) and Company_Name='" + companyName + "' and [Rejected Approval]='Yes' and Approvalbyid='" + Userid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Rejected_withUserIDHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Rejected_withUserIDHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Rejected_withUserIDHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Rejected_withUserIDforAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_Rejected_withUserIDBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Rejected_withUserIDBlankAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Rejected_withUserIDBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Rejected_withUserIDBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_Resolved_withUseIDbyHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUseIDbyHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Resolved_withUseIDbyHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Resolved_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserID(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "' )and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserIDVC(string companyName, string Userid, string searchid)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (UPPER([UserID]) LIKE UPPER('%" + searchid + "%'))  and Company_Name='" + companyName + "' and Status='Approved' and Company_Name='" + companyName + "' and Approvalbyid='" + Userid + "' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Resolved_withUserIDByUserforadmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserIDByUserAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withUserIDByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserIDByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and (UPPER([Userid]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserIDByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "' and (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Detail_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+        //case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload 
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department'  from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Update_tble_Leaveapr_ResolvedHODFinal1(string hod_Approval_Date, string id, string ApprovedBy, string Approvalbyid)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set FinalApprovalStatus=1 , [Rejected Approval]='No',CountStatusHOD='Approved',ApprovedBy='" + ApprovedBy + "',Approvalbyid='" + Approvalbyid + "',ApprovalDate='" + System.DateTime.Now.ToString("dd MMM yyyy") + "'  where id ='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Leave_Approval_Detail_withUserNameVC(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+        //case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload 
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload ,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where ((HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No' ) OR Status='Recommend' and Company_Name='" + companyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withHODALLPending(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "'   and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withHODALLPending(string HODuserid, string companyName)
+    {
+        Connect();
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "'   and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withHODALLPending(string HODuserid, string companyName)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'   and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";   //comment by ashu due to HOD+HOD1(any one can view or approve)            
+        // two HOD
+
+
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload ,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where (HODUserid='" + HODuserid + "' or HODUserid1='" + HODuserid + "' or ( FinalApprovalId='" + HODuserid + "' and  Status='Approved' ))   and Company_Name='" + companyName + "' and Status='Pending'  and [Rejected Approval]='No'  order by AutoNo desc";
+        //string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload  from tble_Leave_Approval where (HODUserid='" + HODuserid + "' or HODUserid1='" + HODuserid + "')   and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Detail_withHODALLPending1(string HODuserid, string companyName)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'   and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";   //comment by ashu due to HOD+HOD1(any one can view or approve)            
+        // two HOD
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload ,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department' from tble_Leave_Approval where  [FinalApprovalId]='" + HODuserid + "'  and Company_Name='" + companyName + "' and [FinalApprovalStatus]=0 and [Rejected Approval]='No' and Status='Approved'  order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withHODALLPendingVC1(string HODuserid, string companyName)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'   and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";   //comment by ashu due to HOD+HOD1(any one can view or approve)            
+        // two HOD
+
+        string s = "select * from (select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department'  from tble_Leave_Approval where  [FinalApprovalId]='" + HODuserid + "'  and Company_Name='" + companyName + "' and [FinalApprovalStatus]=0 and [Rejected Approval]='No' and Status='Approved' and From_Date>'2021-07-31' union All select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload ,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department'  from tble_Leave_Approval where ((HODUserid='" + HODuserid + "' or HODUserid1='" + HODuserid + "')   and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No') OR Status='Recommend' and Company_Name='" + companyName + "') T order by T.AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Detail_withHODALLPendingVC(string HODuserid, string companyName)
+    {
+        Connect();
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'   and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHOD='Pending' and [Rejected Approval]='No'";   //comment by ashu due to HOD+HOD1(any one can view or approve)            
+        // two HOD
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,*,case isnull(AttachmentName,'') when '' then 'No' else 'Download' end as Upload,concat(HODName,'(',HODUserid,')') as HOD,(Select [Department Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=UserId) 'Department'  from tble_Leave_Approval where ((HODUserid='" + HODuserid + "' or HODUserid1='" + HODuserid + "')   and Company_Name='" + companyName + "' and Status='Pending' and [Rejected Approval]='No') OR Status='Recommend' and Company_Name='" + companyName + "' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_for_Admin_UserNameUser(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendce_Approval_Detail_withUserNameUserAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_withUserNameUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + UserID + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withUserNameUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + UserID + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Detail_withUserNameUser(string UserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + UserID + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_For_Admin_withALLPendingBlank(string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withALLPendingBlankAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_withALLPendingBlank(string UserID, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + UserID + "'  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withALLPendingBlank(string UserID, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + UserID + "'  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Detail_withALLPendingBlank(string UserID, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + UserID + "'  and Company_Name='" + companyName + "' and Status!='Approved' and [Rejected Approval]='No' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Detail_withUserNameHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HRUserID + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendce_Approval_Detail_withUserNameHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HRUserID + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Detail_withUserNameHR(string HRUserID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date, * from tble_Leave_Approval where HR_Userid='" + HRUserID + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Detail_withPriorityHRAllPending(string HRUserID, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HRUserID + "'   and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendce_Approval_Detail_withPriorityHRAllPending(string HRUserID, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HRUserID + "'   and CompanyName='" + companyName + "' and ApprovalStatus!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withPriorityHRAllPending(string HRUserID, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HRUserID + "'   and Company_Name='" + companyName + "' and Status!='Approved' and CountStatusHR='Pending' and [Rejected Approval]='No' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Detail_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Detail_withUserNameBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where Userid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Detail_withUserNameHR(string HRUSerID, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentDetail where HR_Userid='" + HRUSerID + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_rejected_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_rejected_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "' ) and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserNameVC(string companyName, string Userid, string serchName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (UPPER([UName]) LIKE UPPER('%" + serchName + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes' and Approvalbyid='" + Userid + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_rejected_withUserNameAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence  where HODUserID='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_rejected_withUserNameAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval  where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval  where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserNameAllRejectVC(string userid, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval  where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval  where  Company_Name='" + companyName + "' and [Rejected Approval]='Yes' and Approvalbyid='" + userid + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_rejected_withUserNameHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserNameHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameHRAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_rejected_withUserNameHRAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserNameHRAllReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendence_Approval_rejected_withUserNameBlankAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where  (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameBlank_ForAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_rejected_withUserNameBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_rejected_withUserNameBlank(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_rejected_For_Admins(string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_rejected_withUserNameBlankALLReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Attendence_Approval_rejected_withUserNameBlankALLRejectAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Attendence_Approval_rejected_withUserNameBlankALLReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and CompanyName='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_rejected_withUserNameBlankALLReject(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "' and Company_Name='" + companyName + "' and [Rejected Approval]='Yes'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Count_Current_ForAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select COUNT(UserID) as UserID from tble_ProfileApprovalStatus where CompanyName='" + companyName + "'  and ApprovalStatus!='Approved' and [Rejected Approval]='No' and ApprovalStatus!='Approved' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Count_Current(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HODuserid) as HODuserid from tble_ProfileApprovalStatus where CompanyName='" + companyName + "' and HODuserid='" + Userid + "' and CountStatusHOD='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_Count_Current(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HODUserID) as HODuserid from tbl_attendence where CompanyName='" + companyName + "' and HODUserID='" + Userid + "' and CountStatusHOD='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Count_Current1(string companyName, string Userid)
+    {
+        Connect();
+
+
+        string s = "select COUNT(HODUserid) as HODUserid from tble_Leave_Approval where Company_Name='TMU' and FinalApprovalId='" + Userid + "' and   [FinalApprovalStatus]=0  and [Rejected Approval]='No' and Status='Approved' ";
+
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Count_Current(string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select COUNT(HODUserid) as HODUserid from tble_Leave_Approval where Company_Name='" + companyName + "' and HODUserid='" + Userid + "' and CountStatusHOD='Pending' and [Rejected Approval]='No' and Status!='Approved'";   //comment by ashu 2-08-2016 for HOD1
+
+        // For 2HOD---------
+        string s = "select COUNT(HODUserid) as HODUserid from tble_Leave_Approval where Company_Name='" + companyName + "' and (HODUserid='" + Userid + "' or HODUserid1='" + Userid + "' or (FinalApprovalId='" + Userid + "' and  Status='Approved')) and CountStatusHOD='Pending' and [Rejected Approval]='No' and Status='Pending'";
+        // string s = "select COUNT(HODUserid) as HODUserid from tble_Leave_Approval where Company_Name='" + companyName + "' and (HODUserid='" + Userid + "' or HODUserid1='" + Userid + "' ) and CountStatusHOD='Pending' and [Rejected Approval]='No' and Status='Pending'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Recommend1(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select Count(Status) as 'Status' from (select Status,UserID,Leave_Type from tble_Leave_Approval where  Company_Name='" + companyName + "' and FinalApprovalId='" + Userid + "'and   [FinalApprovalStatus]=0  and [Rejected Approval]='No' and Status='Approved'  and From_Date>'2021-07-31' Union  select Status,UserID,Leave_Type from tble_Leave_Approval where  (Company_Name='" + companyName + "' and (HODUserid='" + Userid + "' or HODUserid1='" + Userid + "' ) and [Rejected Approval]='No' and Status='Pending') OR Company_Name='" + companyName + "' and Status='Recommend'  )T       ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Recommend(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(Status) as Status from tble_Leave_Approval where  (Company_Name='" + companyName + "' and (HODUserid='" + Userid + "' or HODUserid1='" + Userid + "' ) and [Rejected Approval]='No' and Status='Pending') OR Company_Name='" + companyName + "' and Status='Recommend'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_Count_CurrentHR(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HRUserID) as HRUserID from tble_ProfileApprovalStatus where CompanyName='" + companyName + "' and HRUserID='" + Userid + "' and CountStatusHR='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attend_Approval_Count_CurrentHR(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HR_Userid) as HRUserID from tbl_attendence where CompanyName='" + companyName + "' and HR_Userid='" + Userid + "' and CountStatusHR='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Count_CurrentHR(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HR_Userid) as HRUserID from tble_Leave_Approval where Company_Name='" + companyName + "' and HR_Userid='" + Userid + "' and CountStatusHR='Pending' and [Rejected Approval]='No' and Status='Pending'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attend_Approval_Count_CurrentUser_ForAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select COUNT(UserID) as UserID from tbl_attendence where CompanyName='" + companyName + "' and  ApprovalStatus!='Approved' and [Rejected Approval]='No' and ApprovalStatus!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Count_CurrentUser(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(UserID) as UserID from tble_ProfileApprovalStatus where CompanyName='" + companyName + "' and UserID='" + Userid + "' and ApprovalStatus='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attend_Approval_Count_CurrentUser(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(Userid) as UserID from tbl_attendence where CompanyName='" + companyName + "' and Userid='" + Userid + "' and ApprovalStatus='Pending' and [Rejected Approval]='No' and ApprovalStatus!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Count_CurrentUser(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(UserID) as UserID from tble_Leave_Approval where Company_Name='" + companyName + "' and UserID='" + Userid + "' and Status='Pending' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Count_CurrentUser_ForAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select COUNT(UserID) as UserID from tble_Leave_Approval where Company_Name='" + companyName + "' and Status!='Approved' and [Rejected Approval]='No' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Count_Current(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HODUserid) as HODuserid from tbl_reimbursmentDetail where Company_Name='" + companyName + "' and HODUserid='" + Userid + "' and CountStatusHOD='Pending' and [Rejected Approval]='No' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public string FacultyGoogleLink(string UID)
+    {
+        string Link = "";
+        if (Con1.State == ConnectionState.Closed)
+            Con1.Open();
+        SqlCommand cmd = new SqlCommand("select [Google Site Link] from [TMU$Employee] where No_='" + UID + "'", Con1);
+        Link = cmd.ExecuteScalar().ToString();
+        Con1.Close();
+        if (string.IsNullOrEmpty(Link))
+            Link = "";
+        return Link;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Count_CurrentHR(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(HR_Userid) as HRUserID from tbl_reimbursmentDetail where Company_Name='" + companyName + "' and HR_Userid='" + Userid + "' and CountStatusHR='Pending' and [Rejected Approval]='No' and Status!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Reimbursment_Approval_Count_CurrentUser(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select COUNT(Userid) as UserID from tbl_reimbursmentDetail where Company_Name='" + companyName + "' and Userid='" + Userid + "' and Status!='Approved' and [Rejected Approval]='No'  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Reimbursment_Approval_Count_For_Admin(string companyName)
+    {
+        Connect();
+
+        string s = "select COUNT(Userid) as UserID from tbl_reimbursmentDetail where Company_Name='" + companyName + "' and  Status!='Approved' and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserName(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "')  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameVC(string companyName, string Userid, string uname)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (UPPER([UName]) LIKE UPPER('%" + uname + "%')) and Status='Approved' and Company_Name='" + companyName + "' and Approvalbyid='" + Userid + "' order by AutoNo desc";
+
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Profile_Approval_Resolved_withUserNameAll(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HODuserid='" + HODuserid + "' and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HODUserID='" + HODuserid + "' and CompanyName='" + companyName + "' and CountStatusHOD='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameAllVC(string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where  Status='Approved' and Company_Name='" + companyName + "' and Approvalbyid='" + Userid + "' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Resolved_withUserNameAll1(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+        string s = "   select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,   convert(varchar(11),(convert(date,To_Date )),113) as T_Date, * from tble_Leave_Approval  where (FinalApprovalId='" + HODuserid + "' or Approvalbyid='" + HODuserid + "')   and Company_Name='TMU' and  (Status='Approved' or FinalApprovalStatus=1)";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        //string s = "select * from tble_Leave_Approval where HODUserid='" + HODuserid + "' and Company_Name='" + companyName + "' and CountStatusHOD='Approved'";
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date, * from tble_Leave_Approval where (HODUserid='" + HODuserid + "' OR HODUserid1='" + HODuserid + "') and Company_Name='" + companyName + "' and  (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByUserForAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByUserAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameByUser(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and Status='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByUserAllforAdmin(string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where  CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByUserAll(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + HODuserid + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByUserAllAdmin(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByUserAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + HODuserid + "' and CompanyName='" + companyName + "' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameByUserAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + HODuserid + "' and Company_Name='" + companyName + "' and Status='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "'  and (UPPER([Fname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "'  and (UPPER([Uname]) LIKE UPPER('%" + Userid + "%'))  and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameByHR(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "'  and (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Profile_Approval_Resolved_withUserNameByHRAll(string HODuserid, string companyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where HRUserID='" + HODuserid + "' and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Attendence_Approval_Resolved_withUserNameByHRAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where HR_Userid='" + HODuserid + "' and CompanyName='" + companyName + "' and CountStatusHR='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameByHRAll(string HODuserid, string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where HR_Userid='" + HODuserid + "' and Company_Name='" + companyName + "' and CountStatusHR='Approved' order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_setupReimbursment(string Com_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where CompanyName='" + Com_Name + "' and Applicable_For!='ALL' and Final_Block='False' order by Sl_no desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_setupReimbursmentINDVForUser(string Com_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where CompanyName='" + Com_Name + "' and Final_Block='False' order by Sl_no desc ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+
+    public SqlDataReader Show_setupReimbursmentAllforr(string Com_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where CompanyName='" + Com_Name + "' and Applicable_For='ALL' and Final_Block='False' order by Sl_no desc ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_setupReimbursmentWithSearch(string Expense_Type, string com_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where (UPPER([Expense_Type]) LIKE UPPER('%" + Expense_Type + "%')) and Final_Block='False' and CompanyName='" + com_Name + "' order by Sl_no desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_setupReimbursmentWithSearchINDV(string Expense_Type, string com_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where (UPPER([Expense_Type]) LIKE UPPER('%" + Expense_Type + "%')) and Final_Block='False' and CompanyName='" + com_Name + "' order by Sl_no desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_Distict_ExpensenceType(string Com_Name, string Department_Code, string Degignation_Code)
+    {
+        Connect();
+
+        string s = "select '-------' as [Expense_Type], '--'  as  Expense_Code union  select  distinct(Expense_Type) as Expense_Type, Expense_Code from tbl_reimbursment where CompanyName='" + Com_Name + "'  and Final_Block='False' and Block='False'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_Distict_ExpensenceTypeWithNoOption(string Com_Name)
+    {
+        Connect();
+
+        string s = "select '-------' as [Expense_Type], '--'  as  Expense_Code union  select  distinct(Expense_Type) as Expense_Type, Expense_Code from tbl_reimbursment where CompanyName='" + Com_Name + "'  and Final_Block='False' and Block='False'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_repeation_tbl_Co_Leave_Details(string Userid, string Co_Date, string Company)
+    {
+        Connect();
+
+        string s = "select * from tbl_Co_Leave_Details where Userid='" + Userid + "' and Co_Date='" + Co_Date + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_CreditLimit(string CompanyName, string ReimbursmentType_Code)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where CompanyName='" + CompanyName + "' and Expense_Type='" + ReimbursmentType_Code + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_OptionForReimbursment(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where CompanyName='" + CompanyName + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void insert_AttendenceDetail(string Userid, string Uname, string CompanyName, string Atte_Date, string fromTime, string ToTime, string Job_location, string Remarks, string Status, string Working_Duration, string CreatedDate, string HODUserID, string HR_Userid, string comMail, string HREmailid, string HODEmailID, string HRName, string HODName, int Co_Leave)
+    {
+        Connect();
+        string sqlq = "insert into tbl_attendence (Userid,Uname,CompanyName,Atte_Date,fromTime,ToTime,Job_location,Remarks,Status,Working_Duration,CreatedDate,HODUserID,HR_Userid,Comp_Mail,HREmailid,HODEmailID,HRName,HODName,Co_Leave) values ('" + Userid + "','" + Uname + "','" + CompanyName + "','" + Atte_Date + "','" + fromTime + "','" + ToTime + "','" + Job_location + "','" + Remarks + "','" + Status + "','" + Working_Duration + "','" + CreatedDate + "','" + HODUserID + "','" + HR_Userid + "','" + comMail + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "'," + Co_Leave + ")";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+    public void Update_tble_ProfileApprovalStatus_Resolved(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Approved' , Approval_HOD_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_ProfileApprovalStatus_ResolvedBlankcase(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Approved' , Approval_HOD_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and Noofchange='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tble_Atttendence_ResolvedBlank(string ApprovalStatus, string Approval_User_Date, string HOD_Remarks_Date, string Hr_Remarks_Date, string HR_Userid, string HODUserID, string userid, string CountStatusHOD, string CountStatusHR, string Atte_Date, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='" + ApprovalStatus + "' , Approval_User_Date='" + Approval_User_Date + "' ,HOD_Remarks_Date='" + HOD_Remarks_Date + "',Hr_Remarks_Date='" + Hr_Remarks_Date + "',HR_Userid='" + HR_Userid + "', HODUserID ='" + HODUserID + "',CountStatusHOD='" + CountStatusHOD + "',CountStatusHR='" + CountStatusHR + "', [Rejected Approval]='No' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + Atte_Date + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_leaveApproval_ResolvedBlank(string ApprovalStatus, string Approval_User_Date, string HOD_Remarks_Date, string Hr_Remarks_Date, string HR_Userid, string HODUserID, string userid, string CountStatusHOD, string CountStatusHR, string id)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='" + ApprovalStatus + "' , Approval_User_Date='" + Approval_User_Date + "' ,HOD_Remarks_Date='" + HOD_Remarks_Date + "',Hr_Remarks_Date='" + Hr_Remarks_Date + "',HR_Userid='" + HR_Userid + "', HODUserID ='" + HODUserID + "',CountStatusHOD='" + CountStatusHOD + "',CountStatusHR='" + CountStatusHR + "', [Rejected Approval]='No' where UserID ='" + userid + "' and id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_ProfileApprovalStatus_ResolvedHRFinal(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Approved' , Approval_HOD_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHR='Approved' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_Attendence_ResolvedHRFinal(string Hr_Remarks_Date, string userid, string Atte_Date, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='Approved' , Hr_Remarks_Date='" + Hr_Remarks_Date + "' ,[Rejected Approval]='No',CountStatusHR='Approved' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + Atte_Date + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tble_leaveapr_ResolvedHRFinal(string Hr_Remarks_Date, string id)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Approved' , Hr_Remarks_Date='" + Hr_Remarks_Date + "' ,[Rejected Approval]='No',CountStatusHR='Approved' where id ='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_ProfileApprovalStatus_ResolvedHODFinal(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Approved', Approval_HOD_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHOD='Approved' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Update_tble_Attendence_ResolvedHODFinal(string hod_Approval_Date, string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='Approved' , HOD_Remarks_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHOD='Approved' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_Leaveapr_ResolvedHODFinal(string hod_Approval_Date, string id, string ApprovedBy, string Approvalbyid)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Approved' , HOD_Remarks_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHOD='Approved',ApprovedBy='" + ApprovedBy + "',Approvalbyid='" + Approvalbyid + "',ApprovalDate='" + System.DateTime.Now.ToString("dd MMM yyyy") + "'  where id ='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tble_LeaveaRecomdeded(string id)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Recommend', HOD_Remarks_Date='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "' where id ='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void insert_tbl_Co_Leave_Details(string Userid, string Name, string Company, string Co_Date, string Intime, string OutTime, string PresentHour, string Expireon, string Remarks)
+    {
+        Connect();
+        string sqlq = "insert into tbl_Co_Leave_Details (Userid,Name,Company,Co_Date,[In time],[Out Time],[Present Hour],[Expire on],Remarks) values('" + Userid + "', '" + Name + "', '" + Company + "','" + Co_Date + "','" + Intime + "', '" + OutTime + "', '" + PresentHour + "','" + Expireon + "', '" + Remarks + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tbl_Co_Leave_Details(string Status, string id, string Basedonworking)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Details set Status='" + Status + "',[Based on working]='" + Basedonworking + "' where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Delete_tbl_Co_Leave_Details(string AutoNo)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Details set Status='Pending' where [Based on working]='" + AutoNo + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_ProfileApprovalStatus_ResolvedHOD(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName, string HRUserID, string ApprovalStatus, string CountStatusHOD)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='" + ApprovalStatus + "' , HRUserID='" + HRUserID + "',Approval_HOD_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHOD='" + CountStatusHOD + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tbleAttendence_ResolvedHOD(string ApprovalStatus, string HOD_Remarks_Date, string HR_Userid, string userid, string CountStatusHOD, string Atte_Date, string CompanyName)
+    {
+        Connect();
+
+
+        string sqlq = "update tbl_attendence set ApprovalStatus='" + ApprovalStatus + "' , HOD_Remarks_Date='" + HOD_Remarks_Date + "',HR_Userid='" + HR_Userid + "', CountStatusHOD='" + CountStatusHOD + "', [Rejected Approval]='No' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + Atte_Date + "' and CompanyName='" + CompanyName + "'";
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tbleLeaveapr_ResolvedHOD(string ApprovalStatus, string HOD_Remarks_Date, string HR_Userid, string id, string CountStatusHOD)
+    {
+        Connect();
+
+
+        string sqlq = "update tble_Leave_Approval set Status='" + ApprovalStatus + "' , HOD_Remarks_Date='" + HOD_Remarks_Date + "',HR_Userid='" + HR_Userid + "', CountStatusHOD='" + CountStatusHOD + "', [Rejected Approval]='No' where id ='" + id + "'";
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+    public void Update_tble_ProfileApprovalStatus_ResolvedHR(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName, string HODuserid, string ApprovalStatus, string CountStatusHR)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='" + ApprovalStatus + "' , HODuserid='" + HODuserid + "',Approval_HR_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No',CountStatusHR='" + CountStatusHR + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_Attendence_ResolvedHR(string ApprovalStatus, string Hr_Remarks_Date, string HODUserID, string userid, string CountStatusHR, string Atte_Date, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='" + ApprovalStatus + "' , Hr_Remarks_Date='" + Hr_Remarks_Date + "', HODUserID ='" + HODUserID + "',CountStatusHR='" + CountStatusHR + "', [Rejected Approval]='No' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + Atte_Date + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tble_leave_ResolvedHRapr(string ApprovalStatus, string Hr_Remarks_Date, string HODUserID, string id, string CountStatusHR)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='" + ApprovalStatus + "' , Hr_Remarks_Date='" + Hr_Remarks_Date + "', HODUserid ='" + HODUserID + "',CountStatusHR='" + CountStatusHR + "', [Rejected Approval]='No' where id ='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public SqlDataReader Show_ApprovalStatusHR_HOD(string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_Co_Leave_DetailsinGrid(string Userid, string Company)
+    {
+        Connect();
+
+        string s = "select * from tbl_Co_Leave_Details where Userid ='" + Userid + "' and Company='" + Company + "' and Status='Pending' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_cowithAutono(string Basedonworking)
+    {
+        Connect();
+
+        string s = "select * from tbl_Co_Leave_Details where [Based on working] ='" + Basedonworking + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_MaxNotble_Leave_Approval(string UserID, string Company_Name)
+    {
+        Connect();
+
+        string s = "select MAX(AutoNo) AutoNo from tble_Leave_Approval where UserID='" + UserID + "' and Company_Name='" + Company_Name + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_AttendenceApprovalStatusHR_HOD(string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "'  and CompanyName='" + CompanyName + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_LeaveApprovalStatusHR_HOD(string id)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where id ='" + id + "'  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Show_ApprovalStatusHR_HODForAttendence(string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "' and CompanyName='" + CompanyName + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ApprovalStatusHR_HODForleaved(string id)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where id ='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public void Update_tbl_reimbursmentDetail_Resolved(string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursmentDetail set Status='Approved' , HOD_Remarks_Date='" + hod_Approval_Date + "' ,[Rejected Approval]='No' where Userid ='" + userid + "' and Create_Date='" + ProfileUpdateDate + "' and SerialNo='" + Noofchange + "' and Company_Name='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_ProfileApprovalStatus_Rejected(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Approval_HOD_Date='" + hod_Approval_Date + "' ,RejectedByHODRemarks='" + rejectRemarks + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_LeaveApprovalStatus_Rejected(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string id, string ApprovedBy, string approvalbyid)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', HOD_Remarks_Date='" + hod_Approval_Date + "' ,RejectedByUserRemarks='" + rejectRemarks + "',ApprovedBy='" + ApprovedBy + "',approvalbyid='" + approvalbyid + "',ApprovalDate='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_Attendence_Rejected(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Rejected_User_Date='" + hod_Approval_Date + "' ,RejectedByUserRemarks='" + rejectRemarks + "' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_ProfileApprovalStatus_RejectedByHR(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Approval_HR_Date='" + hod_Approval_Date + "' ,RejectedByHRRemarks='" + rejectRemarks + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_LeaveApprovalStatus_RejectedByHR(string rejectRemarks, string RejectedApproval, string Hr_Remarks_Date, string id)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Rejected',[Rejected Approval]='" + RejectedApproval + "', Hr_Remarks_Date='" + Hr_Remarks_Date + "',RejectedByUserRemarks='" + rejectRemarks + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+    public void Update_tble_Attendence_RejectedByHR(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_attendence set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Rejected_User_Date='" + hod_Approval_Date + "' ,RejectedByUserRemarks='" + rejectRemarks + "' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_ProfileApprovalStatus_RejectedbyUser(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Rejected_User_Date='" + hod_Approval_Date + "',RejectedByUserRemarks='" + rejectRemarks + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_LeaveApprovalStatus_RejectedbyUser(string rejectRemarks, string RejectedApproval, string Rejected_User_Date, string id)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set Status='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Rejected_User_Date='" + Rejected_User_Date + "',RejectedByUserRemarks='" + rejectRemarks + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+
+    public void Update_tble_Attendence_RejectedbyUser(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set ApprovalStatus='Rejected' ,[Rejected Approval]='" + RejectedApproval + "', Rejected_User_Date='" + hod_Approval_Date + "',RejectedByUserRemarks='" + rejectRemarks + "' where Userid ='" + userid + "' and CONVERT(date, Atte_Date,103)='" + ProfileUpdateDate + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tbl_reimbursmentDetail_Rejected(string rejectRemarks, string RejectedApproval, string hod_Approval_Date, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursmentDetail set Status='" + rejectRemarks + "' ,[Rejected Approval]='" + RejectedApproval + "', HOD_Remarks_Date='" + hod_Approval_Date + "' where Userid ='" + userid + "' and Create_Date='" + ProfileUpdateDate + "' and SerialNo='" + Noofchange + "' and Company_Name='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+    public void Insert_tbl_reimbursment(string Department, string Band, string Expense_Type, string Expense_Amount, string Create_Userid, string Created_Date, string CompanyName, string ReimbursmentType_Code, string Start_Date, string Expense_AmountMin, string Expense_Code, string Final_Block, string Department_Code, string Band_Code, string Salary_Based, string Salary_Based_Type, string Applicable_For, string Applicable_UserID, string End_Date, string Location, string Location_Code, string Grade, string Grade_Code, string Departmentwise, string Locationwise, string Bandwise, string Gradewise, string Enddatewise, string Branch_Name, string Branch_Code, string Branchwise)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursment (Department,Band,Expense_Type,Expense_AmountMax,Create_Userid,Created_Date,CompanyName,ReimbursmentType_Code,Start_Date,Expense_AmountMin,Expense_Code,Final_Block,Department_Code,Band_Code,Salary_Based,Salary_Based_Type,Applicable_For,Applicable_UserID,End_Date,Location,Location_Code,Grade,Grade_Code,Departmentwise,Locationwise,Bandwise,Gradewise, Enddatewise,Branch_Name,Branch_Code,Branchwise) values('" + Department + "','" + Band + "','" + Expense_Type + "','" + Expense_Amount + "','" + Create_Userid + "','" + Created_Date + "','" + CompanyName + "','" + ReimbursmentType_Code + "','" + Start_Date + "','" + Expense_AmountMin + "','" + Expense_Code + "','" + Final_Block + "','" + Department_Code + "','" + Band_Code + "','" + Salary_Based + "','" + Salary_Based_Type + "','" + Applicable_For + "','" + Applicable_UserID + "','" + End_Date + "','" + Location + "','" + Location_Code + "','" + Grade + "','" + Grade_Code + "','" + Departmentwise + "' ,'" + Locationwise + "','" + Bandwise + "','" + Gradewise + "' ,'" + Enddatewise + "' ,'" + Branch_Name + "','" + Branch_Code + "','" + Branchwise + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Insert_tbl_reimbursmentsetupIndvidualuser(string Department, string Band, string Expense_Type, string Expense_Amount, string Create_Userid, string Created_Date, string CompanyName, string ReimbursmentType_Code, string Start_Date, string Expense_AmountMin, string Expense_Code, string Final_Block, string Department_Code, string Band_Code, string Salary_Based, string Salary_Based_Type, string Applicable_For, string Applicable_UserID, string End_Date, string Location, string Location_Code, string Grade, string Grade_Code, string Departmentwise, string Locationwise, string Bandwise, string Gradewise, string Enddatewise)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursmentsetupIndvidualuser (Department,Band,Expense_Type,Expense_AmountMax,Create_Userid,Created_Date,CompanyName,ReimbursmentType_Code,Start_Date,Expense_AmountMin,Expense_Code,Final_Block,Department_Code,Band_Code,Salary_Based,Salary_Based_Type,Applicable_For,Applicable_UserID,End_Date,Location,Location_Code,Grade,Grade_Code,Departmentwise,Locationwise,Bandwise,Gradewise, Enddatewise) values('" + Department + "','" + Band + "','" + Expense_Type + "','" + Expense_Amount + "','" + Create_Userid + "','" + Created_Date + "','" + CompanyName + "','" + ReimbursmentType_Code + "','" + Start_Date + "','" + Expense_AmountMin + "','" + Expense_Code + "','" + Final_Block + "','" + Department_Code + "','" + Band_Code + "','" + Salary_Based + "','" + Salary_Based_Type + "','" + Applicable_For + "','" + Applicable_UserID + "','" + End_Date + "','" + Location + "','" + Location_Code + "','" + Grade + "','" + Grade_Code + "','" + Departmentwise + "' ,'" + Locationwise + "','" + Bandwise + "','" + Gradewise + "' ,'" + Enddatewise + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tbl_reimbursment(string Department, string Band, string Expense_Type, string Expense_Amount, string Create_Userid, string Created_Date, string CompanyName, string id, string Start_Date, string Expense_AmountMin, string Expense_Code, string Department_Code, string Band_Code, string Salary_Based, string Location, string Location_Code, string Grade, string Grade_Code, string Salary_Based_Type, string End_Date)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursment set Department='" + Department + "', Band='" + Band + "',Expense_Type='" + Expense_Type + "',Expense_AmountMax='" + Expense_Amount + "' , Create_Userid='" + Create_Userid + "',Created_Date='" + Created_Date + "',CompanyName='" + CompanyName + "' ,Start_Date='" + Start_Date + "',Expense_AmountMin='" + Expense_AmountMin + "',Expense_Code='" + Expense_Code + "',Department_Code='" + Department_Code + "',Band_Code='" + Band_Code + "',Salary_Based='" + Salary_Based + "',Location='" + Location + "',Location_Code='" + Location_Code + "',Grade='" + Grade + "',Grade_Code='" + Grade_Code + "',Salary_Based_Type='" + Salary_Based_Type + "',End_Date='" + End_Date + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tbl_reimbursmentsetupIndvidualuser(string Department, string Band, string Expense_Type, string Expense_Amount, string Create_Userid, string Created_Date, string CompanyName, string id, string Start_Date, string Expense_AmountMin, string Expense_Code, string Department_Code, string Band_Code, string Salary_Based, string Location, string Location_Code, string Grade, string Grade_Code, string Salary_Based_Type, string End_Date)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursmentsetupIndvidualuser set Department='" + Department + "', Band='" + Band + "',Expense_Type='" + Expense_Type + "',Expense_AmountMax='" + Expense_Amount + "' , Create_Userid='" + Create_Userid + "',Created_Date='" + Created_Date + "',CompanyName='" + CompanyName + "' ,Start_Date='" + Start_Date + "',Expense_AmountMin='" + Expense_AmountMin + "',Expense_Code='" + Expense_Code + "',Department_Code='" + Department_Code + "',Band_Code='" + Band_Code + "',Salary_Based='" + Salary_Based + "',Location='" + Location + "',Location_Code='" + Location_Code + "',Grade='" + Grade + "',Grade_Code='" + Grade_Code + "',Salary_Based_Type='" + Salary_Based_Type + "',End_Date='" + End_Date + "'  where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void SetBlock_tbl_reimbursment(string id)
+    {
+        Connect();
+        //string sqlq = "delete from tbl_reimbursment where id='" + id + "'";
+        string sqlq = "update tbl_reimbursment set Block='True' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void SetUnBlock_tbl_reimbursment(string id)
+    {
+        Connect();
+        //string sqlq = "delete from tbl_reimbursment where id='" + id + "'";
+        string sqlq = "update tbl_reimbursment set Block='False' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void SetUnBlock_tbl_reimbursmentINDv(string id)
+    {
+        Connect();
+
+        string sqlq = "update tbl_reimbursmentsetupIndvidualuser set Block='False' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void SetBlock_tbl_reimbursmentINDV(string id)
+    {
+        Connect();
+
+        string sqlq = "update tbl_reimbursmentsetupIndvidualuser set Block='True' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Delete_tbl_reimbursmentDetail(string id)
+    {
+        Connect();
+        string sqlq = "delete from tbl_reimbursmentDetail where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+
+    public void Insert_tbl_reimbursmentDetailBlank(string Expense_Type, string Credit_limit, string Expense_Amount, string Remarks, string Bill_Detail, string Userid, string Department, string Designation, string Company_Name, string SerialNo, string Create_Date, string Status, string UName, string From_Date, string ToDate, string user_Emailid, int Document_No, string Expense_Code, string Error_Remarks_expensecrosslimit)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursmentDetail (Expense_Type,Credit_limit,Expense_Amount,Remarks, Bill_Detail, Userid,Department,Designation,Company_Name,SerialNo,Create_Date,Status,UName,From_Date,ToDate,user_Emailid,Document_No,Expense_Code,Error_Remarks_expensecrosslimit) values('" + Expense_Type + "','" + Credit_limit + "','" + Expense_Amount + "','" + Remarks + "', '" + Bill_Detail + "','" + Userid + "','" + Department + "','" + Designation + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + Status + "','" + UName + "','" + From_Date + "','" + ToDate + "','" + user_Emailid + "','" + Document_No + "','" + Expense_Code + "','" + Error_Remarks_expensecrosslimit + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_tbl_reimbursmentDetailHODID(string Expense_Type, string Credit_limit, string Expense_Amount, string Remarks, string Bill_Detail, string Userid, string Department, string Designation, string Company_Name, string SerialNo, string Create_Date, string Status, string UName, string From_Date, string ToDate, string user_Emailid, int Document_No, string HODUserid, string Expense_Code, string Error_Remarks_expensecrosslimit)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursmentDetail (Expense_Type,Credit_limit,Expense_Amount,Remarks, Bill_Detail, Userid,Department,Designation,Company_Name,SerialNo,Create_Date,Status,UName,From_Date,ToDate,user_Emailid,Document_No,HODUserid,Expense_Code,Error_Remarks_expensecrosslimit) values('" + Expense_Type + "','" + Credit_limit + "','" + Expense_Amount + "','" + Remarks + "', '" + Bill_Detail + "','" + Userid + "','" + Department + "','" + Designation + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + Status + "','" + UName + "','" + From_Date + "','" + ToDate + "','" + user_Emailid + "','" + Document_No + "','" + HODUserid + "','" + Expense_Code + "','" + Error_Remarks_expensecrosslimit + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Insert_tbl_reimbursmentDetailHRID(string Expense_Type, string Credit_limit, string Expense_Amount, string Remarks, string Bill_Detail, string Userid, string Department, string Designation, string Company_Name, string SerialNo, string Create_Date, string Status, string UName, string From_Date, string ToDate, string user_Emailid, int Document_No, string HR_Userid, string Expense_Code, string Error_Remarks_expensecrosslimit)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursmentDetail (Expense_Type,Credit_limit,Expense_Amount,Remarks, Bill_Detail, Userid,Department,Designation,Company_Name,SerialNo,Create_Date,Status,UName,From_Date,ToDate,user_Emailid,Document_No,HR_Userid,Expense_Code,Error_Remarks_expensecrosslimit) values('" + Expense_Type + "','" + Credit_limit + "','" + Expense_Amount + "','" + Remarks + "', '" + Bill_Detail + "','" + Userid + "','" + Department + "','" + Designation + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + Status + "','" + UName + "','" + From_Date + "','" + ToDate + "','" + user_Emailid + "','" + Document_No + "','" + HR_Userid + "','" + Expense_Code + "','" + Error_Remarks_expensecrosslimit + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public SqlDataReader SHow_tble_ProfileApprovalStatus(string userid, string ProfileUpdateDate, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + userid + "' and convert(varchar(250),ProfileUpdateDate,103) = '" + ProfileUpdateDate + "' and ApprovalStatus!='Approved' and CompanyName='" + CompanyName + "'";
+
+        // string s = "select * from tble_ProfileApprovalStatus where UserID='" + userid + "' and ApprovalStatus!='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_tblesetupforpriorityforApproval(string type, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tblesetupforpriority where Type='" + type + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_NoofchangePerday(string UserID, string ProfileUpdateDate, string companyName)
+    {
+        Connect();
+
+        //string s = "select * from tble_ProfileApprovalStatus where UserID='" + userid + "' and convert(varchar(250),ProfileUpdateDate,103) = '" + ProfileUpdateDate + "'";
+
+        string s = "select top 1(Noofchange) as Noofchange from tble_ProfileApprovalStatus where UserID='" + UserID + "' and convert(date,ProfileUpdateDate,103)='" + ProfileUpdateDate + "' and CompanyName='" + companyName + "' order by Noofchange desc  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader New_DocumentNo(string companyName)
+    {
+        Connect();
+
+
+        string s = "select top 1(CONVERT(int,Document_No)) as Document_No  from tble_claim_Apply where  Company_Name='" + companyName + "' order by CONVERT(int,Document_No) desc  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader SHow_SerialNo(string UserID, string Create_Date, string companyName)
+    {
+        Connect();
+
+        string s = "select top 1(SerialNo) as SerialNo from tbl_reimbursmentDetail where Userid='" + UserID + "' and convert(date,Create_Date,103)='" + Create_Date + "' and Company_Name='" + companyName + "' order by SerialNo desc  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_tble_ProfileApprovalStatuswithUserid(string userid, string companyName)
+    {
+        Connect();
+        string s = "select max(convert(date,ProfileUpdateDate,103))  as Noofchange,Approval_HOD_Date,ApprovalStatus,Approval_HR_Date  from tble_ProfileApprovalStatus where UserID='" + userid + "' and CompanyName='" + companyName + "' group by Approval_HOD_Date,ApprovalStatus,Approval_HR_Date ORDER BY max(convert(date,ProfileUpdateDate,103)) DESC";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void update_tble_ProfileApprovalStatus(string title, string Fname, string SName, string LName, string Address, string Address2, string City, string State, string Country, string Pin_Code, string Email_ID, string Marital_Status, string Phone_No, string Mobile_No, string DOB, string FatherName, string HusbandName, string PAddress, string PAddress2, string PCity, string PState, string PanNo, string Ac_No, string Photo, string ApprovalStatus, string ProfileUpdateDate, string UserID, string ProfileUpdatedUserid, string CompanyName, string Change_Status, string HODUserid, string hodName, string HRUserID, string Photo1, string OldAddress, string OldAddress2, string OldCity, string OldState, string OldCounty, string OldPostCode, string OldEMail, string OldMaritalStatus, string OldPhoneNo, string OldMobilePhoneNo, string OldBirthDate, string OldFatherName, string OldHusbandName, string OldPermanentAddress1, string OldPermanentAddress2, string OldPermanentCity, string OldPermanentState, string OldPANNo, string OldAccountNo, string OldProfilePhoto, string HREmailid, string HODEmailID, string HRName, string HODName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set title='" + title + "' ,Fname ='" + Fname + "',SName='" + SName + "', LName='" + LName + "' ,Address='" + Address + "',  Address2='" + Address2 + "', City='" + City + "',State='" + State + "', Country='" + Country + "', Pin_Code='" + Pin_Code + "',Email_ID='" + Email_ID + "', Marital_Status='" + Marital_Status + "', Phone_No='" + Phone_No + "',Mobile_No='" + Mobile_No + "', DOB='" + DOB + "',FatherName='" + FatherName + "', HusbandName='" + HusbandName + "', PAddress='" + PAddress + "',PAddress2='" + PAddress2 + "', PCity='" + PCity + "', PState='" + PState + "', PanNo='" + PanNo + "',  Ac_No='" + Ac_No + "',  Photo='" + Photo + "', ApprovalStatus='" + ApprovalStatus + "',  ProfileUpdateDate='" + ProfileUpdateDate + "', UserID='" + UserID + "', ProfileUpdatedUserid='" + ProfileUpdatedUserid + "',  CompanyName='" + CompanyName + "', Change_Status='" + Change_Status + "',HODuserid='" + HODUserid + "',HODName='" + hodName + "',HRUserID='" + HRUserID + "',Photo1='" + Photo1 + "',OldAddress='" + OldAddress + "',OldAddress2='" + OldAddress2 + "',OldCity='" + OldCity + "', OldState='" + OldState + "',OldCounty='" + OldCounty + "',OldPostCode='" + OldPostCode + "',OldEMail='" + OldEMail + "',OldMaritalStatus='" + OldMaritalStatus + "',OldPhoneNo='" + OldPhoneNo + "',OldMobilePhoneNo='" + OldMobilePhoneNo + "',OldBirthDate='" + OldBirthDate + "',OldFatherName='" + OldFatherName + "',OldHusbandName='" + OldHusbandName + "', OldPermanentAddress1='" + OldPermanentAddress1 + "',OldPermanentAddress2='" + OldPermanentAddress2 + "',OldPermanentCity='" + OldPermanentCity + "',OldPermanentState='" + OldPermanentState + "',OldPANNo='" + OldPANNo + "',OldAccountNo='" + OldAccountNo + "', OldProfilePhoto='" + OldProfilePhoto + "',HREmailid='" + HREmailid + "',HODEmailID ='" + HODEmailID + "' , HRName= '" + HRName + "' where UserID='" + UserID + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and ApprovalStatus!='Approved' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+    public void Insert_tble_ProfileApprovalStatus(string title, string Fname, string SName, string LName, string Address, string Address2, string City, string State, string Country, string Pin_Code, string Email_ID, string Marital_Status, string Phone_No, string Mobile_No, string DOB, string FatherName, string HusbandName, string PAddress, string PAddress2, string PCity, string PState, string PanNo, string Ac_No, string Photo, string ApprovalStatus, string ProfileUpdateDate, string UserID, string ProfileUpdatedUserid, string CompanyName, string Change_Status, string HODuserid, string Noofchange, string HRUserID, string Photo1, string OldAddress, string OldAddress2, string OldCity, string OldState, string OldCounty, string OldPostCode, string OldEMail, string OldMaritalStatus, string OldPhoneNo, string OldMobilePhoneNo, string OldBirthDate, string OldFatherName, string OldHusbandName, string OldPermanentAddress1, string OldPermanentAddress2, string OldPermanentCity, string OldPermanentState, string OldPANNo, string OldAccountNo, string OldProfilePhoto, string HREmailid, string HODEmailID, string HRName, string HODName, string Picture)
+    {
+        Connect();
+        string sqlq = "insert into tble_ProfileApprovalStatus (title,Fname,SName,LName,Address,Address2, City, State, Country, Pin_Code, Email_ID, Marital_Status,Phone_No, Mobile_No,  DOB,FatherName, HusbandName,PAddress, PAddress2,PCity,PState,  PanNo,Ac_No, Photo, ApprovalStatus, ProfileUpdateDate, UserID, ProfileUpdatedUserid,CompanyName,Change_Status,HODuserid,Noofchange,HRUserID,Photo1,OldAddress,OldAddress2,OldCity, OldState,OldCounty,OldPostCode,OldEMail,OldMaritalStatus,OldPhoneNo,OldMobilePhoneNo,OldBirthDate,OldFatherName,OldHusbandName, OldPermanentAddress1,OldPermanentAddress2,OldPermanentCity,OldPermanentState,OldPANNo,OldAccountNo, OldProfilePhoto,HREmailid,HODEmailID,HRName,HODName,Picture) values('" + title + "','" + Fname + "','" + SName + "','" + LName + "' ,'" + Address + "', '" + Address2 + "','" + City + "','" + State + "','" + Country + "','" + Pin_Code + "','" + Email_ID + "', '" + Marital_Status + "','" + Phone_No + "','" + Mobile_No + "','" + DOB + "','" + FatherName + "', '" + HusbandName + "','" + PAddress + "','" + PAddress2 + "','" + PCity + "', '" + PState + "', '" + PanNo + "', '" + Ac_No + "', '" + Photo + "','" + ApprovalStatus + "', '" + ProfileUpdateDate + "', '" + UserID + "','" + ProfileUpdatedUserid + "', '" + CompanyName + "','" + Change_Status + "','" + HODuserid + "','" + Noofchange + "','" + HRUserID + "','" + Photo1 + "','" + OldAddress + "','" + OldAddress2 + "','" + OldCity + "','" + OldState + "','" + OldCounty + "','" + OldPostCode + "','" + OldEMail + "','" + OldMaritalStatus + "','" + OldPhoneNo + "','" + OldMobilePhoneNo + "','" + OldBirthDate + "','" + OldFatherName + "','" + OldHusbandName + "','" + OldPermanentAddress1 + "','" + OldPermanentAddress2 + "','" + OldPermanentCity + "','" + OldPermanentState + "','" + OldPANNo + "','" + OldAccountNo + "','" + OldProfilePhoto + "','" + HREmailid + "' , '" + HODEmailID + "','" + HRName + "','" + HODName + "','" + Picture + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_tblesetupforpriority(int HOD, int HR, int Blank, int PriorityHOD, int PriorityHR, string type, string CompanyName, string EmailBlank, string EmailHR, string EmailHOD)
+    {
+        Connect();
+        string sqlq = "insert into tblesetupforpriority (HOD,HR,Blank,PriorityHOD,PriorityHR,Type,CompanyName,EmailBlank,EmailHR,EmailHOD) values(" + HOD + "," + HR + "," + Blank + "," + PriorityHOD + "," + PriorityHR + ",'" + type + "','" + CompanyName + "','" + EmailBlank + "','" + EmailHR + "','" + EmailHOD + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tblesetupforpriority(int HOD, int HR, int Blank, int PriorityHOD, int PriorityHR, string type, string CompanyName, string EmailBlank, string EmailHR, string EmailHOD)
+    {
+        Connect();
+        string sqlq = "update tblesetupforpriority set HOD=" + HOD + ",HR=" + HR + ",Blank=" + Blank + ",PriorityHOD=" + PriorityHOD + ",PriorityHR=" + PriorityHR + ",EmailBlank='" + EmailBlank + "',EmailHR='" + EmailHR + "',EmailHOD='" + EmailHOD + "'  where Type='" + type + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    //--------------------Add column------Arrangement--------12-07-2016
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc)
+    {
+        Connect();
+        string sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Arrangement,Half_Day_type_Code,Half_Day_type_Desc) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','" + Status + "','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    //For Hospital
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch, string Staff)
+    {
+        Connect();
+
+
+
+        string sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId,ApplyBy,HOD_Remarks_Date,CountStatusHOD,ApprovedBy,Approvalbyid) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','Approved' ,'" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, ( select case when (select  case when (select [Employee Posting Group]  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff]  else [SA for Non-Teach Staff]  end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='CL'  )=''  and '" + HODUserid + "' in (select [SA for Teaching Staff] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave])  and '" + HODUserid + "' in (select [SA for Non-Teach Staff] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave])  then '" + HODUserid + "' else    ( select  case when (select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]    where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff] else [SA for Non-Teach Staff] end    from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='CL') end   ),'" + Staff + "','" + Create_Date + "','Approved','" + HODName + "','" + HODUserid + "')";
+
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    //Overload method of above by //add column HODUserid1 --ashu-02-08-2016
+
+
+
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch)
+    {
+        Connect();
+        string sqlq = "";        
+        Connect();
+
+        if (HODUserid == "TMU03651" && (Leave_Type == "CL" || Leave_Type == "ML"))
+        {
+            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "', 'Approved' ,'" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, '" + HODUserid + "')";
+        }
+        else
+        {
+            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "',case when '" + HODUserid + "'=(select  case when (select [Employee Posting Group]  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff]  else [SA for Non-Teach Staff] end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='" + Leave_Type + "'  ) then 'Approved' else 'Pending' end,'" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, ( select  case when (select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff] else [SA for Non-Teach Staff] end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='" + Leave_Type + "'  ))";
+        }
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_LeavePendingDetail(string userid, string companyName)
+    {
+        Connect();
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where UserID='" + userid + "' and Company_Name='" + companyName + "' and (Status!='Approved'  or (FinalApprovalStatus!=1 and isnull(FinalApprovalId,'')!='')) and [Rejected Approval]='No'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Delete_leavePendingDetail(string id)
+    {
+        Connect();
+        string sqlq = "delete from tble_Leave_Approval where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Select_leavePendingDetail1(string id)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where id='" + id + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Delete_AttendenceDetail(string id)
+    {
+        Connect();
+        string sqlq = "delete from tbl_attendence where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+
+
+    public SqlDataReader Show_LeaveViewwith_Date_Status(string fromDate, string toDate, string userid, string status, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,case when isnull(FinalApprovalStatus,5)=0 and isnull(FinalApprovalId,'')!='' then 'Recommend' else Status end as 'Status1',* from tble_Leave_Approval where UserID='" + userid + "' and Company_Name='" + companyName + "' and convert(date, To_Date,111) >= '" + fromDate + "' and convert(date, To_Date,111) <='" + toDate + "' and Status='" + status + "' order by convert(date,To_Date,111) desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_LeaveViewwith_Date_StatusAll(string fromDate, string toDate, string userid, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,case when isnull(FinalApprovalStatus,5)=0 and isnull(FinalApprovalId,'')!='' and Status!='Rejected' then 'Recommend' else Status end as 'Status1',* from tble_Leave_Approval where UserID='" + userid + "' and Company_Name='" + companyName + "' and convert(date, To_Date,111) >= '" + fromDate + "' and convert(date, To_Date,111) <='" + toDate + "' order by CONVERT(date,To_Date,111) desc ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_attendenceforEdit(string id)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Update_AttendenceToTime(string fromTime, string ToTime, string Job_location, string Remarks, string Working_Duration, string Update_Date, string id)
+    {
+        Connect();
+        string sqlq = "Update tbl_attendence set fromTime='" + fromTime + "',ToTime='" + ToTime + "',Job_location='" + Job_location + "',Remarks='" + Remarks + "',Working_Duration='" + Working_Duration + "',Update_Date='" + Update_Date + "' where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_AttendenceToTimewithCardYes(string fromTime, string ToTime, string Job_location, string Remarks, string Working_Duration, string Update_Date, string id, string UpdatedInTime, string UpdatedOutTime)
+    {
+        Connect();
+        string sqlq = "Update tbl_attendence set fromTime='" + fromTime + "',ToTime='" + ToTime + "',Job_location='" + Job_location + "',Remarks='" + Remarks + "',Working_Duration='" + Working_Duration + "',Update_Date='" + Update_Date + "',[Updated In Time]='" + UpdatedInTime + "',[Updated Out Time]='" + UpdatedOutTime + "' where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Update_tble_ProfileApprovalStatus_Resolvedfrom_Navision(string Address, string Address2, string City, string State, string Country, string Pin_Code, string Email_ID, string Marital_Status, string Phone_No, string Mobile_No, string DOB, string FatherName, string HusbandName, string PAddress, string PAddress2, string PCity, string PState, string PanNo, string Ac_No, string Photo, string Photo1, string userid, string ProfileUpdateDate, string Noofchange, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_ProfileApprovalStatus set Address='" + Address + "',Address2='" + Address2 + "',City='" + City + "',State='" + State + "',Country='" + Country + "',Pin_Code='" + Pin_Code + "', Email_ID='" + Email_ID + "', Marital_Status='" + Marital_Status + "',Phone_No='" + Phone_No + "',Mobile_No='" + Mobile_No + "',DOB='" + DOB + "',FatherName='" + FatherName + "',HusbandName='" + HusbandName + "',PAddress='" + PAddress + "',PAddress2='" + PAddress2 + "',PCity='" + PCity + "',PState='" + PState + "',PanNo='" + PanNo + "',Ac_No='" + Ac_No + "',Photo='" + Photo + "',Photo1='" + Photo1 + "' where UserID ='" + userid + "' and ProfileUpdateDate='" + ProfileUpdateDate + "' and id='" + Noofchange + "' and CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_tbl_Attendence_Expiry(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_Attendence_Expiry where CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_Attendence_ExpiryIND(string CompanyName, string empID)
+    {
+        Connect();
+
+        string s = "select * from tbl_Atten_Expiryforemployee where CompanyName='" + CompanyName + "' and EmployeeID='" + empID + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_Attendence_ExpiryINDV(string CompanyName, string EmployeeID)
+    {
+        Connect();
+
+        string s = "select * from tbl_Atten_Expiryforemployee where CompanyName='" + CompanyName + "' and EmployeeID='" + EmployeeID + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_Attendence_ExpiryINDS(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tbl_Atten_Expiryforemployee where CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Insert_tbl_Attendence_Expiry(string days, string CompanyName, string Option_fromTime_toime_All, string From_Time, string To_Time, string In_time_Out_TimeRquired, string Card_Attendance_changing)
+    {
+        Connect();
+        string sqlq = "insert into tbl_Attendence_Expiry (No_of_Days,CompanyName,Option_fromTime_toime_All,From_Time,To_Time,In_time_Out_TimeRquired,Card_Attendance_changing) values('" + days + "','" + CompanyName + "','" + Option_fromTime_toime_All + "','" + From_Time + "','" + To_Time + "','" + In_time_Out_TimeRquired + "','" + Card_Attendance_changing + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Insert_tbl_Attendence_ExpiryEMPIDWISE(string days, string EmployeeID, string CompanyName, string Option_fromTime_toime_Individual, string From_TimeForIndividual, string To_TimeForIndividual, string In_time_Out_TimeRquired, string Card_Attendance_changing)
+    {
+        Connect();
+        string sqlq = "insert into tbl_Atten_Expiryforemployee (Duration,EmployeeID,CompanyName,Option_fromTime_toime_Individual,From_Time,To_Time,In_time_Out_TimeRquired,Card_Attendance_changing) values('" + days + "','" + EmployeeID + "','" + CompanyName + "','" + Option_fromTime_toime_Individual + "','" + From_TimeForIndividual + "','" + To_TimeForIndividual + "','" + In_time_Out_TimeRquired + "','" + Card_Attendance_changing + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void update_tbl_Attendence_Expiry(string days, string CompanyName, string Option_fromTime_toime_All, string From_Time, string To_Time, string In_time_Out_TimeRquired, string Card_Attendance_changing)
+    {
+        Connect();
+        string sqlq = "update tbl_Attendence_Expiry  set No_of_Days ='" + days + "' ,Option_fromTime_toime_All='" + Option_fromTime_toime_All + "',From_Time='" + From_Time + "', To_Time ='" + To_Time + "', In_time_Out_TimeRquired='" + In_time_Out_TimeRquired + "',Card_Attendance_changing='" + Card_Attendance_changing + "' where CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void update_tbl_Attendence_Expiryempidwise(string days, string EmployeeID, string CompanyName, string Option_fromTime_toime_Individual, string From_TimeForIndividual, string To_TimeForIndividual, string In_time_Out_TimeRquired, string Card_Attendance_changing)
+    {
+        Connect();
+        string sqlq = "update tbl_Atten_Expiryforemployee set Duration ='" + days + "' ,EmployeeID='" + EmployeeID + "',Option_fromTime_toime_Individual='" + Option_fromTime_toime_Individual + "',From_Time='" + From_TimeForIndividual + "',To_Time='" + To_TimeForIndividual + "' ,In_time_Out_TimeRquired='" + In_time_Out_TimeRquired + "',Card_Attendance_changing='" + Card_Attendance_changing + "' where CompanyName='" + CompanyName + "' and EmployeeID='" + EmployeeID + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_tble_leave_setupClub(string CompanyName, string LeaveType)
+    {
+        Connect();
+
+        string s = "select * from tble_leave_setup where CompanyName='" + CompanyName + "' and [Leave Type]='" + LeaveType + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowCoLeaveupto(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Co_Leave_Upto where [Company Name]='" + CompanyName + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowCoLeaveuptoIND(string CompanyName, string userid)
+    {
+        Connect();
+
+        string s = "select * from tble_Co_Leave_Upto where [Company Name]='" + CompanyName + "'  and [Employee ID]='" + userid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_leave_setup(string CompanyName, string LeaveType)
+    {
+        Connect();
+
+        string s = "select * from tble_leave_setup where CompanyName='" + CompanyName + "' and [Leave Type]='" + LeaveType + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+
+    public SqlDataReader Show_tble_leave_setupAll(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_leave_setup where CompanyName='" + CompanyName + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_leave_Applywithdate(string fdate, string tdate, string employeeid, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where convert(date, [From_Date],111) >='" + fdate + "' and convert(date, [To_Date],111)  <='" + tdate + "' and Company_Name='" + CompanyName + "' and UserID='" + employeeid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_leave_Applye(string employeeid, string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where  Company_Name='" + CompanyName + "' and UserID='" + employeeid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Insert_tble_leave_setup(string LeaveType, string ClubHoliday, string CompanyName)
+    {
+        Connect();
+        string sqlq = "insert into tble_leave_setup ([Leave Type],[Club Holiday],CompanyName) values('" + LeaveType + "','" + ClubHoliday + "','" + CompanyName + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void update_tble_leave_setup(string ClubHoliday, string LeaveType, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_leave_setup set [Club Holiday]='" + ClubHoliday + "'  where CompanyName='" + CompanyName + "' and [Leave Type]='" + LeaveType + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void update_tble_Co_Leave_Upto(int CompLeaveUpto, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tble_Co_Leave_Upto set [Comp Leave Upto]=" + CompLeaveUpto + " where [Company Name]='" + CompanyName + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void update_tble_Co_Leave_UptoINDsetup(int CompLeaveUpto, string CompanyName, string EmployeeID)
+    {
+        Connect();
+        string sqlq = "update tble_Co_Leave_Upto set [Individual Duration]=" + CompLeaveUpto + ",[Employee ID]='" + EmployeeID + "' where [Company Name]='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_tble_Co_Leave_Upto(int CompLeaveUpto, string CompanyName)
+    {
+        Connect();
+        string sqlq = "insert into tble_Co_Leave_Upto ([Comp Leave Upto],[Company Name]) values (" + CompLeaveUpto + ",'" + CompanyName + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Insert_tble_Co_Leave_UptoINDSetup(int CompLeaveUpto, string CompanyName, string employeeid)
+    {
+        Connect();
+        string sqlq = "insert into tble_Co_Leave_Upto ([Individual Duration],[Company Name],[Employee ID]) values (" + CompLeaveUpto + ",'" + CompanyName + "','" + employeeid + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public SqlDataReader Show_tble_Leave_ApprovalRepetiondateMaxToDate(string employeeid, string CompanyName)
+    {
+        Connect();
+
+        string s = "select max( CONVERT(date,To_Date,111)),From_Date,To_Date from tble_Leave_Approval where  Company_Name='" + CompanyName + "' and UserID='" + employeeid + "' and [Rejected Approval]='No' group by From_Date,To_Date order by To_Date desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_Leave_ApprovalRepetiondateMinFromDate(string employeeid, string CompanyName)
+    {
+        Connect();
+
+        string s = "select min( CONVERT(date,From_Date,111)),From_Date,To_Date from tble_Leave_Approval where  Company_Name='" + CompanyName + "' and UserID='" + employeeid + "' and [Rejected Approval]='No' group by From_Date,To_Date order by To_Date asc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_MailSetup1(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tblMailSetup where CompanyName='" + CompanyName + "'  ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_MailSetup(string CompanyName, string SMTPFor)
+    {
+        Connect();
+
+        string s = "select * from tblMailSetup where CompanyName='" + CompanyName + "' and SMTPFor='" + SMTPFor + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void update_tble_MailSetup(string CompanyName, string from_Email, string smtp, string Password_From, string Port_No, int Mail_Sending_Option, string Profile_Change, string Profile_Approval, string Attendence_Mark, string Attendence_Approval, string Leave_Apply, string Leave_Approval, string CCMail, string Reimbursment_Apply, string Reimbursment_Approval, string SMTPFor)
+    {
+        Connect();
+        string sqlq = "update tblMailSetup set from_Email ='" + from_Email + "',smtp='" + smtp + "' ,Password_From='" + Password_From + "', Port_No='" + Port_No + "',Mail_Sending_Option=" + Mail_Sending_Option + ",Profile_Change='" + Profile_Change + "',Profile_Approval='" + Profile_Approval + "',Attendence_Mark='" + Attendence_Mark + "',Attendence_Approval='" + Attendence_Approval + "',Leave_Apply='" + Leave_Apply + "',Leave_Approval='" + Leave_Approval + "',CCMail='" + CCMail + "',Reimbursment_Apply='" + Reimbursment_Apply + "',Reimbursment_Approval='" + Reimbursment_Approval + "' where CompanyName='" + CompanyName + "' and SMTPFor='" + SMTPFor + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void insert_tble_MailSetup(string CompanyName, string from_Email, string smtp, string Password_From, string Port_No, int Mail_Sending_Option, string Profile_Change, string Profile_Approval, string Attendence_Mark, string Attendence_Approval, string Leave_Apply, string Leave_Approval, string CCMail, string Reimbursment_Apply, string Reimbursment_Approval, string SMTPFor)
+    {
+        Connect();
+        string sqlq = "insert into tblMailSetup (from_Email,smtp,Password_From,Port_No,Mail_Sending_Option,CompanyName, Profile_Change,Profile_Approval,Attendence_Mark,Attendence_Approval,Leave_Apply,Leave_Approval,CCMail,Reimbursment_Apply,Reimbursment_Approval,SMTPFor) values('" + from_Email + "','" + smtp + "','" + Password_From + "','" + Port_No + "'," + Mail_Sending_Option + ",'" + CompanyName + "','" + Profile_Change + "','" + Profile_Approval + "','" + Attendence_Mark + "','" + Attendence_Approval + "','" + Leave_Apply + "','" + Leave_Approval + "','" + CCMail + "','" + Reimbursment_Apply + "','" + Reimbursment_Approval + "','" + SMTPFor + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Insert_tbl_reimbursmenttype(string Reimbursment_Type, string Company_Name, string Block)
+    {
+        Connect();
+        string sqlq = "insert into tbl_reimbursmenttype (Reimbursment_Type,Company_Name,Block) values('" + Reimbursment_Type + "','" + Company_Name + "','" + Block + "') ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tbl_reimbursmenttype(string Reimbursment_Type, string Block, string id)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursmenttype set Reimbursment_Type='" + Reimbursment_Type + "', Block ='" + Block + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tbl_reimbursmenttypeexpense(string Final_Block, string CompanyName, string id)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursment set Final_Block='" + Final_Block + "' where Expense_Code='" + id + "' and CompanyName ='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tbl_reimbursmentsetupIndvidualuserFinalBlock(string Final_Block, string CompanyName, string id)
+    {
+        Connect();
+        string sqlq = "update tbl_reimbursmentsetupIndvidualuser set Final_Block='" + Final_Block + "' where Expense_Code='" + id + "' and CompanyName ='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public SqlDataReader Show_tbl_reimbursmenttype(string Company_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmenttype where Company_Name='" + Company_Name + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_reimbursmenttypeid(string id)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmenttype where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_reimbursmenttypecodedesc(string Company_Name)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmenttype where Company_Name='" + Company_Name + "' and Block='False' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Delete_tbl_Atten_Expiryforemployee(string id)
+    {
+        Connect();
+        string sqlq = "delete from tbl_Atten_Expiryforemployee where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_tbl_reimbursmenttypewithtype(string Company_Name, string Type)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmenttype where Company_Name='" + Company_Name + "' and Reimbursment_Type='" + Type + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_AttendanceDataRejected(string Company_Name, string Userid, string profilechangedaterejected)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + Userid + "' and CompanyName='" + Company_Name + "' and CONVERT(date, Atte_Date,103) ='" + profilechangedaterejected + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Approved_AttendanceData(string Company_Name, string Userid, string profilechangedate)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + Userid + "' and CompanyName='" + Company_Name + "' and CONVERT(date, Atte_Date,103) ='" + profilechangedate + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Approved_LeaveData(string Company_Name, string Userid, string profilechangedate)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + Userid + "' and id='" + profilechangedate + "' and Company_Name='" + Company_Name + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ApprovedStatusofPaydeialyAttendance(string Company, string Userid, string AutoNo)
+    {
+        Connect();
+
+        string s = "select * from tbl_Co_Leave_Details where Userid='" + Userid + "' and Company='" + Company + "' and [Based on working]='" + AutoNo + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader rejected_LeaveApprovaldata1(string Company_Name, string Userid, string profilechangedate)
+    {
+        Connect();
+
+        string s = "select * from tble_Leave_Approval where UserID='" + Userid + "' and id='" + profilechangedate + "' and Company_Name='" + Company_Name + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Approvalfor_ProfileData(string Company_Name, string Userid, string profilechangedate, string id)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + Userid + "' and CompanyName='" + Company_Name + "' and ProfileUpdateDate ='" + profilechangedate + "' and id='" + id + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Rejectedfor_ProfileData1(string Company_Name, string Userid, string profilechangedate, string id)
+    {
+        Connect();
+
+        string s = "select * from tble_ProfileApprovalStatus where UserID='" + Userid + "' and CompanyName='" + Company_Name + "' and ProfileUpdateDate ='" + profilechangedate + "' and id='" + id + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader ShowTimeOf_Attendance(string Company_Name, string Userid, string Atte_Date)
+    {
+        Connect();
+
+        string s = "select * from tbl_attendence where Userid='" + Userid + "' and CompanyName='" + Company_Name + "' and [Rejected Approval]='No' and ApprovalStatus!='Rejected' and Status='Present' and CONVERT(date, [Atte_Date],103) ='" + Atte_Date + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_Reimbursmenttypewithfilldata(string CompanyName, string Expense_Type)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursment where  CompanyName='" + CompanyName + "'  and Expense_Code='" + Expense_Type + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_Reimbursmenttypewithfilldataindv(string CompanyName, string Applicable_UserID)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where CompanyName='" + CompanyName + "' and Applicable_UserID='" + Applicable_UserID + "' and Block='False'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_Reimburs_creditlimitINDV(string CompanyName, string Expense_Type, string Applicable_UserID)
+    {
+        Connect();
+
+        string s = "select * from tbl_reimbursmentsetupIndvidualuser where CompanyName='" + CompanyName + "' and Expense_Type='" + Expense_Type + "' and Applicable_UserID='" + Applicable_UserID + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Insert_tble_Reimbursmentsetup(string Type, string Description, string Self_Approval, string Self_Limit, string RM1_Approval, string RM1_Limit, string RM2_Approval, string RM2_Limit, string Applicable_For, string Department, string Individual_Userid, string Limit, string Percentage_Of_Basic_Pay, string Percentage, string Fixed_Amount, string Amount, string Company_Name, string Display_limit, string Display_Balance)
+    {
+        Connect();
+        string sqlq = "insert into tble_Reimbursment_Approval_setup (Type,Description,Self_Approval,Self_Limit,RM1_Approval,RM1_Limit,RM2_Approval,RM2_Limit,Applicable_For,Department,Individual_Userid,Limit,Percentage_Of_Basic_Pay,Percentage,Fixed_Amount,Amount,Company_Name,Display_limit,Display_Balance) values('" + Type + "','" + Description + "','" + Self_Approval + "','" + Self_Limit + "','" + RM1_Approval + "','" + RM1_Limit + "','" + RM2_Approval + "','" + RM2_Limit + "','" + Applicable_For + "','" + Department + "','" + Individual_Userid + "','" + Limit + "','" + Percentage_Of_Basic_Pay + "','" + Percentage + "','" + Fixed_Amount + "','" + Amount + "','" + Company_Name + "','" + Display_limit + "','" + Display_Balance + "') ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_tble_ReimbursmentsetupNew(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' order by Type ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_Reim_Approval_Setupsearch(string CompanyName, string Type)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where (UPPER([Type]) LIKE UPPER('%" + Type + "%')) and  Company_Name='" + CompanyName + "' order by Type ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_ReimbursmentsetupRepeatation(string CompanyName, string Applicable_For, string types)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' and Applicable_For='" + Applicable_For + "' and Type='" + types + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tble_ReimbursmentsetupRepeatationType(string CompanyName, string types)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' and Type='" + types + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Show_tble_ReimbursmentsetupforUpdateID(string id)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_ReimbursmentsetupRepeatationDepart(string CompanyName, string Applicable_For, string Department, string types)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' and Applicable_For='" + Applicable_For + "' and Department='" + Department + "' and Type='" + types + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tble_ReimbursmentsetupRepeatationINDV(string CompanyName, string Applicable_For, string Individual_Userid, string Type)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' and Applicable_For='" + Applicable_For + "' and Individual_Userid='" + Individual_Userid + "' and Type='" + Type + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowRem_Approval_type(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_Reimbursment_Approval_setup where  Company_Name='" + CompanyName + "' order by Type ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader ShowRem_ReimTypeserach(string CompanyName, string Reim_Type)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where (UPPER([Reim_Type]) LIKE UPPER('%" + Reim_Type + "%')) and  Company_Name='" + CompanyName + "' order by Reim_Type";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowRem_Mastertble_ReimBursementtype_Master(string CompanyName)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where  Company_Name='" + CompanyName + "' order by Reim_Type";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Update_tble_Reimbursmentsetup(string Description, string Self_Approval, string Self_Limit, string RM1_Approval, string RM1_Limit, string RM2_Approval, string RM2_Limit, string Limit, string Percentage_Of_Basic_Pay, string Percentage, string Fixed_Amount, string Amount, string id, string Applicable_For, string Department, string Individual_Userid, string Display_limit, string Display_Balance)
+    {
+        Connect();
+        string sqlq = "update tble_Reimbursment_Approval_setup set Description ='" + Description + "' ,Self_Approval ='" + Self_Approval + "',Self_Limit='" + Self_Limit + "',RM1_Approval='" + RM1_Approval + "',RM1_Limit='" + RM1_Limit + "' , RM2_Approval='" + RM2_Approval + "' ,RM2_Limit ='" + RM2_Limit + "' , Limit ='" + Limit + "',Percentage_Of_Basic_Pay='" + Percentage_Of_Basic_Pay + "' ,Percentage ='" + Percentage + "' ,Fixed_Amount='" + Fixed_Amount + "' , Amount ='" + Amount + "',Applicable_For='" + Applicable_For + "',Department='" + Department + "',Individual_Userid='" + Individual_Userid + "',Display_limit='" + Display_limit + "',Display_Balance='" + Display_Balance + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public SqlDataReader ShowRem_Mastertble_ReimBursementtype_MasterRepetion(string CompanyName, string Reim_Type, string Approval_type)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where  Company_Name='" + CompanyName + "' and Reim_Type='" + Reim_Type + "' and Approval_type='" + Approval_type + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void insert_tble_ReimBursementtype_Master(string Reim_Type, string Reim_Description, string Approval_type, string Active, string Effective_date, string Company_Name, string Applicable_for, string Department, string Indvidual_userid, string Approval_typeid, string GL_Account_DR_Name, string Gl_Account_Dr_Id, string Gl_Account_CR_Name, string Gl_Account_CR_ID)
+    {
+        Connect();
+        string sqlq = "insert into tble_ReimBursementtype_Master (Reim_Type,Reim_Description,Approval_type,Active,Effective_date,Company_Name,Applicable_for,Department,Indvidual_userid,Approval_typeid,GL_Account_DR_Name,Gl_Account_Dr_Id,Gl_Account_CR_Name,Gl_Account_CR_ID) values('" + Reim_Type + "','" + Reim_Description + "','" + Approval_type + "' ,'" + Active + "','" + Effective_date + "','" + Company_Name + "','" + Applicable_for + "','" + Department + "','" + Indvidual_userid + "','" + Approval_typeid + "','" + GL_Account_DR_Name + "','" + Gl_Account_Dr_Id + "','" + Gl_Account_CR_Name + "','" + Gl_Account_CR_ID + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader ShowRem_Mastertble_ReimBursementtype_MasterID(string id)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where id='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowRem_Type_master_AllData(string Applicable_for, string Company_Name)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where Applicable_for='" + Applicable_for + "' and Company_Name='" + Company_Name + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowRem_Type_master_Department(string Applicable_for, string Department, string Indvidual_userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where Applicable_for='" + Applicable_for + "' and Department='" + Department + "' and Indvidual_userid!='" + Indvidual_userid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowRem_Type_master_Department1(string Applicable_for, string Company_Name)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where Applicable_for='" + Applicable_for + "' and Company_Name='" + Company_Name + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowRem_Type_master_Departmentwithindvnotremtype(string Applicable_for, string reim_type)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where Applicable_for='" + Applicable_for + "' and Reim_Type !='" + reim_type + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowRem_Type_master_All(string Applicable_for, string Indvidual_userid)
+    {
+        Connect();
+
+        string s = "select * from tble_ReimBursementtype_Master where Applicable_for='" + Applicable_for + "' and Indvidual_userid!='" + Indvidual_userid + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Update_tble_ReimBursementtype_Master(string Reim_Description, string Approval_type, string Active, string Effective_date, string id, string GL_Account_DR_Name, string Gl_Account_Dr_Id, string Gl_Account_CR_Name, string Gl_Account_CR_ID)
+    {
+        Connect();
+        string sqlq = "update tble_ReimBursementtype_Master set Reim_Description='" + Reim_Description + "' , Approval_type='" + Approval_type + "' ,Active ='" + Active + "' ,Effective_date ='" + Effective_date + "',GL_Account_DR_Name='" + GL_Account_DR_Name + "',Gl_Account_Dr_Id='" + Gl_Account_Dr_Id + "',Gl_Account_CR_Name='" + Gl_Account_CR_Name + "' ,Gl_Account_CR_ID ='" + Gl_Account_CR_ID + "' where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader SHow_ClaimTypeOFUser(string Company_Name, string Userid, string Approval_Status)
+    {
+        Connect();
+        string s = "select * from tble_claim_Apply where Company_Name='" + Company_Name + "' and Userid = '" + Userid + "' and Approval_Status='" + Approval_Status + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader SHow_ClaimType(string Company_Name)
+    {
+        Connect();
+        string s = "select * from tble_ReimBursementtype_Master where  Company_Name='" + Company_Name + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Claim_Apply_tble_claim_Apply(string Name, string Userid, string U_EmailID, string Claim_type, string Claim_Date, string Claim_Amount, string Remarks, string Self_Approval, string RM1, string RM2, string RM1_Email, string RM2_Email, string Approval_Status, string Claim_created_Date, string RM1_Name, string RM2_Name, string Company_Name, string Claim_id, string AmountExceed, string ExceedAmount, string Approval_type, string Bill_Attach, string Balance_Amount, string No_of_Attachment, string Document_No, int Attached, int HardCopies, string DocumentNoAlphaChar, int Noof_Month, string RM2_Approval_Required, decimal RM1ApprovalAmount, decimal RM2ApprovalAmount, decimal SelfApprovalAmount, decimal Approval_Amount, string Approval_Date, string First_ApprovalUserid)
+    {
+        Connect();
+        string sqlq = "insert into tble_claim_Apply (Name,Userid,U_EmailID,Claim_type,Claim_Date,Claim_Amount,Remarks,Self_Approval,RM1,RM2, RM1_Email,RM2_Email, Approval_Status,Claim_created_Date, RM1_Name,RM2_Name,Company_Name,Claim_id,AmountExceed,ExceedAmount,Approval_type,Bill_Attach,Balance_Amount,No_of_Attachment,Document_No,Attached,HardCopies,DocumentNoAlphaChar,Noof_Month,RM2_Approval_Required,RM1ApprovalAmount,RM2ApprovalAmount,SelfApprovalAmount,Approval_Amount,Approval_Date,First_ApprovalUserid) values('" + Name + "','" + Userid + "','" + U_EmailID + "','" + Claim_type + "','" + Claim_Date + "','" + Claim_Amount + "','" + Remarks + "','" + Self_Approval + "','" + RM1 + "','" + RM2 + "','" + RM1_Email + "','" + RM2_Email + "','" + Approval_Status + "','" + Claim_created_Date + "','" + RM1_Name + "','" + RM2_Name + "','" + Company_Name + "','" + Claim_id + "','" + AmountExceed + "','" + ExceedAmount + "','" + Approval_type + "','" + Bill_Attach + "','" + Balance_Amount + "','" + No_of_Attachment + "','" + Document_No + "'," + Attached + "," + HardCopies + ",'" + DocumentNoAlphaChar + "'," + Noof_Month + ",'" + RM2_Approval_Required + "','" + RM1ApprovalAmount + "','" + RM2ApprovalAmount + "','" + SelfApprovalAmount + "','" + Approval_Amount + "','" + Approval_Date + "','" + First_ApprovalUserid + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void delete_Claim_Apply(string id)
+    {
+        Connect();
+        string sqlq = "delete from tble_claim_Apply where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tbl_Co_Leave_DetailsStatus(string Status, string AutoNo, string CompanyName)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Details set Status='" + Status + "' where [Based on working]='" + AutoNo + "' and Company='" + CompanyName + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void insert_tble_temp_Rem_type(string Userid, string Company_Name, string Rem_Type, string Approval_type, string Applicable_For, string Approval_typeid)
+    {
+        Connect();
+        string sqlq = "insert into tble_temp_Rem_type (Userid,Company_Name,Rem_Type,Approval_type,Applicable_For,Approval_typeid)  values('" + Userid + "','" + Company_Name + "','" + Rem_Type + "','" + Approval_type + "','" + Applicable_For + "','" + Approval_typeid + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void update_Claim_Apply(string Self_Approval, string RM1, string RM2, string RM1_Email, string RM2_Email, string Approval_Status, string RM1_Name, string RM2_Name, string id, string RM2_Approval_Required, decimal RM1ApprovalAmount, decimal RM2ApprovalAmount, decimal SelfApprovalAmount, decimal Approval_Amount, string Approval_Date, string First_ApprovalUserid)
+    {
+        Connect();
+        string sqlq = "update tble_claim_Apply set Self_Approval ='" + Self_Approval + "',RM1='" + RM1 + "',RM2='" + RM2 + "',RM1_Email='" + RM1_Email + "',RM2_Email='" + RM2_Email + "',Approval_Status ='" + Approval_Status + "',RM1_Name='" + RM1_Name + "' ,RM2_Name='" + RM2_Name + "',RM2_Approval_Required='" + RM2_Approval_Required + "',RM1ApprovalAmount='" + RM1ApprovalAmount + "',RM2ApprovalAmount='" + RM2ApprovalAmount + "',SelfApprovalAmount='" + SelfApprovalAmount + "',Approval_Amount='" + Approval_Amount + "' ,Approval_Date='" + Approval_Date + "',First_ApprovalUserid='" + First_ApprovalUserid + "' where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+
+    public void update_Attachement(string Documentid, string CompanyName, string Approval_Status, string userid)
+    {
+        Connect();
+        string sqlq = "update tble_Attachment set Approval_Status ='" + Approval_Status + "' where Documentid='" + Documentid + "' and CompanyName='" + CompanyName + "' and userid='" + userid + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader SHow_ClaimDetailid(string id)
+    {
+        Connect();
+        string s = "select * from tble_claim_Apply where  id='" + id + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_Tyepfor_App_cable(string A_Type)
+    {
+        Connect();
+        string s = "select * from tble_Reimbursment_Approval_setup where  Type='" + A_Type + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void delete_Claim_ApplyAll(string Userid, string Company_Name, string Approval_Status)
+    {
+        Connect();
+        string sqlq = "delete from tble_claim_Apply where Userid='" + Userid + "' and Company_Name ='" + Company_Name + "'  and Approval_Status ='" + Approval_Status + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_Claim_ApplyAll(string Claim_type, string Claim_Date, string Claim_Amount, string Remarks, string billDetails, string id, string Claim_id, string AmountExceed, string ExceedAmount, string Approval_type, string Bill_Attach, string Balance_Amount, int No_of_Attachment, int Attached, int HardCopies, int Noof_Month)
+    {
+        Connect();
+        string sqlq = "update tble_claim_Apply set Claim_type='" + Claim_type + "' ,Claim_Date='" + Claim_Date + "', Claim_Amount ='" + Claim_Amount + "' ,Remarks='" + Remarks + "',Bill_Details='" + billDetails + "',Claim_id='" + Claim_id + "',AmountExceed='" + AmountExceed + "',ExceedAmount='" + ExceedAmount + "',Approval_type='" + Approval_type + "' ,Bill_Attach='" + Bill_Attach + "',Balance_Amount='" + Balance_Amount + "',No_of_Attachment=" + No_of_Attachment + " ,Attached ='" + Attached + "',HardCopies='" + HardCopies + "',Noof_Month=" + Noof_Month + " where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader SHow_Typeof_Reimbursment_forApproval(string RType, string Applicable_For, string Company_Name)
+    {
+        Connect();
+        string s = "select * from tble_Reimbursment_Approval_setup where  Type='" + RType + "' and Applicable_For='" + Applicable_For + "'  and Company_Name='" + Company_Name + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_final_rem_type(string RType, string Applicable_for, string Company_Name)
+    {
+        Connect();
+        string s = "select * from tble_ReimBursementtype_Master where  Reim_Type='" + RType + "' and Applicable_for='" + Applicable_for + "'  and Company_Name='" + Company_Name + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_rem_typeRep(string RType, string Userid, string Company_Name)
+    {
+        Connect();
+        string s = "select * from tble_temp_Rem_type where  Rem_Type='" + RType + "' and Userid='" + Userid + "' and Company_Name='" + Company_Name + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_rem_typeFinal(string Userid, string Company_Name)
+    {
+        Connect();
+        string s = "select * from tble_temp_Rem_type where  Userid='" + Userid + "' and Company_Name='" + Company_Name + "' order by Rem_Type";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader SHow_Reim_Approvalid(string id)
+    {
+        Connect();
+        string s = "select * from tble_temp_Rem_type where  id='" + id + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_Reim_Approvalidwithlimit(string Type)
+    {
+        Connect();
+        string s = "select * from tble_Reimbursment_Approval_setup where  Type='" + Type + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Update_tble_Claim_CSV_Data_Temp(string Company_name, string Userid)
+    {
+        Connect();
+        string sqlq = "update tble_Claim_CSV_Data_Temp set Company_name='" + Company_name + "' ,Userid='" + Userid + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader SHow_Reim_FromCSV(string Userid, string Company_Name, string Rem_Type)
+    {
+        Connect();
+        string s = "select * from tble_temp_Rem_type where  Userid='" + Userid + "' and Company_Name ='" + Company_Name + "' and Rem_Type='" + Rem_Type + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void insert_tble_Claim_CSV_Data(string Claim_type, string Claim_Date, string Claim_Amount, string Bill_Detail, string Remarks, string Company_name, string Userid, string Error_Remarks, string Approval_type, string Applicable_For, string Applicable, string AmountExceed, string ExceedAmount, string Balance_Amount, string No_Of_Bills, string Attached, string HardCopies, int Noof_Month)
+    {
+        Connect();
+        string sqlq = "insert into tble_Claim_CSV_Data (Claim_type,Claim_Date,Claim_Amount,Bill_Detail,Remarks,Company_name,Userid,Error_Remarks,Approval_type,Applicable_For,Applicable,AmountExceed,ExceedAmount,Balance_Amount,No_Of_Bills,Attached,HardCopies,Noof_Month) values('" + Claim_type + "','" + Claim_Date + "','" + Claim_Amount + "','" + Bill_Detail + "','" + Remarks + "','" + Company_name + "','" + Userid + "','" + Error_Remarks + "','" + Approval_type + "','" + Applicable_For + "','" + Applicable + "','" + AmountExceed + "','" + ExceedAmount + "','" + Balance_Amount + "','" + No_Of_Bills + "','" + Attached + "','" + HardCopies + "'," + Noof_Month + ")";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void delete_tble_Claim_CSV_Data_Temp(string Company_Name, string Userid)
+    {
+        Connect();
+        string sqlq = "delete from tble_Claim_CSV_Data_Temp where Company_name='" + Company_Name + "' and Userid ='" + Userid + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void delete_tble_Claim_CSV_Data_withid(string id)
+    {
+        Connect();
+        string sqlq = "delete from tble_Claim_CSV_Data where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void delete_tble_Claim_CSV_Data_notsend_Approve(string Company_Name, string Userid)
+    {
+        Connect();
+        string sqlq = "delete from tble_Claim_CSV_Data where Company_name='" + Company_Name + "' and Userid ='" + Userid + "' and SendforApproval='No'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public void Update_tble_Claim_CSV_Data_notsend_Approvewithidgrd(string Claim_Amount, string Bill_Detail, string id, string Error_Remarks, string AmountExceed, string ExceedAmount, string Balance_Amount, DateTime Claim_Date, string Remarks, string No_Of_Bills, string Attached, string HardCopies, int Noof_Month)
+    {
+        Connect();
+        string sqlq = "update tble_Claim_CSV_Data set Claim_Amount='" + Claim_Amount + "' , Bill_Detail='" + Bill_Detail + "',Error_Remarks='" + Error_Remarks + "',AmountExceed='" + AmountExceed + "' ,ExceedAmount='" + ExceedAmount + "',Balance_Amount='" + Balance_Amount + "',Claim_Date='" + Claim_Date + "',Remarks='" + Remarks + "' ,No_Of_Bills = '" + No_Of_Bills + "' ,Attached ='" + Attached + "',HardCopies='" + HardCopies + "',Noof_Month=" + Noof_Month + " where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_tble_ReimBursementtype_MasteraccordingtoApproval(string Applicable_for, string Department, string Indvidual_userid, string Approval_type, string Company_Name)
+    {
+        Connect();
+        string sqlq = "update tble_ReimBursementtype_Master set Applicable_for='" + Applicable_for + "',Department='" + Department + "',Indvidual_userid='" + Indvidual_userid + "' where Approval_type ='" + Approval_type + "' and Company_Name='" + Company_Name + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void delete_tble_Claim_CSV_Data_notsend_Approvewithid(string id)
+    {
+        Connect();
+        string sqlq = "delete from tble_Claim_CSV_Data where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_tble_Attachment(string File_Attachment_Name, string ContentType, string Data, string Documentid, string Size)
+    {
+        Connect();
+        string sqlq = "insert into tble_Attachment (File_Attachment_Name,ContentType,Data,Documentid,Size) values('" + File_Attachment_Name + "','" + ContentType + "','" + Data + "','" + Documentid + "','" + Size + "') ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    public SqlDataReader SHow_CSVdataforsendApproval(string Company_Name, string Userid)
+    {
+        Connect();
+        string s = "select * from tble_Claim_CSV_Data where Company_name='" + Company_Name + "' and Userid = '" + Userid + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Sum_Claim_Amount_tble_claim_Apply(string Company_Name, string Userid, string Claim_type)
+    {
+        Connect();
+        string s = "select sum(Claim_Amount) as Claim_Amount  from tble_claim_Apply where Company_Name='" + Company_Name + "' and Userid = '" + Userid + "' and Claim_type='" + Claim_type + "' and Rejected='No'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader SHow_LimitToApprovalType(string Company_Name, string Type)
+    {
+        Connect();
+        string s = "select * from tble_Reimbursment_Approval_setup where Company_name='" + Company_Name + "' and Type='" + Type + "' ";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_Attachement(string Documentid, string CompanyName, string userid)
+    {
+        Connect();
+        string s = "select * from  tble_Attachment where Documentid='" + Documentid + "' and CompanyName='" + CompanyName + "' and userid='" + userid + "' ";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void delete_tble_Attachment(string id)
+    {
+        Connect();
+        string sqlq = "delete from tble_Attachment where id='" + id + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void delete_All_Attachment(string CompanyName, string userid, string Approval_Status)
+    {
+        Connect();
+        string sqlq = "delete from tble_Attachment where CompanyName='" + CompanyName + "' and userid='" + userid + "' and Approval_Status='" + Approval_Status + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader SHow_AttachedData(string Company_Name, string Userid, string Document_No)
+    {
+        Connect();
+        string s = "select sum(Attached) as Attached from tble_claim_Apply where Company_Name='" + Company_Name + "' and Userid='" + Userid + "' and Document_No ='" + Document_No + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader SHow_AttachedDataCSV(string Company_name, string Userid)
+    {
+        Connect();
+        string s = "select sum(CAST(Attached AS INT)) as Attached from tble_Claim_CSV_Data where Company_name='" + Company_name + "' and Userid='" + Userid + "'";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void updateset_exp(string exDate)
+    {
+        Connect();
+
+        // cmd = new SqlCommand("insert into tblexp(exDate) values('" + exDate + "')", Conn);
+        cmd = new SqlCommand("update tblexp set exDate='" + exDate + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void insersetex_exp(string exDate)
+    {
+        Connect();
+
+        cmd = new SqlCommand("insert into tblexp(exDate) values('" + exDate + "')", Conn);
+
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Showexp()
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tblexp", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void insert_tble_AdvanceClaim(string Name, string Userid, string Claintype, DateTime ClaimDate, DateTime AutoClaimDate, int NoofMonth, decimal ClaimAmount, string ClaimRemarks, string CompanyName)
+    {
+        Connect();
+        string sqlq = "insert into tble_AdvanceClaim (Name,Userid,Claimtype,ClaimDate,AutoClaimDate,NoofMonth,ClaimAmount,ClaimRemarks,CompanyName) values('" + Name + "','" + Userid + "', '" + Claintype + "','" + ClaimDate + "','" + AutoClaimDate + "'," + NoofMonth + ",'" + ClaimAmount + "','" + ClaimRemarks + "','" + CompanyName + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_tble_AdvanceClaim(string Userid, string CompanyName)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tble_AdvanceClaim where Userid='" + Userid + "' and SendforApproval='No' and CompanyName='" + CompanyName + "' ", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void delete_tble_AdvanceClaim(string id)
+    {
+        Connect();
+
+        cmd = new SqlCommand("delete from tble_AdvanceClaim where id='" + id + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void delete_tble_AdvanceClaimNotsendApproval(string Userid, string CompanyName)
+    {
+        Connect();
+
+        cmd = new SqlCommand("delete from tble_AdvanceClaim where Userid='" + Userid + "' and SendforApproval='No' and CompanyName='" + CompanyName + "' ", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public SqlDataReader ShowClaimApprovalForRM1withUserid(string Userid, string CompanyName, string RM1userid)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tble_claim_Apply where Userid='" + Userid + "' and Company_Name='" + CompanyName + "' and RM1='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "' or  Userid='" + Userid + "' and Company_Name='" + CompanyName + "' and RM2='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowClaimApprovalForRM1withName(string Name, string CompanyName, string RM1userid)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tble_claim_Apply where (UPPER([Name]) LIKE UPPER('%" + Name + "%')) and Company_Name='" + CompanyName + "' and RM1='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "' or (UPPER([Name]) LIKE UPPER('%" + Name + "%')) and Company_Name='" + CompanyName + "' and RM2='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "' ", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowClaimApprovalForRM1withDate(string CompanyName, string RM1userid, DateTime FromDate, DateTime Todate)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tble_claim_Apply where CONVERT(date, Claim_Date,103) >='" + FromDate + "' and CONVERT(date, Claim_Date,103) <='" + Todate + "'  and Company_Name='" + CompanyName + "' and RM1='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' or CONVERT(date, Claim_Date,103) >='" + FromDate + "' and CONVERT(date, Claim_Date,103) <='" + Todate + "'  and Company_Name='" + CompanyName + "' and RM2='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader ShowClaimApprovalForRM1withAll(string CompanyName, string RM1userid)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tble_claim_Apply where Company_Name='" + CompanyName + "' and RM1='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "'  or Company_Name='" + CompanyName + "' and RM2='" + RM1userid + "' and Approval_Status!='Approved' and Rejected='No' and First_ApprovalUserid='" + RM1userid + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void updateclaimdatawithRejectedRemarks(string Approval_Remarks, string id, DateTime Approval_Date)
+    {
+        Connect();
+
+        cmd = new SqlCommand("update  tble_claim_Apply set Approval_Status='Rejected' ,Approval_Remarks ='" + Approval_Remarks + "' ,Approval_Date='" + Approval_Date + "' ,Rejected='Yes' where id='" + id + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void ClaimApprovebyRM1(string id, DateTime Approval_Date, decimal ApprovalAmt)
+    {
+        Connect();
+        cmd = new SqlCommand("update tble_claim_Apply set Approval_Status='Approved',Approval_Date='" + Approval_Date + "' ,Rejected='No' , Approval_Amount='" + ApprovalAmt + "'  where id='" + id + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void ClaimApprovebForRM2(string id, DateTime Approval_Date, string RM2, string RM2_Email, string RM2_Name, string Approval_Remarks, string RM1Approved, string First_ApprovalUserid)
+    {
+        Connect();
+        cmd = new SqlCommand("update tble_claim_Apply set Approval_Date='" + Approval_Date + "' ,Rejected='No' , RM2='" + RM2 + "' ,RM2_Email='" + RM2_Email + "',RM2_Name='" + RM2_Name + "',Approval_Remarks='" + Approval_Remarks + "',RM1Approved='" + RM1Approved + "',First_ApprovalUserid='" + First_ApprovalUserid + "'  where id='" + id + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_intotbl_Requisition_user_Request(string Item_To_Purchase, string Reason_For_Purchase, decimal Approxe_Cost, DateTime Request_Date, string Vendor, string Remarks, string StoreId, string Store, DateTime Current_Date_Time, string Request_Created_UserId, string Request_Created_UserName, string Request_Created_UserEmailid, string HOD_Userid, string HOD_Name, string HOD_EmailID, string Company_Name, string Requisition_Type, string Vendor_Mobile_No, string Vendor_Address, decimal Quantity, string Requisition_Type_id, string Vendor_Contact_Person, string Department_Description, string DepartmentCode, string Campus)
+    {
+        Connect();
+
+        cmd = new SqlCommand("insert into tbl_Requisition_user_Request (Item_To_Purchase,Reason_For_Purchase,Approxe_Cost,Request_Date,Vendor,Remarks,StoreId,Store,Current_Date_Time,Request_Created_UserId,Request_Created_UserName,Request_Created_UserEmailid,HOD_Userid, HOD_Name, HOD_EmailID, Company_Name, Requisition_Type,Vendor_Mobile_No,Vendor_Address,Quantity,Requisition_Type_id,Vendor_Contact_Person,[Department Description],[Department Code],Campus) values('" + Item_To_Purchase + "','" + Reason_For_Purchase + "','" + Approxe_Cost + "','" + Request_Date + "','" + Vendor + "', '" + Remarks + "','" + StoreId + "','" + Store + "','" + Current_Date_Time + "','" + Request_Created_UserId + "','" + Request_Created_UserName + "','" + Request_Created_UserEmailid + "','" + HOD_Userid + "','" + HOD_Name + "','" + HOD_EmailID + "','" + Company_Name + "','" + Requisition_Type + "','" + Vendor_Mobile_No + "','" + Vendor_Address + "','" + Quantity + "','" + Requisition_Type_id + "','" + Vendor_Contact_Person + "','" + Department_Description + "','" + DepartmentCode + "','" + Campus + "') ", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public SqlDataReader Show_table_Requisition(string Company_Name, string Request_Created_UserId, DateTime fRequest_Date, DateTime TRequest_Date)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where CONVERT(date, Request_Date,103) >='" + fRequest_Date + "' and CONVERT(date, Request_Date,103) <='" + TRequest_Date + "'  and Company_Name='" + Company_Name + "' and Request_Created_UserId='" + Request_Created_UserId + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_table_RequisitionwithStatus(string Company_Name, string Request_Created_UserId, DateTime fRequest_Date, DateTime TRequest_Date, string Approval_Status)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where CONVERT(date, Request_Date,103) >='" + fRequest_Date + "' and CONVERT(date, Request_Date,103) <='" + TRequest_Date + "'  and Company_Name='" + Company_Name + "' and Request_Created_UserId='" + Request_Created_UserId + "' and Approval_Status='" + Approval_Status + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_table_RequisitionwithPending(string Company_Name, string HOD_Userid, DateTime fRequest_Date, DateTime TRequest_Date, string Approval_Status)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where CONVERT(date, Request_Date,103) >='" + fRequest_Date + "' and CONVERT(date, Request_Date,103) <='" + TRequest_Date + "'  and Company_Name='" + Company_Name + "' and HOD_Userid='" + HOD_Userid + "' and Approval_Status='" + Approval_Status + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_table_RequisitionwithPendingAll(string Company_Name, string HOD_Userid, string Approval_Status)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where Company_Name='" + Company_Name + "' and HOD_Userid='" + HOD_Userid + "' and Approval_Status='" + Approval_Status + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_table_RequisitionwithPendingCount(string Company_Name, string HOD_Userid, string Approval_Status)
+    {
+        Connect();
+        cmd = new SqlCommand("select  COUNT(Approval_Status)  as Approval_Status from tbl_Requisition_user_Request where Company_Name='" + Company_Name + "' and  HOD_Userid='" + HOD_Userid + "' and Approval_Status='" + Approval_Status + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader show_Tble_Requition_View(string id)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where id='" + id + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void tble_Requition_ApprovalStatus(string Approval_Status, string Approval_Remarks, DateTime Approval_Date, string id)
+    {
+        Connect();
+
+        cmd = new SqlCommand("update tbl_Requisition_user_Request set Approval_Status='" + Approval_Status + "',Approval_Remarks ='" + Approval_Remarks + "' ,Approval_Date ='" + Approval_Date + "' where id='" + id + "'", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_tble_Requition_Approval_statusofHOD(string Company_Name, string HOD_Userid, DateTime fRequest_Date, DateTime TRequest_Date, string Approval_Status)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where CONVERT(date, Request_Date,103) >='" + fRequest_Date + "' and CONVERT(date, Request_Date,103) <='" + TRequest_Date + "'  and Company_Name='" + Company_Name + "' and HOD_Userid='" + HOD_Userid + "' and Approval_Status='" + Approval_Status + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void Update_intotbl_Requisition_user_Request(string Item_To_Purchase, string Reason_For_Purchase, decimal Approxe_Cost, DateTime Request_Date, string Vendor, string Remarks, string StoreId, string Store, DateTime Current_Date_Time, string Requisition_Type, string Vendor_Mobile_No, string Vendor_Address, decimal Quantity, string Requisition_Type_id, string Vendor_Contact_Person, string DepartmentDescription, string DepartmentCode, string Campus, string id)
+    {
+        Connect();
+
+        cmd = new SqlCommand(" update tbl_Requisition_user_Request set Item_To_Purchase ='" + Item_To_Purchase + "' ,Reason_For_Purchase ='" + Reason_For_Purchase + "',Approxe_Cost='" + Approxe_Cost + "',Request_Date='" + Request_Date + "',Vendor='" + Vendor + "',Remarks='" + Remarks + "',StoreId='" + StoreId + "',Store='" + Store + "',Current_Date_Time='" + Current_Date_Time + "', Requisition_Type='" + Requisition_Type + "',Vendor_Mobile_No='" + Vendor_Mobile_No + "',Vendor_Address='" + Vendor_Address + "',Quantity='" + Quantity + "',Requisition_Type_id='" + Requisition_Type_id + "',Vendor_Contact_Person='" + Vendor_Contact_Person + "', [Department Description]='" + DepartmentDescription + "',[Department Code]='" + DepartmentCode + "',Campus='" + Campus + "',Approval_Status='Pending' ,Approval_Remarks='' where id='" + id + "' ", Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader ShowRequitionforResend(string id)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Requisition_user_Request where id='" + id + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    //----------------------------------Ashutosh----------------Leave SL-----------Attachment------------
+    //----------------------------------Add column------Arrangement--------
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, byte[] LeaveAttachment, string AttachmentName, string AttachmentType, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch)
+    {
+        Connect();
+        string sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','" + Status + "','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    //---------------------Overload Mehtod by adding field   string Hospital
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, byte[] LeaveAttachment, string AttachmentName, string AttachmentType, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch, string Staff)
+    {
+        Connect();
+
+
+        string sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,ApplyBy,HOD_Remarks_Date,CountStatusHOD,ApprovedBy,Approvalbyid) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','Approved','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "','" + Staff + "','" + Create_Date + "','Approved','" + HODName + "','" + HODUserid + "')";
+
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+
+    }
+
+
+    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, byte[] LeaveAttachment, string AttachmentName, string AttachmentType, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch)
+    {
+        Connect();
+        string sqlq = "";
+        if (HODUserid == "TMU03651" && (Leave_Type == "CL" || Leave_Type == "ML"))
+        {
+            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','Approved','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, '" + HODUserid + "')";
+        }
+        else
+        {
+            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','" + Status + "','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, ( select  case when (select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff] else [SA for Non-Teach Staff] end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='" + Leave_Type + "'  ))";
+
+        }
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_AttachmentNo(string AutoNo)
+    {
+        Connect();
+        string s = "select Attachment,AttachmentName,AttachmentType from tble_Leave_Approval  where AutoNo='" + AutoNo + "' and AttachmentName<>'' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public string ReturnExtension(string fileExtension)
+    {
+        return "";
+        // Dim FileExtensionNew = StrConv(Replace(Trim(fileExtension), "'", "''"), VbStrConv.Lowercase)
+
+        //fileExtension FileExtensionNew = StrConv(Replace(Trim(fileExtension), "'", "''"), VbStrConv.Lowercase)
+        // Case (FileExtensionNew)
+        //    Case ".htm"
+        //        Return "text/HTML"
+        //    Case ".html"
+        //        Return "text/HTML"
+        //    Case ".log"
+        //        Return "text/HTML"
+        //    Case ".txt"
+        //        Return "text/plain"
+        //    Case ".doc"
+        //        Return "application/msword"
+        //    Case ".docx"
+        //        Return "application/msword"
+        //    Case ".tiff"
+        //        Return "image/tiff"
+        //    Case ".tif"
+        //        Return "image/tiff"
+        //    Case ".asf"
+        //        Return "video/x-ms-asf"
+        //    Case ".avi"
+        //        Return "video/avi"
+        //    Case ".zip"
+        //        Return "application/zip"
+        //    Case ".xls"
+        //        Return "application/vnd.ms-excel"
+        //    Case ".xlsx"
+        //        Return "application/vnd.ms-excel"
+        //    Case ".csv"
+        //        Return "application/vnd.ms-excel"
+        //    Case ".gif"
+        //        Return "image/gif"
+        //    Case ".jpg"
+        //        Return "image/jpeg"
+        //    Case ".jpeg"
+        //        Return "image/jpeg"
+        //    Case ".bmp"
+        //        Return "image/bmp"
+        //    Case ".wav"
+        //        Return "audio/wav"
+        //    Case ".mp3"
+        //        Return "audio/mpeg"
+        //    Case ".mp2"
+        //        Return "audio/mpeg"
+        //    Case ".mpga"
+        //        Return "audio/mpeg"
+        //    Case ".mpg"
+        //        Return "video/mpeg"
+        //    Case ".dat"
+        //        Return "video/mpeg"
+        //    Case ".mpeg"
+        //        Return "video/mpeg"
+        //    Case ".rtf"
+        //        Return "application/rtf"
+        //    Case ".asp"
+        //        Return "text/asp"
+        //    Case ".pdf"
+        //        Return "application/pdf"
+        //    Case ".fdf"
+        //        Return "application/vnd.fdf"
+        //    Case ".ppt"
+        //        Return "application/mspowerpoint"
+        //    Case ".dwg"
+        //        Return "image/vnd.dwg"
+        //    Case ".msg"
+        //        Return "application/msoutlook"
+        //    Case ".xml"
+        //        Return "application/xml"
+        //    Case ".sdxl"
+        //        Return "application/xml"
+        //    Case ".xdp"
+        //        Return "application/vnd.adobe.xdp+xml"
+        //    Case Else
+        //        Return "application/octet-stream"
+        //End Select
+
+    }
+
+    //Dhirendra 09-06-2016
+    public void Insert_EmployeePunchData(string Emp_Name, string Emp_ID, string atten_date, string Company)
+    {
+        Connect();
+        string sqlq = "insert into tble_Employee_Punch_Data([Employee Name],[Employee ID],[Attendance Date],Company) values('" + Emp_Name + "','" + Emp_ID + "','" + atten_date + "','" + Company + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void delete_EmployeePunchData(string Emp_ID)
+    {
+        Connect();
+        string sqlq = "delete from tble_Employee_Punch_Data where [Employee ID]='" + Emp_ID + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+    }
+
+
+    public SqlDataReader Show_9Punchdata(string employeeid)
+    {
+        Connect();
+        string s = "select * from tble_Employee_Punch_Data where [Employee ID]='" + employeeid + "' order by [Attendance Date]";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void update_EmployeePunchDataINTime(string Emp_ID, string Atten_date, string inTime, string outTime, string P1, string P2, string P3, string P4, string P5, string P6, string P7, string P8, string P9)
+    {
+        Connect();
+        string sqlq = "update tble_Employee_Punch_Data set [In Time]='" + inTime + "',[Out Time]='" + outTime + "',P1='" + P1 + "', P2='" + P2 + "',P3='" + P3 + "',P4='" + P4 + "',P5= '" + P5 + "',P6='" + P6 + "',P7='" + P7 + "',P8='" + P8 + "',P9='" + P9 + "'  where [Employee ID]='" + Emp_ID + "' and [Attendance Date]='" + Atten_date + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    //Dhirendra 09-07-2016
+
+    public void Insert_tbl_OD_Application(string EmployeeNo, string EmployeeName, string FromDate, string FromTime, string ToDate, string ToTime, string Destination, string Purpose, string Remarks, string CreatedDate, string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string sqlq = "insert into tbl_OD_Application([Employee No],[Employee Name],[From Date],[From Time],[To Date],[To Time],[Destination],[Purpose],Remarks,[Created Date],HOD,HOD1,Company) values('" + EmployeeNo + "','" + EmployeeName + "', '" + FromDate + "', '" + FromTime + "','" + ToDate + "','" + ToTime + "', '" + Destination + "', '" + Purpose + "', '" + Remarks + "','" + CreatedDate + "','" + HOD + "','" + HOD1 + "','" + Company + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    //Dhirendra 09-08-2016
+
+    public SqlDataReader Show_ODApplicationByEmployee(string employeeNo, string Approval_status, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ODApplicationByEmployeeDateWise(string employeeNo, string Approval_status, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        // string s = "select * from tbl_OD_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "'  and CONVERT(date, [From Date],103) >='" + FromDate + "' union select * from tbl_OD_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "'  and CONVERT(date, [To Date],103) <='" + Todate + "'";
+        //string s = "SELECT * FROM tbl_OD_Application WHERE '"+Todate+"' BETWEEN [From Date] AND [To Date] and [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' ";
+        string s = "SELECT * FROM tbl_OD_Application WHERE convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByEmployeeDateWiseAll(string employeeNo, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        // string s = "select * from tbl_OD_Application where [Employee No]='" + employeeNo + "' and CONVERT(date, [From Date],103) >='" + FromDate + "' union select * from tbl_OD_Application where [Employee No]='" + employeeNo + "' and CONVERT(date, [To Date],103) <='" + Todate + "'";
+        //string s = "SELECT * FROM tbl_OD_Application WHERE '" + Todate + "' BETWEEN [From Date] AND [To Date] and [Employee No]='" + employeeNo + "'";
+        string s = "SELECT * FROM tbl_OD_Application   WHERE (convert(date,[From Date],111)    between '" + FromDate + "' and '" + Todate + "' or convert(date,[To Date],111) between '" + FromDate + "' and '" + Todate + "') and [Employee No]='" + employeeNo + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByHOD(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByHODVC(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' OR Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee]  where [Employee Posting Group]!='NON-TEACH'	  or [Global Dimension 1 Code]='TMHS' ) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ODApplicationByHODVC1(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' OR Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee]  where [Employee Posting Group]='NON-TEACH'	  and  [Global Dimension 1 Code]!='TMHS' ) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ODApplicationByHODWithEMPIDVC(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [Approval By]='" + HOD + "' and Company='" + Company + "' and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+
+    public SqlDataReader Show_ODApplicationByHODWithEMPID(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByHODWithEMPNAmeVC(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%'))  and Company='" + Company + "'  or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')  and Company='" + Company + "') or [Approval By]='" + HOD + "' and Company='" + Company + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_ODApplicationByHODWithEMPNAme(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%'))  and Company='" + Company + "'  or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')  and Company='" + Company + "')";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByHODWithDatewiseVC(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where ([HOD]='" + HOD + "' or  [Approval By]='" + HOD + "')  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' and [Approval By]='" + HOD + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_ODApplicationByHODWithDatewise(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_HODODCount(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_HODODCountVC(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "' or Approval='Recommend' and Company='" + Company + "' and [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee] where [Employee Posting Group]!='NON-TEACH'	  or [Global Dimension 1 Code]='TMHS' )";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_HODODCountVC1(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_OD_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "' or Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee] where [Employee Posting Group]='NON-TEACH'	  AND [Global Dimension 1 Code]!='TMHS' )";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    // 09 09 2016 Dhirendra
+    public SqlDataReader Show_ApprovalODid(string id)
+    {
+        Connect();
+        string s = "select * from tbl_OD_Application where ID='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Update_ODStatus(string id, string ApprovalByName, string ApprovalBy, string Status)
+    {
+        Connect();
+        string sqlq = "update tbl_OD_Application set Approval='" + Status + "',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approval By Name]='" + ApprovalByName + "',[Approval By]='" + ApprovalBy + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_ODStatusReject(string id, string ApprovalByName, string ApprovalBy, string RejectedRemarks)
+    {
+        Connect();
+        string sqlq = "update tbl_OD_Application set Approval='Rejected',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approval By Name]='" + ApprovalByName + "',[Approval By]='" + ApprovalBy + "',[Rejected Remarks]='" + RejectedRemarks + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_HOD(string HOD, string HOD1, string empID, string company)
+    {
+        Connect();
+        string sqlq = "update tbl_OD_Application set HOD='" + HOD + "',HOD1='" + HOD1 + "' where [Employee No]='" + empID + "' and Company='" + company + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void Update_HODLeave(string HOD, string HOD1, string empID, string Companyname)
+    {
+        Connect();
+        string sqlq = "update tble_Leave_Approval set HODUserid='" + HOD + "',HODUserid1='" + HOD1 + "' where UserID='" + empID + "' and Company_Name='" + Companyname + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+    //For Hospital
+
+    public void insert_tbl_attendenceforCOApplication(string Userid, string Uname, string CompanyName, string Atte_Date, string fromTime, string ToTime, string Job_location, string Remarks, string Status, string Working_Duration, string CreatedDate, string ApprovalStatus, string HODName, string Co_Leave, string AttendanceType, string HOD2Name, string HOD2, string Purpose, string HODUserID, string StaffCode)
+    {
+        Connect();
+        string sqlq = "";
+
+        sqlq = "insert into tbl_Co_Leave_Application (Userid,Uname,CompanyName,Atte_Date,fromTime,ToTime,Job_location,Remarks,Status,Working_Duration,CreatedDate,ApprovalStatus,HODName,Co_Leave,[Attendance Type],[HOD2 Name],HOD2,Purpose,HODUserID,ApplyStaff) values('" + Userid + "','" + Uname + "','" + CompanyName + "','" + Atte_Date + "','" + fromTime + "','" + ToTime + "','" + Job_location + "','" + Remarks + "','" + Status + "','" + Working_Duration + "','" + CreatedDate + "','" + ApprovalStatus + "','" + HODName + "','" + Co_Leave + "','" + AttendanceType + "','" + HOD2Name + "','" + HOD2 + "','" + Purpose + "','" + HODUserID + "','" + StaffCode + "')";
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    // 12 -11 2016 Dhirendra 
+
+
+
+
+    public void insert_tbl_attendenceforCOApplication(string Userid, string Uname, string CompanyName, string Atte_Date, string fromTime, string ToTime, string Job_location, string Remarks, string Status, string Working_Duration, string CreatedDate, string ApprovalStatus, string HODName, string Co_Leave, string AttendanceType, string HOD2Name, string HOD2, string Purpose, string HODUserID)
+    {
+        Connect();
+        string sqlq = "insert into tbl_Co_Leave_Application (Userid,Uname,CompanyName,Atte_Date,fromTime,ToTime,Job_location,Remarks,Status,Working_Duration,CreatedDate,ApprovalStatus,HODName,Co_Leave,[Attendance Type],[HOD2 Name],HOD2,Purpose,HODUserID) values('" + Userid + "','" + Uname + "','" + CompanyName + "','" + Atte_Date + "','" + fromTime + "','" + ToTime + "','" + Job_location + "','" + Remarks + "','" + Status + "','" + Working_Duration + "','" + CreatedDate + "','" + ApprovalStatus + "','" + HODName + "','" + Co_Leave + "','" + AttendanceType + "','" + HOD2Name + "','" + HOD2 + "','" + Purpose + "','" + HODUserID + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Duplicate_tbl_attendenceforCOApplication(string Atte_Date, string Userid, string CompanyName)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where convert(date,Atte_Date,103)='" + Atte_Date + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and Rejected='No' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader ShowByusertbl_attendenceforCOApplicationAll(string fromdate, string todate, string Userid, string CompanyName)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where convert(date,Atte_Date,103)>='" + fromdate + "' and convert(date,Atte_Date,103)<='" + todate + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader ShowByusertbl_attendenceforCOApplication(string fromdate, string todate, string Userid, string CompanyName, string ApprovalStatus)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where convert(date,Atte_Date,103)>='" + fromdate + "' and convert(date,Atte_Date,103)<='" + todate + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and ApprovalStatus='" + ApprovalStatus + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    //done
+    public SqlDataReader Show_CoApplicationforApprovalPending(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    //done
+    public SqlDataReader Show_COApplicationByHODWithEMPID(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and [Userid]='" + EmployeeNo + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and [Userid]='" + EmployeeNo + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    //done
+    public SqlDataReader Show_COApplicationByHODWithEMPNAme(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where [HODUserID]='" + HOD + "' and ApprovalStatus='" + Approval_status + "' and (UPPER([Uname]) LIKE UPPER('%" + EmployeeName + "%'))  and CompanyName='" + Company + "' and Co_Leave='1'  or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and (UPPER([Uname]) LIKE UPPER('%" + EmployeeName + "%')  and CompanyName='" + Company + "' and Co_Leave='1')";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_COApplicationByHODWithDatewise(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and convert(date,[Atte_Date],103) >= '" + FromDate + "' and convert(date,[Atte_Date],103) <='" + Todate + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and convert(date,[Atte_Date],103) >= '" + FromDate + "' and convert(date,[Atte_Date],103) <='" + Todate + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_HODODCountCOApplication(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(ApprovalStatus) as ApprovalStatus from tbl_Co_Leave_Application where [HODUserID]='" + HOD + "'  and ApprovalStatus='Pending' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='Pending' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ApprovalCOid(string id)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where ID='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void Update_COStatusReject(string id, string ApprovalByName, string RejectedRemarks)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Application set Rejected='Yes',ApprovalStatus='Rejected',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approved by]='" + ApprovalByName + "',[RejectedByHODRemarks]='" + RejectedRemarks + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Update_CoStatus(string id, string ApprovalBy)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Application set ApprovalStatus='Approved',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approved by]='" + ApprovalBy + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    //Dhirendra 19-11-2016
+    public SqlDataReader Show_MAlLeaveMaxid()
+    {
+        Connect();
+        cmd = new SqlCommand("select MAX(AutoNo) as AutoNo from tble_Leave_Approval", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_TrasportMaxid()
+    {
+        Connect();
+        cmd = new SqlCommand("select MAX(AutoNo) as AutoNo from tbleTransportApp", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public void delete_tbl_Co_Leave_DetailsIncative(string Userid, string Company, string Co_Date)
+    {
+        Connect();
+        string sqlq = "delete from tbl_Co_Leave_Details where Userid='" + Userid + "' and Company='" + Company + "' and convert(date,Co_Date,103)='" + Co_Date + "' ";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public void delete_LeaveApplicationIncative(string Userid, string Co_Date, string Company)
+    {
+        Connect();
+        string sqlq = "delete from tbl_Co_Leave_Application where Userid='" + Userid + "' and convert(date, Atte_Date,103)='" + Co_Date + "' and CompanyName='" + Company + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    //30-11-2016
+
+    public void Insert_tbl_RemedialClass(string Course, string CourseName, string Semester, string Section, string Subject, string SubjectName, string FacultyCode, string FacultyName, string StartDate, string EndDate, string HourNoFrom, string HourNoTill, string StudentNo, string EnrollmentNo, string Name, string CreatedDate, string CreatedBy, string CreatedByName, string CompanyName, string AcademicYear, string SubjectType, string GlobalDimension1, string TypeOfCourse, string RoomAllocation, string SubjectClassification, string ExamMethod)
+    {
+        Connect();
+        string sqlq = "insert into tbl_RemedialClass (Course,[Course Name],Semester,Section,Subject,[Subject Name],[Faculty Code],[Faculty Name],[Start Date],[End Date],[Hour No From],[Hour No Till],[Student No],[Enrollment No],Name,[Created Date],[Created By],[Created By Name],[Company Name],[Academic Year],[Subject Type],[Global Dimension 1],[Type Of Course],[Room Allocation],[Subject Classification],[Exam Methed]) values('" + Course + "','" + CourseName + "','" + Semester + "','" + Section + "','" + Subject + "','" + SubjectName + "','" + FacultyCode + "','" + FacultyName + "','" + StartDate + "','" + EndDate + "', '" + HourNoFrom + "','" + HourNoTill + "','" + StudentNo + "','" + EnrollmentNo + "','" + Name + "',Getdate(),'" + CreatedBy + "','" + CreatedByName + "','" + CompanyName + "' ,'" + AcademicYear + "' , '" + SubjectType + "','" + GlobalDimension1 + "', '" + TypeOfCourse + "','" + RoomAllocation + "','" + SubjectClassification + "','" + ExamMethod + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+
+
+    public SqlDataReader Show_tbl_RemedialClassRepetion(string Course, string Semester, string Section, string Subject, string StudentNo, string CompanyName, string SubjectType)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_RemedialClass where Course='" + Course + "' and Semester='" + Semester + "'  and Section='" + Section + "' and Subject='" + Subject + "' and [Student No] ='" + StudentNo + "' and [Company Name]='" + CompanyName + "' and [Subject Type]='" + SubjectType + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    //21-01-2019
+    public SqlDataReader Show_tbl_RemedialClassRepetioncheck(string Course, string Semester, String RoomNo, String HourFrom, String HourTo, String Facultycode, string Section, string Subject, string StudentNo, string CompanyName, string SubjectType)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_RemedialClass where Course='" + Course + "' and Semester='" + Semester + "'  and [Room Allocation]='" + RoomNo + "' and [Hour No From]='" + HourFrom + "'and [Hour No Till]='" + HourFrom + "' and [Faculty Code]='" + Facultycode + "' and Section='" + Section + "' and Subject='" + Subject + "' and [Student No] ='" + StudentNo + "' and [Company Name]='" + CompanyName + "' and [Subject Type]='" + SubjectType + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void delete_tbl_RemedialClass(string id)
+    {
+        Connect();
+        string sqlq = "delete from tbl_RemedialClass where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Course(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select distinct(([Course] +'   ' + [Course Name])) as CourseName, Course  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by CourseName,Course", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Subject(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select distinct(([Subject] +'   ' + [Subject Name])) as SubjectName, Subject  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by SubjectName, Subject", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_StudentNo(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select distinct(([Student No] +'   ' + [Name])) as StudentName, [Student No]  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by StudentName, [Student No]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_EnrollmentNo(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select distinct(([Enrollment No] +'   ' + [Name])) as StudentName, [Enrollment No]  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by StudentName, [Enrollment No]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Course_Grid(string CompanyName, string Course, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and Course='" + Course + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by Course", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Subject_Grid(string CompanyName, string Subject, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and Subject='" + Subject + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by Subject", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Student_Grid(string CompanyName, string StudentNo, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Student No]='" + StudentNo + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by [Student No]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_EnrollmentNo_Grid(string CompanyName, string EnrollmentNo, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Enrollment No]='" + EnrollmentNo + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by [Enrollment No]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Faculty_Grid(string CompanyName, string Faculty, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Faculty Code]='" + Faculty + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by [Faculty Code]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionViewID(string id)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where id='" + id + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_tbl_RemedialClassRepetionView_Faculty(string CompanyName, string GlobalDimension1)
+    {
+        Connect();
+        cmd = new SqlCommand("select distinct(([Faculty Code] +'   ' + [Faculty Name])) as Facultyname, [Faculty Code]  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and [Global Dimension 1]='" + GlobalDimension1 + "' order by Facultyname, [Faculty Code]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_RemedialdataforDuplication(string CompanyName, string Course, string Semester, string Section, string Subject, string GlobalDimension1, string SubjectType, string AcademicYear)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and Course='" + Course + "' and Semester='" + Semester + "' and Section='" + Section + "' and Subject='" + Subject + "' and [Global Dimension 1]='" + GlobalDimension1 + "' and [Subject Type]='" + SubjectType + "' and [Academic Year]='" + AcademicYear + "' ", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader SHow_TimeTableGeneration(string companyName, string SubjectCode, string CourseCOde, string Semester, string facultyCode, string academicyrs, string roomAllocation, string GlobalDimension1)
+    {
+        Connect();
+        string s = "select * from tbl_RemedialClass where [Subject]='" + SubjectCode + "' and [Course]='" + CourseCOde + "' and Semester='" + Semester + "' and [Faculty Code]='" + facultyCode + "' and [Academic Year]='" + academicyrs + "' and [Room Allocation]='" + roomAllocation + "' and [Global Dimension 1]='" + GlobalDimension1 + "' ";
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_RemedialDataforClassForHeader(string CompanyName, string Course, string Semester, string Section, string Subject, string AcademicYear, string facultyCode, string cDate)
+    {
+        Connect();
+        cmd = new SqlCommand("select *  from tbl_RemedialClass where [Company Name]='" + CompanyName + "' and Course='" + Course + "' and Semester='" + Semester + "' and Section='" + Section + "' and Subject='" + Subject + "' and [Academic Year]='" + AcademicYear + "' and [Faculty Code]='" + facultyCode + "' and convert(date,[Start Date],103)>='" + cDate + "' and  convert(date,[End Date],103)<='" + cDate + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public void delete_tbl_MultipleDepartmentforIndent(string Employeeid)
+    {
+        Connect();
+        string sqlq = "delete from tbl_MultipleDepartmentforIndent where Employeeid='" + Employeeid + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public void Insert_tbl_MultipleDepartmentforIndent(string Code, string Description, string Employeeid)
+    {
+        Connect();
+        string sqlq = "insert into tbl_MultipleDepartmentforIndent (Code,Description,Employeeid) values('" + Code + "','" + Description + "','" + Employeeid + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+    public SqlDataReader Show_Departmentdata(string Employeeid)
+    {
+        Connect();
+        cmd = new SqlCommand("select ([Code] + '  ' + Description) as Description, [Code] , Description from tbl_MultipleDepartmentforIndent where Employeeid='" + Employeeid + "' order by [Code]", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    //----Co Update from Nav table----07-03-2017----
+    public void InsertCo_Leave_ApplicationFromNav(string Id, String Name)
+    {
+        SqlCommand cmdCo = new SqlCommand("SP_InsertCo_Leave_ApplicationFromNav", Conn);
+        cmdCo.CommandType = CommandType.StoredProcedure;
+        cmdCo.Parameters.Add("@UserId", Id);
+        cmdCo.Parameters.Add("@Name", Name);
+        Connect();
+        cmdCo.ExecuteNonQuery();
+        DisConnect();
+
+    }
+    public void Updatetbl_Co_Leave_DetailsFromNav(string Id)
+    {
+        SqlCommand cmdCo = new SqlCommand("Updatetbl_Co_Leave_DetailsFromNav", Conn);
+        cmdCo.CommandType = CommandType.StoredProcedure;
+        cmdCo.Parameters.Add("@UserId", Id);
+        Connect();
+        cmdCo.ExecuteNonQuery();
+        DisConnect();
+
+    }
+    public DataTable GetLink(string Id, string CollegeCode)
+    {
+        DataTable dt = new DataTable();
+        // SqlCommand cmd = new SqlCommand("Sp_GetFormVisibleAsPerRole", Con1);
+        SqlCommand cmd = new SqlCommand("Sp_GetFormVisibleAsPerRole_New", Con1); //add on 10=05-2017
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@LoginId", Id);
+
+        cmd.Parameters.Add("@CollegeCode", CollegeCode);//add on 10=05-2017
+        Connect();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        DisConnect();
+        return dt;
+
+    }
+
+
+    public void Update_COStatusCanceled(string id, string ApprovalByName, string RejectedRemarks, string userid, string Attendate, string Company)
+    {
+        Connect();
+        string sqlq = "update tbl_Co_Leave_Application set ApprovalStatus='Cancelled',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approved by]='" + ApprovalByName + "',[RejectedByHODRemarks]='" + RejectedRemarks + "' where id='" + id + "' delete from tbl_Co_Leave_Details where Userid='" + userid + "' and Company='" + Company + "' and CONVERT(date,Co_Date,103)='" + Attendate + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+
+
+    public SqlDataReader Show_Co_data_canceled(string id)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Co_Leave_Application where id='" + id + "'", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_tbl_Co_Leave_Details_Basedonworking(string userid, string company, string co_date)
+    {
+        Connect();
+        cmd = new SqlCommand("select * from tbl_Co_Leave_Details where  Userid='" + userid + "' and Company='" + company + "' and CONVERT(date,Co_Date,103)='" + co_date + "' and ([Based on working]='' or [Based on working] is NULL)", Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    // 24- 04- 2017 
+
+    public SqlDataReader Leave_Approval_Resolved_withdateHR24(string fromDate, string todate, string companyName)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where  convert(date,From_Date,111) >= '" + fromDate + "' and convert(date,To_Date,111) <='" + todate + "' and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Leave_Approval_Resolved_withUserIDHR24(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where  (UPPER([UserID]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameHR24(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date,* from tble_Leave_Approval where (UPPER([UName]) LIKE UPPER('%" + Userid + "%'))  and Company_Name='" + companyName + "' and (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+
+
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Leave_Approval_Resolved_withUserNameAllHR24(string companyName, string Userid)
+    {
+        Connect();
+
+        string s = "select convert(varchar(11),(convert(date,From_Date )),113) as F_Date,convert(varchar(11),(convert(date,To_Date )),113) as T_Date, * from tble_Leave_Approval where  Company_Name='" + companyName + "' and  (Status='Approved' OR Status='Recommend') order by AutoNo desc";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    // 25-04-2017
+    public SqlDataReader Show_CoApplicationforApprovalPendingHR(string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where  ApprovalStatus='Approved' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+
+    public SqlDataReader Show_COApplicationByHODWithEMPIDHR(string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where  ApprovalStatus='Approved' and [Userid]='" + EmployeeNo + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_COApplicationByHODWithEMPNAmeHR(string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where ApprovalStatus='Approved' and (UPPER([Uname]) LIKE UPPER('%" + EmployeeName + "%'))  and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    public SqlDataReader Show_COApplicationByHODWithDatewiseHR(string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_Co_Leave_Application where convert(date,[Atte_Date],103) >= '" + FromDate + "' and convert(date,[Atte_Date],103) <='" + Todate + "' and CompanyName='" + Company + "' and Co_Leave='1' and ApprovalStatus='Approved'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader SHow_EmployeeMobileNo(string userid, string companyName)
+    {
+        if (Con1.State == ConnectionState.Closed)
+            Con1.Open();
+        string s = "select [Mobile Phone No_] as MobilePhoneNo,([Title]+' '+[First Name]) as faculty from " + companyName + " where  [No_]='" + userid + "'";
+        cmd = new SqlCommand(s, Con1);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+
+    //Work from Home
+    public void Update_WFH(string HOD, string HOD1, string empID, string company)
+    {
+        Connect();
+        string sqlq = "update tbl_WFH_Application set HOD='" + HOD + "',HOD1='" + HOD1 + "' where [Employee No]='" + empID + "' and Company='" + company + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Insert_tbl_WFH_Application(string EmployeeNo, string EmployeeName, string FromDate, string FromTime, string ToDate, string ToTime, string Destination, string Purpose, string Remarks, string CreatedDate, string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string sqlq = "insert into tbl_WFH_Application([Employee No],[Employee Name],[From Date],[From Time],[To Date],[To Time],[Destination],[Purpose],Remarks,[Created Date],HOD,HOD1,Company) values('" + EmployeeNo + "','" + EmployeeName + "', '" + FromDate + "', '" + FromTime + "','" + ToDate + "','" + ToTime + "', '" + Destination + "', '" + Purpose + "', '" + Remarks + "','" + CreatedDate + "','" + HOD + "','" + HOD1 + "','" + Company + "')";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_WFHApplicationByEmployee(string employeeNo, string Approval_status, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByEmployeeDateWise(string employeeNo, string Approval_status, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        // string s = "select * from tbl_OD_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "'  and CONVERT(date, [From Date],103) >='" + FromDate + "' union select * from tbl_OD_Application where [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "'  and CONVERT(date, [To Date],103) <='" + Todate + "'";
+        //string s = "SELECT * FROM tbl_OD_Application WHERE '"+Todate+"' BETWEEN [From Date] AND [To Date] and [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' ";
+        string s = "SELECT * FROM tbl_WFH_Application WHERE convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and [Employee No]='" + employeeNo + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByEmployeeDateWiseAll(string employeeNo, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        // string s = "select * from tbl_OD_Application where [Employee No]='" + employeeNo + "' and CONVERT(date, [From Date],103) >='" + FromDate + "' union select * from tbl_OD_Application where [Employee No]='" + employeeNo + "' and CONVERT(date, [To Date],103) <='" + Todate + "'";
+        //string s = "SELECT * FROM tbl_OD_Application WHERE '" + Todate + "' BETWEEN [From Date] AND [To Date] and [Employee No]='" + employeeNo + "'";
+        string s = "SELECT * FROM tbl_WFH_Application   WHERE (convert(date,[From Date],111)    between '" + FromDate + "' and '" + Todate + "' or convert(date,[To Date],111) between '" + FromDate + "' and '" + Todate + "') and [Employee No]='" + employeeNo + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODVC(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' OR Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee]  where [Employee Posting Group]!='NON-TEACH'	  or [Global Dimension 1 Code]='TMHS' ) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODVC1(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' OR Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee]  where [Employee Posting Group]='NON-TEACH'	  and  [Global Dimension 1 Code]!='TMHS' ) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHOD(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithEMPIDVC(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [Approval By]='" + HOD + "' and Company='" + Company + "' and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithEMPID(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and [Employee No]='" + EmployeeNo + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithEMPNAmeVC(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%'))  and Company='" + Company + "'  or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')  and Company='" + Company + "') or [Approval By]='" + HOD + "' and Company='" + Company + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')) ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithEMPNAme(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "' and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%'))  and Company='" + Company + "'  or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and (UPPER([Employee Name]) LIKE UPPER('%" + EmployeeName + "%')  and Company='" + Company + "')";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithDatewiseVC(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where ([HOD]='" + HOD + "' or  [Approval By]='" + HOD + "')  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' and [Approval By]='" + HOD + "' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_WFHApplicationByHODWithDatewise(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='" + Approval_status + "' and convert(date,[From Date],111) >= '" + FromDate + "' and convert(date,[To Date],111) <='" + Todate + "' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_HODWFHCount(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_HODWFHCountVC(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "' or Approval='Recommend' and Company='" + Company + "' and [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee] where [Employee Posting Group]!='NON-TEACH'	  or [Global Dimension 1 Code]='TMHS' )";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_HODWFHCountVC1(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(Approval) as Approval from tbl_WFH_Application where [HOD]='" + HOD + "'  and Approval='Pending' and Company='" + Company + "' or [HOD1]='" + HOD1 + "'  and Approval='Pending' and Company='" + Company + "' or Approval='Recommend' and Company='" + Company + "' AND   [Employee No] COLLATE Latin1_General_100_CS_AS in 	 (Select [No_] from [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee] where [Employee Posting Group]='NON-TEACH'	  AND [Global Dimension 1 Code]!='TMHS' )";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_ApprovalWFHid(string id)
+    {
+        Connect();
+        string s = "select * from tbl_WFH_Application where ID='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Update_WFHStatus(string id, string ApprovalByName, string ApprovalBy, string Status)
+    {
+        Connect();
+        string sqlq = "update tbl_WFH_Application set Approval='" + Status + "',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approval By Name]='" + ApprovalByName + "',[Approval By]='" + ApprovalBy + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Update_WFHStatusReject(string id, string ApprovalByName, string ApprovalBy, string RejectedRemarks)
+    {
+        Connect();
+        string sqlq = "update tbl_WFH_Application set Approval='Rejected',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approval By Name]='" + ApprovalByName + "',[Approval By]='" + ApprovalBy + "',[Rejected Remarks]='" + RejectedRemarks + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_HODPunchCorrectionCount(string HOD, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select count(ApprovalStatus) as ApprovalStatus from [tbl_PunchCorrect_Application] where [HODUserID]='" + HOD + "'  and ApprovalStatus='Pending' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='Pending' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader ShowByusertbl_Punch(string fromdate, string todate, string Userid, string CompanyName)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where convert(date,Atte_Date,103)>='" + fromdate + "' and convert(date,Atte_Date,103)<='" + todate + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader ShowByusertbl_PunchIn(string fromdate, string todate, string Userid, string CompanyName, string ApprovalStatus)
+    {
+        Connect();
+        string s = "select * from tbl_PunchCorrect_Application where convert(date,Atte_Date,103)>='" + fromdate + "' and convert(date,Atte_Date,103)<='" + todate + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and ApprovalStatus='" + ApprovalStatus + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+   
+    public SqlDataReader Show_PunchApprovalPending(string HOD, string Approval_status, string HOD1, string Company)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_PunchByHODWithEMPID(string HOD, string Approval_status, string HOD1, string EmployeeNo, string Company)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and [Userid]='" + EmployeeNo + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and [Userid]='" + EmployeeNo + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_PunchByHODWithEMPNAme(string HOD, string Approval_status, string HOD1, string EmployeeName, string Company)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where [HODUserID]='" + HOD + "' and ApprovalStatus='" + Approval_status + "' and (UPPER([Uname]) LIKE UPPER('%" + EmployeeName + "%'))  and CompanyName='" + Company + "' and Co_Leave='1'  or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and (UPPER([Uname]) LIKE UPPER('%" + EmployeeName + "%')  and CompanyName='" + Company + "' and Co_Leave='1')";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Show_PunchByHODWithDatewise(string HOD, string Approval_status, string HOD1, string EmployeeName, string FromDate, string Todate, string Company)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where [HODUserID]='" + HOD + "'  and ApprovalStatus='" + Approval_status + "' and convert(date,[Atte_Date],103) >= '" + FromDate + "' and convert(date,[Atte_Date],103) <='" + Todate + "' and CompanyName='" + Company + "' and Co_Leave='1' or [HOD2]='" + HOD1 + "'  and ApprovalStatus='" + Approval_status + "' and convert(date,[Atte_Date],103) >= '" + FromDate + "' and convert(date,[Atte_Date],103) <='" + Todate + "' and CompanyName='" + Company + "' and Co_Leave='1'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public SqlDataReader Duplicate_tbl_attendenceforPunch(string Atte_Date, string Userid, string CompanyName)
+    {
+        Connect();
+        string s = "select * from tbl_PunchCorrect_Application where convert(date,Atte_Date,103)='" + Atte_Date + "' and Userid='" + Userid + "' and CompanyName='" + CompanyName + "' and Rejected='No' ";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    //---
+    public void insert_tbl_PunchCorrection(string Userid, string Uname, string CompanyName, string Atte_Date, string fromTime, string ToTime, string Job_location, string Remarks, string Status, string Working_Duration, string CreatedDate, string ApprovalStatus, string HODName, string Co_Leave, string AttendanceType, string HOD2Name, string HOD2, string Purpose, string HODUserID, string StaffCode, string CfromTime, string cToTime)
+    {
+        Connect();
+        string sqlq = "";
+
+        sqlq = "insert into tbl_PunchCorrect_Application (Userid,Uname,CompanyName,Atte_Date,fromTime,ToTime,Job_location,Remarks,Status,Working_Duration,CreatedDate,ApprovalStatus,HODName,Co_Leave,[Attendance Type],[HOD2 Name],HOD2,Purpose,HODUserID,ApplyStaff,CfromTime,CToTime) values('" + Userid + "','" + Uname + "','" + CompanyName + "','" + Atte_Date + "','" + fromTime + "','" + ToTime + "','" + Job_location + "','" + Remarks + "','" + Status + "','" + Working_Duration + "','" + CreatedDate + "','" + ApprovalStatus + "','" + HODName + "','" + Co_Leave + "','" + AttendanceType + "','" + HOD2Name + "','" + HOD2 + "','" + Purpose + "','" + HODUserID + "','" + StaffCode + "','" + CfromTime + "','" + cToTime + "')";
+
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public SqlDataReader Show_ApprovalPunch(string id)
+    {
+        Connect();
+        string s = "select * from [tbl_PunchCorrect_Application] where ID='" + id + "'";
+        cmd = new SqlCommand(s, Conn);
+        SqlDataReader dr = cmd.ExecuteReader();
+        return dr;
+    }
+    public void Update_PunchStatus(string id, string ApprovalBy)
+    {
+        Connect();
+        string sqlq = "update [tbl_PunchCorrect_Application] set ApprovalStatus='Approved',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approved by]='" + ApprovalBy + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+    public void Update_PunchStatusReject(string id, string ApprovalBy)
+    {
+        Connect();
+        string sqlq = "update [tbl_PunchCorrect_Application] set ApprovalStatus='Rejected',[Approval Date]='" + System.DateTime.Now.ToString("yyyy-MM-dd") + "',[Approved by]='" + ApprovalBy + "' where id='" + id + "'";
+        cmd = new SqlCommand(sqlq, Conn);
+        cmd.ExecuteNonQuery();
+
+    }
+}
+
+

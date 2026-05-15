@@ -1,0 +1,98 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class LeaveApproval : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+    protected void lnkleaveview_Click(object sender, EventArgs e)
+    {
+        pnlleaveView.Visible = true;
+        btnSearch.Visible = false;
+        pnlDate.Visible = false;
+        pnlEmployeeidName.Visible = false;
+        pnlrejected.Visible = false;
+        pnlApprovedDetail.Visible = false;
+        pnlMain.Visible = false;
+    }
+    protected void rdEmployeeID_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = true;
+        pnlDate.Visible = false;
+        btnSearch.Visible = true;
+    }
+    protected void rdEmployeeName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = true;
+        pnlDate.Visible = false;
+        btnSearch.Visible = true;
+    }
+    protected void rdDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = false;
+        pnlDate.Visible = true;
+        btnSearch.Visible = true;
+    }
+    protected void rdLeaveRectedEMPID_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = true;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = false;
+    }
+    protected void rdrdLeaveRectedName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = true;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = false;
+    }
+    protected void rdLeaveRectedDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = false;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = true;
+    }
+    protected void lnkRejectLeaveDetail_Click(object sender, EventArgs e)
+    {
+        pnlrejected.Visible = true;
+        pnlleaveView.Visible = false;
+        btnrejectedsearch.Visible = false;
+        pnlLeaveRejectedEMPID.Visible = false;
+        pnlLeaveRejectedDatewise.Visible = false;
+        pnlApprovedDetail.Visible = false;
+        pnlMain.Visible = false;
+    }
+    protected void lnkApprovedLeavedetail_Click(object sender, EventArgs e)
+    {
+        pnlApprovedDetail.Visible = true;
+        pnlrejected.Visible = false;
+        pnlleaveView.Visible = false;
+        btnApprovedSearch.Visible = false;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        pnlLeaveApprovedDetailEmpid.Visible = false;
+        pnlMain.Visible = false;
+    }
+    protected void rdApprovedEmpid_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = true;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        btnApprovedSearch.Visible = true;
+    }
+    protected void rdApprovedEMPName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = true;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        btnApprovedSearch.Visible = true;
+    }
+    protected void rdApprovedDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = false;
+        pnlLeaveApprovedDetailDatewise.Visible = true;
+        btnApprovedSearch.Visible = true;
+    }
+}

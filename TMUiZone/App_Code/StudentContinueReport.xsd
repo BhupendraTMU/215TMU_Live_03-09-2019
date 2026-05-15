@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="StudentContinueReport" targetNamespace="http://tempuri.org/StudentContinueReport.xsd" xmlns:mstns="http://tempuri.org/StudentContinueReport.xsd" xmlns="http://tempuri.org/StudentContinueReport.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Web.config" AppSettingsPropertyName="TMUCON" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="TMUCON (Web.config)" ParameterPrefix="@" PropertyReference="AppConfig.System.Configuration.ConfigurationManager.0.ConnectionStrings.TMUCON.ConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="StudentContinueReport" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="False" msprop:Generator_DataSetName="StudentContinueReport" msprop:Generator_UserDSName="StudentContinueReport">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="StudentContinueReport" msprop:Generator_TableClassName="StudentContinueReportDataTable" msprop:Generator_TableVarName="tableStudentContinueReport" msprop:Generator_TablePropName="_StudentContinueReport" msprop:Generator_RowDeletingName="StudentContinueReportRowDeleting" msprop:Generator_RowChangingName="StudentContinueReportRowChanging" msprop:Generator_RowEvHandlerName="StudentContinueReportRowChangeEventHandler" msprop:Generator_RowDeletedName="StudentContinueReportRowDeleted" msprop:Generator_UserTableName="StudentContinueReport" msprop:Generator_RowChangedName="StudentContinueReportRowChanged" msprop:Generator_RowEvArgName="StudentContinueReportRowChangeEvent" msprop:Generator_RowClassName="StudentContinueReportRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="EnrollmentNo" msprop:Generator_ColumnVarNameInTable="columnEnrollmentNo" msprop:Generator_ColumnPropNameInRow="EnrollmentNo" msprop:Generator_ColumnPropNameInTable="EnrollmentNoColumn" msprop:Generator_UserColumnName="EnrollmentNo" type="xs:string" minOccurs="0" />
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" minOccurs="0" />
+              <xs:element name="SemesterYear" msprop:Generator_ColumnVarNameInTable="columnSemesterYear" msprop:Generator_ColumnPropNameInRow="SemesterYear" msprop:Generator_ColumnPropNameInTable="SemesterYearColumn" msprop:Generator_UserColumnName="SemesterYear" type="xs:string" minOccurs="0" />
+              <xs:element name="Course" msprop:Generator_ColumnVarNameInTable="columnCourse" msprop:Generator_ColumnPropNameInRow="Course" msprop:Generator_ColumnPropNameInTable="CourseColumn" msprop:Generator_UserColumnName="Course" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

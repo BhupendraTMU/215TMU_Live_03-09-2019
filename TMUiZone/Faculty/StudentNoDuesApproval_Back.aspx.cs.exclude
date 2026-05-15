@@ -1,0 +1,1832 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+
+public partial class Faculty_SyudentNoDuesApproval : System.Web.UI.Page
+{
+    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+            {
+
+                getdeptlibrary();
+                getnodueslist();
+                hideSubmitbutton();
+                //binddata();
+            }
+
+            if (Session["uid"].ToString() == "TMU00140")
+            {
+                // VisibleFormCOE();
+                btn_Save.Visible = true;
+            }
+            else
+            {
+                btn_Save.Visible = false;
+            }
+
+        }
+        catch
+        {
+            Response.Redirect("../Default.aspx");
+        }
+    }
+
+    public void alldept()
+    {
+        Decimal Total = 0;
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+        string strSQL = "Select [Status of Dues],Remark,Particular,[Dept Employee Name],[Check NoDues Status],[Dept Employee Code],[Total Amount],[Pending Amount],Designation,ID,isnull((select top 1 [Temp 2] from  [EDUCOLLEGELIVE-R2].dbo.OnlinePaymentLog where UserID='" + hdfSTNO.Value + "' and OrderID like 'TMUNODUES%' and GatewayStatus=1),-1) as PayStatus from Tbl_StudentOutstanigNoDues where [Enrollment No_] ='" + UserId.Text + "'  ";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        con.Close();
+        if (dt.Rows.Count > 0)
+        {
+
+            if (dt.Rows[0]["PayStatus"].ToString() == "-1")
+            {
+                Button2.Visible = false;
+
+            }
+            else if (dt.Rows[0]["PayStatus"].ToString() == "0")
+            {
+                Button2.Visible = true;
+            }
+            else if (dt.Rows[0]["PayStatus"].ToString() == "1")
+            {
+                Button2.Enabled = false;
+                Button2.ForeColor = System.Drawing.Color.White;
+                Button2.BackColor = System.Drawing.Color.Green;
+
+            }
+            else
+            {
+
+            }
+            DataRow[] dr1 = dt.Select("Particular = 'Central Library'");
+            if (dr1.Length > 0)
+            {
+                TextBox8.Text = dr1[0]["Status of Dues"].ToString();
+                txtremarkcentrallib.Text = dr1[0]["Remark"].ToString();
+                txtpendingamountcentrallibrary.Text = dr1[0]["Pending Amount"].ToString();
+                //TextBox12.Text = dr1[0]["Total Amount"].ToString();               
+                txtCentrallibID.Text = dr1[0]["ID"].ToString();
+                if (dr1[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox3.Checked = true;
+
+                }
+                else
+                {
+                    CheckBox3.Checked = false;
+
+                }
+                if (dr1[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr1[0]["Pending Amount"]);
+                }
+                if (TextBox8.Text == "NoDues")
+                {
+                    CheckBox3.Enabled = false;
+                    txtremarkcentrallib.Enabled = false;
+                    txtpendingamountcentrallibrary.Enabled = false;
+                    btn_Centrallib.ForeColor = System.Drawing.Color.White;
+                    btn_Centrallib.BackColor = System.Drawing.Color.Green;
+                    btn_Centrallib.Enabled = false;
+                }
+                else
+                {
+
+                    btn_Centrallib.ForeColor = System.Drawing.Color.White;
+                    btn_Centrallib.BackColor = System.Drawing.Color.Red;
+
+                }
+
+            }
+            DataRow[] dr2 = dt.Select("Particular = 'Department Library'");
+            if (dr2.Length > 0)
+            {
+                TextBox6.Text = dr2[0]["Status of Dues"].ToString();
+                txtremarkdeptlibrary.Text = dr2[0]["Remark"].ToString();
+                //TextBox12.Text = dt.Rows[0]["Total Amount"].ToString();
+                txtpendingamountdeptlibrary.Text = dr2[0]["Pending Amount"].ToString();
+                txtdepartmentlibID.Text = dr2[0]["ID"].ToString();
+                if (dr2[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox1.Checked = true;
+                }
+                else
+                {
+                    CheckBox1.Checked = false;
+                }
+                if (dr2[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr2[0]["Pending Amount"]);
+                }
+                if (TextBox6.Text == "NoDues")
+                {
+                    CheckBox1.Enabled = false;
+                    txtremarkdeptlibrary.Enabled = false;
+                    txtpendingamountdeptlibrary.Enabled = false;
+                    btn_DepartmentLib.ForeColor = System.Drawing.Color.White;
+                    btn_DepartmentLib.BackColor = System.Drawing.Color.Green;
+                    btn_DepartmentLib.Enabled = false;
+                }
+                else
+                {
+
+                    btn_DepartmentLib.ForeColor = System.Drawing.Color.White;
+                    btn_DepartmentLib.BackColor = System.Drawing.Color.Red;
+
+                }
+
+
+            }
+            DataRow[] dr7 = dt.Select("Particular = 'Sports'");
+            if (dr7.Length > 0)
+            {
+                TextBox15.Text = dr7[0]["Status of Dues"].ToString();
+                txtremarksportic.Text = dr7[0]["Remark"].ToString();
+                TextBox5.Text = dr7[0]["Pending Amount"].ToString();
+                txtSportID.Text = dr7[0]["ID"].ToString();
+                if (dr7[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox8.Checked = true;
+                }
+                else
+                {
+                    CheckBox8.Checked = false;
+                }
+                if (dr7[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr7[0]["Pending Amount"]);
+                }
+                if (TextBox15.Text == "NoDues")
+                {
+                    txtremarksportic.Enabled = false;
+                    TextBox5.Enabled = false;
+                    Button14.ForeColor = System.Drawing.Color.White;
+                    Button14.BackColor = System.Drawing.Color.Green;
+                    Button14.Enabled = false;
+                    CheckBox8.Enabled = false;
+                }
+                else
+                {
+
+                    Button14.ForeColor = System.Drawing.Color.White;
+                    Button14.BackColor = System.Drawing.Color.Red;
+
+                }
+            }
+            DataRow[] dr19 = dt.Select("Particular = 'Other Fee'");
+            if (dr19.Length > 0)
+            {
+                TextBox16.Text = dr19[0]["Status of Dues"].ToString();
+                txtotherfee.Text = dr19[0]["Remark"].ToString();
+                txtifotherfeeid.Text = dr19[0]["ID"].ToString();
+                //lblotherfinename.Text = dr19[0]["Dept Employee Name"].ToString();
+                lblaccountdeg.Text = dr19[0]["Designation"].ToString();
+                TextBox7.Text = dr19[0]["Pending Amount"].ToString();
+                if (dr19[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox9.Checked = true;
+                }
+                else
+                {
+                    CheckBox9.Checked = false;
+                }
+                if (dr19[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr19[0]["Pending Amount"]);
+                }
+                if (TextBox16.Text == "NoDues")
+                {
+                    CheckBox9.Enabled = false;
+                    txtotherfee.Enabled = false;
+                    TextBox7.Enabled = false;
+                    Button3.ForeColor = System.Drawing.Color.White;
+                    Button3.BackColor = System.Drawing.Color.Green;
+                    Button3.Enabled = false;
+                }
+                else
+                {
+                    Button3.ForeColor = System.Drawing.Color.White;
+                    Button3.BackColor = System.Drawing.Color.Red;
+                }
+            }
+
+            DataRow[] dr18 = dt.Select("Particular = 'Electricty Department'");
+            if (dr18.Length > 0)
+            {
+                TextBox14.Text = dr18[0]["Status of Dues"].ToString();
+                txtelectrictydeptremark.Text = dr18[0]["Remark"].ToString();
+                txtelectrictid.Text = dr18[0]["ID"].ToString();
+                lblelectrictydeptname.Text = dr18[0]["Dept Employee Name"].ToString();
+                lblelectrictydeptdeg.Text = dr18[0]["Designation"].ToString();
+                TextBox4.Text = dr18[0]["Pending Amount"].ToString();
+                if (dr18[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox7.Checked = true;
+                }
+                else
+                {
+                    CheckBox7.Checked = false;
+                }
+                if (dr18[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr18[0]["Pending Amount"]);
+                }
+                if (TextBox14.Text == "NoDues")
+                {
+                    txtelectrictydeptremark.Enabled = false;
+                    TextBox4.Enabled = false;
+                    Button1.BackColor = System.Drawing.Color.Green;
+                    Button1.ForeColor = System.Drawing.Color.White;
+                    Button1.Enabled = false;
+                    CheckBox7.Enabled = false;
+                }
+                else
+                {
+
+                    Button1.BackColor = System.Drawing.Color.Red;
+                    Button1.ForeColor = System.Drawing.Color.White;
+
+                }
+            }
+
+            DataRow[] dr14 = dt.Select("Particular = 'College/Department Laboratory'");
+            if (dr14.Length > 0)
+            {
+                TextBox9.Text = dr14[0]["Status of Dues"].ToString();
+                txtremarkdepartmentLaboratory.Text = dr14[0]["Remark"].ToString();
+                txtidDeptLaboratory.Text = dr14[0]["ID"].ToString();
+                txtpandingamountdeptlaboratory.Text = dr14[0]["Pending Amount"].ToString();
+                if (dr14[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox2.Checked = true;
+                }
+                else
+                {
+                    CheckBox2.Checked = false;
+                }
+                if (dr14[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr14[0]["Pending Amount"]);
+                }
+                if (TextBox9.Text == "NoDues")
+                {
+                    txtremarkdepartmentLaboratory.Enabled = false;
+                    txtpandingamountdeptlaboratory.Enabled = false;
+                    btn_DeptLaboratory.BackColor = System.Drawing.Color.Green;
+                    btn_DeptLaboratory.ForeColor = System.Drawing.Color.White;
+                    btn_DeptLaboratory.Enabled = false;
+                    CheckBox2.Enabled = false;
+                }
+                else
+                {
+
+                    btn_DeptLaboratory.BackColor = System.Drawing.Color.Red;
+                    btn_DeptLaboratory.ForeColor = System.Drawing.Color.White;
+
+                }
+            }
+
+            DataRow[] dr15 = dt.Select("Particular = 'College/Department Workshop'");
+            if (dr15.Length > 0)
+            {
+                TextBox10.Text = dr15[0]["Status of Dues"].ToString();
+                txtremarkdepartmentwork.Text = dr15[0]["Remark"].ToString();
+                txtidcollegework.Text = dr15[0]["ID"].ToString();
+                TextBox1.Text = dr15[0]["Pending Amount"].ToString();
+                if (dr15[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox4.Checked = true;
+                }
+                else
+                {
+                    CheckBox4.Checked = false;
+                }
+                if (dr15[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr15[0]["Pending Amount"]);
+                }
+                if (TextBox10.Text == "NoDues")
+                {
+                    txtremarkdepartmentwork.Enabled = false;
+                    TextBox1.Enabled = false;
+                    Button8.ForeColor = System.Drawing.Color.White;
+                    Button8.BackColor = System.Drawing.Color.Green;
+                    Button8.Enabled = false;
+                    CheckBox4.Enabled = false;
+                }
+                else
+                {
+
+                    Button8.ForeColor = System.Drawing.Color.White;
+                    Button8.BackColor = System.Drawing.Color.Red;
+
+                }
+            }
+            DataRow[] dr16 = dt.Select("Particular = 'Hostel'");
+            if (dr16.Length > 0)
+            {
+                TextBox11.Text = dr16[0]["Status of Dues"].ToString();
+                txtremarkhostel.Text = dr16[0]["Remark"].ToString();
+                txtidhostel.Text = dr16[0]["ID"].ToString();
+                TextBox2.Text = dr16[0]["Pending Amount"].ToString();
+                if (dr16[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox5.Checked = true;
+                }
+                else
+                {
+                    CheckBox5.Checked = false;
+                }
+                if (dr16[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr16[0]["Pending Amount"]);
+                }
+                if (TextBox11.Text == "NoDues")
+                {
+                    txtremarkhostel.Enabled = false;
+                    TextBox2.Enabled = false;
+                    Btn_Hostel.ForeColor = System.Drawing.Color.White;
+                    Btn_Hostel.BackColor = System.Drawing.Color.Green;
+                    Btn_Hostel.Enabled = false;
+                    CheckBox5.Enabled = false;
+                }
+                else
+                {
+
+                    Btn_Hostel.ForeColor = System.Drawing.Color.White;
+                    Btn_Hostel.BackColor = System.Drawing.Color.Red;
+
+                }
+            }
+            DataRow[] dr17 = dt.Select("Particular = 'Washer Man'");
+            if (dr17.Length > 0)
+            {
+                TextBox13.Text = dr17[0]["Status of Dues"].ToString();
+                txtremarkwasherman.Text = dr17[0]["Remark"].ToString();
+                txtidwasherman.Text = dr17[0]["ID"].ToString();
+                TextBox3.Text = dr17[0]["Pending Amount"].ToString();
+                if (dr17[0]["Check NoDues Status"].ToString() == "Y")
+                {
+                    CheckBox6.Checked = true;
+                }
+                else
+                {
+                    CheckBox6.Checked = false;
+                }
+                if (dr17[0]["Pending Amount"] == "")
+                {
+                    Total = Total + 0;
+                }
+                else
+                {
+                    Total = Total + Convert.ToDecimal(dr17[0]["Pending Amount"]);
+                }
+                if (TextBox13.Text == "NoDues")
+                {
+                    txtremarkwasherman.Enabled = false;
+                    TextBox3.Enabled = false;
+                    Btn_Washerman.ForeColor = System.Drawing.Color.White;
+                    Btn_Washerman.BackColor = System.Drawing.Color.Green;
+                    Btn_Washerman.Enabled = false;
+                    CheckBox6.Enabled = false;
+                }
+                else
+                {
+
+                    Btn_Washerman.ForeColor = System.Drawing.Color.White;
+                    Btn_Washerman.BackColor = System.Drawing.Color.Red;
+
+                }
+            }
+            TextBox12.Text = Total.ToString();
+            //(
+            //    Convert.ToDecimal(dr19[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr17[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr16[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr1[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr2[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr7[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr18[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr9[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr10[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr11[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr12[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr13[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr14[0]["Pending Amount"]) +
+            //    Convert.ToDecimal(dr15[0]["Pending Amount"])).ToString();
+        }
+    }
+
+
+    public void getdeptlibrary()
+    {
+        if (Session["uid"].ToString() == "TMU04426")
+        {
+
+            //DropDownList1.Enabled = true;
+            txtremarkdeptlibrary.Enabled = true;
+            btn_DepartmentLib.Enabled = true;
+            //DropDownList2.Enabled = true;
+            btn_Centrallib.Enabled = true;
+            txtremarkcentrallib.Enabled = true;
+            txtpendingamountdeptlibrary.Enabled = true;
+            txtpendingamountcentrallibrary.Enabled = true;
+            CheckBox1.Enabled = true;
+            CheckBox3.Enabled = true;
+
+        }
+        else
+        {
+            // DropDownList1.Enabled = false;
+            txtremarkdeptlibrary.Enabled = false;
+            btn_DepartmentLib.Enabled = false;
+            //DropDownList2.Enabled = false;
+            btn_Centrallib.Enabled = false;
+            txtremarkcentrallib.Enabled = false;
+            txtpendingamountdeptlibrary.Enabled = false;
+            txtpendingamountcentrallibrary.Enabled = false;
+            CheckBox1.Enabled = false;
+            CheckBox3.Enabled = false;
+        }
+
+        if (Session["uid"].ToString() == "TMU00784")
+        {
+            // DrpSport.Enabled = true;
+            txtremarksportic.Enabled = true;
+            Button14.Enabled = true;
+            TextBox5.Enabled = true;
+            CheckBox8.Enabled = true;
+        }
+        else
+        {
+            //DrpSport.Enabled = false;
+            txtremarksportic.Enabled = false;
+            Button14.Enabled = false;
+            TextBox5.Enabled = false;
+            CheckBox8.Enabled = false;
+        }
+
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+        SqlCommand cmd = new SqlCommand("sp_getlibrarydept2", con);
+        //cmd.Parameters.AddWithValue("@enroll", Session["enroll"].ToString());
+        cmd.CommandType = CommandType.StoredProcedure;
+        SqlDataAdapter adpt = new SqlDataAdapter(cmd);
+        SqlDataAdapter daCL = new SqlDataAdapter(cmd);
+        DataTable dtCL = new DataTable();
+        daCL.Fill(dtCL);
+
+        lbldepartmentlib.Text = dtCL.Select("Particulars='Department Library'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lbldepartmentlibdeg.Text = dtCL.Select("Particulars='Department Library'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        // txtdepartmentlibemployeecode.Text = dtCL.Select("Particulars='Department Library'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        lblcentlibname.Text = dtCL.Select("Particulars='Central Library'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lblcentlibdeg.Text = dtCL.Select("Particulars='Central Library'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        // lblcentlibnameemployeecode.Text = dtCL.Select("Particulars='Central Library'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        lbldeptLaboratory.Text = dtCL.Select("Particulars='College/Department Laboratory'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lbldeptLaboratorydeg.Text = dtCL.Select("Particulars='College/Department Laboratory'").CopyToDataTable().Rows[0]["Designation"].ToString();
+
+
+        lblcollegeworkname.Text = dtCL.Select("Particulars='College/Department Wprkshop'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lblcollegeworkdeg.Text = dtCL.Select("Particulars='College/Department Wprkshop'").CopyToDataTable().Rows[0]["Designation"].ToString();
+
+        //lblAlumnifeename.Text = dtCL.Select("Particulars='Alumni Fee'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        //lblAlumnifeedeg.Text = dtCL.Select("Particulars='Alumni Fee'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        ////lblhostelmessnamecode.Text = dtCL.Select("Particulars='Hostel Mess'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        lblaccountname.Text = dtCL.Select("Particulars='Account Deptt'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lblaccountdeg.Text = dtCL.Select("Particulars='Account Deptt'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        ////lblhosteloffficenamecode.Text = dtCL.Select("Particulars='Hostel Office'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        lblsportname.Text = dtCL.Select("Particulars='Sport I/c'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        lblsportdeg.Text = dtCL.Select("Particulars='Sport I/c'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        ////lblsportnamecode.Text = dtCL.Select("Particulars='Sport I/c'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        lblaccountname.Text = dtCL.Select("Particulars='Account Deptt'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        txtaccountemployeecode.Text = dtCL.Select("Particulars='Account Deptt'").CopyToDataTable().Rows[0]["Designation"].ToString();
+
+        //lblhostelsname.Text = dtCL.Select("Particulars='Hostel'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        //lblhosteldeg.Text = dtCL.Select("Particulars='Hostel'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        ////lbltransportofficenamecode.Text = dtCL.Select("Particulars='Transport Office'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+
+        //lblwashermanname.Text = dtCL.Select("Particulars='Hostel'").CopyToDataTable().Rows[0]["Employee_Name"].ToString();
+        //lblwashermandeg.Text = dtCL.Select("Particulars='Hostel'").CopyToDataTable().Rows[0]["Designation"].ToString();
+        ////lbltransportofficenamecode.Text = dtCL.Select("Particulars='Transport Office'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
+    }
+    public void getnodueslist()
+    {
+        SqlCommand cmd = new SqlCommand("pro_Studentnodueslist", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@UserId", Session["uid"].ToString());
+
+        if (con.State == ConnectionState.Closed)
+            con.Open();
+        SqlDataAdapter daCL = new SqlDataAdapter(cmd);
+        DataTable dtCL = new DataTable();
+        daCL.Fill(dtCL);
+        
+            GriedviewStudent.DataSource = dtCL;
+            GriedviewStudent.DataBind();
+        
+        
+    }
+    public void binddata()
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+        string strSQL = "select Case when Gender=1 then 'Male' else 'Female' end as Gender,*  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] where [Enrollment No_]='" + UserId.Text + "'";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        con.Close();
+        if (dt.Rows.Count > 0)
+        {
+            UserId.Text = dt.Rows[0]["Enrollment No_"].ToString();
+            txtstudentName.Text = dt.Rows[0]["Student Name"].ToString();
+            lblcertifiedname.Text = dt.Rows[0]["Student Name"].ToString();
+            txtfathername.Text = dt.Rows[0]["Fathers Name"].ToString();
+            txtmobile.Text = dt.Rows[0]["Mobile Number"].ToString();
+            txtemailid.Text = dt.Rows[0]["E-Mail Address"].ToString();
+            txtPrograme.Text = dt.Rows[0]["Course Name"].ToString();
+            txtcollegedept.Text = dt.Rows[0]["Global Dimension 1 Code"].ToString();
+            lblcertifiedname.Text = dt.Rows[0]["Student Name"].ToString();
+            lblYear.Text = dt.Rows[0]["Academic Year"].ToString();
+            txtgender.Text = dt.Rows[0]["Gender"].ToString();
+        }
+    }
+    public void binddataHOD()
+    {
+
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+        string strSQL = "select Distinct Principal,(select [First Name] from TMU$Employee where No_=T.Principal) as P,(select [Job Title_Grade Desc] from TMU$Employee where No_=T.Principal) as Title from [TMU$User Role Matrix]  as T where [Global Dimenison 1 Code] ='" + txtcollegedept.Text + "'";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        con.Close();
+        if (dt.Rows.Count > 0)
+        {
+            txtdeptlaboratorydegcode.Text = dt.Rows[0]["Principal"].ToString();
+            txtCollegeDepartmentWorkshopcode.Text = dt.Rows[0]["Principal"].ToString();
+            lbldeptLaboratory.Text = dt.Rows[0]["P"].ToString();
+            lblcollegeworkname.Text = dt.Rows[0]["P"].ToString();
+            lbldeptLaboratorydeg.Text = dt.Rows[0]["Title"].ToString();
+            lblcollegeworkdeg.Text = dt.Rows[0]["Title"].ToString();
+        }
+        if (Session["uid"].ToString() == txtdeptlaboratorydegcode.Text || Session["uid"].ToString() == txtCollegeDepartmentWorkshopcode.Text)
+        {
+
+
+            txtremarkdepartmentLaboratory.Enabled = true;
+            btn_DeptLaboratory.Enabled = true;
+            txtremarkdepartmentwork.Enabled = true;
+
+            Button8.Enabled = true;
+            txtpandingamountdeptlaboratory.Enabled = true;
+            TextBox1.Enabled = true;
+            CheckBox2.Enabled = true;
+            CheckBox4.Enabled = true;
+
+        }
+        else
+        {
+
+
+            txtremarkdepartmentLaboratory.Enabled = false;
+            btn_DeptLaboratory.Enabled = false;
+            txtremarkdepartmentwork.Enabled = false;
+            //DropDownList8.Enabled = false;
+            Button8.Enabled = false;
+            txtpandingamountdeptlaboratory.Enabled = false;
+            TextBox1.Enabled = false;
+            CheckBox2.Enabled = false;
+            CheckBox4.Enabled = false;
+
+        }
+        if (Session["uid"].ToString() == txtaccountemployeecode.Text)
+        {
+
+            txtotherfee.Enabled = true;
+            TextBox7.Enabled = false;
+            Button3.Enabled = true;
+            CheckBox9.Enabled = true;
+            Button2.Visible = true;
+            hidePaymentbutton();
+            VerifyButton();
+
+        }
+        else
+        {
+            txtotherfee.Enabled = false;
+            TextBox7.Enabled = false;
+            Button3.Enabled = false;
+            CheckBox9.Enabled = false;
+            Button2.Visible = false;
+
+
+        }
+    }
+    protected void lnkbutton_Click(object sender, EventArgs e)
+    {
+
+        GridViewRow row = ((GridViewRow)((LinkButton)sender).NamingContainer);
+        int index = row.RowIndex;
+        Label UserId = (Label)GriedviewStudent.Rows[index].FindControl("lblemployeecode");
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+        string strSQL = "select * from Tbl_StudentNodues WHERE [ST NO_]='" + UserId.Text + "'";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        con.Close();
+        if (dt.Rows.Count > 0)
+        {
+            if (dt.Rows[0]["Hostel Id"].ToString() == Session["uid"].ToString())
+            {
+
+                txtremarkwasherman.Enabled = true;
+                txtremarkhostel.Enabled = true;
+                Btn_Hostel.Enabled = true;
+                Btn_Washerman.Enabled = true;
+
+                txtelectrictydeptremark.Enabled = true;
+                Button1.Enabled = true;
+                TextBox4.Enabled = true;
+                TextBox2.Enabled = true;
+                TextBox3.Enabled = true;
+                CheckBox5.Enabled = true;
+                CheckBox6.Enabled = true;
+                CheckBox7.Enabled = true;
+
+            }
+            else
+            {
+
+                txtremarkwasherman.Enabled = false;
+                txtremarkhostel.Enabled = false;
+                Btn_Hostel.Enabled = false;
+                Btn_Washerman.Enabled = false;
+
+                txtelectrictydeptremark.Enabled = false;
+                Button1.Enabled = false;
+                TextBox4.Enabled = false;
+                TextBox2.Enabled = false;
+                TextBox3.Enabled = false;
+                CheckBox5.Enabled = false;
+                CheckBox6.Enabled = false;
+                CheckBox7.Enabled = false;
+            }
+            this.UserId.Text = dt.Rows[0]["Enrollement No"].ToString();
+            txtstudentName.Text = dt.Rows[0]["Student Name"].ToString();
+            txtfathername.Text = dt.Rows[0]["Father's Name"].ToString();
+            txtcollegedept.Text = dt.Rows[0]["College/Dept"].ToString();
+            txtPrograme.Text = dt.Rows[0]["Programme"].ToString();
+            txtmobile.Text = dt.Rows[0]["Mobile No_"].ToString();
+            txtemailid.Text = dt.Rows[0]["Email Id"].ToString();
+            txtgender.Text = dt.Rows[0]["Gender"].ToString();
+            txtSection.Text = dt.Rows[0]["Section"].ToString();
+            txtdatedirectorprincipaldate.Text = dt.Rows[0]["Date"].ToString();
+            lblhosteldeg.Text = dt.Rows[0]["Hostel Designation"].ToString();
+            lblhostelsname.Text = dt.Rows[0]["Hostel Employee_Name"].ToString();
+            lblwashermanname.Text = dt.Rows[0]["Hostel Employee_Name"].ToString();
+            lblwashermandeg.Text = dt.Rows[0]["Hostel Designation"].ToString();
+            lblelectrictydeptname.Text = dt.Rows[0]["Hostel Employee_Name"].ToString();
+            lblelectrictydeptdeg.Text = dt.Rows[0]["Hostel Designation"].ToString();
+            lblaccountname.Text = dt.Rows[0]["Account Employee Name"].ToString();
+            lblaccountdeg.Text = dt.Rows[0]["Account Dept Designation"].ToString();
+            txtaccountemployeecode.Text = dt.Rows[0]["Account Dept Id"].ToString();
+            txtnoduesid.Text = dt.Rows[0]["No_Dues_Id"].ToString();
+            hdfSTNO.Value = dt.Rows[0]["ST NO_"].ToString();
+            GridViewdata.Show();
+            binddataHOD();
+            alldept();
+            hidePaymentbutton();
+            hideSubmitbutton();
+            UpdateAndDisplayAmount();
+
+
+        }
+    }
+    protected void btn_DepartmentLib_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox1.Checked)
+        {
+            if (txtremarkdeptlibrary.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (txtpendingamountdeptlibrary.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox1.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", LabelR1.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lbldepartmentlib.Text);
+            cmd.Parameters.AddWithValue("@Designation", lbldepartmentlibdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdeptlibrary.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpendingamountdeptlibrary.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtdepartmentlibID.Text);
+
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+            if (txtremarkdeptlibrary.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+
+            string Declaration = CheckBox1.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", LabelR1.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lbldepartmentlib.Text);
+            cmd.Parameters.AddWithValue("@Designation", lbldepartmentlibdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdeptlibrary.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpendingamountdeptlibrary.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtdepartmentlibID.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+
+    protected void btn_Centrallib_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox3.Checked)
+        {
+            if (txtremarkcentrallib.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (txtpendingamountcentrallibrary.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox3.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label5.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblcentlibname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblcentlibdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkcentrallib.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpendingamountcentrallibrary.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtCentrallibID.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+
+            if (txtremarkcentrallib.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+
+            string Declaration = CheckBox3.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label5.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblcentlibname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblcentlibdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkcentrallib.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpendingamountcentrallibrary.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtCentrallibID.Text);
+
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+    protected void Button14_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox8.Checked)
+        {
+
+            if (txtremarksportic.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox5.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox8.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label21.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblsportname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblsportdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarksportic.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox5.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtSportID.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+            if (txtremarksportic.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox8.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label21.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblsportname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblsportdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarksportic.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox5.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtSportID.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+    protected void btn_DeptLaboratory_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox2.Checked)
+        {
+
+            if (txtremarkdepartmentLaboratory.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (txtpandingamountdeptlaboratory.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox2.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label12.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lbldeptLaboratory.Text);
+            cmd.Parameters.AddWithValue("@Designation", lbldeptLaboratorydeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdepartmentLaboratory.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpandingamountdeptlaboratory.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtidDeptLaboratory.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+            if (txtremarkdepartmentLaboratory.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox2.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label12.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lbldeptLaboratory.Text);
+            cmd.Parameters.AddWithValue("@Designation", lbldeptLaboratorydeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdepartmentLaboratory.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@PendingAmount", txtpandingamountdeptlaboratory.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtidDeptLaboratory.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+
+    protected void Button8_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox4.Checked)
+        {
+
+            if (txtremarkdepartmentwork.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox1.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox4.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label15.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblcollegeworkname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblcollegeworkdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdepartmentwork.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox1.Text);
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtidcollegework.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+
+        }
+        else
+        {
+
+            if (txtremarkdepartmentwork.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox4.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label15.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblcollegeworkname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblcollegeworkdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkdepartmentwork.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox1.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@ID", txtidcollegework.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+
+    protected void btnclose_Click(object sender, EventArgs e)
+    {
+        GridViewdata.Hide();
+        Response.Redirect("StudentNoDuesApproval.aspx");
+    }
+
+    protected void Btn_Hostel_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox5.Checked)
+        {
+            if (txtremarkhostel.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox2.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox5.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label16.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblhostelsname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblhosteldeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkhostel.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox2.Text);
+            cmd.Parameters.AddWithValue("@ID", txtidhostel.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+            if (txtremarkhostel.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox5.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label16.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblhostelsname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblhosteldeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkhostel.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox2.Text);
+            cmd.Parameters.AddWithValue("@ID", txtidhostel.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+
+    protected void Btn_Washerman_Click(object sender, EventArgs e)
+    {
+
+        if (CheckBox6.Checked)
+        {
+
+            if (txtremarkwasherman.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox3.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox6.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label17.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblwashermanname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblwashermandeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkwasherman.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox3.Text);
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtidwasherman.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+
+            if (txtremarkwasherman.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox6.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label17.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblwashermanname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblwashermandeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtremarkwasherman.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox3.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@ID", txtidwasherman.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+
+        }
+    }
+
+
+
+    //public void ShowDept()
+    //{
+    //    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+    //    {
+    //        using (SqlCommand cmd = new SqlCommand("select *, [Elegible] from Tbl_StudentNoDues where [Enrollement No]='" + UserId.Text + "'", con))
+    //        {
+    //            con.Open();
+    //            SqlDataReader dr = cmd.ExecuteReader();
+    //            if (dr.HasRows)
+    //            {
+    //                if (dr.Read())
+    //                {
+    //                    string Elegible = dr["Elegible"].ToString();
+    //                    con.Close();
+    //                    if (Elegible == "Y" || Elegible == "N")
+
+    //                    {
+    //                        divverifydat.Visible = true;
+    //                        btn_Save.Visible = false;
+
+    //                    }
+    //                    else
+    //                    {
+    //                        divverifydat.Visible = false;
+    //                        btn_Save.Visible = true;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+
+
+    //protected void btn_Save_Click(object sender, EventArgs e)
+    //{
+    //    SqlCommand cmd = new SqlCommand("Pro_UpdateNodues", con);
+    //    cmd.CommandType = CommandType.StoredProcedure;
+    //    //cmd.Parameters.AddWithValue("@Student_Number", Session["enroll"].ToString());     
+    //    cmd.Parameters.AddWithValue("@EnrollementNo", UserId.Text);
+    //    if (chkelegebleyesorno.Checked)
+    //    {
+    //        cmd.Parameters.AddWithValue("@Elegible", "Y");
+    //    }
+    //    else
+    //    {
+    //        cmd.Parameters.AddWithValue("@Elegible", "N");
+    //    }
+
+    //    if (con.State == ConnectionState.Open)
+    //    { con.Close(); }
+    //    con.Open();
+    //    cmd.ExecuteNonQuery();
+    //    con.Close();
+
+    //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert(' Your details have been saved successfully')", true);
+    //    getnodueslist();
+    //}
+
+    protected void GriedviewStudent_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GriedviewStudent.PageIndex = e.NewPageIndex;
+        getnodueslist();
+    }
+
+    public void hidePaymentbutton()
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+        string strSQL = "select count(*) c from  HRMSPortal.dbo.Tbl_StudentOutstanigNoDues where Status='Submit' and  [Enrollment No_] ='" + UserId.Text + "'";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        if (dt.Rows.Count > 0)
+        {
+            if (Convert.ToInt32(dt.Rows[0]["c"]) >= 9)
+            {
+                VerifyButton();
+            }
+        }
+    }
+
+
+    public void VerifyButton()
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+        {
+            using (SqlCommand cmd = new SqlCommand("Select * from  [EDUCOLLEGELIVE-R2].dbo.OnlinePaymentLog as P  where UserID='" + txtSection.Text + "' and OrderID like 'TMUNODUES%' and GatewayStatus=1", con))
+            {
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    if (dr.Read())
+                    {
+                        string GatewayStatus = dr["GatewayStatus"].ToString();
+                        con.Close();
+                        if (GatewayStatus == "1")
+
+                        {
+                            Button2.Enabled = true;
+                        }
+                        else
+                        {
+                            Button2.Enabled = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected void Btn_otherfee_Click(object sender, EventArgs e)
+    {
+
+
+        if (CheckBox9.Checked)
+        {
+
+
+            if (txtotherfee.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox7.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox9.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label19.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblaccountname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblaccountdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtotherfee.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox7.Text);
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtifotherfeeid.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+        else
+        {
+            if (txtotherfee.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox9.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label19.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblaccountname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblaccountdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtotherfee.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox7.Text);
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@ID", txtifotherfeeid.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        if (CheckBox7.Checked)
+        {
+
+            if (txtelectrictydeptremark.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            if (TextBox4.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Pending Amount')", true);
+                return;
+            }
+            string Declaration = CheckBox7.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label22.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "NoDues");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblelectrictydeptname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblelectrictydeptdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtelectrictydeptremark.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox4.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@Status", "Submit");
+            cmd.Parameters.AddWithValue("@ID", txtelectrictid.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+
+        }
+        else
+        {
+            if (txtelectrictydeptremark.Text == "")
+            {
+                GridViewdata.Show();
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Remark')", true);
+                return;
+            }
+            string Declaration = CheckBox7.Checked ? "Y" : "N";
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+            SqlCommand cmd = new SqlCommand("pro_StudentOutstandingNoDues", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Particular", Label22.Text);
+            cmd.Parameters.AddWithValue("@StatusofDues", "Pending");
+            cmd.Parameters.AddWithValue("@DeptEmployeeName", lblelectrictydeptname.Text);
+            cmd.Parameters.AddWithValue("@Designation", lblelectrictydeptdeg.Text);
+            cmd.Parameters.AddWithValue("@Remark", txtelectrictydeptremark.Text);
+            cmd.Parameters.AddWithValue("@EnrollmentNo_", UserId.Text);
+            cmd.Parameters.AddWithValue("@StudentName", txtstudentName.Text);
+            cmd.Parameters.AddWithValue("@DeptEmployeeCode", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@PendingAmount", TextBox4.Text);
+            cmd.Parameters.AddWithValue("@CheckNoDuesStatus", Declaration);
+            cmd.Parameters.AddWithValue("@Status", "Pending");
+            cmd.Parameters.AddWithValue("@ID", txtelectrictid.Text);
+            if (con.State == ConnectionState.Open)
+            { con.Close(); }
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');", true);
+            GridViewdata.Show();
+            alldept();
+        }
+    }
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        if (con.State == ConnectionState.Closed)
+        {
+            con.Open();
+        }
+        SqlCommand command = new SqlCommand("update  [EDUCOLLEGELIVE-R2].dbo.OnlinePaymentLog set [Temp 2]=1 where UserID='" + hdfSTNO.Value + "' and OrderID like 'TMUNODUES%' and GatewayStatus=1", con);
+
+        command.ExecuteNonQuery();
+        con.Close();
+    }
+    protected void CheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox1.Checked)
+        {
+            txtremarkdeptlibrary.Text = "OK";
+            txtremarkdeptlibrary.Enabled = false;
+            txtpendingamountdeptlibrary.Enabled = true;
+        }
+        else
+        {
+            txtremarkdeptlibrary.Enabled = true;
+            txtpendingamountdeptlibrary.Enabled = true;
+            txtremarkdeptlibrary.Text = "";
+        }
+
+    }
+    protected void CheckBox3_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox3.Checked)
+        {
+            txtremarkcentrallib.Text = "OK";
+            txtremarkcentrallib.Enabled = false;
+            txtpendingamountcentrallibrary.Enabled = true;
+        }
+        else
+        {
+            txtremarkcentrallib.Enabled = true;
+            txtpendingamountcentrallibrary.Enabled = true;
+            txtremarkcentrallib.Text = "";
+        }
+    }
+    protected void CheckBox2_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox2.Checked)
+        {
+            txtremarkdepartmentLaboratory.Text = "OK";
+            txtremarkdepartmentLaboratory.Enabled = false;
+            txtpandingamountdeptlaboratory.Enabled = true;
+        }
+        else
+        {
+            txtremarkdepartmentLaboratory.Enabled = true;
+            txtpandingamountdeptlaboratory.Enabled = true;
+            txtremarkdepartmentLaboratory.Text = "";
+        }
+
+    }
+    protected void CheckBox4_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox4.Checked)
+        {
+            txtremarkdepartmentwork.Text = "OK";
+            txtremarkdepartmentwork.Enabled = false;
+            TextBox1.Enabled = true;
+        }
+        else
+        {
+            txtremarkdepartmentwork.Enabled = true;
+            TextBox1.Enabled = true;
+            txtremarkdepartmentwork.Text = "";
+        }
+    }
+    protected void CheckBox5_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox5.Checked)
+        {
+            txtremarkhostel.Text = "OK";
+            txtremarkhostel.Enabled = false;
+            TextBox2.Enabled = true;
+        }
+        else
+        {
+            txtremarkhostel.Enabled = true;
+            TextBox2.Enabled = true;
+            txtremarkhostel.Text = "";
+        }
+
+    }
+    protected void CheckBox6_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox6.Checked)
+        {
+            txtremarkwasherman.Text = "OK";
+            txtremarkwasherman.Enabled = false;
+            TextBox3.Enabled = true;
+        }
+        else
+        {
+            txtremarkwasherman.Enabled = true;
+            TextBox3.Enabled = true;
+            txtremarkwasherman.Text = "";
+        }
+    }
+    protected void CheckBox7_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox7.Checked)
+        {
+            txtelectrictydeptremark.Text = "OK";
+            txtelectrictydeptremark.Enabled = false;
+            TextBox4.Enabled = true;
+        }
+        else
+        {
+            txtelectrictydeptremark.Enabled = true;
+            TextBox4.Enabled = true;
+            txtelectrictydeptremark.Text = "";
+        }
+
+    }
+    protected void CheckBox8_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox8.Checked)
+        {
+            txtremarksportic.Text = "OK";
+            txtremarksportic.Enabled = false;
+            TextBox5.Enabled = true;
+        }
+        else
+        {
+            txtremarksportic.Enabled = true;
+            TextBox5.Enabled = true;
+            txtremarksportic.Text = "";
+        }
+    }
+
+    protected void CheckBox9_CheckedChanged(object sender, EventArgs e)
+    {
+        if (CheckBox9.Checked)
+        {
+            txtotherfee.Text = "OK";
+            txtotherfee.Enabled = false;
+            TextBox7.Enabled = false;
+        }
+        else
+        {
+            txtotherfee.Enabled = true;
+            TextBox7.Enabled = false;
+            txtotherfee.Text = "";
+        }
+    }
+
+
+
+    protected void btn_Save_Click(object sender, EventArgs e)
+    {
+        SqlCommand cmd = new SqlCommand("Pro_UpdateCOEStatus", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@EnrollmentNo", UserId.Text);
+        if (con.State == ConnectionState.Open)
+        { con.Close(); }
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Saved Successfully.');document.location.href='StudentNoDuesApproval.aspx';", true);
+        GridViewdata.Show();
+        alldept();
+    }
+    public void hideSubmitbutton()
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+        {
+            using (SqlCommand cmd = new SqlCommand("Select [COE Status] as COEStatus from Tbl_StudentNodues where [Enrollement No]='" + UserId.Text + "'", con))
+            {
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    if (dr.Read())
+                    {
+                        string COEStatus = dr["COEStatus"].ToString();
+                        con.Close();
+                        if (COEStatus == "Submit")
+
+                        {
+                            btn_Save.Visible = false;
+                        }
+                        else
+                        {
+                            //btn_Save.Visible = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void VisibleFormCOE()
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+        string strSQL = "select count(*) c from  HRMSPortal.dbo.Tbl_StudentOutstanigNoDues where Status='Submit' and  [Enrollment No_] ='" + UserId.Text + "'";
+        SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        if (dt.Rows.Count > 0)
+        {
+            if (Convert.ToInt32(dt.Rows[0]["c"]) >= 9 || TextBox12.Text == "0")
+            {
+
+            }
+        }
+    }
+
+    public void UpdateAndDisplayAmount()
+    {
+        String query = "(select * from (Select (Select [Student Name] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] where No_ = P.[Customer No_]) As StudentName, (Select [Enrollment No_] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] where No_ = P.[Customer No_] ) As EnrollmentNo, (Select  CAST(ROUND(sum([Amount (LCY)]), 2) AS DECIMAL(10, 0))[Amount (LCY)] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Detailed Cust_ Ledg_ Entry] where [Cust_ Ledger Entry No_]= P.[Entry No_]) as PendingAmount, [Customer No_] as customerNo, CONVERT(VARCHAR, [Posting Date], 103) AS PostingDate, * from [EDUCOLLEGELIVE-R2].dbo.[TMU$Cust_ Ledger Entry] As P where [Customer No_] ='"+ txtSection.Text +"' and[Open]=1) Y where isnull(Y.PendingAmount,0)!=0)";
+        string constr = ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+        using (SqlConnection con = new SqlConnection(constr))
+        {
+            using (SqlCommand cmd = new SqlCommand(query))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    cmd.Connection = con;
+                    sda.SelectCommand = cmd;
+                    using (DataTable dt = new DataTable())
+                    {
+                        sda.Fill(dt);
+
+                        //Calculate Sum and display in Footer Row
+                        if (dt.Rows.Count > 0)
+                        {
+                            decimal total = dt.AsEnumerable().Sum(row => row.Field<decimal>("PendingAmount"));
+                            TextBox7.Text = total.ToString();
+                        }
+                        else
+                        {
+                            TextBox7.Text = "0";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+   

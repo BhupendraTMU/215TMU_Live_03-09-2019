@@ -1,0 +1,336 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using DL;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Drawing;
+
+public partial class Enquiry : System.Web.UI.Page
+{
+    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        if (!IsPostBack)
+        {
+
+            bindCountryCode();
+            BindProgramType();
+            BindSate();
+        }
+    }
+    
+        public void bindCountryCode()
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetCountryCode", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                con.Open();
+                da.Fill(ds);
+                con.Close();
+
+
+                drpCountryCode.DataSource = ds.Tables[0];
+                drpCountryCode.DataTextField = "Details";
+                drpCountryCode.DataValueField = "No_";
+                drpCountryCode.DataBind();
+                drpCountryCode.SelectedValue = "+91";
+            }
+            catch
+            {
+            }
+        }
+
+        public void BindSate()
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetState", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt1 = new DataTable();
+                con.Open();
+                da.Fill(dt1);
+                con.Close();
+                txtState.DataSource = dt1;
+                txtState.DataTextField = "Details";
+                txtState.DataValueField = "No_";
+                txtState.DataBind();
+            }
+            catch
+            {
+            }
+        }
+
+        public void BindStream(string ProgramType )
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetStreamByDoc", con);
+                cmd.Parameters.AddWithValue("@Code", ProgramType);
+                
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                con.Open();
+                da.Fill(ds);
+                con.Close();
+                ddlStream.DataSource = ds.Tables[0];
+                ddlStream.DataTextField = "Details";
+                ddlStream.DataValueField = "No_";
+                ddlStream.DataBind();
+
+
+            }
+            catch
+            {
+            }
+        }
+        public void BindDdlCity(string Statecode)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetCityDdlByStateDistrict", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@ID", Statecode);
+                cmd.Parameters.AddWithValue("@ID1", Statecode);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt1 = new DataTable();
+                con.Open();
+                da.Fill(dt1);
+                con.Close();
+                txtcity.DataSource = dt1;
+                txtcity.DataTextField = "Details";
+                txtcity.DataValueField = "No_";
+                txtcity.DataBind();
+
+            }
+            catch
+            {
+            }
+        }
+
+
+
+        public void BindSpecialization(string Streamcode,string ProgramCode)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetSpecialization", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@SteamID", Streamcode);
+                cmd.Parameters.AddWithValue("@Program", ddlStream.SelectedValue);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt1 = new DataTable();
+                con.Open();
+                da.Fill(dt1);
+                con.Close();
+                ddlSpecialization.DataSource = dt1;
+                ddlSpecialization.DataTextField = "Details";
+                ddlSpecialization.DataValueField = "No_";
+                ddlSpecialization.DataBind();
+            }
+            catch
+            {
+            }
+        }
+
+        public void BindProgramType()
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("proc_GetProgramType", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+
+              
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt1 = new DataTable();
+                con.Open();
+                da.Fill(dt1);
+                con.Close();
+                ddlProgramType.DataSource = dt1;
+                ddlProgramType.DataTextField = "Details";
+                ddlProgramType.DataValueField = "No_";
+                ddlProgramType.DataBind();
+            }
+            catch
+            {
+            }
+        }
+
+        [System.Web.Script.Services.ScriptMethod()]
+        [System.Web.Services.WebMethod]
+        public static string Save(string ContactNo, string Course, string Name, string City, string Email)
+        {
+            DL.CommonDL commonDl = new CommonDL();
+            //----------------Duplicate---------Start
+            string Result = commonDl.addApplicantInformation(ContactNo, Course);
+            if (Result != "")
+            {
+                return "Error";
+            }
+            //----------------Duplicate-----End
+            string No = "";
+            EnquiryDL objEnquiryDL = new EnquiryDL();
+            No = objEnquiryDL.GetNextEnquiryNo();
+            ContactNo = "+91" + ContactNo;
+            //---changes on 05-06-2016--by Saurabh-Email ID- add email ID
+            commonDl.RegisterYourInterest(No, Name.ToUpper(), "", ContactNo, Course, "", "", "", 0, "WEBSITE", City, "", Email);
+            return "You Have Registered Successfully with Enquiry No : " + No + "  ! ";
+        }
+        protected void txtState_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+
+                BindDdlCity(txtState.SelectedValue);
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        protected void ddlProgram_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                BindSpecialization(ddlProgramType.SelectedValue, ddlStream.SelectedValue);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        protected void ddlProgramType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                BindStream(ddlProgramType.SelectedValue);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        protected void btnsubmit_Click(object sender, EventArgs e)
+        {
+            string result = "";
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_SaveEnquiry", con);//Insert_proc_MarksEntryHeader1
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ApplicantName", txtUser.Text);//Session["GlobalDimension1Code"]
+                cmd.Parameters.AddWithValue("@Mail", txtMail.Text);
+                cmd.Parameters.AddWithValue("@CountryCode", drpCountryCode.SelectedValue);
+                cmd.Parameters.AddWithValue("@Gender", drpGender.SelectedValue);
+                cmd.Parameters.AddWithValue("@Mobile", txtMobile.Text);
+                cmd.Parameters.AddWithValue("@State", txtState.SelectedValue);
+                cmd.Parameters.AddWithValue("@City", txtcity.SelectedValue);
+                cmd.Parameters.AddWithValue("@ProgramType", ddlStream.Text);
+                cmd.Parameters.AddWithValue("@Stream", ddlProgramType.SelectedItem.Text);
+                cmd.Parameters.AddWithValue("@Specialization", ddlSpecialization.SelectedItem.Text);
+                cmd.Parameters.Add("@result", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
+                if (con.State == ConnectionState.Open)
+                { con.Close(); }
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+                result = cmd.Parameters["@result"].Value.ToString();
+                if (result == "0")
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alertMessage", "customAlert('E','Already Register');", true);
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alertMessage", "customAlert('S','Enquiry No. " + result + " is generated successfully.');", true);
+                }
+                //Response.Redirect("EnquiryOnline.aspx");
+
+            }
+            catch (Exception Ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alertMessage", "customAlert('E','Error... ');", true);
+            }
+        }
+
+        protected void btnexist_Click(object sender, EventArgs e)
+        {
+            divenq.Visible = false;
+            divlog.Visible = true;
+        }
+        protected void btnregistration_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Enquiry.aspx");
+        }
+        protected void btnlogin_Click(object sender, EventArgs e)
+        {
+            if (txtenno.Text == "")
+            {
+                txtenno.Focus();
+                txtenno.BorderColor = Color.Red;
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alertMessage", "customAlert('E','Enter Enquiry No');", true);
+                return;
+            }
+            if (txtpassword.Text == "")
+            {
+                txtpassword.Focus();
+                txtpassword.BorderColor = Color.Red;
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alertMessage", "customAlert('E','Enter Password');", true);
+                return;
+            }
+            if (txtenno.Text != "" && txtpassword.Text != "")
+            {
+                Response.Redirect("Application.aspx?invno=" + txtenno.Text + "&invp=" + txtpassword.Text);
+
+            }
+        }
+
+        //protected void drpCountryCode_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (drpCountryCode.SelectedValue == "+91")
+        //    {
+        //        txtState.Visible = true;
+        //        txtcity.Visible = true;
+        //        BindSate();
+        //    }
+        //    else
+        //    {
+        //        txtState.Visible = false;
+        //        txtcity.Visible = false;
+        //        txtState.DataSource = "";
+               
+        //        txtState.DataBind(); 
+        //    }
+        //}
+        protected void lnkVerify_Click(object sender, EventArgs e)
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+        }
+        protected void ddlStream_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindSpecialization(ddlProgramType.SelectedValue, ddlStream.SelectedValue);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "", "Selector();", true);
+        }
+}

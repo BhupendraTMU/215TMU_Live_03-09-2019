@@ -1,0 +1,15 @@
+
+
+.logo-lg img {
+    width: 185px;
+    margin-left: -25px;
+}
+.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+    border: 1px solid #d3d5d6;
+}
+.treeview-menu.menu-open i.fa{
+    margin-right:5px;
+}
+.box.box-default {
+    border-top-color: #d0830f;
+}

@@ -1,0 +1,197 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="IndexMasterM.master.cs" Inherits="IndexMasterM" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>TMU</title>
+    <link href="dropdown_one.css" rel="stylesheet" />
+    <link href="CSS/mainpage.css" rel="stylesheet" type="text/css" />
+   <%-- <link href="dropdown_one.css" rel="stylesheet" type="text/css" />--%>
+     <link href="CSS/reset.css" rel="stylesheet" type="text/css" />
+    <link href="CSS/structure.css" rel="stylesheet" type="text/css" />
+
+   <link rel="shortcut icon" type="image/x-icon" href="logo/Bg.jpg" />
+ 
+    <link href="CSS/style.css" rel="stylesheet" />
+
+   
+    <%--<link href="menucss/styles.css" rel="stylesheet" />--%>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body >
+    <form id="form1" runat="server">
+    <div >
+    <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+    <tr> <td> 
+
+    <table cellpadding="0px" cellspacing="0px" style="width:100%">
+
+        <tr> <td style="height:2px;background-color:#ed7600"> </td></tr>
+
+    <tr> <td style="height:8px;background-color:White"> </td></tr>
+     
+    <tr> <td style="background-color:White"> 
+    <div id="wrapHeader"> 
+    <table cellpadding="0px" cellspacing="0px" > <tr> <td><asp:Image ID="Image1" runat="server" ImageUrl="~/logo/Logo.jpg" Height="100px" />   </td>  <td style="width:30px">  
+        <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
+        </td><td style="width:684px" align="center">
+    <br />
+    
+
+        <%--<asp:Label ID="Label1" runat="server" Text="Human Resource Management" 
+            Font-Size="17pt" 
+            Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" 
+            ForeColor="#093A62"></asp:Label>--%>   </td> <td align="right"> 
+            <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+            <tr> <td> 
+        <asp:Image ID="imgProfile" runat="server" Width="40px"  Height="40px" CssClass="imgcircle"/> </td> <td>&nbsp;&nbsp; Welcome  
+                 </td> <td>&nbsp;&nbsp;
+                     <asp:Label ID="lblName" runat="server" Text=""></asp:Label>
+                 </td>  <%--<td style="width:10px">  </td> <td>   </td>--%></tr></table>  </td></tr></table>
+     
+    
+    </div>
+     
+    </td></tr>
+
+       
+    <tr> <td style="height:10px;background-color:White">
+
+          
+
+         </td></tr>
+    <tr> <td style="background-color:#ed7600"> 
+
+
+
+      
+
+
+    <div id="wrapMenu">
+
+
+     
+
+         <ul id="menu"  style="text-transform: uppercase" >
+	
+	
+  
+
+     <%--    <li> <asp:LinkButton ID="lnkAttendancedetail" runat="server" PostBackUrl="~/AttendenceDetail.aspx" Visible="false"> View Attendance</asp:LinkButton>
+	
+	</li>--%>
+<li><a href="StudentDetailsView1.aspx"><b>Student Details </b></a> </li>
+<li><a href="StudentFeedback.aspx"><b>Student Feedback </b></a> </li>
+<li><a href="StudentAttendance.aspx"><b>Student Attendance </b></a> </li>
+<li><a href="StudentGrievances.aspx"><b>Student Grievances </b></a> </li>
+<li><a href="StudentAssignment.aspx"><b>Student Assignment </b></a> </li>
+
+
+
+  
+   
+   <%--<li><a href="LeaveApproval.aspx">Leave Approval  <asp:Label ID="lblLeaveCount" runat="server"  ForeColor="White"></asp:Label> </a>  </li>--%>
+              <%--<asp:LinkButton ID="LinkButton1" runat="server" PostBackUrl="~/post_attendance.aspx">Post Attendance</asp:LinkButton> --%>
+    <%-- <li> <a href="~/post_attendance.aspx" id="lnkpostAttendance" runat="server"> Post Attendance <asp:Label ID="lblPostAttendanceNotify" runat="server" Text="" ForeColor="Red"></asp:Label></a> </li>--%>
+
+	 
+        <li > <asp:LinkButton ID="lnkAttendanceApprovalHODHR" runat="server" PostBackUrl="~/AttendenceApproval.aspx" Visible="false">Attendance Approval</asp:LinkButton> <asp:Label ID="lblAttendence" runat="server"  ForeColor="Red" Visible="false"></asp:Label>  </li>
+        <li > <a href="ProfileApproval.aspx" id="lnkprofileaprovalblank" runat="server" visible="false">Profile Approval<asp:Label ID="lblProfileCount" runat="server"  ForeColor="Red" Visible="false"></asp:Label></a> </li>
+      
+           <li > <asp:Label ID="lblReimbursmentCount" runat="server" ForeColor="Red" Visible="false" ></asp:Label></li>
+      
+
+              <%--  <li><a class="sub" href=""><b> Approval</b></a>
+		<ul>
+			<li><a href="LeaveApproval.aspx">Leave  <asp:Label ID="lblLeaveCount" runat="server"  ForeColor="Red"></asp:Label> </a>   </li>
+      
+
+
+            <li> <asp:LinkButton ID="lnkAttendanceApprovalHODHR" runat="server" PostBackUrl="~/AttendenceApproval.aspx">Attendance</asp:LinkButton> <asp:Label ID="lblAttendence" runat="server"  ForeColor="Red"></asp:Label> </li>
+
+			<li><a href="ProfileApproval.aspx">Profile<asp:Label ID="lblProfileCount" runat="server"  ForeColor="Red"></asp:Label></a> </li>
+          <li><a href="ReimbursementApproval.aspx">Reimbursement<asp:Label ID="lblReimbursmentCount" runat="server" ForeColor="Red"></asp:Label></a></li>
+		</ul>
+	
+	</li>--%>
+
+
+           <%--<li><a href="change_password.aspx">Change Password</a></li>--%>
+   <%-- <li><a class="sub" href=""><b>Profile</b></a>
+		<ul>
+			<li><a href="profile.aspx">View Profile</a></li>
+			<li><a href="EditProfile.aspx">Edit Profile</a></li>
+            <li><a href="viewpreviousprofile.aspx">View Previous Changes Profile </a></li>
+            <li><a href="change_password.aspx">Change Password</a></li>
+			
+			
+		</ul>
+	
+	</li>--%>
+
+
+        <li > <asp:LinkButton ID="lnkClaim" runat="server" PostBackUrl="~/reimbursement.aspx" Visible="false">Claims</asp:LinkButton> </li>
+         <%-- <li > <asp:LinkButton ID="LinkButton1" runat="server" PostBackUrl="~/erp.aspx" >ERP</asp:LinkButton> </li>--%>
+   <li> <asp:LinkButton ID="lnkPaySlip" runat="server" PostBackUrl="~/Payslipdetail.aspx" >Pay Slip</asp:LinkButton> </li>
+
+         <li><asp:LinkButton ID="lnlrecognition" runat="server" PostBackUrl="~/ERP.aspx" Visible="false">ERP</asp:LinkButton> </li>
+      <li><a href="EditProfile.aspx">Profile</a></li>
+
+    <li> <asp:LinkButton ID="lnkSetup" runat="server" PostBackUrl="~/setup.aspx">Setup</asp:LinkButton></li>
+    
+
+         
+        <li>  <asp:LinkButton ID="lnkLogout" runat="server" >Logout</asp:LinkButton></li>
+</ul>
+
+   
+  
+    </div>
+     </td></tr>
+     <tr> <td style="height:10px;" class="leftBackground"> </td></tr>
+    <tr> <td class="leftBackground" style="height:100%;background-color:#eaf3b0"> 
+    <div id="wrap" > 
+     <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+        </div>
+    </td></tr>
+
+    <tr> <td style="height:40px"> </td></tr>
+
+    <tr> <td class="ffooterInner"> 
+    <div id="wrapFooter">
+    
+     <table cellpadding="0px" cellspacing="0px" style="width:100%">
+      <tr> <td style="height:19px"> </td></tr>
+      
+       <tr> <td > <div id="Div1">    
+      
+      <table cellpadding="0px" cellspacing="0px" style="width:100%"><tr> <td> <table cellpadding="0px" cellspacing="0px">  <tr><td> <label> Company Name :</label></td> <td style="width:20px"> </td> <td>
+          <asp:Label ID="lblCompanyName" runat="server" Text=""></asp:Label> </td>  <td style="width:50px"> </td><td><label>Employee ID</label> </td><td style="width:20px"> </td> <td>  <asp:Label ID="lbluserid666" runat="server" Text=""></asp:Label></td> <td style="width:10px">  </td> <td>
+              <asp:LinkButton ID="lnkChangePassword" runat="server" PostBackUrl="change_password.aspx" Visible="false">Change Password</asp:LinkButton>  </td><td style="width:10px">  </td> <td></td></tr></table>   </td> <td align="right">   All right reserved By  : <a href="https://www.tmu.ac.in/" style="color:white; text-decoration:none" target="_blank"> Teerthanker Mahaveer University.</a> </td></tr> </table>
+
+   
+      
+      
+         </div> </td></tr></table>
+     </div>
+    
+    </td></tr>
+
+    </table>
+
+
+  
+        
+
+       
+        </td></tr></table>
+    </div>
+    </form>
+</body>
+</html>

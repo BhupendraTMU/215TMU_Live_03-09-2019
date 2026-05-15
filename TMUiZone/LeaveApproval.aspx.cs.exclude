@@ -1,0 +1,2956 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.Net;
+using System.Net.Mail;
+using System.IO;
+
+public partial class LeaveApproval : System.Web.UI.Page
+{
+    Connection Portalcon;
+    ServicePoratal con;
+    string HRHODsame = "";
+    string forHRisHOD = "";
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            Portalcon = new Connection();
+            con = new ServicePoratal();
+            Showpermission();
+            if (Session["uid"].ToString() == Session["HRID"].ToString())
+            {
+                HRHODsame = "HRHOD";
+            }
+            if (Session["uid"].ToString() != Session["HRID"].ToString())
+            {
+
+                HRHODsame = "HR";
+            }
+            if (Session["uid"].ToString() == Session["HODLoginPage"].ToString())
+            {
+                forHRisHOD = "HRHOD";
+            }
+            if (Session["uid"].ToString() != Session["HODLoginPage"].ToString())
+            {
+
+                forHRisHOD = "HR";
+            }
+
+
+            if (!IsPostBack)
+            {
+                pnlrejectedDetail.Visible = false;
+                ModalPopupExtender1.Hide();
+
+                CHKAllPending.Checked = true;
+                LeaveApproval_Search();
+
+            }
+           
+        }
+        catch (Exception)
+        {
+            Response.Redirect("Default.aspx");
+        }
+
+
+    }
+
+
+
+    protected void lnkleaveview_Click(object sender, EventArgs e)
+    {
+        pnlProfileView.Visible = true;
+        btnSearch.Visible = false;
+        pnlDate.Visible = false;
+        pnlEmployeeidName.Visible = false;
+        pnlProfileRejected.Visible = false;
+        pnlApprovedDetail.Visible = false;
+        pnlMain.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        ModalPopupExtender1.Hide();
+        rdEmployeeID.Checked = false;
+        rdEmployeeName.Checked = false;
+        rdDatewise.Checked = false;
+        CHKAllPending.Checked = true;
+        LeaveApproval_Search();
+
+    }
+    protected void rdEmployeeID_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = true;
+        pnlDate.Visible = false;
+        btnSearch.Visible = true;
+        txtSearchName.Text = "";
+        txtfromDate.Text = "";
+        txtTodate.Text = "";
+        btnreject.Visible = false;
+        btnApprove.Visible = false;
+        grdViewApproval.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        btnselectchecked.Visible = false;
+        btnuncheked.Visible = false;
+        ModalPopupExtender1.Hide();
+
+    }
+    protected void rdEmployeeName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = true;
+        pnlDate.Visible = false;
+        btnSearch.Visible = true;
+        txtSearchName.Text = "";
+        txtfromDate.Text = "";
+        txtTodate.Text = "";
+        grdViewApproval.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        btnreject.Visible = false;
+        btnApprove.Visible = false;
+        btnselectchecked.Visible = false;
+        btnuncheked.Visible = false;
+        ModalPopupExtender1.Hide();
+    }
+    protected void rdDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlEmployeeidName.Visible = false;
+        pnlDate.Visible = true;
+        btnSearch.Visible = true;
+        txtSearchName.Text = "";
+        txtfromDate.Text = "";
+        txtTodate.Text = "";
+        btnreject.Visible = false;
+        btnApprove.Visible = false;
+        grdViewApproval.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        btnselectchecked.Visible = false;
+        btnuncheked.Visible = false;
+        ModalPopupExtender1.Hide();
+    }
+    protected void rdLeaveRectedEMPID_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = true;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = false;
+        grdRejected.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        ModalPopupExtender1.Hide();
+        txtRejectedSearch.Text = "";
+        txtRejectedFromDate.Text = "";
+        txtRejectedToDate.Text = "";
+    }
+    protected void rdrdLeaveRectedName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = true;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = false;
+        txtRejectedSearch.Text = "";
+        txtRejectedFromDate.Text = "";
+        txtRejectedToDate.Text = "";
+        pnlrejectedDetail.Visible = false;
+        ModalPopupExtender1.Hide();
+        grdRejected.Visible = false;
+
+    }
+    protected void rdLeaveRectedDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = false;
+        btnrejectedsearch.Visible = true;
+        pnlLeaveRejectedDatewise.Visible = true;
+        pnlrejectedDetail.Visible = false;
+        ModalPopupExtender1.Hide();
+        txtRejectedSearch.Text = "";
+        txtRejectedFromDate.Text = "";
+        txtRejectedToDate.Text = "";
+        grdRejected.Visible = false;
+    }
+    protected void lnkRejectLeaveDetail_Click(object sender, EventArgs e)
+    {
+        pnlProfileRejected.Visible = true;
+        pnlProfileView.Visible = false;
+        btnrejectedsearch.Visible = false;
+        pnlLeaveRejectedEMPID.Visible = false;
+        pnlLeaveRejectedDatewise.Visible = false;
+        pnlApprovedDetail.Visible = false;
+        pnlMain.Visible = false;
+
+        rdProfileRectedEMPID.Checked = false;
+        rdProfileRectedDatewise.Checked = false;
+        rdrdProfileRectedName.Checked = false;
+        txtRejectedSearch.Text = "";
+        txtRejectedFromDate.Text = "";
+        txtRejectedToDate.Text = "";
+        grdRejected.Visible = true;
+        pnlrejectedDetail.Visible = false;
+        rdAllReject.Checked = true;
+        LeaveRejected_Search();
+
+        ModalPopupExtender1.Hide();
+
+    }
+    protected void lnkApprovedApproveddetail_Click(object sender, EventArgs e)
+    {
+        pnlApprovedDetail.Visible = true;
+        pnlProfileRejected.Visible = false;
+        pnlProfileView.Visible = false;
+        btnApprovedSearch.Visible = false;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        pnlLeaveApprovedDetailEmpid.Visible = false;
+        pnlMain.Visible = false;
+        rdApprovedEmpid.Checked = false;
+        rdApprovedEMPName.Checked = false;
+        rdApprovedDatewise.Checked = false;
+        txtResolvedSearch.Text = "";
+        txtApprovedFromDate.Text = "";
+        txtApprovedToDate.Text = "";
+        grdResolved.Visible = true;
+       
+        pnlrejectedDetail.Visible = false;
+        rdAllApprove.Checked = true;
+       
+        LeaveResolved_Search();
+        ModalPopupExtender1.Hide();
+    }
+    protected void rdApprovedEmpid_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = true;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        btnApprovedSearch.Visible = true;
+        txtResolvedSearch.Text = "";
+        txtApprovedFromDate.Text = "";
+        txtApprovedToDate.Text = "";
+        grdResolved.Visible = false;
+    }
+    protected void rdApprovedEMPName_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = true;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        btnApprovedSearch.Visible = true;
+        pnlrejectedDetail.Visible = false;
+        txtResolvedSearch.Text = "";
+        txtApprovedFromDate.Text = "";
+        txtApprovedToDate.Text = "";
+        ModalPopupExtender1.Hide();
+        grdResolved.Visible = false;
+    }
+    protected void rdApprovedDatewise_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = false;
+        pnlLeaveApprovedDetailDatewise.Visible = true;
+        btnApprovedSearch.Visible = true;
+        pnlrejectedDetail.Visible = false;
+        txtResolvedSearch.Text = "";
+        txtApprovedFromDate.Text = "";
+        txtApprovedToDate.Text = "";
+        ModalPopupExtender1.Hide();
+        grdResolved.Visible = false;
+    }
+    string HODapr = "";
+    string HRapr = "";
+    string Blankapr = "";
+    string PriorityHRapr = "";
+    string PriorityHODapr = "";
+
+    string EmailBlank = "";
+    string EmailHR = "";
+    string EmailHOD = "";
+    public void Showpermission()
+    {
+        string type = "For Leave";
+        SqlDataReader dr = con.SHow_tblesetupforpriorityforApproval(type,Session["Company"].ToString());
+        dr.Read();
+        if (dr.HasRows)
+        {
+            HODapr = dr["HOD"].ToString();
+            HRapr = dr["HR"].ToString();
+            Blankapr = dr["Blank"].ToString();
+            PriorityHRapr = dr["PriorityHR"].ToString();
+            PriorityHODapr = dr["PriorityHOD"].ToString();
+
+            EmailBlank = dr["EmailBlank"].ToString();
+            EmailHR = dr["EmailHR"].ToString();
+            EmailHOD = dr["EmailHOD"].ToString();
+        }
+        dr.Close();
+        con.DisConnect();
+    }
+
+
+    public void LeaveApproval_Search()
+    {
+        if (rdDatewise.Checked == true)
+        {
+
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Detail_withdateUser(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdViewApproval.DataSource = Dt;
+                grdViewApproval.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+                SqlDataReader dr = con.Leave_Approval_Detail_withdateUser(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                dr.Read();
+                if (dr.HasRows)
+                {
+                    btnApprove.Visible = true;
+                    btnreject.Visible = true;
+                    btnselectchecked.Visible = true;
+                    btnselectchecked.Visible = true;
+
+                }
+                else
+                {
+                    btnApprove.Visible = false;
+                    btnreject.Visible = false;
+                    btnselectchecked.Visible = false;
+                    btnselectchecked.Visible = false;
+
+                    //btnuncheked.Visible = false;
+                }
+                dr.Close();
+                con.DisConnect();
+
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withdateHR(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withdateHR(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+
+                    SqlDataReader odr = con.Leave_Approval_Detail_withdate(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withdate(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withdateHR(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withdateHR(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withdate(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withdate(Session["uid"].ToString(), txtfromDate.Text, txtTodate.Text, Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+            }
+
+
+        }
+
+        if (rdEmployeeID.Checked == true)
+        {
+
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Detail_withUserIDUser(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdViewApproval.DataSource = Dt;
+                grdViewApproval.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+                SqlDataReader dr = con.Leave_Approval_Detail_withUserIDUser(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                dr.Read();
+                if (dr.HasRows)
+                {
+                    btnApprove.Visible = true;
+                    btnreject.Visible = true;
+                    btnselectchecked.Visible = true;
+                    btnselectchecked.Visible = true;
+
+                }
+                else
+                {
+                    btnApprove.Visible = false;
+                    btnreject.Visible = false;
+                    btnselectchecked.Visible = false;
+                    btnselectchecked.Visible = false;
+
+                }
+                dr.Close();
+                con.DisConnect();
+
+            }
+
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+
+
+            }
+
+
+
+        }
+
+        if (rdEmployeeName.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Detail_withUserNameUser(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdViewApproval.DataSource = Dt;
+                grdViewApproval.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+                SqlDataReader dr = con.Leave_Approval_Detail_withUserNameUser(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                dr.Read();
+                if (dr.HasRows)
+                {
+                    btnApprove.Visible = true;
+                    btnreject.Visible = true;
+                    btnselectchecked.Visible = true;
+                    btnselectchecked.Visible = true;
+
+                }
+                else
+                {
+                    btnApprove.Visible = false;
+                    btnreject.Visible = false;
+                    btnselectchecked.Visible = false;
+                    btnselectchecked.Visible = false;
+
+                }
+                dr.Close();
+                con.DisConnect();
+
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+                else
+                {
+
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtSearchName.Text);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+
+            }
+
+
+
+        }
+
+        if (CHKAllPending.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Detail_withALLPendingBlank(Session["uid"].ToString(), Session["Company"].ToString());
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdViewApproval.DataSource = Dt;
+                grdViewApproval.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+                SqlDataReader dr = con.Leave_Approval_Detail_withALLPendingBlank(Session["uid"].ToString(), Session["Company"].ToString());
+                dr.Read();
+                if (dr.HasRows)
+                {
+                    btnApprove.Visible = true;
+                    btnreject.Visible = true;
+                    btnselectchecked.Visible = true;
+                    btnselectchecked.Visible = true;
+
+                }
+                else
+                {
+                    btnApprove.Visible = false;
+                    btnreject.Visible = false;
+                    btnselectchecked.Visible = false;
+                    btnselectchecked.Visible = false;
+
+                }
+                dr.Close();
+                con.DisConnect();
+
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withPriorityHRAllPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withPriorityHRAllPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+                else
+                {
+
+                    SqlDataReader odr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withPriorityHRAllPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withPriorityHRAllPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdViewApproval.DataSource = Dt;
+                    grdViewApproval.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                    SqlDataReader dr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        btnApprove.Visible = true;
+                        btnreject.Visible = true;
+                        btnselectchecked.Visible = true;
+                        btnselectchecked.Visible = true;
+
+                    }
+                    else
+                    {
+                        btnApprove.Visible = false;
+                        btnreject.Visible = false;
+                        btnselectchecked.Visible = false;
+                        btnselectchecked.Visible = false;
+
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+
+            }
+
+
+
+        }
+
+
+    }
+    public void showoffLeavesetup(string LeaveType)
+    {
+        ///under Process
+
+        SqlDataReader dr = con.Show_tble_leave_setup(Session["Company"].ToString(), LeaveType);
+        dr.Read();
+        if (dr.HasRows)
+        {
+            lblHolidayexpect.Text = dr["Club Holiday"].ToString();
+            if (lblHolidayexpect.Text == "Yes")
+            {
+                lblHolidayexpect.Text = "1";
+            }
+            if (lblHolidayexpect.Text == "No")
+            {
+                lblHolidayexpect.Text = "0";
+            }
+
+            lblOffdayexpect.Text = dr["Club Holiday"].ToString();
+            if (lblOffdayexpect.Text == "Yes")
+            {
+
+                lblOffdayexpect.Text = "1";
+            }
+            if (lblOffdayexpect.Text == "No")
+            {
+
+                lblOffdayexpect.Text = "0";
+            }
+        }
+        dr.Close();
+        con.DisConnect();
+
+    }
+    double unapprovedleavess;
+    public void UpdatePayPayEmployeeLeaveEntitled(string Leave_Code, string UserID,  double unapprovedleave,string To_No_OfLeave)
+    {
+        string ccnameUN = Session["Company"].ToString();
+        string rccname = ccnameUN.Replace(".", "_");
+        string tble_Pay_Employee_Leave_Entitled = "[" + rccname + "$Pay Employee Leave Entitled" + "]";
+
+        SqlDataReader dr = Portalcon.ShowLeaveBalance_DetailwithOption(tble_Pay_Employee_Leave_Entitled, UserID, Leave_Code);
+        dr.Read();
+        if (dr.HasRows)
+        {
+            string lb = dr["Leave Balance"].ToString();
+            double To_No_OfLeave1 = Convert.ToDouble(To_No_OfLeave);
+            string unapproved = dr["Unapproved Leave"].ToString();
+            double UnAP1 = Convert.ToDouble(unapproved);
+            double lbc = Convert.ToDouble(lb);
+            double lbc1 = Convert.ToDouble(lbc - To_No_OfLeave1);
+
+
+            unapprovedleavess = UnAP1 - To_No_OfLeave1;
+
+
+
+            dr.Close();
+            Portalcon.DisConnect();
+
+
+            Portalcon.Update_Pay_Employee_Leave_EntitledLeave_BalanceUnaprovedafterApproval(lbc1, tble_Pay_Employee_Leave_Entitled, UserID, Leave_Code, unapprovedleavess);
+            Portalcon.DisConnect();
+
+        }
+        else
+        {
+            dr.Close();
+            Portalcon.DisConnect();
+        }
+    }
+
+
+
+
+
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        grdViewApproval.Visible = true;
+        LeaveApproval_Search();
+    }
+    string chkUSerID = ""; string profilechangedate = ""; string lblnoofchangeu1 = ""; string HRAPRStatus = "";
+    string HODAPRStatus = "";
+    string tblenameAttendence = "";
+    public void FindCheckData(string LeaveType)
+    {
+
+        
+
+        showoffLeavesetup(LeaveType);
+        string ccname = Session["Company"].ToString();
+        string rccname = ccname.Replace(".", "_");
+        tblenameAttendence = "[" + rccname + "$Pay Daily Attendence Detail" + "]";
+
+        SqlDataReader drall=con.Approved_LeaveData(Session["Company"].ToString(),chkUSerID,profilechangedate);
+        drall.Read();
+        if (drall.HasRows)
+        {
+
+        //SqlDataAdapter da = new SqlDataAdapter("select * from tble_Leave_Approval where UserID='" + chkUSerID + "' and id='" + profilechangedate + "'", con.Con);
+        //DataSet ds = new DataSet();
+        //da.Fill(ds, "tble_Leave_Approval");
+        //for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+        //{
+            string AutoNo = "";
+            string Uname = ""; string From_Date = ""; string To_Date = ""; string Leave_Period = ""; string No_Of_Days_Leave_Period = ""; string Leave_Type = ""; string timein = ""; string timeout = ""; string hourpresent = "00.00"; string status = ""; string userEmailid = ""; string HR_Userid = ""; string HREmailidleav = ""; string HODEmailIDleav = ""; string HRNameleav = ""; string HODNameleav = "";
+            Uname = drall["Uname"].ToString();
+            From_Date = drall["From_Date"].ToString();
+            To_Date = drall["To_Date"].ToString();
+            userEmailid = drall["user_Emailid"].ToString();
+            HR_Userid = drall["HR_Userid"].ToString();
+            AutoNo = drall["AutoNo"].ToString();
+
+            HREmailidleav = drall["HREmailid"].ToString();
+            HODEmailIDleav = drall["HODEmailID"].ToString();
+            HRNameleav = drall["HRName"].ToString();
+            HODNameleav = drall["HODName"].ToString();
+          
+            string Leavep = drall["Leave_Period"].ToString();
+           if (Leavep == "(Full-Day)")
+           {
+               Leave_Period = "3";
+           }
+
+           if (Leavep == "(Half-Day)")
+           {
+               Leave_Period = "2";
+           }
+           No_Of_Days_Leave_Period = drall["No_Of_Days_Leave_Period"].ToString();
+           Leave_Type = drall["Leave_Type"].ToString();
+
+           drall.Close();
+           drall.Dispose();
+            if (Leave_Type == "LWP" && Leavep == "(Full-Day)")
+            {
+                status = "6";
+            }
+            if (Leave_Type == "LWP" && Leavep == "(Half-Day)")
+            {
+                status = "5";
+            }
+            if (Leave_Type == "Special Leave")
+            {
+                status = "7";
+            }
+            else
+            {
+                status = "4";
+            }
+                if (Blankapr == "1")
+                {
+                    string approvalStatus = "Approved";
+                    string approvalStatusHOD = "Pending";
+                    string hodDate = ""; string hrdate = ""; string hodid = ""; string hrid = "";
+                    SqlDataReader dr = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date ,chkUSerID);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+
+                        con.Update_tble_leaveApproval_ResolvedBlank(approvalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), hodDate, hrdate, hrid, hodid, chkUSerID, approvalStatusHOD, approvalStatusHOD, profilechangedate);
+                        con.DisConnect();
+
+
+
+                        UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+
+                        UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                        subject1 = "Leave Approval";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " +  " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(userEmailid);
+                        if (EmailHR == "True")
+                        {
+                            subject1 = "Leave Approval of " + Uname ;
+                            string HR2 = "HR Manager";
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + HR2 + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Our Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(HREmailidleav);
+                        }
+
+                        if (EmailHOD == "True")
+                        {
+                            subject1 = "Leave Approval of " + Uname;
+                            
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + HODNameleav + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Our Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(HODEmailIDleav);
+                        }
+
+                    }
+                    else
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                       // ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+                    }
+                }
+
+
+                if (HRapr == "1" && HODapr == "1")
+                {
+                    if (PriorityHRapr == "1" && Session["UserType"].ToString() == "2" || PriorityHRapr == "1" && Session["UserType"].ToString() == "2" && HRHODsame == "HR" || PriorityHRapr == "1" && Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                    {
+                        SqlDataReader drap = con.Show_ApprovalStatusHR_HODForleaved(profilechangedate);
+                        drap.Read();
+                        if (drap.HasRows)
+                        {
+                            HRAPRStatus = drap["CountStatusHR"].ToString();
+                            HODAPRStatus = drap["CountStatusHOD"].ToString();
+                            drap.Close();
+                            con.DisConnect();
+                            if (HRAPRStatus == "Pending" && HODAPRStatus == "Pending")
+                            {
+                                string ApprovalStatus = "Approved By HR and HR Forwarded this record for HOD Approval";
+                                string CountStatusHR = "Approved";
+                                Portalcon.DisConnect();
+                                SqlDataReader dr = Portalcon.SHow_HODIDForApproval(chkUSerID, Session["CompanyTableEmployee"].ToString());
+                                dr.Read();
+                                if (dr.HasRows)
+                                {
+                                    string hodid = "";
+                                    hodid = dr["HOD"].ToString();
+                                    dr.Close();
+                                    con.DisConnect();
+                                    if (hodid == "")
+                                    {
+                                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('There is no HOD ID available of this user Please update HOD');", true);
+                                    }
+                                    else
+                                    {
+
+                                        con.Update_tble_leave_ResolvedHRapr(ApprovalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), hodid, profilechangedate, CountStatusHR);
+                                        con.DisConnect();
+
+                                        subject1 = "Pending leave Approval and HR Approved this leave of   " + Uname ; 
+
+                                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + HODNameleav + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "i have Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                                        ShowMailDataTo(HODEmailIDleav);
+                                    }
+                                }
+                                dr.Close();
+                                con.DisConnect();
+
+                            }
+
+
+                            else
+                            {
+                                string ApprovalStatus = "Approved";
+                                string CountStatusHR = "Approved";
+                                Portalcon.DisConnect();
+                                SqlDataReader dr = Portalcon.SHow_HODIDForApproval(chkUSerID, Session["CompanyTableEmployee"].ToString());
+                                dr.Read();
+                                if (dr.HasRows)
+                                {
+                                    string hodid = "";
+                                    hodid = dr["HOD"].ToString();
+                                    dr.Close();
+                                    con.DisConnect();
+                                    if (hodid == "")
+                                    {
+                                        //dr.Close();
+                                        //con.DisConnect();
+                                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('There is no HOD ID available of this user please update HOD');", true);
+                                    }
+                                    else
+                                    {
+                                        SqlDataReader drNav = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date, chkUSerID);
+                                        drNav.Read();
+                                        if (drNav.HasRows)
+                                        {
+                                            drNav.Close();
+                                            Portalcon.DisConnect();
+                                            if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                                            {
+                                                Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                                Portalcon.DisConnect();
+                                            }
+                                            if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                                            {
+                                                Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                                Portalcon.DisConnect();
+                                            }
+                                            if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                                            {
+                                                Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                                Portalcon.DisConnect();
+                                            }
+                                            if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                                            {
+                                                Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                                Portalcon.DisConnect();
+                                            }
+
+                                            con.Update_tble_leave_ResolvedHRapr(ApprovalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), hodid, profilechangedate, CountStatusHR);
+                                            con.DisConnect();
+
+
+                                            UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                                            con.DisConnect();
+
+                                            UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                                            subject1 = "Leave Approved";
+
+                                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                                            ShowMailDataTo(userEmailid);
+                                            
+                                        }
+                                        else
+                                        {
+                                            drNav.Close();
+                                            Portalcon.DisConnect();
+                                           // ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+                                            ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                                        }
+                                    }
+                                }
+                                dr.Close();
+                                con.DisConnect();
+                            }
+                        }
+                        drap.Close();
+                        con.DisConnect();
+
+                    }
+
+                    if (PriorityHODapr == "1" && Session["UserType"].ToString() == "2" || PriorityHODapr == "1" && Session["UserType"].ToString() == "2" && HRHODsame == "HR" || PriorityHODapr == "1" && Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                    {
+                        string ApprovalStatus = "Approved";
+                        string CountStatusHR = "Approved";
+                        Portalcon.DisConnect();
+                        SqlDataReader dr = Portalcon.SHow_HODIDForApproval(chkUSerID, Session["CompanyTableEmployee"].ToString());
+                        dr.Read();
+                        if (dr.HasRows)
+                        {
+                            string hodid = "";
+                            hodid = dr["HOD"].ToString();
+                            dr.Close();
+                            con.DisConnect();
+                            if (hodid == "")
+                            {
+                                dr.Close();
+                                con.DisConnect();
+                                ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('There is no HOD ID available of this user Please update HOD');", true);
+                            }
+                            else
+                            {
+
+                                SqlDataReader drNav = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date, chkUSerID);
+                                drNav.Read();
+                                if (drNav.HasRows)
+                                {
+                                    drNav.Close();
+                                    Portalcon.DisConnect();
+                                    if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+
+                                    con.Update_tble_leave_ResolvedHRapr(ApprovalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), hodid, profilechangedate, CountStatusHR);
+                                    con.DisConnect();
+
+
+                                    UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                                    con.DisConnect();
+                                    UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                                    subject1 = "Leave Approved";
+
+                                    Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                                    ShowMailDataTo(userEmailid);
+
+                                }
+                                else
+                                {
+                                    drNav.Close();
+                                    Portalcon.DisConnect();
+                                    //ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+                                    ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                                }
+                            }
+                        }
+                        dr.Close();
+                        con.DisConnect();
+                    }
+
+
+                    else if (Session["UserType"].ToString() != "2")
+                    {
+
+                        SqlDataReader drap = con.Show_ApprovalStatusHR_HODForleaved(profilechangedate);
+                        drap.Read();
+                        if (drap.HasRows)
+                        {
+                            HRAPRStatus = drap["CountStatusHR"].ToString();
+                            HODAPRStatus = drap["CountStatusHOD"].ToString();
+                            drap.Close();
+                            con.DisConnect();
+                            if (HRAPRStatus == "Pending" && HODAPRStatus == "Pending")
+                            {
+
+                                string ApprovalStatus = "Approved By HOD it forwared to HR for Approval";
+                                string CountStatusHOD = "Approved";
+                                Portalcon.DisConnect();
+
+
+
+                                SqlDataReader dr = Portalcon.SHow_HODIDForApproval(chkUSerID, Session["CompanyTableEmployee"].ToString());
+                                dr.Read();
+                                if (dr.HasRows)
+                                {
+                                    string HRIDIND = "";
+                                    HRIDIND = dr["HR"].ToString();
+                                    dr.Close();
+                                    con.DisConnect();
+                                    if (HRIDIND == "")
+                                    {
+                                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('There is no HR ID available of this user Please update HR ');", true);
+                                    }
+                                    else
+                                    {
+
+                                        con.Update_tbleLeaveapr_ResolvedHOD(ApprovalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), HRIDIND, profilechangedate, CountStatusHOD);
+                                        con.DisConnect();
+                                        subject1 = "Pending leave Approval and HOd Approved this leave of   " + Uname;
+
+                                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + HODNameleav + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "i have Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                                        ShowMailDataTo(HREmailidleav);
+
+                                    }
+                                }
+                                dr.Close();
+                                con.DisConnect();
+
+
+
+
+                              
+
+                            }
+                            else
+                            {
+                                string ApprovalStatus = "Approved";
+                                string CountStatusHOD = "Approved";
+                                Portalcon.DisConnect();
+                                drap.Close();
+                                con.DisConnect();
+                                SqlDataReader drNAV = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date, chkUSerID);
+                                drNAV.Read();
+                                if (drNAV.HasRows)
+                                {
+                                    drNAV.Close();
+                                    Portalcon.DisConnect();
+                                    if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+                                    if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                                    {
+                                        Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                                        Portalcon.DisConnect();
+                                    }
+
+                                    con.Update_tbleLeaveapr_ResolvedHOD(ApprovalStatus, System.DateTime.Now.ToString("dd-MM-yyyy"), HR_Userid, profilechangedate, CountStatusHOD);
+                                    con.DisConnect();
+
+
+                                    UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                                    con.DisConnect();
+                                    UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                                    subject1 = "Leave Approved";
+
+                                    Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                                    ShowMailDataTo(userEmailid);
+                                }
+
+                                else
+                                {
+                                    drNAV.Close();
+                                    Portalcon.DisConnect();
+                                    ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                                   // ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+
+                                }
+                            }
+                        }
+                        drap.Close();
+                        con.DisConnect();
+
+
+
+                    }
+
+
+
+
+                }
+                if (HRapr == "1" && HODapr == "0")
+                {
+                    SqlDataReader dr = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date, chkUSerID);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+
+                        con.Update_tble_leaveapr_ResolvedHRFinal(System.DateTime.Now.ToString("dd-MM-yyyy"), profilechangedate);
+                        con.DisConnect();
+
+                        UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+                        UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                        subject1 = "Leave Approved";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(userEmailid);
+                        if (EmailHOD == "True")
+                        {
+                            subject1 = "Leave Approved by HR of " + Uname;
+
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + HODNameleav + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "i have Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(HODEmailIDleav);
+                        }
+                    }
+                    else
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                       // ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+
+                    }
+                }
+
+                if (HODapr == "1" && HRapr == "0")
+                {
+                    SqlDataReader dr = Portalcon.Show_AttendenceDateFromNavisionforLeave(tblenameAttendence, From_Date, To_Date, chkUSerID);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeave(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholidayoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "1" && lblOffdayexpect.Text == "0")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinholiday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+                        if (lblHolidayexpect.Text == "0" && lblOffdayexpect.Text == "1")
+                        {
+                            Portalcon.Update_AttendencewithApprovalforLeavenotinoffday(tblenameAttendence, timein, timeout, status, hourpresent, chkUSerID, From_Date, To_Date, Leave_Period, Leave_Type);
+                            Portalcon.DisConnect();
+                        }
+
+                        con.Update_tble_Leaveapr_ResolvedHODFinal(System.DateTime.Now.ToString("dd-MM-yyyy"),  profilechangedate);
+                        con.DisConnect();
+
+                        UpdatePayPayEmployeeLeaveEntitled(Leave_Type, chkUSerID, unapprovedleavess, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+
+                        UpdateCO(Leave_Type, AutoNo, chkUSerID);
+
+                        subject1 = "Leave Approved";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(userEmailid);
+                        if (EmailHR == "True")
+                        {
+                            subject1 = "Leave Approved by HOD of " + Uname;
+                            string hrm1 = "HR Manager";
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}", Environment.NewLine, "" + hrm1 + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "i have Approved " + Leave_Type + " , " + " From " + From_Date + " To " + To_Date + " . ", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(HREmailidleav);
+                        }
+                    }
+                    else
+                    {
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please update Attendance table from Navision, date is not available ');", true);
+
+                      //  ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact Navision Team or Update Pay Daily Attendence Detail table this date is not available ');", true);
+
+                    }
+
+                }
+                
+        }
+        drall.Close();
+        drall.Dispose();
+    }
+
+
+
+
+
+    public void UpdateCO(string Leave_Type, string AutoNo,string userid)
+    {
+
+        if (Leave_Type == "CO")
+        {
+            con.Update_tbl_Co_Leave_DetailsStatus("Approved", AutoNo, Session["Company"].ToString());
+            con.DisConnect();
+
+
+            SqlDataAdapter da = new SqlDataAdapter("select * from tbl_Co_Leave_Details where Userid='" + userid + "' and Company='" + Session["Company"].ToString() + "' and [Based on working]='" + AutoNo + "'", con.Con);
+            DataSet ds = new DataSet();
+            da.Fill(ds, "tbl_Co_Leave_Details");
+            for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+            {
+                string lblAttendacedate4 = "";
+
+                lblAttendacedate4 = ds.Tables[0].Rows[i]["Co_Date"].ToString();
+
+                Portalcon.updateCoLeaveStatusinPaydailyAttendance(tblenameAttendence, Convert.ToDateTime(lblAttendacedate4), chkUSerID, "Approved");
+                Portalcon.DisConnect();
+            }
+
+           // SqlDataReader drautono = con.ApprovedStatusofPaydeialyAttendance(Session["Company"].ToString(), userid, AutoNo);
+            //while (drautono.Read)
+            //{
+
+            //    string atte = drautono["Co_Date"].ToString();
+            //    drautono.Close();
+            //    con.DisConnect();
+            //    Portalcon.updateCoLeaveStatusinPaydailyAttendance(tblenameAttendence, Convert.ToDateTime(atte), chkUSerID, "Approved");
+            //    Portalcon.DisConnect();
+            //    con.Connect();
+            //    drautono.Read();
+            //}
+
+        }
+    }
+
+
+
+
+
+    double unapprovedleavessRejected;
+    public void UpdatePayPayEmployeeLeaveEntitledRejected(string Leave_Code, string UserID, string To_No_OfLeave)
+    {
+        string ccnameUN = Session["Company"].ToString();
+        string rccname = ccnameUN.Replace(".", "_");
+        string tble_Pay_Employee_Leave_Entitled = "[" + rccname + "$Pay Employee Leave Entitled" + "]";
+
+        SqlDataReader dr = Portalcon.ShowLeaveBalance_DetailwithOption(tble_Pay_Employee_Leave_Entitled, UserID, Leave_Code);
+        dr.Read();
+        if (dr.HasRows)
+        {
+            //string lb = dr["Leave Balance"].ToString();
+            double To_No_OfLeave1 = Convert.ToDouble(To_No_OfLeave);
+            string unapproved = dr["Unapproved Leave"].ToString();
+            double UnAP1 = Convert.ToDouble(unapproved);
+            //double lbc = Convert.ToDouble(lb);
+            unapprovedleavessRejected = Convert.ToDouble(UnAP1 - To_No_OfLeave1);
+
+
+          
+
+
+
+            dr.Close();
+            Portalcon.DisConnect();
+
+
+            Portalcon.Update_Pay_Employee_Leave_EntitledLeave_BalanceApply(unapprovedleavessRejected, tble_Pay_Employee_Leave_Entitled, UserID, Leave_Code);
+            Portalcon.DisConnect();
+
+        }
+        else
+        {
+            dr.Close();
+            Portalcon.DisConnect();
+        }
+    }
+
+
+    public void FindCheckDataRejected(string LeaveType)
+    {
+
+        string tble_Pay_Employee_Leave_Entitledlb = "";
+        //showoffLeavesetup();
+        string ccname = Session["Company"].ToString();
+        string rccname = ccname.Replace(".", "_");
+        tblenameAttendence = "[" + rccname + "$Pay Daily Attendence Detail" + "]";
+        string ccnamelb = Session["Company"].ToString();
+        string rccnamelb = ccnamelb.Replace(".", "_");
+        tble_Pay_Employee_Leave_Entitledlb = "[" + rccnamelb + "$Pay Employee Leave Entitled" + "]";
+
+        SqlDataReader drall = con.rejected_LeaveApprovaldata1(Session["Company"].ToString(), chkUSerIDRejected, profilechangedaterejected);
+        drall.Read();
+        if(drall.HasRows)
+        {
+
+
+
+            string AutoNo = ""; string Uname = ""; string From_Date = ""; string To_Date = ""; string Leave_Period = ""; string No_Of_Days_Leave_Period = ""; string Leave_Type = ""; string lbBalance_Leave_entiled = ""; string emailId = ""; string HREmailidrej = ""; string HODEmailIDrej = ""; string HRNamerej = ""; string HODNamerej = "";
+            Uname = drall["Uname"].ToString();
+            From_Date = drall["From_Date"].ToString();
+            AutoNo = drall["AutoNo"].ToString();
+            To_Date = drall["To_Date"].ToString();
+            emailId = drall["user_Emailid"].ToString();
+            Leave_Period = drall["Leave_Period"].ToString();
+            No_Of_Days_Leave_Period = drall["No_Of_Days_Leave_Period"].ToString();
+            Leave_Type = drall["Leave_Type"].ToString();
+
+            HREmailidrej = drall["HREmailid"].ToString();
+            HODEmailIDrej = drall["HODEmailID"].ToString();
+            HRNamerej = drall["HRName"].ToString();
+            HODNamerej = drall["HODName"].ToString();
+
+            drall.Close();
+            con.DisConnect();
+            if (Blankapr == "1")
+            {
+                
+                SqlDataReader dr = Portalcon.ShowLeaveBalance_Detail_LBType(tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected,Leave_Type);
+                dr.Read();
+                if (dr.HasRows)
+                {
+                    lbBalance_Leave_entiled = dr["Leave Balance"].ToString();
+                    double prbal = Convert.ToDouble(No_Of_Days_Leave_Period);
+                    double curbal = Convert.ToDouble(lbBalance_Leave_entiled);
+                    double curprbal = prbal + curbal;
+                   
+                    dr.Close();
+                    Portalcon.DisConnect();
+                    con.Update_tble_LeaveApprovalStatus_RejectedbyUser(txtRemarksRejected.Text, "Yes", System.DateTime.Now.ToString("dd/MM/yyyy"), profilechangedaterejected);
+                    con.DisConnect();
+                    //Portalcon.Update_Pay_Employee_Leave_EntitledLeave_Balance(curprbal, tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                    //Portalcon.DisConnect();
+
+                    UpdatePayPayEmployeeLeaveEntitledRejected(Leave_Type, chkUSerIDRejected, No_Of_Days_Leave_Period);
+                    con.DisConnect();
+                    UpdateCoDetailsrejected(Leave_Type, AutoNo);
+
+                    subject1 = "Your Leave  is Rejected";
+
+                    Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                    ShowMailDataTo(emailId);
+
+                    if (EmailHOD == "True")
+                    {
+                        subject1 = "Leave  is Rejected of  " + Uname;
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + HODNamerej + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(HODEmailIDrej);
+                    }
+
+                    if (EmailHR == "True")
+                    {
+                        subject1 = "Leave  is Rejected of  " + Uname;
+                        string hrm3 = "HR Manager";
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + hrm3 + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(HREmailidrej);
+                    }
+                }
+                dr.Close();
+                con.DisConnect();
+                
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2")
+                {
+
+                    SqlDataReader dr = Portalcon.ShowLeaveBalance_Detail_LBType(tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        lbBalance_Leave_entiled = dr["Leave Balance"].ToString();
+                        double prbal = Convert.ToDouble(No_Of_Days_Leave_Period);
+                        double curbal = Convert.ToDouble(lbBalance_Leave_entiled);
+                        double curprbal = prbal + curbal;
+                       
+                        dr.Close();
+                        Portalcon.DisConnect();
+                        con.Update_tble_LeaveApprovalStatus_RejectedByHR(txtRemarksRejected.Text, "Yes", System.DateTime.Now.ToString("dd/MM/yyyy"), profilechangedaterejected);
+                        con.DisConnect();
+                        //Portalcon.Update_Pay_Employee_Leave_EntitledLeave_Balance(curprbal, tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                        //Portalcon.DisConnect();
+
+                        UpdatePayPayEmployeeLeaveEntitledRejected(Leave_Type, chkUSerIDRejected, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+
+                        UpdateCoDetailsrejected(Leave_Type, AutoNo);
+                        subject1 = "Your Leave  is Rejected";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(emailId);
+
+
+                        if (EmailHR == "True")
+                        {
+                            subject1 = "Leave  is Rejected by HOD of " + Uname;
+                            string hrt = "HR Manager";
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + hrt + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(HREmailidrej);
+
+                        
+                        }
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+
+                    SqlDataReader dr = Portalcon.ShowLeaveBalance_Detail_LBType(tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        lbBalance_Leave_entiled = dr["Leave Balance"].ToString();
+                        double prbal = Convert.ToDouble(No_Of_Days_Leave_Period);
+                        double curbal = Convert.ToDouble(lbBalance_Leave_entiled);
+                        double curprbal = prbal + curbal;
+
+                        dr.Close();
+                        Portalcon.DisConnect();
+
+                        con.Update_tble_LeaveApprovalStatus_Rejected(txtRemarksRejected.Text, "Yes", System.DateTime.Now.ToString("dd/MM/yyyy"), profilechangedaterejected);
+                        con.DisConnect();
+                        //Portalcon.Update_Pay_Employee_Leave_EntitledLeave_Balance(curprbal, tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                        //Portalcon.DisConnect();
+                        UpdatePayPayEmployeeLeaveEntitledRejected(Leave_Type, chkUSerIDRejected, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+                        UpdateCoDetailsrejected(Leave_Type, AutoNo);
+                        subject1 = "Your Leave  is Rejected";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(emailId);
+
+                        if (EmailHR == "True")
+                        {
+                            subject1 = "Leave  is Rejected by HOD of " + Uname;
+                            string hry = "HR Manager";
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + hry + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+                            ShowMailDataTo(HREmailidrej);
+                        }
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2")
+                {
+                      SqlDataReader dr = Portalcon.ShowLeaveBalance_Detail_LBType(tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        lbBalance_Leave_entiled = dr["Leave Balance"].ToString();
+                        double prbal = Convert.ToDouble(No_Of_Days_Leave_Period);
+                        double curbal = Convert.ToDouble(lbBalance_Leave_entiled);
+                        double curprbal = prbal + curbal;
+
+                        dr.Close();
+                        Portalcon.DisConnect();
+
+
+                        con.Update_tble_LeaveApprovalStatus_RejectedByHR(txtRemarksRejected.Text, "Yes", System.DateTime.Now.ToString("dd/MM/yyyy"), profilechangedaterejected);
+                        con.DisConnect();
+                        //Portalcon.Update_Pay_Employee_Leave_EntitledLeave_Balance(curprbal, tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                        //Portalcon.DisConnect();
+                        UpdatePayPayEmployeeLeaveEntitledRejected(Leave_Type, chkUSerIDRejected, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+                        UpdateCoDetailsrejected(Leave_Type, AutoNo);
+                        subject1 = "Your Leave  is Rejected";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(emailId);
+
+                        if (EmailHOD == "True")
+                        {
+                            subject1 = "Leave is Rejected by HR of " + Uname;
+
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + HODNamerej + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(emailId);
+                        
+                        }
+                    }
+                    dr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                     SqlDataReader dr = Portalcon.ShowLeaveBalance_Detail_LBType(tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                    dr.Read();
+                    if (dr.HasRows)
+                    {
+                        lbBalance_Leave_entiled = dr["Leave Balance"].ToString();
+                        double prbal = Convert.ToDouble(No_Of_Days_Leave_Period);
+                        double curbal = Convert.ToDouble(lbBalance_Leave_entiled);
+                        double curprbal = prbal + curbal;
+
+                        dr.Close();
+                        Portalcon.DisConnect();
+
+                        con.Update_tble_LeaveApprovalStatus_Rejected(txtRemarksRejected.Text, "Yes", System.DateTime.Now.ToString("dd/MM/yyyy"), profilechangedaterejected);
+                        con.DisConnect();
+                        //Portalcon.Update_Pay_Employee_Leave_EntitledLeave_Balance(curprbal, tble_Pay_Employee_Leave_Entitledlb, chkUSerIDRejected, Leave_Type);
+                        //Portalcon.DisConnect();
+                        UpdatePayPayEmployeeLeaveEntitledRejected(Leave_Type, chkUSerIDRejected, No_Of_Days_Leave_Period);
+                        con.DisConnect();
+                        UpdateCoDetailsrejected(Leave_Type, AutoNo);
+                        subject1 = "Your Leave  is Rejected";
+
+                        Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Your Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                        ShowMailDataTo(emailId);
+
+                        if (EmailHOD == "True")
+                        {
+                            subject1 = "Leave  is Rejected by HR " + Uname;
+
+                            Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}", Environment.NewLine, "" + Uname + Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "Leave is rejected of From Date : " + From_Date + " and To Date : " + To_Date + "", Environment.NewLine, "Thanking you,", Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
+
+                            ShowMailDataTo(emailId);
+                        
+                        }
+                    }
+                    dr.Close();
+                    con.DisConnect();
+
+                }
+            }
+            
+
+        }
+        drall.Close();
+        drall.Dispose();
+    }
+
+    public void UpdateCoDetailsrejected(string Leave_Type, string AutoNo)
+    {
+        if (Leave_Type == "CO")
+        {
+            con.Update_tbl_Co_Leave_DetailsStatus("Pending", AutoNo, Session["Company"].ToString());
+            con.DisConnect();
+        }
+    
+    }
+    string mailfrom = ""; string subject1 = ""; string Body1 = ""; string smtpfromportal = ""; int portNo1; string Pass_From = ""; string Mail_Sending_Option = ""; string Leave_Applymail = ""; string CCMail = "";
+    public void ShowMailDataTo(string mailTo1)
+    {
+
+        SqlDataReader dr = con.Show_tble_MailSetup(Session["Company"].ToString(), "Leave");
+        dr.Read();
+        if (dr.HasRows)
+        {
+            mailfrom = dr["from_Email"].ToString();
+            smtpfromportal = dr["smtp"].ToString();
+            Pass_From = dr["Password_From"].ToString();
+            CCMail = dr["CCMail"].ToString();
+            string portNo = dr["Port_No"].ToString();
+            portNo1 = Convert.ToInt32(portNo);
+            Mail_Sending_Option = dr["Mail_Sending_Option"].ToString();
+            Leave_Applymail = dr["Leave_Approval"].ToString();
+
+        }
+
+        dr.Close();
+        con.DisConnect();
+        if (Mail_Sending_Option == "1" && Leave_Applymail == "True")
+        {
+            SendMail(mailTo1);
+        }
+
+    }
+
+
+    public void SendMail(string MailTo)
+    {
+
+
+        System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
+        if (mailfrom == "" && MailTo == "")
+        { }
+
+        else
+        {
+            if (mailfrom == "")
+            {
+            }
+
+            else
+            {
+
+                msg.From = new MailAddress(Session["CompanyEmail"].ToString().Trim(), "  " + Session["Fulname"].ToString());
+                if (MailTo == "")
+                { }
+                else
+                {
+
+                    string[] multi = MailTo.Split(',');
+                    foreach (string multiTo in multi)
+                    {
+                        msg.To.Add(multiTo);
+                    }
+                }
+                if (CCMail == "")
+                { }
+                else
+                {
+                    string[] ccmulti = CCMail.Split(',');
+                    foreach (string ccm in ccmulti)
+                    {
+                        msg.CC.Add(ccm);
+                    }
+                }
+                msg.Subject = subject1;
+                msg.Body = Body1;
+                SmtpClient smtp = new SmtpClient();
+
+                smtp.Port = portNo1;
+                smtp.Host = smtpfromportal;
+                smtp.EnableSsl = true;
+                NetworkCredential credential = new NetworkCredential(mailfrom, Pass_From);
+                smtp.UseDefaultCredentials = true;
+                smtp.Credentials = credential;
+
+                try
+                {
+                    smtp.Send(msg);
+                    msg.Dispose();
+
+                }
+                catch (Exception)
+                {
+                    msg.Dispose();
+                }
+            }
+        }
+    }
+
+
+
+
+    protected void btnApprove_Click(object sender, EventArgs e)
+    {
+        
+
+        foreach (GridViewRow row in grdViewApproval.Rows)
+        {
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+
+                CheckBox chkRow = (row.Cells[0].FindControl("chkMark") as CheckBox);
+                Label lblProfilechangedate1 = (row.Cells[0].FindControl("lblProfilechangedate") as Label);
+                Label lblLeaveTypegrid = (row.Cells[0].FindControl("lblLeaveTypegrid") as Label);
+
+                if (chkRow.Checked == true)
+                {
+                    //DateTime lblProfilechangedate11 = DateTime.ParseExact(lblProfilechangedate1.Text, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    //profilechangedate = lblProfilechangedate11.ToString("yyyy-MM-dd");
+                    profilechangedate = lblProfilechangedate1.Text;
+                    chkUSerID = chkRow.Text;
+                    FindCheckData(lblLeaveTypegrid.Text);
+
+
+                }
+            }
+        }
+        LeaveApproval_Search();
+
+       
+
+    }
+    string profilechangedaterejected = "";
+    string chkUSerIDRejected = ""; string lblnoofchangeReject1 = "";
+
+    protected void btnreject_Click(object sender, EventArgs e)
+    {
+
+       pnlrejectedDetail.Visible = true;
+       ModalPopupExtender1.Show();
+
+
+    }
+    protected void btnRejectProfile1_Click(object sender, EventArgs e)
+    {
+        foreach (GridViewRow row in grdViewApproval.Rows)
+        {
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+                CheckBox chkRow = (row.Cells[0].FindControl("chkMark") as CheckBox);
+                Label lblProfilechangedate1 = (row.Cells[0].FindControl("lblProfilechangedate") as Label);
+                Label lblLeaveTypegrid1 = (row.Cells[0].FindControl("lblLeaveTypegrid") as Label);
+
+                if (chkRow.Checked == true)
+                {
+
+                    profilechangedaterejected = lblProfilechangedate1.Text;
+                    chkUSerIDRejected = chkRow.Text;
+
+                    FindCheckDataRejected(lblLeaveTypegrid1.Text);
+
+
+                }
+            }
+        }
+        LeaveApproval_Search();
+
+
+    }
+
+    public void LeaveRejected_Search()
+    {
+        if (rdProfileRectedDatewise.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Reject_withdateBlank(Session["uid"].ToString(), txtRejectedFromDate.Text, txtRejectedToDate.Text, Session["Company"].ToString());
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdRejected.DataSource = Dt;
+                grdRejected.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Reject_withdateHR(Session["uid"].ToString(), txtRejectedFromDate.Text, txtRejectedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Reject_withdate(Session["uid"].ToString(), txtRejectedFromDate.Text, txtRejectedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Reject_withdateHR(Session["uid"].ToString(), txtRejectedFromDate.Text, txtRejectedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Reject_withdate(Session["uid"].ToString(), txtRejectedFromDate.Text, txtRejectedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+
+                }
+            }
+
+
+
+        }
+
+        if (rdProfileRectedEMPID.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Rejected_withUserIDBlank(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdRejected.DataSource = Dt;
+                grdRejected.DataBind();
+                odr.Close();
+                con.DisConnect();
+
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Rejected_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Rejected_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Rejected_withUserIDHR(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Rejected_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+        }
+
+        if (rdrdProfileRectedName.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_rejected_withUserNameBlank(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdRejected.DataSource = Dt;
+                grdRejected.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameHR(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtRejectedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+
+
+        }
+        if (rdAllReject.Checked == true)
+        {
+
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_rejected_withUserNameBlankALLReject(Session["uid"].ToString(), Session["Company"].ToString());
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdRejected.DataSource = Dt;
+                grdRejected.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameHRAllReject(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameAllReject(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameHRAllReject(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_rejected_withUserNameAllReject(Session["uid"].ToString(), Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdRejected.DataSource = Dt;
+                    grdRejected.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+
+
+        }
+
+
+    }
+
+
+    public void LeaveResolved_Search()
+    {
+        if (rdApprovedDatewise.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Resolved_withdateByUser(Session["uid"].ToString(), txtApprovedFromDate.Text, txtApprovedToDate.Text, Session["Company"].ToString());
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdResolved.DataSource = Dt;
+                grdResolved.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withdateByHR(Session["uid"].ToString(), txtApprovedFromDate.Text, txtApprovedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withdate(Session["uid"].ToString(), txtApprovedFromDate.Text, txtApprovedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withdateByHR(Session["uid"].ToString(), txtApprovedFromDate.Text, txtApprovedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withdate(Session["uid"].ToString(), txtApprovedFromDate.Text, txtApprovedToDate.Text, Session["Company"].ToString());
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+
+
+        }
+
+        if (rdApprovedEmpid.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Resolved_withUserIDByUser(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdResolved.DataSource = Dt;
+                grdResolved.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUseIDbyHR(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUseIDbyHR(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserID(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+
+        }
+
+        if (rdApprovedEMPName.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByUser(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdResolved.DataSource = Dt;
+                grdResolved.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByHR(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByHR(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserName(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+        }
+        if (rdAllApprove.Checked == true)
+        {
+            if (Blankapr == "1")
+            {
+                SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByUserAll(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                DataTable Dt = new DataTable();
+                Dt.Load(odr);
+                grdResolved.DataSource = Dt;
+                grdResolved.DataBind();
+                odr.Close();
+                con.DisConnect();
+            }
+            if (PriorityHODapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByHRAll(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameAll(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+
+                }
+            }
+
+            if (PriorityHRapr == "1")
+            {
+                if (Session["UserType"].ToString() == "2" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" || Session["UserType"].ToString() == "2" && HRHODsame == "HR" && forHRisHOD == "HR")
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameByHRAll(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+                else
+                {
+                    SqlDataReader odr = con.Leave_Approval_Resolved_withUserNameAll(Session["uid"].ToString(), Session["Company"].ToString(), txtResolvedSearch.Text);
+                    DataTable Dt = new DataTable();
+                    Dt.Load(odr);
+                    grdResolved.DataSource = Dt;
+                    grdResolved.DataBind();
+                    odr.Close();
+                    con.DisConnect();
+                }
+            }
+
+
+        }
+
+
+    }
+
+    protected void btnrejectedsearch_Click(object sender, EventArgs e)
+    {
+        grdRejected.Visible = true;
+        LeaveRejected_Search();
+    }
+    protected void btnApprovedSearch_Click(object sender, EventArgs e)
+    {
+        grdResolved.Visible = true;
+        LeaveResolved_Search();
+    }
+    protected void grdViewApproval_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        grdViewApproval.PageIndex = e.NewPageIndex;
+        LeaveApproval_Search();
+    }
+    protected void grdResolved_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        grdResolved.PageIndex = e.NewPageIndex;
+        LeaveResolved_Search();
+    }
+    protected void grdRejected_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        grdRejected.PageIndex = e.NewPageIndex;
+        LeaveRejected_Search();
+    }
+   
+    protected void CHKAllPending_CheckedChanged(object sender, EventArgs e)
+    {
+
+        pnlEmployeeidName.Visible = false;
+        pnlDate.Visible = false;
+        btnSearch.Visible = false;
+        txtSearchName.Text = "";
+        txtfromDate.Text = "";
+        txtTodate.Text = "";
+
+        pnlrejectedDetail.Visible = false;
+        grdViewApproval.Visible = true;
+        LeaveApproval_Search();
+
+    }
+    protected void rdAllReject_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveRejectedEMPID.Visible = false;
+        btnrejectedsearch.Visible = false;
+        pnlLeaveRejectedDatewise.Visible = false;
+        pnlrejectedDetail.Visible = true;
+        ModalPopupExtender1.Hide();
+        txtRejectedSearch.Text = "";
+        txtRejectedFromDate.Text = "";
+        txtRejectedToDate.Text = "";
+        grdRejected.Visible = true;
+        LeaveRejected_Search();
+
+    }
+    protected void rdAllApprove_CheckedChanged(object sender, EventArgs e)
+    {
+        pnlLeaveApprovedDetailEmpid.Visible = false;
+        pnlLeaveApprovedDetailDatewise.Visible = false;
+        btnApprovedSearch.Visible = false;
+        pnlrejectedDetail.Visible = false;
+        txtResolvedSearch.Text = "";
+        txtApprovedFromDate.Text = "";
+        txtApprovedToDate.Text = "";
+        ModalPopupExtender1.Hide();
+
+        grdResolved.Visible = true;
+        LeaveResolved_Search();
+    }
+    
+    protected void btnchangestatus_Command(object sender, CommandEventArgs e)
+    {
+
+      Session["chgsUserid"] = e.CommandArgument.ToString();
+   //     foreach (GridViewRow row in grdViewApproval.Rows)
+   //     {
+   //         if (row.RowType == DataControlRowType.DataRow)
+   //         {
+
+   //             Label lblProfilechangedate1 = (row.Cells[0].FindControl("lblProfilechangedate") as Label);
+   //               Session["chgsProfilechangeDate"] = lblProfilechangedate1.Text;
+   //             Label lblNoofchange = (row.Cells[0].FindControl("lblNoofchange") as Label);
+   //             Session["chgsNoOfchanges"] = lblNoofchange.Text;
+                
+
+               
+   //         }
+   //     }
+   //     Page.ClientScript.RegisterStartupScript(
+   //this.GetType(), "OpenWindow", "window.open('changeStatus.aspx','_newtab');", true);
+      
+    }
+
+
+
+
+
+
+    string chgsUserid = ""; string chgsProfilechangeDate = ""; string chgsNoOfchanges = "";
+   
+
+
+   
+    protected void btnchangestusrejected_Command(object sender, CommandEventArgs e)
+    {
+        Session["chgsUserid"] = e.CommandArgument.ToString();
+    }
+   
+    protected void btnresolved_Command(object sender, CommandEventArgs e)
+    {
+        Session["chgsUserid"] = e.CommandArgument.ToString();
+    }
+   
+    private void ToggleCheckState(bool checkState)
+    {
+
+        foreach (GridViewRow row in grdViewApproval.Rows)
+        {
+
+            CheckBox cb = (CheckBox)row.FindControl("chkMark");
+            if (cb != null)
+                cb.Checked = checkState;
+        }
+    }
+
+    protected void btnselectchecked_Click(object sender, EventArgs e)
+    {
+        ToggleCheckState(true);
+        btnselectchecked.Visible = false;
+        btnuncheked.Visible = true;
+    }
+    protected void btnuncheked_Click(object sender, EventArgs e)
+    {
+        ToggleCheckState(false);
+        btnselectchecked.Visible = true;
+        btnuncheked.Visible = false;
+    }
+
+    protected void grdViewApproval_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+
+
+            Button btnWorkingDetails = (Button)e.Row.FindControl("btnWorkingDetails");
+            Label lblLeaveTypegrid = (Label)e.Row.FindControl("lblLeaveTypegrid");
+            if (lblLeaveTypegrid.Text == "CO")
+            {
+                btnWorkingDetails.Visible = true;
+            }
+            if (lblLeaveTypegrid.Text != "CO")
+            {
+                btnWorkingDetails.Visible = false;
+            }
+        }
+    }
+
+    public void ShowGridworkingdetails(string AutoNo)
+    {
+        SqlDataReader dr = con.Show_tble_cowithAutono(AutoNo);
+
+        DataTable dt = new DataTable();
+        dt.Load(dr);
+        grdworkingdetails.DataSource = dt;
+        grdworkingdetails.DataBind();
+        dr.Close();
+        Portalcon.DisConnect();
+
+    }
+    protected void btnWorkingDetails_Command(object sender, CommandEventArgs e)
+    {
+        pnlrejectedDetail.Visible = true;
+        string AutoNo = e.CommandArgument.ToString();
+      
+        ShowGridworkingdetails(AutoNo);
+        ModalPopupExtender2.Show();
+
+    }
+    protected void btnworkingDetailsrejected_Command(object sender, CommandEventArgs e)
+    {
+        pnlProfileRejected.Visible = true;
+        string AutoNo = e.CommandArgument.ToString();
+
+        ShowGridworkingdetails(AutoNo);
+        ModalPopupExtender2.Show();
+
+    }
+    protected void grdRejected_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+
+
+            Button btnworkingDetailsrejected = (Button)e.Row.FindControl("btnworkingDetailsrejected");
+            Label lblLeavetypeAppliedrejected = (Label)e.Row.FindControl("lblLeavetypeAppliedrejected");
+            if (lblLeavetypeAppliedrejected.Text == "CO")
+            {
+                btnworkingDetailsrejected.Visible = true;
+            }
+            if (lblLeavetypeAppliedrejected.Text != "CO")
+            {
+                btnworkingDetailsrejected.Visible = false;
+            }
+        }
+    }
+
+    protected void grdResolved_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+
+
+            Button btnworkingDetailsApproved = (Button)e.Row.FindControl("btnworkingDetailsApproved");
+            Label lblLeavetypeAppliedApproved = (Label)e.Row.FindControl("lblLeavetypeAppliedApproved");
+            if (lblLeavetypeAppliedApproved.Text == "CO")
+            {
+                btnworkingDetailsApproved.Visible = true;
+            }
+            if (lblLeavetypeAppliedApproved.Text != "CO")
+            {
+                btnworkingDetailsApproved.Visible = false;
+            }
+        }
+    }
+    protected void btnworkingDetailsApproved_Command(object sender, CommandEventArgs e)
+    {
+        pnlApprovedDetail.Visible = true;
+        string AutoNo = e.CommandArgument.ToString();
+
+        ShowGridworkingdetails(AutoNo);
+        ModalPopupExtender2.Show();
+
+    }
+}

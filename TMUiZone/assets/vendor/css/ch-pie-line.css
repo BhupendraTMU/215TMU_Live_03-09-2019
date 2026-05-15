@@ -1,0 +1,136 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+.chart_bg {    
+  background-color:#fff;  
+  position: relative;
+}
+.chart_area {
+  width: 100%;
+  height: 290px;
+}
+.chartscroll_h {
+    width: 100%;
+    height: 1600px;
+}
+.chartscroll_h_pro{
+    width: 100%;
+    height: 1800px;
+}
+.chartscroll_h_sm{
+    width: 100%;
+    height: 290px;
+}
+.bg_white {
+    background:#fff;
+}
+
+.chartProgram-container {
+    height: 310px;
+    width:100%;
+    overflow-y: scroll;
+}
+#chartProgram {
+    
+}
+
+#bar-chart::before, #line-chart::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 240px;
+  height: 30px;
+  left: 155px;
+  top: 254px;
+  /*background: #FAFAFA;
+  box-shadow: 1px 1px 0 0 #DDD;*/
+}
+#pie-chart {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  background-color:#fff;
+}
+#pie-chart::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 120px;
+  height: 115px;
+  right: 31px;
+  top: 0;
+  /*background: #FAFAFA;
+  box-shadow: 1px 1px 0 0 #DDD;*/
+}
+#pie-chart::after {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 260px;
+  left: 70px;
+  width: 170px;
+  height: 2px;
+  /*background: rgba(0,0,0,0.1);
+  border-radius: 50%;
+  box-shadow: 0 0 3px 4px rgba(0,0,0,0.1);*/
+}
+
+
+
+.dashboardContainer .panel-default {
+    min-width: 470px;
+    border:0;
+}
+    
+.dashboardContainer .panel-default .panel-heading{
+    border: 0;
+    background-color: transparent;
+    color: #000;
+    font-weight: 600;
+}
+
+.dashboardContainer .panel-default .panel-heading span {
+    padding:8px 1px;
+}
+
+.dashboardContainer .panel-default .panel-body {
+    background-color: #fff;
+    -webkit-border-bottom-right-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomright: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.dashboardContainer .mapContainer {
+    width: 100%;
+    height: 450px;
+    border: 0;
+}
+
+.dashboardContainer .print {
+    padding: 3px 5px !important;
+    color: #e6e4e4;
+    font-size: 15px !important;
+    margin-top: 0px;
+    background-color: #5a6f3b !important;
+    border: 0;
+}
+.dashboardContainer .dashboardSelect {
+    width: auto;
+    display: -webkit-inline-box;
+    margin: 0 10px 0 0px;
+    padding: 4px 5px;
+    height: auto;
+    float: right;
+}
+@media all and (device-width: 1024px) {
+    .dashboardContainer .print{
+        display:none;
+    }
+}
+@media all and (max-width: 768px) {
+    .dashboardContainer .print{
+        display:none;
+    }
+}

@@ -1,0 +1,343 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/IndexMaster.master" AutoEventWireup="true" CodeFile="LeaveApproval1.aspx.cs" Inherits="LeaveApproval" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
+  <fieldset class="boxBody">
+ <asp:Label ID="Label1" runat="server" 
+            Text="Leave Detail" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+
+ </fieldset>
+
+
+    <fieldset class="boxBody"> 
+
+<table cellpadding="0px" cellspacing="0px">  <tr>  <td  style="width:10px">  </td>
+<td  style="width:200px" valign="top"> 
+
+<table cellpadding="0px" cellspacing="0px" class="leftbg1" style="width:200px; height:462px">  <tr> <td style="width:10px"> </td> <td>
+
+
+<table cellpadding="0px" cellspacing="0px" >
+ <tr> <td style="height:10px"> </td></tr>
+ <tr> <td class="leftmMenu">  <img src="logo/Star.png" /> 
+    <asp:LinkButton ID="lnkleaveview" runat="server" onclick="lnkleaveview_Click" 
+        >Leave View</asp:LinkButton></td></tr>
+    <tr> <td style="height:10px"> </td></tr>
+     <tr> <td class="leftmMenu">  <img src="logo/Star.png" /> 
+    <asp:LinkButton ID="lnkRejectLeaveDetail" runat="server" 
+             onclick="lnkRejectLeaveDetail_Click" >Rejected Leave Detail </asp:LinkButton></td></tr>
+     <tr> <td style="height:10px"> </td></tr>
+     <tr> <td class="leftmMenu">   <img src="logo/Star.png" />
+    <asp:LinkButton ID="lnkApprovedLeavedetail" runat="server" 
+             onclick="lnkApprovedLeavedetail_Click" >Approved Leave Detail </asp:LinkButton></td></tr>
+     <tr> <td style="height:10px"> </td></tr>
+
+    </table>
+ </td> <td style="width:10px"> </td></tr></table>
+
+
+
+    
+</td>  <td style="width:30px">  </td>
+ <td valign="top"> 
+ 
+ 
+    <asp:Panel ID="pnlleaveView" runat="server" CssClass="leftBackground" Visible="false">
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td style="width:10px"> </td> <td>
+    
+    <table cellpadding="0px" cellspacing="0px">  <tr> <td > 
+    
+   
+    <br />
+    <asp:Label ID="Label2" runat="server" 
+            Text="Employee Leave Detail" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+           
+  </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+    <tr> <td>  
+    
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td> <label> Select Option for Leave detail </label> </td> <td style="width:160px"> </td> <td> 
+        <asp:RadioButton ID="rdEmployeeID" runat="server" Text="Employee Id" 
+            GroupName="LOption" oncheckedchanged="rdEmployeeID_CheckedChanged" 
+            AutoPostBack="True"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdEmployeeName" runat="server" Text="Employee Name" 
+            GroupName="LOption" oncheckedchanged="rdEmployeeName_CheckedChanged" 
+            AutoPostBack="True"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdDatewise" runat="server" Text="Date Wise " 
+            GroupName="LOption" oncheckedchanged="rdDatewise_CheckedChanged" 
+            AutoPostBack="True"/> </td>
+        </tr></table>
+
+   
+        
+        
+        
+         </td></tr>
+         <tr> <td style="height:13px"> </td></tr>
+         <tr> <td class="leftm"> </td></tr>
+          <tr> <td style="height:20px"> </td></tr>
+
+          <tr> <td >  <table cellpadding="0px" cellspacing="0px"> <tr> <td>  
+              <asp:Panel ID="pnlEmployeeidName" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>Enter Employee Id/ Name </label> </td> <td style="width:110px"> </td><td> 
+                   <asp:TextBox ID="txtSearchName" runat="server" Width="200px"></asp:TextBox></td> </tr></table>
+
+              </asp:Panel>
+
+                 <asp:Panel ID="pnlDate" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>From Date</label> </td> <td style="width:10px"> </td><td> 
+                   <asp:TextBox ID="txtFromDate" runat="server"></asp:TextBox>
+                   
+                    <cc1:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="txtFromDate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender1" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtFromDate">
+      </cc1:TextBoxWatermarkExtender>
+
+                   </td>  <td style="width:30px"> </td> <td>To Date </td>  <td style=" width:10px"> </td><td>
+                       <asp:TextBox ID="txtTodate" runat="server"></asp:TextBox>
+                        <cc1:CalendarExtender ID="CalendarExtender2" runat="server" TargetControlID="txtTodate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender2" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtTodate">
+      </cc1:TextBoxWatermarkExtender>
+                        </td>  </tr></table>
+
+              </asp:Panel>
+
+          </td>   <td style="width:40px"> </td> <td>  
+              <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btnLogin" 
+                  Visible="False"/></td></tr></table> </td></tr>
+
+                  <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+
+     <tr> <td style="height:13px"> </td></tr>
+
+          <tr> <td> 
+          
+          <table cellpadding="0px" cellspacing="0px"> <tr> <td>  </td></tr></table>
+          </td></tr>
+   
+    </table>
+     </td> <td style="width:10px"> </td> </tr></table>
+
+    
+    </asp:Panel>
+
+
+
+      <asp:Panel ID="pnlrejected" runat="server" CssClass="leftBackground" Visible="false">
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td style="width:10px"> </td> <td>
+    
+    <table cellpadding="0px" cellspacing="0px">  <tr> <td > 
+    
+   
+    <br />
+    <asp:Label ID="Label3" runat="server" 
+            Text="Employee Leave Rejected Detail" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+           
+  </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+    <tr> <td>  
+    
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td> <label> Select Option for Leave detail </label> </td> <td style="width:160px"> </td> <td> 
+        <asp:RadioButton ID="rdLeaveRectedEMPID" runat="server" Text="Employee Id" 
+            GroupName="leaveRd" 
+            AutoPostBack="True" oncheckedchanged="rdLeaveRectedEMPID_CheckedChanged"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdrdLeaveRectedName" runat="server" Text="Employee Name" 
+            GroupName="leaveRd" 
+            AutoPostBack="True" oncheckedchanged="rdrdLeaveRectedName_CheckedChanged"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdLeaveRectedDatewise" runat="server" Text="Date Wise " 
+            GroupName="leaveRd" 
+            AutoPostBack="True" 
+            oncheckedchanged="rdLeaveRectedDatewise_CheckedChanged"/> </td>
+        </tr></table>
+
+   
+        
+        
+        
+         </td></tr>
+         <tr> <td style="height:13px"> </td></tr>
+         <tr> <td class="leftm"> </td></tr>
+          <tr> <td style="height:20px"> </td></tr>
+
+          <tr> <td >  <table cellpadding="0px" cellspacing="0px"> <tr> <td>  
+              <asp:Panel ID="pnlLeaveRejectedEMPID" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>Enter Employee Id/ Name </label> </td> <td style="width:110px"> </td><td> 
+                   <asp:TextBox ID="TextBox3" runat="server" Width="200px"></asp:TextBox></td> </tr></table>
+
+              </asp:Panel>
+
+                 <asp:Panel ID="pnlLeaveRejectedDatewise" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>From Date</label> </td> <td style="width:10px"> </td><td> 
+                   <asp:TextBox ID="txtRejectedFromdate" runat="server"></asp:TextBox>
+                   
+                    
+                        <cc1:CalendarExtender ID="CalendarExtender3" runat="server" TargetControlID="txtRejectedFromdate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender3" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtRejectedFromdate">
+      </cc1:TextBoxWatermarkExtender>
+                   </td>  <td style="width:30px"> </td> <td>To Date </td>  <td style=" width:10px"> </td><td>
+                       <asp:TextBox ID="txtRejectedToDate" runat="server"></asp:TextBox>
+                       
+                       <cc1:CalendarExtender ID="CalendarExtender4" runat="server" TargetControlID="txtRejectedToDate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender4" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtRejectedToDate">
+      </cc1:TextBoxWatermarkExtender>
+                        </td>  </tr></table>
+
+              </asp:Panel>
+
+          </td>   <td style="width:40px"> </td> <td>  
+              <asp:Button ID="btnrejectedsearch" runat="server" Text="Search" CssClass="btnLogin" 
+                  Visible="False"/></td></tr></table> </td></tr>
+
+                  <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+
+     <tr> <td style="height:13px"> </td></tr>
+
+          <tr> <td> 
+          
+          <table cellpadding="0px" cellspacing="0px"> <tr> <td>  </td></tr></table>
+          </td></tr>
+   
+    </table>
+     </td> <td style="width:10px"> </td> </tr></table>
+
+    
+    </asp:Panel>
+
+
+
+         <asp:Panel ID="pnlApprovedDetail" runat="server" CssClass="leftBackground" Visible="false">
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td style="width:10px"> </td> <td>
+    
+    <table cellpadding="0px" cellspacing="0px">  <tr> <td > 
+    
+   
+    <br />
+    <asp:Label ID="Label4" runat="server" 
+            Text="Employee Approved Leave  Detail" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+           
+  </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+    <tr> <td>  
+    
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td> <label> Select Option for Leave detail </label> </td> <td style="width:160px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedEmpid" runat="server" Text="Employee Id" 
+            GroupName="leaveAd" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedEmpid_CheckedChanged" /> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedEMPName" runat="server" Text="Employee Name" 
+            GroupName="leaveAd" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedEMPName_CheckedChanged" /> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedDatewise" runat="server" Text="Date Wise " 
+            GroupName="leaveAd" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedDatewise_CheckedChanged" 
+           /> </td>
+        </tr></table>
+
+   
+        
+        
+        
+         </td></tr>
+         <tr> <td style="height:13px"> </td></tr>
+         <tr> <td class="leftm"> </td></tr>
+          <tr> <td style="height:20px"> </td></tr>
+
+          <tr> <td >  <table cellpadding="0px" cellspacing="0px"> <tr> <td>  
+              <asp:Panel ID="pnlLeaveApprovedDetailEmpid" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>Enter Employee Id/ Name </label> </td> <td style="width:110px"> </td><td> 
+                   <asp:TextBox ID="TextBox6" runat="server" Width="200px"></asp:TextBox></td> </tr></table>
+
+              </asp:Panel>
+
+                 <asp:Panel ID="pnlLeaveApprovedDetailDatewise" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>From Date</label> </td> <td style="width:10px"> </td><td> 
+                   <asp:TextBox ID="txtApprovalFromDate" runat="server"></asp:TextBox>
+                   
+                       <cc1:CalendarExtender ID="CalendarExtender5" runat="server" TargetControlID="txtApprovalFromDate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender5" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtApprovalFromDate">
+      </cc1:TextBoxWatermarkExtender>
+                   
+                   </td>  <td style="width:30px"> </td> <td>To Date </td>  <td style=" width:10px"> </td><td>
+                       <asp:TextBox ID="txtApprovalToDate" runat="server"></asp:TextBox> 
+                       
+                        <cc1:CalendarExtender ID="CalendarExtender6" runat="server" TargetControlID="txtApprovalToDate" Format="dd/MM/yyyy">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender6" runat="server" WatermarkText="dd/MM/yyyy" TargetControlID="txtApprovalToDate">
+      </cc1:TextBoxWatermarkExtender>
+                       </td>  </tr></table>
+
+              </asp:Panel>
+
+          </td>   <td style="width:40px"> </td> <td>  
+              <asp:Button ID="btnApprovedSearch" runat="server" Text="Search" CssClass="btnLogin" 
+                  Visible="False"/></td></tr></table> </td></tr>
+
+                  <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+
+     <tr> <td style="height:13px"> </td></tr>
+
+          <tr> <td> 
+          
+          <table cellpadding="0px" cellspacing="0px"> <tr> <td>  </td></tr></table>
+          </td></tr>
+   
+    </table>
+     </td> <td style="width:10px"> </td> </tr></table>
+
+    
+    </asp:Panel>
+
+
+
+      <asp:Panel ID="pnlMain" runat="server" >
+
+      <table cellpadding="0px" cellspacing="0px" style="width:100%"> <tr> <td align="center"> <br /> <br /> 
+          &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <img src="logo/leave.jpg"  /></td></tr></table>
+      
+
+     </asp:Panel>
+ 
+ </td></tr></table>
+
+
+   
+
+
+
+</fieldset>
+
+</asp:Content>
+

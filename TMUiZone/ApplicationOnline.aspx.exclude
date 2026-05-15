@@ -1,0 +1,1536 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ApplicationOnline.aspx.cs" Inherits="ApplicationOnline" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="Scripts/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/jquery-1.11.2.min.js"></script>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <link href="bootstrap/css/bootstrapValidator.min.css" rel="stylesheet" />
+    <script src="bootstrap/js/bootstrapValidator.min.js"></script>
+    <script src="Scripts/jquery-1.4.1.min.js"></script>
+    <script src="Scripts/alertify/alertify.js"></script>
+    <script src="Scripts/alertify/alertify.min.js"></script>
+    <link href="Content/alertify/alertify.bootstrap.css" rel="stylesheet" />
+    <link href="Content/alertify/alertify.default.css" rel="stylesheet" />
+    <link href="Content/alertify/alertify.core.css" rel="stylesheet" />
+
+    <link href="CSS/Ajaxcal.css" rel="stylesheet" />
+    <style type="text/css">
+        .red-border {
+            border: 1px solid red;
+        }
+    </style>
+    <script>
+        function callFeedbackMessage(inputType, inputText) {
+
+            if (inputType == 'Error') {
+                alertify.error("Upload Image and Try again !");
+                return false;
+            }
+            else if (inputType == 'Error1') {
+                //alertify.confirm().set('overflow', false);
+                alertify.success("Add QUalification !");
+                return false;
+            }
+            else {
+                alertify.log(inputText, "", 10000);
+                return false;
+            }
+        }
+    </script>
+
+
+    <script type="text/javascript">
+
+        function CalculateAge(DOB) {
+            debugger
+            if (DOB.value != '') {
+                now = new Date()
+                dob = DOB.value.split('-');
+                if (dob.length === 3) {
+                    born = new Date(dob[2], dob[1] * 1 - 1, dob[0]);
+                    age = Math.floor((now.getTime() - born.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+                    day = Math.floor(now.getDate());
+                    day1 = Math.floor(born.getDate());
+                    if (day1 < day) {
+                        month = Math.floor((now.getMonth() - born.getMonth()));
+                    }
+                    else {
+                        month = Math.floor((now.getMonth() - born.getMonth())) - 1;
+                    }
+                    if (month < 0) {
+                        month = 12 + month;
+                    }
+                    if (age < 0) {
+                        $('[id$=txtYear]').val('0');
+                        $('[id$=txtmonths]').val('0');
+                    }
+                    else {
+                        $('[id$=txtYear]').val(age);
+                        $('[id$=txtmonths]').val(month);
+                        return false;
+                    }
+                }
+            }
+        }
+        function checkDate(sender, args) {
+            if (sender._selectedDate > new Date()) {
+                alert("You cannot select greater than current date!");
+                sender._selectedDate = new Date();
+                sender._textbox.set_Value(sender._selectedDate.format(sender._format))
+            }
+        }
+        function NumberOnly() {
+            var AsciiValue = event.keyCode
+            if ((AsciiValue >= 48 && AsciiValue <= 57) || (AsciiValue == 8 || AsciiValue == 127))
+                event.returnValue = true;
+            else
+                event.returnValue = false;
+        }
+
+        function OnChangeCheckbox(lnk) {
+            if (lnk.checked) {
+                $('[id$=txtCorresAddress]').val($('[id$=txtPermAddress]').val());
+                $('[id$=txtCorresPinCode]').val($('[id$=txtPermPinCode]').val());
+                $('[id$=ddlCorresState]').val($('[id$=ddlPermState]').val());
+                $('[id$=ddlCorresDistrict]').val($.trim($("[id*=ddlPermDistrict]").val()));
+                $('[id$=ddlCorresCity]').val($.trim($("[id*=ddlPermCity]").val()));
+
+                // alert($('[id$=ddlCorresDistrict]').val());
+
+                $('[id$=txtCorresAddress]').attr("readonly", "readonly");
+                $('[id$=txtCorresPinCode]').attr("readonly", "readonly");
+                $('[id$=txtPermAddress]').attr("readonly", "readonly");
+                $('[id$=txtPermPinCode]').attr("readonly", "readonly");
+                $('[id$=ddlCorresState]').attr('disabled', true);
+                $('[id$=ddlCorresDistrict]').attr('disabled', true);
+                $('[id$=ddlCorresCity]').attr('disabled', true);
+                $('[id$=ddlPermState]').attr('disabled', true);
+                $('[id$=ddlPermDistrict]').attr('disabled', true);
+                $('[id$=ddlPermCity]').attr('disabled', true);
+            }
+            else {
+
+                $('[id$=txtCorresAddress]').val('');
+                $('[id$=ddlCorresState]').val('');
+                $('[id$=ddlCorresDistrict]').val('')
+                $('[id$=ddlCorresCity]').val('');
+                $('[id$=txtCorresPinCode]').val('');
+
+                $('[id$=txtCorresAddress]').removeAttr("readonly");
+                $('[id$=ddlCorresState]').attr('disabled', false);
+                $('[id$=ddlCorresDistrict]').attr('disabled', false);
+                $('[id$=txtCorresPinCode]').removeAttr("readonly");
+                $('[id$=ddlCorresCity]').attr('disabled', false);
+                $('[id$=txtPermAddress]').removeAttr("readonly");
+                $('[id$=ddlPermState]').attr('disabled', false);
+                $('[id$=ddlPermDistrict]').attr('disabled', false);
+                $('[id$=ddlPermCity]').attr('disabled', false);
+                $('[id$=txtPermPinCode]').removeAttr("readonly");
+
+            }
+        }
+
+    </script>
+    <script type="text/javascript">
+
+        function validateLength(oSrc, args) {
+            args.IsValid = (parseInt($('[id$=txtMaximum]').val()) >= parseInt($('[id$=txtMarkObtained]').val()));
+        }
+
+        function ShowImagePreview(input) {
+            debugger
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgApplicant').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function GenerateNo() {
+            $('[id$=txtEnqApplicantName]').css('border-color', 'red');;
+            $('[id$=ddlEnqCourse]').css('border-color', 'red');
+            $('[id$=txtEnqMobileNo]').css('border-color', 'red');
+
+            var a = '';
+            if ($('[id$=txtEnqApplicantName]').val() == '') { a = "false" } else $('[id$=txtEnqApplicantName]').css('border-color', '');
+            if ($('[id$=ddlEnqCourse]').val() == '') { a = "false" } else $('[id$=ddlEnqCourse]').css('border-color', '');
+            if ($('[id$=txtEnqMobileNo]').val().length < 10) { a = "false" } else $('[id$=txtEnqMobileNo]').css('border-color', '');
+            if (a == "false") { return false; }
+        }
+        function OTPsend() {
+            $('[id$=txtAppEnquiryNo]').css('border-color', 'red');;
+            $('[id$=txtAppMobileNo]').css('border-color', 'red');
+
+            var a = '';
+            if ($('[id$=txtAppEnquiryNo]').val().length < 14) { a = "false" } else $('[id$=txtAppEnquiryNo]').css('border-color', '');
+            if ($('[id$=txtAppMobileNo]').val().length < 10) { a = "false" } else $('[id$=txtAppMobileNo]').css('border-color', '');
+            if (a == "false") { return false; }
+        }
+        function OTPvalidate() {
+            $('[id$=txtAppEnquiryNo]').css('border-color', 'red');
+            $('[id$=txtAppMobileNo]').css('border-color', 'red');
+            $('[id$=txtOTP]').css('border-color', 'red');
+
+            var a = '';
+            if ($('[id$=txtAppEnquiryNo]').val().length < 14) { a = "false" } else $('[id$=txtAppEnquiryNo]').css('border-color', '');
+            if ($('[id$=txtAppMobileNo]').val().length < 10) { a = "false" } else $('[id$=txtAppMobileNo]').css('border-color', '');
+            if ($('[id$=txtOTP]').val().length < 4) { a = "false" } else $('[id$=txtOTP]').css('border-color', '');
+            if (a == "false") { return false; }//alert("ashu");
+        }
+        function Upload() {
+
+            debugger
+            $('[id$=imgUpload]').css('border-color', 'red');
+            if ($('[id$=imgUpload]').val() == '') { return false; } else $('[id$=imgUpload]').css('border-color', '');
+
+        }
+        function add() {
+            $('[id$=txtAppEnquiryNo]').css('border-color', 'red');
+            $('[id$=txtAppMobileNo]').css('border-color', 'red');
+            $('[id$=txtOTP]').css('border-color', 'red');
+
+            var a = '';
+            if ($('[id$=txtAppEnquiryNo]').val().length < 14) { a = "false" } else $('[id$=txtAppEnquiryNo]').css('border-color', '');
+            if ($('[id$=txtAppMobileNo]').val().length < 10) { a = "false" } else $('[id$=txtAppMobileNo]').css('border-color', '');
+            if ($('[id$=txtOTP]').val().length < 4) { a = "false" } else $('[id$=txtOTP]').css('border-color', '');
+            if (a == "false") { return false; }//alert("ashu");
+        }
+    </script>
+
+    <script type="text/javascript">
+        function preventBackspace(e) {
+            var evt = e || window.event;
+            if (evt) {
+                var keyCode = evt.charCode || evt.keyCode;
+                if (keyCode === 8) {
+                    if (evt.preventDefault) {
+                        evt.preventDefault();
+                    } else {
+                        evt.returnValue = false;
+                    }
+                }
+            }
+        }
+
+    </script>
+    <script type="text/javascript">
+
+
+        function SAVE() {
+
+            var a = '';
+            var rowsCount = <%#grdQualification.Rows.Count %>
+           $('[id$=txtApplicantName]').css('border-color', 'red');
+            if ($('[id$=txtApplicantName]').val() == '') { a = "false" } else $('[id$=txtApplicantName]').css('border-color', '');
+            $('[id$=drpCourse]').addClass("red-border");
+            if ($('[id$=drpCourse]').val() == '') { a = "false" } else $('[id$=drpCourse]').removeClass("red-border");
+            $('[id$=drpPrequalification]').addClass("red-border");
+            if ($('[id$=drpPrequalification]').val() == '') { a = "false" } else $('[id$=drpPrequalification]').removeClass("red-border");
+            $('[id$=drpGender]').addClass("red-border");
+            if ($('[id$=drpGender]').val() == '0') { a = "false" } else $('[id$=drpGender]').removeClass("red-border");
+            $('[id$=drpAcademicYear]').addClass("red-border");
+            if ($('[id$=drpAcademicYear]').val() == '') { a = "false" } else $('[id$=drpAcademicYear]').removeClass("red-border");
+            $('[id$=drpCitizen]').addClass("red-border");
+            if ($('[id$=drpCitizen]').val() == '') { a = "false" } else $('[id$=drpCitizen]').removeClass("red-border");
+            $('[id$=ddlRegidanceStatus]').addClass("red-border");
+            if ($('[id$=ddlRegidanceStatus]').val() == '0') { a = "false" } else $('[id$=ddlRegidanceStatus]').removeClass("red-border");
+            $('[id$=ddlMaritalStatus]').addClass("red-border");
+            if ($('[id$=ddlMaritalStatus]').val() == '0') { a = "false" } else $('[id$=ddlMaritalStatus]').removeClass("red-border");
+            $('[id$=txtMotherTounge]').css('border-color', 'red');
+            if ($('[id$=txtMotherTounge]').val() == '') { a = "false" } else $('[id$=txtMotherTounge]').css('border-color', '');
+            $('[id$=ddlReligion]').addClass("red-border");
+            if ($('[id$=ddlReligion]').val() == '') { a = "false" } else $('[id$=ddlReligion]').removeClass("red-border");
+            $('[id$=drpMedium]').addClass("red-border");
+            if ($('[id$=drpMedium]').val() == '') { a = "false"; } else $('[id$=drpMedium]').removeClass("red-border");
+            $('[id$=drpQuota]').addClass("red-border");
+            if ($('[id$=drpQuota]').val() == '') { a = "false" } else $('[id$=drpQuota]').removeClass("red-border");
+            $('[id$=txtPreviousInst]').css('border-color', 'red');
+            if ($('[id$=txtPreviousInst]').val() == '') { a = "false" } else $('[id$=txtPreviousInst]').css('border-color', '');
+            $('[id$=txtDOB]').css('border-color', 'red');
+            if ($('[id$=txtDOB]').val() == '') { a = "false" } else $('[id$=txtDOB]').css('border-color', '');
+            $('[id$=txtFatherName]').css('border-color', 'red');
+            if ($('[id$=txtFatherName]').val() == '') { a = "false" } else $('[id$=txtFatherName]').css('border-color', '');
+            $('[id$=txtMotherName]').css('border-color', 'red');
+            if ($('[id$=txtMotherName]').val() == '') { a = "false" } else $('[id$=txtMotherName]').css('border-color', '');
+            $('[id$=txtEmailAddress]').css('border-color', 'red');
+            if ($('[id$=txtEmailAddress]').val() == '') { a = "false" } else $('[id$=txtEmailAddress]').css('border-color', '');
+            $('[id$=ddlDisability]').addClass("red-border");
+            if ($('[id$=ddlDisability]').val() == '') { a = "false" } else $('[id$=ddlDisability]').removeClass("red-border");
+            $('[id$=ddlDomicile]').addClass("red-border");
+            if ($('[id$=ddlDomicile]').val() == '') { a = "false" } else $('[id$=ddlDomicile]').removeClass("red-border");
+            $('[id$=drpModeOfPayment]').addClass("red-border");
+            if ($('[id$=drpModeOfPayment]').val() == '0') { a = "false" } else $('[id$=drpModeOfPayment]').removeClass("red-border");
+            $('[id$=lblApplicationCost]').css('border-color', 'red');
+            if ($('[id$=lblApplicationCost]').text == '') { a = "false" } else $('[id$=lblApplicationCost]').css('border-color', '');
+
+            $('[id$=txtPermAddress]').css('border-color', 'red');
+            if ($('[id$=txtPermAddress]').val() == '') { a = "false" } else $('[id$=txtPermAddress]').css('border-color', '');
+            $('[id$=ddlPermState]').addClass("red-border");
+            if ($('[id$=ddlPermState]').val() == '') { a = "false" } else $('[id$=ddlPermState]').removeClass("red-border");
+            $('[id$=ddlPermDistrict]').addClass("red-border");
+            if ($.trim($("[id*=ddlPermDistrict]").val()) == '') { a = "false" } else $('[id$=ddlPermDistrict]').removeClass("red-border");
+            $('[id$=ddlPermCity]').addClass("red-border");
+            if ($.trim($("[id*=ddlPermCity]").val()) == '') { a = "false" } else $('[id$=ddlPermCity]').removeClass("red-border");
+            $('[id$=txtPermPinCode]').css('border-color', 'red');
+            if ($('[id$=txtPermPinCode]').val() == '') { a = "false" } else $('[id$=txtPermPinCode]').css('border-color', '');
+
+
+            $('[id$=txtCorresAddress]').css('border-color', 'red');
+            if ($('[id$=txtCorresAddress]').val() == '') { a = "false" } else $('[id$=txtCorresAddress]').css('border-color', '');
+            $('[id$=ddlCorresState]').addClass("red-border");
+            if ($('[id$=ddlCorresState]').val() == '') { a = "false" } else $('[id$=ddlCorresState]').removeClass("red-border");
+            $('[id$=ddlCorresDistrict]').addClass("red-border");
+            if ($.trim($("[id*=ddlCorresDistrict]").val()) == '') { a = "false" } else $('[id$=ddlCorresDistrict]').removeClass("red-border");
+            $('[id$=ddlCorresCity]').addClass("red-border");
+            if ($.trim($("[id*=ddlCorresCity]").val()) == '') { a = "false" } else $('[id$=ddlCorresCity]').removeClass("red-border")
+            $('[id$=txtCorresPinCode]').css('border-color', 'red');
+            if ($('[id$=txtCorresPinCode]').val() == '') { a = "false" } else $('[id$=txtCorresPinCode]').css('border-color', '');
+
+
+
+            var x = $('[id$=txtEmailAddress]').val();
+            var atpos = x.indexOf("@");
+            var dotpos = x.lastIndexOf(".");
+
+            if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+                $('[id$=txtEmailAddress]').css('border-color', 'red');
+                a = "false"
+            }
+            else
+                $('[id$=txtEmailAddress]').css('border-color', '');
+
+            if (rowsCount = 0) { a = "false"; alert(rowsCount); } else;
+            if (a == "false") { alertify.success("Please fill the mandatory field !"); return false; }
+
+
+        }
+    </script>
+
+    <title>Apply Online</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+        <asp:UpdatePanelAnimationExtender ID="UpdatePanelAnimationExtender1"
+            TargetControlID="UpdatePanel1" runat="server">
+            <Animations>
+            <OnUpdating>
+               <Parallel duration="0">
+                    <ScriptAction Script="onUpdating();" />
+                    <EnableAction AnimationTarget="ddlReaapear" Enabled="false" /> 
+                </Parallel>
+            </OnUpdating>
+            </Animations>
+        </asp:UpdatePanelAnimationExtender>
+        <div style="width: 100%;">
+
+            <div class="container" style="padding-left: 0px; width: 100%; margin-top: -25px; padding-right: 0px">
+                <br />
+                <div class="row">
+                    <div class="col-lg-12" style="width: 100%">
+
+                        <div class="panel panel-info" style="border-color: #ACE9FB; background-color: #ACE9FB">
+                            <div class="panel-heading" style="background-color: #ACE9FB; height: 35px; cursor: pointer" id="head">
+                                <center>
+                        <div class="panel-title" id="head1" "><b><p  style="color:white;font-size:15px"> Application Form</p></b></div> </center>
+                            </div>
+                            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                                <ContentTemplate>
+                                    <%--Registration Steps-------Start----%>
+                                    <div style="background-color: #ffd800">
+                                        <asp:RadioButtonList ID="rblRegStep" runat="server" Width="300px" Style="padding-left: 20px; margin-right: 15px; display: inline" RepeatDirection="Horizontal"
+                                            AutoPostBack="true" OnSelectedIndexChanged="rblRegStep_SelectedIndexChanged">
+                                            <asp:ListItem Selected="True" style="margin-right: 20px">1.Generate Enquiry No</asp:ListItem>
+                                            <asp:ListItem>2.Fill Application Form</asp:ListItem>
+                                            <%--<asp:ListItem>3.Payment</asp:ListItem>--%>
+                                        </asp:RadioButtonList>
+
+                                    </div>
+
+                                    <%--Registration Steps-------End----%>
+                                    <%--Generate Enquiry No-------Start----%>
+
+                                    <div id="dvEnquiry" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                        <div style="background-color: #ACE9FB; color: white; font-size: 15px; text-align: center" id="Div3">
+                                            <center>
+                                  <b> Generate Enquiry No</b>
+                                        </div>
+                                        <div class="panel-body" id="Div1">
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label27" Style="line-height: 30px" runat="server" Text="Label"><b>*Name</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtEnqApplicantName" Name="" runat="server" CssClass="form-control input-sm" placeholder="Applicant Name" MaxLength="50"></asp:TextBox>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label28" Style="line-height: 30px" runat="server" Text="Label"><b>*Course</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:DropDownList ID="ddlEnqCourse" CssClass="form-control input-sm" runat="server">
+                                                        </asp:DropDownList>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label35" Style="line-height: 30px" runat="server" Text="Label"><b>*Mobile No </b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="col-lg-4" style="padding-left: 0px;">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
+                                                            <asp:Label ID="txtcontactPrefix" runat="server" Text="+91" CssClass="form-control input-sm"></asp:Label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8" style="padding-right: 0px;">
+                                                    <div class="form-group">
+                                                        <asp:TextBox ID="txtEnqMobileNo" CssClass="form-control input-sm" runat="server" MaxLength="10" onkeypress="return NumberOnly()"></asp:TextBox>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2" style="font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label22" Style="line-height: 30px" runat="server" Text="Label"><b>Whatsapp No</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 2px;">
+                                                <div class="col-lg-4">
+                                                    <div class="form-group">
+                                                        <div class="input-group" style="padding-right: 6px;">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
+                                                            <asp:Label ID="Label3" runat="server" Text="+91" CssClass="form-control input-sm"></asp:Label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8" style="padding-right: 0px;">
+                                                    <div class="form-group">
+                                                        <asp:TextBox ID="txtWhatsappNo" CssClass="form-control input-sm" runat="server" MaxLength="10" onkeypress="return NumberOnly()"></asp:TextBox>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-lg-12 text-right" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:LinkButton ID="btnEnqNoGenerate" type="button" class="btn btn-info" runat="server" OnClick="btnEnqNoGenerate_Click" OnClientClick="return GenerateNo();">
+                                                            <span class="glyphicon glyphicon-refresh"></span> NEXT
+                                                    </asp:LinkButton>
+                                                    <%--<asp:Button ID="btnEnqNoGenerate"   runat="server" Text="Generate No" CssClass="btn-lg btn-primary btn-block" OnClick="btnEnqNoGenerate_Click" ></asp:Button> --%>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <%--Generate Enquiry No-------End---%>
+                                    <%--Application-------Start---%>
+                                    <div id="dvApplication" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                        <div style="background-color: #ACE9FB; color: white; font-size: 15px; text-align: center" id="Div8">
+                                            <center>                                 
+                               <b> Applicant details</b>
+                                        </div>
+                                        <div id="dvOTP" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                            <div class="panel-body" id="Div10">
+                                                <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                    <div class="form-group">
+                                                        <asp:Label ID="lblEnquiryNo" Style="line-height: 30px" runat="server" Text="Label"><b>*Enquiry No</b></asp:Label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4" style="padding-left: 0px;">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                            <asp:TextBox ID="txtAppEnquiryNo" Name="" runat="server" CssClass="form-control input-sm" placeholder="Enquiry No" MaxLength="15"></asp:TextBox>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-1" style="padding-right: 0px; font-size: 12px;">
+                                                    <div class="form-group">
+                                                        <asp:Label ID="lblAppMobileNo" Style="line-height: 30px" runat="server" Text="Label"><b>*Mobile No</b></asp:Label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-5" style="padding-left: 0px;">
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
+                                                                <asp:Label ID="lblmob" runat="server" Text="+91" CssClass="form-control input-sm"></asp:Label>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <asp:TextBox ID="txtAppMobileNo" CssClass="form-control input-sm" runat="server" MaxLength="10" onkeypress="return NumberOnly()"></asp:TextBox>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                    <div class="form-group">
+                                                        <asp:LinkButton ID="btnSendOTP" type="button" class="btn btn-info" runat="server" OnClick="btnSendOTP_Click" OnClientClick="return OTPsend();">
+                                     <span class="glyphicon glyphicon-refresh"></span> Generate OTP   </asp:LinkButton>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4" style="padding-left: 0px;">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                            <div class="form-group">
+                                                                <asp:TextBox ID="txtOTP" Name="" runat="server" CssClass="form-control input-sm" placeholder="ENTER OTP AND VALIDATE"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                    <id id="divImage" style="display: none;" class="fa fa-spinner fa-pulse fa-2x fa-fw"></id>
+                                                    <span class="sr-only">Loading...</span>
+                                                    <asp:Label ID="lblText" runat="server" Text="" Height="10px"></asp:Label>
+                                                    <div class="form-group">
+
+                                                        <asp:LinkButton ID="btnValidateOTP" type="button" class="btn btn-info" runat="server" OnClick="btnValidateOTP_Click" OnClientClick="return OTPvalidate();">
+                                           <span class="glyphicon glyphicon-ok"></span> CONFIRM         </asp:LinkButton>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4" style="padding-right: 0px;">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <asp:Label ID="lblOTPmasg" Style="line-height: 30px" runat="server" Text="" ForeColor="Red" Font-Bold="true" BackColor="White"></asp:Label>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="clearfix">
+                                                <div class="col-lg-4" style="padding-right: 0px;">
+                                                    <div class="form-group">
+                                                        <asp:Label ID="lblMsg" Style="line-height: 30px" runat="server" Text="" ForeColor="Red" Font-Bold="true" BackColor="White"></asp:Label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="dvAppDetails" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                            <div class="panel-body" id="body">
+                                                <div class="col-lg-6">
+                                                    <div class="col-lg-4" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lblApplicantName" Style="line-height: 30px" runat="server" Text="Label"><b>Applicant Name</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtApplicantName" runat="server" CssClass="form-control input-sm" placeholder="Applicant Name"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label2" Style="line-height: 30px" runat="server" Text="Label"><b>Academic Year</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                <asp:DropDownList ID="drpAcademicYear" CssClass="form-control input-sm" runat="server"></asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label5" Style="line-height: 30px" runat="server" Text="Label"><b>Course </b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+                                                                <asp:DropDownList ID="drpCourse" CssClass="form-control input-sm" placeholder="Course" runat="server">
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label6" Style="line-height: 30px" runat="server" Text="Label"><b>Prequalification</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-copyright-mark"></span></span>
+                                                                <asp:DropDownList ID="drpPrequalification" CssClass="form-control input-sm" placeholder="Course" runat="server"></asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+
+
+                                                    <div class="col-lg-12">
+                                                        <asp:Image ID="imgApplicant" runat="server" Height="100px" Width="125px" ImageAlign="Right" BorderStyle="Double" Visible="true" /><br />
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <asp:Label ID="lbl" runat="server" Height="10px" Text=" "></asp:Label>
+
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label1" Style="line-height: 30px" runat="server" Text="Label"><b></b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8" style="padding-right: 0px;">
+                                                        <div class="col-lg-10">
+                                                            <asp:FileUpload ID="imgUpload" runat="server" onchange="ShowImagePreview(this);" BorderColor="Blue" BorderStyle="Outset" />
+                                                        </div>
+                                                        <%--<div class="col-lg-2" ><asp:Button runat="server"  ID="btnUpload" Text="Upload"  onclick="btnUpload_Click" OnClientClick="return Upload()" /></div>--%>
+                                                    </div>
+
+
+                                                </div>
+
+                                                <div class="col-lg-12">
+
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label13" Style="line-height: 30px" runat="server" Text="Label"><b>Gender</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="drpGender" CssClass="form-control input-sm" placeholder="Course" runat="server">
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label4" Style="line-height: 30px" runat="server" Text="Label"><b>Citizenship</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                <asp:DropDownList ID="drpCitizen" CssClass="form-control input-sm" placeholder="CitizenShip" runat="server"></asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lblBloodGroup" Style="line-height: 30px" runat="server" Text="Label"><b>Residence Status</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="ddlRegidanceStatus" CssClass="form-control input-sm" placeholder="" runat="server">
+                                                                    <asp:ListItem Value="0">-- Select --</asp:ListItem>
+                                                                    <asp:ListItem Value="1">Village</asp:ListItem>
+                                                                    <asp:ListItem Value="2">Town</asp:ListItem>
+                                                                    <asp:ListItem Value="3">City</asp:ListItem>
+
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label17" Style="line-height: 30px" runat="server" Text="Label"><b>Marital Status</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                <asp:DropDownList ID="ddlMaritalStatus" CssClass="form-control input-sm" placeholder="Marital Status" runat="server">
+                                                                    <asp:ListItem Value="0">-- Select --</asp:ListItem>
+                                                                    <asp:ListItem Value="1">Married</asp:ListItem>
+                                                                    <asp:ListItem Value="2">Unmarried</asp:ListItem>
+
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label19" Style="line-height: 30px" runat="server" Text="Label"><b>Religion</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                <asp:DropDownList ID="ddlReligion" CssClass="form-control input-sm" placeholder="Religion" runat="server"
+                                                                    OnSelectedIndexChanged="ddlReligion_SelectedIndexChanged" AutoPostBack="true">
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label12" Style="line-height: 30px" runat="server" Text="Label"><b>Medium Instruction</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="drpMedium" CssClass="form-control input-sm" placeholder="Course" runat="server"></asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label16" Style="line-height: 30px" runat="server" Text="Label"><b>Quota</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="drpQuota" CssClass="form-control input-sm" placeholder="Course" runat="server" AutoPostBack="true" OnSelectedIndexChanged="drpQuota_SelectedIndexChanged">
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lblSubReligion" Style="line-height: 30px" runat="server" Text="Label"><b>Sub Religion</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="ddlSubReligion" CssClass="form-control input-sm" placeholder="Course" runat="server" AutoPostBack="true" OnSelectedIndexChanged="drpQuota_SelectedIndexChanged">
+                                                                </asp:DropDownList>
+                                                                <asp:Label ID="lblSubReligionNotRequired" Style="line-height: 30px" runat="server" CssClass="form-control input-sm" Visible="false" ForeColor="Red" Text="Not Required"></asp:Label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label14" Style="line-height: 30px" runat="server" Text="Label"><b>Mother Tongue</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox runat="Server" ID="txtMotherTounge" CssClass="form-control input-sm"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label9" Style="line-height: 30px" runat="server" Text="Label"><b>Name of previous inst.</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtPreviousInst" runat="server" CssClass="form-control input-sm" placeholder="Previous Institute"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label21" runat="server" Style="line-height: 30px" Text="Label"><b>Father&#39;s Name</b></asp:Label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtFatherName" runat="server" CssClass="form-control input-sm" placeholder="Father's Name"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label15" Style="line-height: 30px" runat="server" Text="Label"><b>Date of Birth</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtDOB" CssClass="form-control input-sm" runat="server" onchange='return CalculateAge(this)' onkeypress="return false" onKeyDown="preventBackspace();"
+                                                                    AutoPostBack="true" oncopy="return false;" onpaste="return false;" autocomplete="off"></asp:TextBox>
+                                                                <%-- <asp:Image runat="server" ID="imgCal" Width="25px" Height="30px" ImageUrl="~/images/calendar.png" />--%>
+                                                                <asp:CalendarExtender ID="cleDOB" Format="dd-MM-yyyy" runat="server" OnClientDateSelectionChanged="checkDate"
+                                                                    CssClass="cal_Theme1" Enabled="true" TargetControlID="txtDOB">
+                                                                </asp:CalendarExtender>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label23" Style="line-height: 30px" runat="server" Text="Label"><b>Mother's Name</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtMotherName" runat="server" CssClass="form-control input-sm" placeholder="Mother's Name"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-right: 5px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lblAge" Style="line-height: 30px" runat="server" Text="Label"><b>Age</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1" style="padding-right: 5px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+
+                                                                <asp:TextBox ID="txtYear" CssClass="form-control input-sm" onkeypress="return false" onKeyDown="preventBackspace();" runat="server" Width="50px"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1" style="padding-right: 5px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lbYear" Style="line-height: 30px" runat="server" Text="label"><b>Year</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1" style="padding-right: 5px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+
+                                                                <asp:TextBox ID="txtmonths" CssClass="form-control input-sm" onkeypress="return false" onKeyDown="preventBackspace();" runat="server" Width="50px"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1" style="padding-right: 5px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lbmonths" Style="line-height: 30px" runat="server"><b>Months</b></asp:Label>
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label10" Style="line-height: 30px" runat="server" Text="Label"><b>Aadhar Number</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtAadharNo" runat="server" CssClass="form-control input-sm" placeholder="Aadhar Number"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label11" Style="line-height: 30px" runat="server" Text="Label"><b>E-Mail Address</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtEmailAddress" runat="server" CssClass="form-control input-sm" placeholder="E-Mail Address" MaxLength="70"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label26" Style="line-height: 30px" runat="server" Text="Label"><b>Facebook ID</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:TextBox ID="txtFacebookId" runat="server" CssClass="form-control input-sm" placeholder="Facebook ID" MaxLength="70"></asp:TextBox>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label7" Style="line-height: 30px" runat="server" Text="Label"><b>Disability</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="ddlDisability" runat="server" CssClass="form-control input-sm" placeholder="Disability">
+                                                                    <asp:ListItem Value="">-- Select --</asp:ListItem>
+                                                                    <asp:ListItem Value="0">Yes</asp:ListItem>
+                                                                    <asp:ListItem Value="1">No</asp:ListItem>
+
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label8" Style="line-height: 30px" runat="server" Text="Label"><b>State of Domicile</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="ddlDomicile" runat="server" CssClass="form-control input-sm" placeholder="Disability">
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label20" Style="line-height: 30px" runat="server" Text="Label"><b>Mode of Payment</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:DropDownList ID="drpModeOfPayment" CssClass="form-control input-sm" placeholder="Course" runat="server">
+                                                                    <%--<asp:ListItem Value="0">--Select--</asp:ListItem>--%>
+                                                                    <asp:ListItem Value="1">Online</asp:ListItem>
+                                                                    <%--<asp:ListItem Value="2">Offline</asp:ListItem>--%>
+                                                                </asp:DropDownList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="Label18" Style="line-height: 30px" runat="server" Text="Label"><b>Application Cost</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-left: 0px;">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>
+                                                                <asp:Label ID="lblApplicationCost" CssClass="form-control input-sm" runat="server"></asp:Label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <%--Paytm/PayUmoney--%>
+                                                    <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                        <div class="form-group">
+                                                            <asp:Label ID="lblPaymentThrough" Style="line-height: 30px" runat="server" Text="Label"><b>Payment Thorugh</b></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4" style="padding-right: 0px;">
+                                                        <div class="input-group">
+                                                            <%-- <span class="input-group-addon"><span class="glyphicon glyphicon-registration-mark"></span></span>--%>
+                                                            <asp:RadioButtonList ID="rblpayment" runat="server" RepeatDirection="Horizontal">
+                                                                <asp:ListItem Text='&nbsp&nbsp<img src="images/Paytm1.jpg" alt="Paytm" Height="45px" Width="160px" />&nbsp&nbsp&nbsp&nbsp' Value="Paytm" Selected="True" />
+                                                                <asp:ListItem Text='&nbsp&nbsp<img src="images/PayUmoney1.jpg" alt="PayUmoney" Height="45px" Width="160px"/>' Value="PayUmoney"></asp:ListItem>
+                                                            </asp:RadioButtonList>
+                                                        </div>
+
+                                                    </div>
+
+
+
+
+                                                    <div class="col-lg-10" style="padding-left: 0px; font-size: 12px;">
+                                                        Do you have any legal procedure/criminal case(s) against you in any court of Law
+                                       <asp:RadioButtonList ID="rblCase" runat="server" RepeatDirection="Horizontal">
+                                           <asp:ListItem Value="0" Selected="True">No&nbsp&nbsp&nbsp&nbsp</asp:ListItem>
+                                           <asp:ListItem Value="1">Yes</asp:ListItem>
+                                       </asp:RadioButtonList>
+                                                    </div>
+
+
+                                                    <div class="form-group">
+                                                        <div class="col-md-9 col-md-offset-3">
+                                                            <div id="messages"></div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%--Application-------End---%>
+                                    <%--Address---Start---%>
+                                    <div id="dvAddress" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                        <div style="background-color: #ACE9FB; color: white; font-size: 15px; text-align: center" id="dvAddr">
+                                            <b>Address</b>
+                                        </div>
+
+                                        <div class="panel-body" id="body2">
+                                            <%--<div class="col-lg-5" style="padding-left:0px; font-size:12px; border:ridge; border-color:#ACE9FB;">--%>
+                                            <table width="100%">
+                                                <tr>
+                                                    <td align="center" headers="Permanent">Permanent Address
+                                                        <br />
+                                                    </td>
+                                                    <td align="right">
+                                                        <asp:CheckBox ID="chkSameAddress" runat="server" OnCheckedChanged="chkSameAddress_CheckedChanged" AutoPostBack="true" Text="Same As"></asp:CheckBox>
+                                                    </td>
+                                                    <td align="center">Correspondence Address 
+                                                        <br />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="46%">
+                                                        <div style="border: ridge; border-color: #ACE9FB">
+                                                            <br />
+                                                            <table>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="col-lg-2" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblPermAddress" Style="line-height: 30px" runat="server" Text="Label"><b>Address</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-10" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:TextBox ID="txtPermAddress" runat="server" CssClass="form-control input-sm" placeholder="Address" MaxLength="50"></asp:TextBox>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblPermState" Style="line-height: 30px" runat="server" Text="Label"><b>State</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlPermState" runat="server" CssClass="form-control input-sm" placeholder="State"
+                                                                                        OnSelectedIndexChanged="ddlPermState_SelectedIndexChanged" AutoPostBack="true">
+                                                                                    </asp:DropDownList>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-right: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblPermDistrict" Style="line-height: 30px" runat="server" Text="Label"><b>District</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-right: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlPermDistrict" runat="server" CssClass="form-control input-sm" placeholder="District"
+                                                                                        OnSelectedIndexChanged="ddlPermDistrict_SelectedIndexChanged" AutoPostBack="true">
+                                                                                    </asp:DropDownList>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblPermCity" Style="line-height: 30px" runat="server" Text="Label"><b>City</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlPermCity" runat="server" CssClass="form-control input-sm" placeholder="City"></asp:DropDownList>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="col-lg-1" style="padding-right: 0px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblPermPincode" Style="line-height: 30px" runat="server" Text="Label"><b>Pincode</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-4" style="padding-right: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:TextBox ID="txtPermPinCode" runat="server" CssClass="form-control input-sm" placeholder="Pin code" MaxLength="6" onkeypress="return NumberOnly()"></asp:TextBox>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                    <td align="right">
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <%--<div class='rotate'></div>--%>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                    <td width="46%">
+                                                        <div style="border: ridge; border-color: #ACE9FB">
+                                                            <br />
+                                                            <table width="100%">
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="col-lg-2" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblCorresAddress" Style="line-height: 30px" runat="server" Text="Label"><b>Address</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-10" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:TextBox ID="txtCorresAddress" runat="server" CssClass="form-control input-sm" placeholder="Address" MaxLength="50"></asp:TextBox>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblCorresState" Style="line-height: 30px" runat="server" Text="Label"><b>State</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlCorresState" runat="server" CssClass="form-control input-sm" placeholder="State"
+                                                                                        OnSelectedIndexChanged="ddlCorresState_SelectedIndexChanged" AutoPostBack="true">
+                                                                                    </asp:DropDownList>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-right: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblCorresDistrict" Style="line-height: 30px" runat="server" Text="Label"><b>District</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-right: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlCorresDistrict" runat="server" CssClass="form-control input-sm" placeholder="District"
+                                                                                        OnSelectedIndexChanged="ddlCorresDistrict_SelectedIndexChanged" AutoPostBack="true">
+                                                                                    </asp:DropDownList>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-1" style="padding-left: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblCorresCity" Style="line-height: 30px" runat="server" Text="Label"><b>City</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-5" style="padding-left: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:DropDownList ID="ddlCorresCity" runat="server" CssClass="form-control input-sm" placeholder="City"></asp:DropDownList>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="col-lg-1" style="padding-right: 5px; font-size: 12px;">
+                                                                            <div class="form-group">
+                                                                                <asp:Label ID="lblCorresPincode" Style="line-height: 30px" runat="server" Text="Label"><b>Pincode</b></asp:Label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-4" style="padding-right: 0px;">
+                                                                            <div class="form-group">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                                                    <asp:TextBox ID="txtCorresPinCode" runat="server" CssClass="form-control input-sm" placeholder="Pin code" MaxLength="6" onkeypress="return NumberOnly()"></asp:TextBox>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <%--</div>--%>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <%--Address---End--%>
+                                    <%--Family Details-------Start---%>
+                                    <div id="dvFamily" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                        <div class="panel-heading" style="background-color: #ACE9FB; height: 35px; cursor: pointer" id="Div4">
+                                            <center>
+                            <div class="panel-title" id="div2"  ><b><p  style="color:white;font-size:15px"> Family Details</p></b></div> </center>
+                                        </div>
+                                        <div class="panel-body" id="Div5">
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label29" Style="line-height: 30px" runat="server" Text="Label"><b>Father's Qualification</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtFatherQualification" Name="txtFatherQualification" runat="server" CssClass="form-control input-sm" placeholder="Qualification"></asp:TextBox>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label30" Style="line-height: 30px" runat="server" Text="Label"><b>Mother's Qualification</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtMotherQualification" Name="txtMotherQualification" runat="server" CssClass="form-control input-sm" placeholder="Qualification"></asp:TextBox>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label31" Style="line-height: 30px" runat="server" Text="Label"><b>Father's Occupation</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtFatherOccupation" Name="txtFatherOccupation" runat="server" CssClass="form-control input-sm" placeholder="Occupation"></asp:TextBox>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label32" Style="line-height: 30px" runat="server" Text="Label"><b>Mother's Occupation</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtMotherOccupation" Name="txtMotherOccupation" runat="server" CssClass="form-control input-sm" placeholder="Occupation"></asp:TextBox>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label33" Style="line-height: 30px" runat="server" Text="Label"><b>Father's Annual Income</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtFatherAnnualIncome" Name="txtFatherAnnualIncome" runat="server" CssClass="form-control input-sm" placeholder="Annual Income"></asp:TextBox>
+                                                        <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender2" runat="server" TargetControlID="txtFatherAnnualIncome" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="Label34" Style="line-height: 30px" runat="server" Text="Label"><b>Mother's Annual Income</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtMotherAnnualIncome" Name="txtMotherAnnualIncome" runat="server"
+                                                            CssClass="form-control input-sm" placeholder="Annual Income"></asp:TextBox>
+                                                        <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender1" runat="server" TargetControlID="txtMotherAnnualIncome" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-left: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="lblParentContact" Style="line-height: 30px" runat="server" Text="Label"><b>Parent's Contact</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-left: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtParentContact" runat="server" MaxLength="10" CssClass="form-control input-sm" placeholder="Parent Contact"></asp:TextBox>
+                                                        <asp:FilteredTextBoxExtender ID="fteParentContact" runat="server" TargetControlID="txtParentContact" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2" style="padding-right: 0px; font-size: 12px;">
+                                                <div class="form-group">
+                                                    <asp:Label ID="lblParentEmail" Style="line-height: 30px" runat="server" Text="Label"><b>Parent's E-mail</b></asp:Label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4" style="padding-right: 0px;">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                                        <asp:TextBox ID="txtParentEmail" runat="server" CssClass="form-control input-sm" placeholder="Parent E-mail" MaxLength="70"></asp:TextBox>
+                                                        <%--<asp:FilteredTextBoxExtender ID="fteParentEmail" runat="server" TargetControlID="txtParentEmail" FilterType="Custom"></asp:FilteredTextBoxExtender>--%>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%--Family Details-------End---%>
+                                    <%--Qualification-------Start---%>
+                                    <div id="dvQualification" class="panel panel-info" runat="server" style="border-color: #ACE9FB">
+                                        <div class="panel-heading" style="background-color: #ACE9FB; height: 35px; cursor: pointer" id="Div6">
+                                            <center>
+                            <div class="panel-title" id="div7"  ><b><p  style="color:white;font-size:15px"> Qualification</p></b></div> </center>
+                                        </div>
+                                        <asp:Panel ID="pnlQualification" runat="server" ScrollBars="Horizontal" Width="100%">
+                                            <div class="panel-body" id="body3">
+
+                                                <table class="table">
+
+                                                    <tr>
+                                                        <th style="font-size: 15px">Qualification&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                        <th style="font-size: 15px">Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                        <th style="font-size: 15px">Year of Passing</th>
+                                                        <th style="font-size: 15px">School/College</th>
+                                                        <th style="font-size: 15px">Name of Board/Univ</th>
+                                                        <th style="font-size: 15px">Max Marks </th>
+                                                        <th style="font-size: 15px">Marks Obtained</th>
+                                                        <th style="font-size: 15px">Marks%</th>
+                                                        <th style="font-size: 15px">Grade</th>
+                                                        <th style="font-size: 15px">Medium of Instruction</th>
+                                                        <th style="font-size: 15px">Descipline/Subjects</th>
+
+                                                        <th style="font-size: 15px"></th>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <asp:DropDownList ID="ddlExamination" CssClass="form-control input-sm" runat="server"></asp:DropDownList>
+                                                            <asp:RequiredFieldValidator ID="rfvExamination" runat="server" ControlToValidate="ddlExamination" ErrorMessage="* Select pre Qualification" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+
+                                                        </td>
+                                                        <td>
+                                                            <asp:TextBox ID="txtDescription" CssClass="form-control input-sm" runat="server" Width="200px" MaxLength="50"></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtDescription" runat="server" ControlToValidate="txtDescription" ErrorMessage="* Description" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+                                                        </td>
+                                                        <td>
+                                                            <asp:TextBox ID="txtYearofPassing" runat="server" CssClass="form-control input-sm" MaxLength="4" placeholder="Year of Passing" Width="50px"></asp:TextBox>
+                                                            <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender5" runat="server" TargetControlID="txtYearofPassing" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                            <asp:RegularExpressionValidator ID="RegularExpresphone2" ValidationGroup="gAdd" Display="Dynamic"
+                                                                ControlToValidate="txtYearofPassing" runat="server" ForeColor="Red" ErrorMessage="Enter Valid Year!"
+                                                                SetFocusOnError="True" ValidationExpression="^\d{4}$"></asp:RegularExpressionValidator>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtYearofPassing" runat="server" ControlToValidate="txtYearofPassing" ErrorMessage="* Year of Passing" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+                                                        </td>
+                                                        <td>
+
+                                                            <asp:TextBox ID="txtSchoolCollege" runat="server" CssClass="form-control input-sm" placeholder="School/College" Width="200px" MaxLength="50"></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtSchoolCollege" runat="server" ControlToValidate="txtSchoolCollege" ErrorMessage="*School/College" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+                                                        </td>
+                                                        <td>
+                                                            <asp:TextBox ID="txtNameOfBoardUniv" runat="server" CssClass="form-control input-sm" placeholder="Name of Board/Univ" Width="200px" MaxLength="50"></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtNameOfBoardUniv" runat="server" ControlToValidate="txtNameOfBoardUniv" ErrorMessage="*Board/Univ" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+                                                        </td>
+                                                        <td>
+                                                            <asp:TextBox ID="txtMaximum" runat="server" CssClass="form-control input-sm" onchange="return Calculate();"
+                                                                MaxLength="4" placeholder="Maximum" Width="50px"></asp:TextBox>
+                                                            <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender3" runat="server" TargetControlID="txtMaximum" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtMaximum" runat="server" ControlToValidate="txtMaximum" ErrorMessage="*Maximum" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+                                                        </td>
+                                                        <td>
+                                                            <asp:TextBox ID="txtMarkObtained" runat="server" CssClass="form-control input-sm"
+                                                                MaxLength="4" Width="50px"  OnTextChanged="txtMarkObtained_TextChanged" AutoPostBack="true" placeholder="Mark Obtained"></asp:TextBox>
+                                                            <asp:FilteredTextBoxExtender ID="FilteredTextBoxExtender4" runat="server" TargetControlID="txtMarkObtained" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtMarkObtained" runat="server" ControlToValidate="txtMarkObtained" ErrorMessage="*Mark Obtained" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+                                                            <asp:CustomValidator ID="CustomValidator2" runat="server" ValidationGroup="gAdd" Display="Dynamic" ControlToValidate="txtMarkObtained" ForeColor="red" ErrorMessage="Marks Obtained Could not be greater than Max Marks!"
+                                                                ClientValidationFunction="validateLength"></asp:CustomValidator>
+
+                                                        </td>
+                                                        <td>
+
+                                                            <asp:TextBox ID="txtPercentageOfMarks" runat="server" Enabled="false" CssClass="form-control input-sm" MaxLength="5" placeholder="% Marks" Width="50px"></asp:TextBox>
+                                                           <%-- <asp:FilteredTextBoxExtender ID="ftetxtPercentageOfMarks" runat="server" TargetControlID="txtPercentageOfMarks" FilterType="Numbers, Custom"></asp:FilteredTextBoxExtender>--%>
+
+                                                        </td>
+                                                        <td>
+
+                                                            <asp:TextBox ID="txtGrade" runat="server" CssClass="form-contrinput-sm" MaxLength="1" placeholder="Grade" Width="50px"></asp:TextBox>
+                                                            <asp:FilteredTextBoxExtender ID="ftetxtGrade" runat="server" TargetControlID="txtGrade" FilterType="LowercaseLetters, UppercaseLetters"></asp:FilteredTextBoxExtender>
+
+                                                        </td>
+                                                        <td>
+
+                                                            <asp:TextBox ID="txtMediumOfInstruction" runat="server" CssClass="form-control input-sm" Width="100px" MaxLength="20" placeholder="Medium Of Instruction"></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtMediumOfInstruction" runat="server" ControlToValidate="txtMediumOfInstruction"
+                                                                ErrorMessage="*Medium Of Instruction" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+                                                        </td>
+                                                        <td>
+
+                                                            <asp:TextBox ID="txtDesciplineSubj" runat="server" CssClass="form-control input-sm" MaxLength="100" Width="200px" placeholder="Descipline/Subject"></asp:TextBox>
+                                                            <asp:RequiredFieldValidator ID="rfvtxtDesciplineSubj" runat="server" ControlToValidate="txtDesciplineSubj" ErrorMessage="*Descipline/Subject" ForeColor="Red" ValidationGroup="gAdd" InitialValue=""></asp:RequiredFieldValidator>
+
+
+                                                        </td>
+                                                        <td>
+                                                            <div class="col-lg2" style="padding-left: 0px;">
+                                                                <%-- <asp:Button ID="btnAdd" runat="server"  CssClass="form-control input-sm" Text="ADD" ValidationGroup="gAdd" OnClick="btnAdd_Click"  />    --%>
+                                                                <asp:LinkButton ID="btnAdd" type="button" class="btn btn-info" runat="server" ValidationGroup="gAdd" OnClick="btnAdd_Click" OnClientClick="return SAVE();">  
+                             <span class="glyphicon glyphicon-plus-sign"></span> ADD </asp:LinkButton>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="12">
+                                                            <asp:Label ID="lblerror" Style="line-height: 30px" ForeColor="Red" runat="server" Text=""></asp:Label>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="12">
+                                                            <asp:GridView ID="grdQualification" runat="server" Width="100%" DataKeyNames="Qualification" CssClass="table table-striped table-bordered table-hover" AutoGenerateColumns="False" EmptyDataText="There are no data records to display." AllowPaging="true" PageSize="10" OnSelectedIndexChanged="grdQualification_SelectedIndexChanged">
+                                                                <Columns>
+                                                                    <asp:BoundField DataField="QualificationDesc" HeaderText="Qualification" SortExpression="Qualification" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="Description" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="YearOfPassing" HeaderText="Year Of Passing" SortExpression="DOB" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="SchoolCollege" HeaderText="School/College" SortExpression="SchoolCollege" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="BoardUniversity" HeaderText="Board/University" SortExpression="BoardUniversity" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="MaximumMarks" HeaderText="Maximum Marks" SortExpression="EnquiryType" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="MarksObtained" HeaderText="Marks Obtained" SortExpression="FathersName" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="PMarks" HeaderText="%Marks" SortExpression="PMarks" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="Grade" HeaderText="Grade" SortExpression="Grade" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="MOI" HeaderText="Medium of Instruction" SortExpression="MOI" ItemStyle-CssClass="visible-lg" HeaderStyle-CssClass="visible-lg" />
+                                                                    <asp:BoundField DataField="DesciplineSubj" HeaderText="Descipline/Subjext" SortExpression="DesciplineSubj" ItemStyle-CssClass="visible-lg" HeaderStyle-CssClass="visible-lg" />
+                                                                    <asp:ButtonField CommandName="Select" Text="Delete" />
+                                                                </Columns>
+                                                                <AlternatingRowStyle CssClass="danger" />
+                                                            </asp:GridView>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </asp:Panel>
+                                    </div>
+                                    <%--Qualification-------End---%>
+                                    <div id="dvSave" runat="server" style="border-color: #ACE9FB; background-color: #ACE9FB; height: 50px" align="right">
+                                        <asp:LinkButton ID="btnSave" type="button" class="btn btn-info" runat="server" OnClick="btnSave_Click" OnClientClick="return SAVE();">  
+                             <span class="glyphicon glyphicon-save"></span> SUBMIT & PAY </asp:LinkButton>
+                                    </div>
+                                    <asp:HiddenField runat="server" ID="hfApplicationNo" />
+                                    <asp:HiddenField ID="key" runat="server" />
+                                    <asp:HiddenField ID="hash" runat="server" />
+                                    <asp:HiddenField ID="txnid" runat="server" />
+                                    <input type="hidden" runat="server" id="surl" name="surl" value="http://tmu.ac.in/feepay/surl.aspx" />
+                                    <input type="hidden" runat="server" id="furl" name="furl" value="http://tmu.ac.in/feepay/furl.aspx" />
+                                    <input type="hidden" runat="server" id="curl" name="curl" value="http://tmu.ac.in/feepay/curl.aspx" />
+                                    <input type="hidden" runat="server" id="service_provider" name="service_provider" value="payu_paisa" />
+
+                                </ContentTemplate>
+                                <Triggers>
+                                    <asp:AsyncPostBackTrigger ControlID="rblRegStep" EventName="SelectedIndexChanged" />
+                                    <asp:PostBackTrigger ControlID="btnValidateOTP" />
+                                    <%--<asp:PostBackTrigger ControlID="btnUpload"  />--%>
+                                    <asp:PostBackTrigger ControlID="btnSave" />
+                                </Triggers>
+                            </asp:UpdatePanel>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+    <script type="text/javascript">
+
+        function sumCalc() {
+            var _txt1 = document.getElementById('<%= txtMaximum.ClientID %>');
+        var _txt2 = document.getElementById('<%= txtMarkObtained.ClientID %>');
+        var _txt3 = document.getElementById('<%= txtPercentageOfMarks.ClientID %>');
+        var t1 = 0, t2 = 0;
+
+        if (_txt1.value != "") t1 = _txt1.value;
+        if (_txt2.value != "") t2 = _txt2.value;
+
+        _txt3.value = parseFloat(t2) * parseFloat(t1) / 100;
+    }
+    </script>
+</body>
+</html>

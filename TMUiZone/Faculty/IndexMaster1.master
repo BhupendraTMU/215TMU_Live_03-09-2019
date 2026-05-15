@@ -1,0 +1,454 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="IndexMaster1.master.cs" Inherits="IndexMaster" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>TMU</title>
+    <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/ajaxtabs.css" rel="stylesheet" type="text/css" />
+    
+    <script src="../Scripts/ajaxtabs.js"></script>
+    <script src="../Scripts/jquery-1.4.1-vsdoc.js"></script>
+
+    <script src="../Scripts/jquery-1.4.1.js"></script>
+    <script src="../Scripts/jquery-1.4.1.min.js"></script>
+    <link href="../CSS/Ajaxcal.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/jquery-1.11.2.min.js"></script>
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
+    <link href="../dropdown_one.css" rel="stylesheet" />
+    <link href="../CSS/mainpage.css" rel="stylesheet" type="text/css" />
+   <%-- <link href="dropdown_one.css" rel="stylesheet" type="text/css" />--%>
+     <link href="../CSS/reset.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/structure.css" rel="stylesheet" type="text/css" />
+   <link rel="shortcut icon" type="image/x-icon" href="../logo/Bg.jpg" /> 
+    <link href="../CSS/style.css" rel="stylesheet" />   
+    <script src="../Scripts/alertify.js"></script>
+    <script src="../Scripts/alertify.min.js"></script>
+    <link href="../Content/alertify/alertify.bootstrap.css" rel="stylesheet" />
+    <link href="../Content/alertify/alertify.core.css" rel="stylesheet" />
+    <link href="../Content/alertify/alertify.default.css" rel="stylesheet" />
+    <link href="../CSS/responsive.css" rel="stylesheet" />
+    <link href="../CSS/font-awesome.css" rel="stylesheet" />
+    <link href="menucss/styles.css" rel="stylesheet" />
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <style type="text/css">
+        .red-border {
+            border: 1px solid red;
+        }
+    </style>
+     <script type="text/javascript">
+         function callFeedbackMessage(inputType, inputText) {
+
+             if (inputType == 'Error') {
+                 alertify.error(inputText);
+                 return false;
+             }
+             else if (inputType == 'Success') {
+                 alertify.success(inputText);
+                 return false;
+             }
+             else {
+                 alertify.log(inputText, "", 10000);
+                 return false;
+             }
+         }
+    </script>
+    <script type ="text/javascript">
+        var validFilesTypes = ["bmp", "png", "jpg", "jpeg", "gif"];
+        function ValidateFile() {
+            var label;
+            var path = $('[id$=imgUpload]').val();
+            var ext = path.substring(path.lastIndexOf(".") + 1, path.length).toLowerCase();
+            var isValidFile = false;
+            for (var i = 0; i < validFilesTypes.length; i++) {
+                if (ext == validFilesTypes[i]) {
+                    isValidFile = true;
+                }
+            }
+            if (!isValidFile) {
+
+                label = "Invalid File. Please upload a File with" +
+                 " extension:\n\n" + validFilesTypes.join(", ");
+                alertify.error(label);
+            }
+            return isValidFile;
+        }
+
+        $(document).ready(function () {
+            $('[id$=btnChangePassword]').click(function Save() {
+                $('[id$=txtOldPassword]').val() == '';
+                $('[id$=txtNewPassword]').val() == '';
+                $('[id$=txtConfirmPassword]').val() == '';
+                $('[id$=lblErrorMessage]').text('');
+                var a = '', b = '', c = '';
+                $('[id$=txtOldPassword]').css('border-color', 'red');
+                if ($('[id$=txtOldPassword]').val() == '') { a = "false" } else $('[id$=txtOldPassword]').css('border-color', '');
+                $('[id$=txtNewPassword]').css('border-color', 'red');
+                if ($('[id$=txtNewPassword]').val() == '') { a = "false" } else $('[id$=txtNewPassword]').css('border-color', '');
+                $('[id$=txtConfirmPassword]').css('border-color', 'red');
+                if ($('[id$=txtConfirmPassword]').val() == '') { a = "false" } else $('[id$=txtConfirmPassword]').css('border-color', '');
+
+                if ($('[id$=txtNewPassword]').val() != $('[id$=txtConfirmPassword]').val()) { b = "false" };
+
+                if ($('[id$=txtNewPassword]').val().length < 5) { c = "false" };
+
+                if (a == "false") { return false; }
+                if (c == "false") {
+                    $('[id$=lblErrorMessage]').text('Password must be at least 5 characters!');
+                    return false;
+                }
+                if (b == "false") {
+                    $('[id$=lblErrorMessage]').text('Password does not match the confirm password!');
+                    return false;
+                }
+
+                var arr = { txtOldPassword: $('[id$=txtOldPassword]').val(), txtNewPassword: $('[id$=txtNewPassword]').val() };
+                $.ajax({
+                    type: "POST",
+                    url: "MasterPageChanges.aspx/ChangePassword",
+                    data: JSON.stringify(arr),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: ChangePassword,
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        alert('Error');
+                    }
+                });
+            });
+        });
+        function ChangePassword(data) {
+            if (data.d == 'successfully') {
+                alertify.success('Change password successfully');
+            }
+            else {
+                alertify.error('Old Password in not correct');
+            }
+        }
+</script>
+</head>
+<body >
+    <form id="form1" runat="server" >
+    <div >
+    <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+    <tr> <td> 
+
+    <table cellpadding="0px" cellspacing="0px" style="width:100%">
+
+        <tr> <td style="height:2px;background-color:#C5122F"> </td></tr>
+
+      <tr> <td style="height:8px;background-color:White"> </td></tr>
+     
+        <tr>
+            <td style="background-color: White">
+                <div id="wrapHeader">
+                    <table cellpadding="0px" cellspacing="0px">
+                        <tr>
+                            <td>
+                                <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" />
+                            </td>
+                            <td style="width: 30px">
+                                <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
+                            </td>
+                            <td style="width: 700px" align="center">
+                                <br />
+                            </td>
+                            <td >
+                                <table> 
+                                                                            
+                                    <tr>
+                                          <td align="left">
+                                            <ul style="list-style-type: none;">
+                                                 <li class="dropdown">
+                                                <asp:Image ID="imgProfile" runat="server" Width="100px" Height="80px" CssClass="imgcircle" />
+                                                <ul class="dropdown-menu" style="padding-left: 0px; margin-top:-5px">
+                                                    <li><asp:LinkButton ID="lnkImageUpload" runat="server" data-toggle="modal" data-target="#myModal1" Text="Change Photo"></asp:LinkButton></li>
+                                                    <li><asp:LinkButton ID="lnkChangePassword1" runat="server" data-toggle="modal" data-target="#myModal" Text="ChangePassword"></asp:LinkButton></li>
+                                                    <li class="divider"></li>
+                                                    <li><asp:LinkButton ID="lnkLogOut" runat="server" Text="Logout" OnClick="lnkLogOut_Click">
+                                                        <span class="glyphicon glyphicon-off">Logout</span>
+                                                        </asp:LinkButton></li>
+                                                </ul>
+                                            </li>
+                                                </ul>
+                                        </td> 
+                                        <td style="width:15px"><label style="width:15px"></label></td>
+                                    </tr>    
+                                      <tr>
+                                        <td colspan="2" style="text-align:center">
+                                           <asp:Label ID="lblName" runat="server"  Font-Bold="true"></asp:Label>
+                                       </td>                                                                                  
+                                    </tr>                         
+                                </table>
+                            </td>  
+                            <td style="width:50px"></td>                         
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>       
+    <tr> <td style="height:10px;background-color:White">          
+
+         </td></tr>
+    <tr> <td style="background-color:#ed7600">
+<%--<td class="ffooterInner"> #C5122F"> --%>
+    <div id="wrapMenu">
+         <ul id="menu"  style="text-transform: uppercase" >
+    <li style="margin-left:0px" id="li5" runat="server"><a href="../Faculty/FacultyDetails.aspx"><b>Profile</b></a> </li>
+               <%--- ------------------------------Enquiry------------------------ --%>
+<li style="margin-left:0px" id="liEnquiryPhone" runat="server" visible="false"><a href="../Enquiry/Enquiry_Phone.aspx"><b>Phone Enquiry</b></a> </li>
+<li style="margin-left:0px" id="liEnquiry" runat="server" visible="false"><a href="../Enquiry/Enquiry.aspx"><b>ENquiry</b></a> </li>
+<li style="margin-left:0px" id="liEnquiryList" runat="server" visible="false"><a href="../Enquiry/EnquiryList.aspx"><b>View Enquiry List</b></a> </li>
+             <%--- ------------------------------Enquiry------------------------ --%>
+<li class="dropdown" style="">
+  <a href="#" class="sf-with-ul" runat="server" id="liSAttendance">Attendance<span class="sf-sub-indicator" runat="server" id="span1">»</span></a>
+   <ul class="dropdown-menu">
+    <li style="margin-left:0px" id="liMarkAttendance" runat="server"><a href="../Faculty/StudentAttendanceMark1.aspx"><b>Mark Attendance</b></a> </li>
+    <li style="margin-left:0px" id="liExtraAttendance" runat="server"><a href="../Faculty/StudentExtraAttendanceMark.aspx"><b>Extra Lecture</b></a> </li>
+    <li style="margin-left:0px" id="liCombinedAttendance" runat="server"><a href="../Faculty/StudentCombinedAttendanceMark.aspx"><b>Combined Attendance</b></a> </li>
+    <li style="margin-left:0px" id="liReviewAttendance" runat="server"><a href="../Faculty/ReviewAttendance.aspx"><b>Review Attendance</b></a> </li>  
+    <li style="margin-left:0px" id="liEditStudentAttendance" runat="server"><a href="../Faculty/EditStudentAttendance.aspx"><b>Edit Attendance</b></a> </li> 
+    <li style="margin-left:0px" id="liDailyAttendance" runat="server" visible="false"><a href="../Faculty/DailyAttendanceDetails.aspx"><b>Daily Report</b></a> </li> 
+  <%-- <li style="margin-left:0px" id="liFacultyLoad" runat="server" visible="false"><a href="../Faculty/FacultyLoad.aspx"><b>Faculty Load</b></a> </li> --%>
+   <li style="margin-left:0px" id="liDetaineeList" runat="server" visible="false"><a href="../Faculty/StudentDetaineeReport.aspx"><b>Detainee List</b></a> </li> 
+   <li style="margin-left:0px" id="liContinueAbsent" runat="server" visible="false"><a href="../Faculty/StudentContinueAbsentReport.aspx"><b>Continue Absent List</b></a> </li> 
+    </ul>
+</li>
+<li class="dropdown" style="">
+  <a href="#" class="sf-with-ul" runat="server" id="liProgram">Program<span class="sf-sub-indicator"  runat="server" id="span2">»</span></a>
+     <ul class="dropdown-menu">
+     <li style="margin-left:0px" id="liAssignment" runat="server"><a href="../Faculty/AssignmentUploadDownload.aspx"><b>Assignment</b></a> </li>
+     <li style="margin-left:0px" id="liAssignmentView" runat="server" visible="false"><a href="../Faculty/AssignmentUploadView.aspx" ><b>Assignment List</b></a> </li> 
+     <li style="margin-left:0px" id="liTimeSheet" runat="server"><a href="../Faculty/FacultyTimeSheet.aspx"><b>Time Table</b></a> </li>
+     <li style="margin-left:0px" id="liTimeTableCreation" runat="server"><a href="../Faculty/CreateTimeTable.aspx"><b>Create TimeTable</b></a> </li> 
+         <li style="margin-left:0px" id="liTimeTableUpload" runat="server"><a href="../Faculty/TimeTableUpload.aspx"><b>Upload TimeTable</b></a> </li>
+     <li style="margin-left:0px" id="liDismissLecture" runat="server" visible="false"><a href="../Faculty/DismissClass.aspx"><b>Dismiss Lecture</b></a> </li> 
+     <li style="margin-left:0px" id="liRemedialClass" runat="server" visible="false"><a href="../Faculty/RemedialClass.aspx"><b>Remedial Class</b></a> </li> 
+     <li style="margin-left:0px" id="liFacultyFreeSlot" runat="server"><a href="../Faculty/FacultyFreeSlot.aspx"><b>Faculty Arrangement</b></a> </li>      
+     <li style="margin-left:0px" id="liLessonPlan" runat="server"><a href="../Faculty/FacultyLessonPlan.aspx"><b>Lesson Plan</b></a> </li> 
+     <li style="margin-left:0px" id="liFacultyCoursePlan" runat="server"><a href="../Faculty/FacultyCoursePlan.aspx"><b>Course Plan</b></a> </li> 
+     <li style="margin-left:0px" id="liFacultyCoursePlanList" runat="server"><a href="../Faculty/FacultyCoursePlanList.aspx"><b>Course Plan List</b></a> </li> 
+     <li style="margin-left:0px" id="liViewGrievances" runat="server" visible="false"><a href="../Faculty/ViewGrievances.aspx" ><b>View Grievances</b></a> </li>
+     <li style="margin-left:0px" id="liDashboard" runat="server" visible="false"><a href="../Faculty/Dashboard.aspx" ><b>Dashboard</b></a> </li>     
+     </ul>
+</li>
+ <li class="dropdown" style="" runat="server" id="liFine">
+ <a href="#" class="sf-with-ul" runat="server" id="A6">Fine<span class="sf-sub-indicator"  runat="server" id="span6">»</span></a>
+     <ul class="dropdown-menu">
+<li style="margin-left:0px" id="liStudentFine" runat="server"><a href="../Faculty/StudentFine.aspx"><b>Disciplinary Fine</b></a> </li> 
+<li style="margin-left:0px" id="liStudentFineReport" runat="server"><a href="../Faculty/StudentFineReport.aspx"><b>Fine Report</b></a> </li> 
+
+</ul>
+ </li>
+<li style="margin-left:0px" id="liMentorshipDetails" runat="server"><a href="../Faculty/MentorshipDetails.aspx"><b>Mentorship Details</b></a> </li> 
+<li class="dropdown" style="">
+      <a href="#" class="sf-with-ul" runat="server" id="liHR">HR<span class="sf-sub-indicator"  runat="server" id="span3">»</span></a>
+        <ul class="dropdown-menu">
+        <%--<li><a href="../Faculty/AttendenceNew.aspx" id="liAttendance" runat="server"><b>Attendance</b></a></li>--%>
+            <li><a href="~/Faculty/ViewAttendance.aspx" id="A1" runat="server"><b>View Attendance</b></a></li>
+            <li><a href="~/Faculty/ViewTeamAttendance.aspx" id="viewteamattendace" runat="server"><b>Team Attendance</b></a></li>
+             <li><a href="~/Faculty/ViewEmployeeAttendance.aspx" id="EmployeeAttendance" runat="server" visible="false"><b>All Attendance</b></a></li>
+
+            <li><a href="~/Faculty/Employee_Punch_Data.aspx" id="A2" runat="server"><b>Punch Data</b></a></li>
+            <li><a href="~/Faculty/Team_Punch_Data.aspx" id="lnk_Team_Punch_Data" runat="server"><b>Team Punching</b></a></li>
+        <li><a href="../Faculty/Leave.aspx" id="liLeave" runat="server"><b>Leave</b></a></li>
+            <li><a href="../Faculty/OD_Application.aspx" id="A3" runat="server"><b>OD / Tour-Claim</b></a></li>
+
+        <li runat="server" id="lnkPaySlip" visible="false"><a href="../Faculty/Payslipdetail.aspx"><b>Pay Slip</b></a></li>
+
+        <li><a href="../Faculty/Co_Application.aspx" id="A4" runat="server"><b>CO Application</b></a></li>        
+        <li runat="server" id="liAppraisalForm"><a href="../Faculty/AppraisalForm.aspx"><b>Appraisal Form</b></a></li>
+        <li runat="server" id="liAppraisalFormList" visible="false" ><a href="../Faculty/AppraisalFormList.aspx"><b>Appraisal Form List</b></a></li>
+        <li runat="server" id="liFacultyGrievances"><a href="../Faculty/FacultyGrievances.aspx"><b>Grievances</b></a></li>
+            <li runat="server" id="liFacultyGrievancesList" visible="false" ><a href="../Faculty/ViewGrievances.aspx"><b>View Grievances </b></a></li>
+        <li runat="server" id="liExitForm" ><a href="../Faculty/exitinterviewform.aspx"><b>Exit Form</b></a></li>
+        <li runat="server" id="lisummeryOfJoinAndLeave" visible="false"  ><a href="../Faculty/summeryOfJoinAndLeave.aspx"><b>Joining/Exit Count</b></a></li>            
+        <li style="margin-left:0px" id="liexitinterviewformDetails" runat="server" visible="false"><a href="../Faculty/exitinterviewformDetails.aspx"><b>Exit Form List</b></a> </li>        
+        </ul>
+</li>
+             <li class="dropdown" >
+      <a href="#" class="sf-with-ul" runat="server" id="liOthers" visible="false">OTHERS<span class="sf-sub-indicator"  runat="server" id="span4">»</span></a>
+        <ul class="dropdown-menu">       
+            <li><a href="~/Faculty/indentview.aspx" id="liIndentRequest" runat="server" visible="false" ><b>Indent </b></a></li>
+            <li><a href="~/Faculty/IndentApproval.aspx" id="liIndentApproval" runat="server" visible="false" ><b>Indent Approval</b></a></li> 
+            <li runat="server" id="liMapFacultySubjects"><a href="../Enquiry/MapFacultySubject.aspx"><b>Faculty Subjects</b></a></li>
+            <li runat="server" id="liAssignSubject" visible="false" ><a href="../Faculty/FacultyLoadCalculation.aspx"><b>Assign Subject</b></a></li>
+             <li runat="server" id="liLoadAssign" visible="true" ><a href="../Faculty/LoadReport.aspx"><b>Load Report</b></a></li>
+             <li runat="server" id="liSecondaryLoad" visible="true" ><a href="../Faculty/SecondaryLoad.aspx"><b>Secondary Load</b></a></li>
+        <li runat="server" id="liSubjectAllocationReport" visible="false" ><a href="../Enquiry/SubjectAllocationReport.aspx"><b>Subject Report </b></a></li>       
+            <%--<li><a href="~/Faculty/Events.aspx" id="A5" runat="server" visible="true" ><b>Event</b></a></li>        --%>
+            <li><a href="~/Faculty/EventList.aspx" id="A5" runat="server" visible="true" ><b>Event</b></a></li>        
+            <li><a href="~/Faculty/EventCreation.aspx" id="LiEvent" runat="server" visible="false" ><b>Create Event</b></a></li>        
+            <li><a href="~/Faculty/SmsEmployee.aspx" id="liSmsEmployee" runat="server" visible="false" ><b>SMS To Employee</b></a></li>        
+            <li><a href="~/Faculty/smsStudent.aspx" id="lismsStudent" runat="server" visible="false" ><b>SMS To Student</b></a></li> 
+            <li><a href="~/Faculty/StudentFeedBackList.aspx" id="liFeedBackList" runat="server" visible="false" ><b>Student Feedback List</b></a></li> 
+             <li><a href="~/Faculty/ResultCoutForFeedback.aspx" id="liFeedbackCount" runat="server" visible="false" ><b>Feedback Count</b></a></li> 
+            <li><a href="~/Faculty/PendingStudentForFeedbackEnty.aspx" id="liPendingFeedback" runat="server" visible="false" ><b>Pending Feedback List </b></a></li> 
+            <li style="margin-left:0px" id="liAcademicCalendar" runat="server" ><a href="../Faculty/EducalenderEntry.aspx"><b>Academic Calendar</b></a> </li> 
+            <li style="margin-left:0px" id="liFileUpload" runat="server" ><a href="../Faculty/FacultyFileUpload.aspx"><b>Dissertation Upload</b></a> </li> 
+            <li style="margin-left:0px" id="li2" runat="server" ><a href="../Faculty/UserRoleMatrix.aspx"><b>User Role </b></a> </li> 
+        </ul>
+</li>
+<!---Start --->
+
+ <li style="margin-left:0px" id="liAppraisalLIst" runat="server" visible="false"><a href="../Faculty/AppraisalFormList.aspx"><b>Appraisal Form List</b></a> </li> 
+
+            
+             <li class="dropdown" >
+                    <a href="#" class="sf-with-ul" runat="server" id="SMS" visible="false">Sms Portal<span class="sf-sub-indicator"  runat="server" id="span5">»</span></a>
+                 <ul class="dropdown-menu">
+                     <li><a href="../Faculty/smsEmployee.aspx" id="smsEmployee" runat="server" visible="false"><b>Sms To Employee</b></a></li>
+            <li><a href="../Faculty/smsStudent.aspx" id="smsStudent" runat="server" visible="false" ><b>Sms To Student</b></a></li>         
+                     </ul>
+</li>
+             <!--- end--->
+<li style="margin-left:0px" id="liFeedback" runat="server" visible="false"><a href="../Faculty/FacultyFeedback.aspx"><b>Feedback</b></a> </li>
+<li style="margin-left:0px" id="lnkSetup" runat="server" visible="false"><a href="setup.aspx"><b>Setup</b></a> </li>  
+<li style="margin-left:0px" id="Li1" runat="server" visible="false"><a href="../Enquiry/StudentChart.aspx"><b>Chart/Graph</b></a> </li> 
+<li > <asp:LinkButton ID="lnkClaim" runat="server" PostBackUrl="~/reimbursement.aspx" Visible="false">Claims</asp:LinkButton> </li>
+<li><asp:LinkButton ID="lnlrecognition" runat="server" PostBackUrl="~/ERP.aspx" Visible="false">ERP</asp:LinkButton> </li>
+
+<li > <asp:LinkButton ID="lnkAttendanceApprovalHODHR" runat="server" PostBackUrl="~/AttendenceApproval.aspx" Visible="false">Attendance Approval</asp:LinkButton> 
+      <asp:Label ID="lblAttendence" runat="server"  ForeColor="Red" Visible="false"></asp:Label>  </li>
+<li > <a href="ProfileApproval.aspx" id="lnkprofileaprovalblank" runat="server" visible="false">Profile Approval
+      <asp:Label ID="lblProfileCount" runat="server"  ForeColor="Red" Visible="false"></asp:Label></a> </li>      
+<li > <asp:Label ID="lblReimbursmentCount" runat="server" ForeColor="Red" Visible="false" ></asp:Label></li>
+      
+</ul>
+          
+    </div>
+     </td></tr>
+     <tr> <td style="height:10px;" class="leftBackground"> </td></tr>
+    <tr > <td class="leftBackground" style="min-height:500px; background-color:#eaf3b0"> 
+    <div id="wrap" style="min-height:400px"> 
+     <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+        </div>
+    </td></tr>
+
+    <tr> <td style="height:40px"> </td></tr>
+
+    <tr> 
+        <%--<td class="ffooterInner"> --%>
+          <td class="ffooterInner"> 
+    <div id="wrapFooter">
+    
+     <table cellpadding="0px" cellspacing="0px" style="width:100%">
+      <tr> <td style="height:19px"> </td></tr>
+      
+       <tr> <td > <div id="Div1">    
+      
+      <table cellpadding="0px" cellspacing="0px" style="width:100%">
+          <tr> <td> <table cellpadding="0px" cellspacing="0px"> 
+               <tr>  <td style="width:50px"> </td><td><label>Employee ID</label> </td><td style="width:20px"> </td> <td>  <asp:Label ID="lbluserid666" runat="server" Text=""></asp:Label></td> <td style="width:10px">  </td> 
+         
+          <td style="width:10px">  </td> <td></td>
+          <td><asp:HyperLink id="GoogleLink"  runat="server" style="color:white;" target="_blank"><asp:Image ID="Image2" runat="server" ImageUrl="../images/google.png" Width="30px" ></asp:Image></asp:HyperLink></td>
+           </tr></table>   </td> <td align="right">   All right reserved By  : <a href="https://www.tmu.ac.in/" style="color:white; text-decoration:none" target="_blank"> Teerthanker Mahaveer University</a> </td></tr> </table>      
+      
+         </div> </td></tr></table>
+     </div>    
+    </td></tr>
+
+    </table>
+
+        </td></tr></table>
+    </div>
+       <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">    
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header" style="background-color:#88CCFF;">
+                    <div>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title"><b style="font-family:'SketchFlow Print'; font-size:15px; font-weight:bold"">Change Password</b></h4>
+                     </div>
+                </div>
+                <div class="modal-body">
+                         <div class="col-lg-3" style="padding-right:0px; font-size:12px; ">                                    
+                                <asp:Label ID="Label28" style="line-height:30px" runat="server" Font-Bold="true" Text="Label"><b>Old Password:</b></asp:Label>                                    
+                        </div>
+                                <div class="col-lg-8" style="padding-right:0px;">
+                           <div class="form-group">       
+                               <div class="input-group">
+                               <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>                      
+                               <asp:TextBox runat="server" ID="txtOldPassword" CssClass="form-control input-sm"  Height="30px" TextMode="Password"></asp:TextBox>
+                           </div>
+                                    </div>
+                                    </div>                   
+                                    <div class="clearfix"></div>
+                                     <div class="col-lg-3" style="padding-right:0px; font-size:12px; ">                                    
+                                                <asp:Label ID="Label2" style="line-height:30px" runat="server" Font-Bold="true" Text="Label"><b>New Password:</b></asp:Label>                                    
+                                        </div>
+                                <div class="col-lg-8" style="padding-right:0px;">
+                                   <div class="form-group">       
+                                       <div class="input-group">
+                                       <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>                      
+                                       <asp:TextBox runat="server" ID="txtNewPassword" CssClass="form-control input-sm"  Height="30px" TextMode="Password"></asp:TextBox>
+                                   </div>
+                                    </div>
+                                    </div>
+                                     <div class="clearfix"></div>
+                                     <div class="col-lg-3" style="padding-right:0px; font-size:12px; ">                                    
+                                                <asp:Label ID="Label3" style="line-height:30px" runat="server" Font-Bold="true" Text="Label"><b>Confirm Password:</b></asp:Label>                                    
+                                     </div>
+                                     <div class="col-lg-8" style="padding-right:0px;">
+                                   <div class="form-group">       
+                                       <div class="input-group">
+                                       <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>                      
+                                       <asp:TextBox runat="server" ID="txtConfirmPassword" CssClass="form-control input-sm"  Height="30px" TextMode="Password"></asp:TextBox>
+                                   </div>
+                                    </div>
+                                         <div>
+                                             <asp:Label runat="server" ID="lblErrorMessage" Text="" ForeColor="Red"></asp:Label>
+                                         </div>
+                                     <%--<asp:CompareValidator ID="CompareValidator1" runat="server" ControlToCompare="txtNewPassword" ControlToValidate="txtConfirmPassword" ErrorMessage="The password does not match!" ValidationGroup="g3"></asp:CompareValidator>--%>
+                                    </div>
+                </div>
+                <div class="modal-footer" style="border-top-width:0px">
+                  <asp:Button runat="server" ID="btnChangePassword" OnClientClick = "return false;" class="close" data-dismiss="modal"  CssClass="btn-sm btn-primary" Width="20%"   ValidationGroup="g3" Text="Change"></asp:Button>
+                </div>
+              </div>
+      
+            </div>
+           </div>
+
+           <div class="modal fade" id="myModal1" role="dialog">
+            <div class="modal-dialog">    
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header" style="background-color:#88CCFF;">
+                    <div>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title"><b style="font-family:'SketchFlow Print'; font-size:15px; font-weight:bold">Upload Image  ( Max Size 20KB )</b></h4>
+                     </div>
+                </div>
+                <div class="modal-body">
+                         <div class="col-lg-3" style="padding-right:0px; font-size:12px; ">                                    
+                                <asp:Label ID="Label4" style="line-height:30px" runat="server" Font-Bold="true" Text="Label"><b>Choose Image:</b></asp:Label>                                    
+                        </div>
+                                <div class="col-lg-8" style="padding-right:0px;">
+                           <div class="form-group">       
+                               <asp:FileUpload runat="server"  ID="imgUpload" />
+                                    </div>
+                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="First choose the file!" ControlToValidate="imgUpload" ValidationGroup="g4"></asp:RequiredFieldValidator>
+                                    </div>               
+                                         
+                </div>
+                <div class="modal-footer" style="border-top-width:0px">
+                  <asp:Button runat="server" ID="btnChangeImage" OnClientClick = "return ValidateFile()" OnClick="btnChangeImage_Click" CssClass="btn-sm btn-primary" Width="20%"  ValidationGroup="g4" Text="Change Image"></asp:Button>
+                </div>
+              </div>
+      
+            </div>
+           </div>
+    </form>
+</body>
+</html>

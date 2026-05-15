@@ -1,0 +1,255 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Faculty_MonthlyPMSApproval : System.Web.UI.Page
+{
+    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+            {
+                bindPMSApprovalPendingList();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Response.Redirect("~/Default.aspx");
+        }
+    }
+    public void bindPMSApprovalPendingList()
+    {
+        SqlCommand cmd = new SqlCommand("proc_GetPendingPMSApprovalMonthly", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@ID", Session["uid"].ToString());
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Open();
+        da.Fill(dt);
+        grdPMSList.DataSource = dt;
+        grdPMSList.DataBind();
+        con.Close();
+
+    }
+ 
+    protected void lnk_A1_Downalod_Command(object sender, CommandEventArgs e)
+    {
+        string autoNo = e.CommandArgument.ToString();
+        DownloadFile(Convert.ToInt32(autoNo));
+    }
+    private void DownloadFile(int autoNo)
+    {
+        pms_connection con = new pms_connection();
+
+        SqlCommand cmd = new SqlCommand("sp_GetAttachmentByID_For_Download_PMS", con.Con);
+
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+        con.Connect();
+        using (SqlDataReader reader = cmd.ExecuteReader())
+        {
+            if (reader.Read())
+            {
+                string fileName = reader["Attachment_FileName"].ToString();
+                string fileType = reader["Attachment_FileType"].ToString();
+                byte[] fileData = (byte[])reader["Attachment_Data"];
+
+                Response.Clear();
+                Response.ContentType = fileType;
+                //Response.AddHeader("Content-Disposition", $"attachment; filename={fileName}");
+                Response.AddHeader("Content-Disposition", string.Format("attachment; filename={0}", fileName));
+
+                Response.OutputStream.Write(fileData, 0, fileData.Length);
+                Response.Flush();
+                Response.End();
+            }
+            reader.Close();
+        }
+
+    }
+    protected void chkAll_CheckedChanged(object sender, EventArgs e)
+    {
+        CheckBox checkBoxheader = (CheckBox)gv_a1.HeaderRow.FindControl("chkAll");
+        foreach (GridViewRow Row in gv_a1.Rows)
+        {
+            CheckBox checkRows = (CheckBox)Row.FindControl("chkStudent");
+            if (checkBoxheader.Checked == true)
+            {
+                checkRows.Checked = true;
+
+            }
+            else
+            {
+                checkRows.Checked = false;
+            }
+        }
+        ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
+    }
+
+    protected void chkStudent_CheckedChanged(object sender, EventArgs e)
+    {
+
+        CheckBox checkBoxheader = (CheckBox)gv_a1.HeaderRow.FindControl("chkAll");
+        foreach (GridViewRow Row in gv_a1.Rows)
+        {
+            CheckBox checkRows = (CheckBox)Row.FindControl("chkStudent");
+            if (checkRows.Checked == false)
+            {
+                checkBoxheader.Checked = false;
+
+            }
+            else
+            {
+                // checkBoxheader.Checked = true;
+            }
+
+        }
+        ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
+    }
+
+
+    protected void btnApprove_Click(object sender, EventArgs e)
+    {
+        SqlConnection Con2 = new SqlConnection(ConfigurationManager.AppSettings["str"]);
+
+        //using (TransactionScope scope = new TransactionScope())
+        //{
+        Label lblUserID = new Label();
+        try
+        {
+            foreach (GridViewRow row in gv_a1.Rows)
+            {
+                if (row.RowType == DataControlRowType.DataRow)
+                {
+
+                    CheckBox chkStudent = (row.Cells[0].FindControl("chkStudent") as CheckBox);
+                     lblUserID = (row.Cells[0].FindControl("Empoyee_Code") as Label);
+                    HiddenField hfAuto = (row.Cells[0].FindControl("hfAuto") as HiddenField);
+                    if (chkStudent.Checked == true)
+                    {
+                        SqlCommand cmd1 = new SqlCommand("UpdateMonthlyPMSAttachment", con);
+                        cmd1.CommandType = CommandType.StoredProcedure;
+                        cmd1.Parameters.Add("@Auto", hfAuto.Value);
+                        cmd1.Parameters.Add("@Status", 2);
+
+                        if (con.State == ConnectionState.Closed)
+                            con.Open();
+                        cmd1.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Success', 'Employee Verify Successfully.');", true);
+            //ShowEMployeeDetails();
+        }
+
+
+
+
+
+
+
+
+        catch (Exception ex)
+        {
+            // scope.Dispose();
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Some Problem Occured.');", true);
+        }
+        SqlCommand cmd = new SqlCommand("sp_GetAttachmentfor_PMS", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@EmployeeID", Session["uid"].ToString());
+        cmd.Parameters.Add("@UserID", lblUserID.Text);
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Open();
+        da.Fill(dt);
+        gv_a1.DataSource = dt;
+        gv_a1.DataBind();
+        ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
+    }
+
+    protected void btnReject_Click(object sender, EventArgs e)
+    {
+        SqlConnection Con2 = new SqlConnection(ConfigurationManager.AppSettings["str"]);
+
+        //using (TransactionScope scope = new TransactionScope())
+        //{
+        try
+        {
+            foreach (GridViewRow row in gv_a1.Rows)
+            {
+                if (row.RowType == DataControlRowType.DataRow)
+                {
+
+                    CheckBox chkStudent = (row.Cells[0].FindControl("chkStudent") as CheckBox);
+                    Label lblUserID = (row.Cells[0].FindControl("Empoyee_Code") as Label);
+                    HiddenField hfAuto = (row.Cells[0].FindControl("hfAuto") as HiddenField);
+                    if (chkStudent.Checked == true)
+                    {
+                        SqlCommand cmd1 = new SqlCommand("UpdateMonthlyPMSAttachment", con);
+                        cmd1.CommandType = CommandType.StoredProcedure;
+                        cmd1.Parameters.Add("@Auto", hfAuto.Value);
+                        cmd1.Parameters.Add("@Status", 3);
+                        if (con.State == ConnectionState.Closed)
+                            con.Open();
+                        cmd1.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Success', 'Employee Verify Successfully.');", true);
+            //ShowEMployeeDetails();
+        }
+
+
+
+
+
+
+
+
+        catch (Exception ex)
+        {
+            // scope.Dispose();
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Some Problem Occured.');", true);
+        }
+        SqlCommand cmd = new SqlCommand("sp_GetAttachmentfor_PMS", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@EmployeeID", Session["uid"].ToString());
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Open();
+        da.Fill(dt);
+        gv_a1.DataSource = dt;
+        gv_a1.DataBind();
+        ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
+    }
+
+    protected void lnkDetails_Command(object sender, CommandEventArgs e)
+    {
+        string Employee = e.CommandArgument.ToString();
+        SqlCommand cmd = new SqlCommand("sp_GetAttachmentfor_PMS", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@EmployeeID", Session["uid"].ToString());
+        cmd.Parameters.Add("@UserID", Employee);
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Open();
+        da.Fill(dt);
+        gv_a1.DataSource = dt;
+        gv_a1.DataBind();
+        ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
+
+    }
+}

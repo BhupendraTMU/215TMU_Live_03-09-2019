@@ -1,0 +1,108 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+using System.Text;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.OleDb;
+
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Drawing;
+using System.Web.SessionState;
+using paytm;
+using System.Net;
+using System.Net.Mail;
+using DL;
+
+public partial class transactionstatus : System.Web.UI.Page
+{
+    StudentDetailsViewDL SDL = new StudentDetailsViewDL(); 
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsPostBack)
+            {
+                // Show_Expiry();
+                show();
+            }
+        }
+        catch (Exception)
+        {
+            Response.Redirect("errorpage.aspx");
+        }
+    }
+    public void show()
+    {
+
+
+        String masterKey = "tvo4V_UPQrYk@8Co";//test    // String masterKey = "WDsyj5CtsaL7thf@";//live
+
+        Dictionary<String, String> parameters = new Dictionary<string, string>();
+
+        parameters.Add("MID", Request.Form["MID"]);
+        parameters.Add("TXNID", Request.Form["TXNID"]);
+        parameters.Add("ORDER_ID", Request.Form["ORDERID"]);
+        parameters.Add("BANKTXNID", Request.Form["BANKTXNID"]);
+        parameters.Add("TXNAMOUNT", Request.Form["TXNAMOUNT"]);
+        parameters.Add("CURRENCY", Request.Form["CURRENCY"]);
+        parameters.Add("STATUS", Request.Form["STATUS"]);
+        parameters.Add("RESPCODE", Request.Form["RESPCODE"]);
+        parameters.Add("RESPMSG", Request.Form["RESPMSG"]);
+        parameters.Add("TXNDATE", Request.Form["TXNDATE"]);
+        parameters.Add("GATEWAYNAME", Request.Form["GATEWAYNAME"]);
+        parameters.Add("BANKNAME", Request.Form["BANKNAME"]);
+        parameters.Add("PAYMENTMODE", Request.Form["PAYMENTMODE"]);
+
+        string str = Request.Form["CHECKSUMHASH"];
+
+        if (CheckSum.verifyCheckSum(masterKey, parameters, str))
+        {
+
+          //  Response.Redirect("tarnsactstatus.aspx");
+
+        }
+        else
+        {
+            //Response.Redirect("maintenence.aspx");
+        }
+
+        lblStatus.Text = Request.Form["STATUS"].ToString();
+        lblStatusCode.Text = Request.Form["RESPCODE"].ToString();
+        lblOrderid.Text = Request.Form["ORDERID"].ToString();
+        lblAmount.Text = Request.Form["TXNAMOUNT"].ToString();
+        lblPaymentDate.Text = Request.Form["TXNDATE"].ToString();
+        lblBankName.Text = Request.Form["BANKNAME"].ToString();
+        lblPaymentMode.Text = Request.Form["PAYMENTMODE"].ToString();
+        lbltxtid.Text = Request.Form["TXNID"].ToString();
+        Session["TXNID"] = Request.Form["TXNID"].ToString();
+        lblAgentId.Text = Session["uid"].ToString();
+
+        //====================== insert into TMU$Gen_ Journal Line===========================
+        DataTable dt = SDL.GetStudentDetailsForSurl(Session["uid"].ToString());
+        lblStudentNo.Text = dt.Rows[0]["No_"].ToString();
+        lblStudentName.Text = dt.Rows[0]["Student Name"].ToString();
+        lblDob.Text = dt.Rows[0]["DOB"].ToString();
+        lblFatherName.Text = dt.Rows[0]["Fathers Name"].ToString();
+        DataTable dt1 = new DataTable();
+        DataTable dt2 = new DataTable();
+        dt1 = (DataTable)Session["AmountDetails"];
+        dt2 = (DataTable)Session["AccountNo"];
+        if (dt1.Rows.Count > 0)
+        {
+            for (int i = 0; i < dt1.Rows.Count; i++)
+            {
+                SDL.insertGen_JournalLine(Session["uid"].ToString(), Convert.ToDecimal(dt1.Rows[i]["Amount"].ToString()), dt1.Rows[i]["Description"].ToString(), dt2.Rows[i]["G_L Account"].ToString(), lblOrderid.Text, dt1.Rows[i]["Entry No"].ToString(), "PAYTM");//ashu add Entry No and PAYTM 28-07-2016
+            }
+        }
+       
+    }
+}

@@ -1,0 +1,98 @@
+﻿.vertical-padding {
+	padding-top: 20px;
+	padding-bottom: 20px;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+.vertical-margin {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.container {
+	width: 100%;
+	max-width: 1200px;
+	
+	padding: 0 15px;
+}
+
+.whitebg-row {
+	background-color: white;
+}
+
+
+.highlighted-row {
+	background-color: #D6E3BC;
+}
+
+.red-highlighted-row1 {
+	background-color: #FBD5B5;
+}
+
+.grey-highlighted-row {
+	background-color: #EFEDE1;
+}
+.no-padding {
+	padding: 0 !important; /* Remove padding */
+}
+
+table {
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+	
+}
+th, td {
+	padding-left: 10px; /* Padding inside table cells */
+    padding-right:10px;
+    
+}
+	table[border="1"] {
+		border: 1px solid black; /* You can adjust the thickness here (e.g., 3px, 5px) */
+	}
+
+		table[border="1"] td,
+		table[border="1"] th {
+			border: 1px solid black; /* Ensure inner cell borders match the outer border */
+		}
+
+	table[border="0"] {
+		border: none;
+	}
+
+		table[border="0"] td,
+		table[border="0"] th 
+		{
+			border: none;
+		}
+
+#wrap
+{
+    background-color:white;
+	width: 1024px;
+	height: 100%;
+	margin: auto;
+}
+
+.center-text
+{
+	text-align:center;
+    height: 22px;
+}
+
+.left-text {
+text-align:left;
+}
+fieldset {
+  background-color: #eeeeee;
+}
+
+legend {
+  background-color: gray;
+  color: white;
+  padding: 5px 10px;
+}
+
+input {
+  margin: 5px;
+}

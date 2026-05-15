@@ -1,0 +1,282 @@
+
+
+.p-0{padding:0;}
+.pl-0{padding-left:0;}
+.pr-0{padding-right:0;}
+.pt-0{padding-top:0;}
+.pb-0{padding-bottom:0;}
+
+.p-5{padding:5px;}
+.pl-5{padding-left:5px;}
+.pr-5{padding-right:5px;}
+.pt-5{padding-top:5px;}
+.pb-5{padding-bottom:5px;}
+
+.p-10{padding:10px;}
+.pl-10{padding-left:10px;}
+.pr-10{padding-right:10px;}
+.pt-10{padding-top:10px;}
+.pb-10{padding-bottom:10px;}
+
+.p-15{padding:15px;}
+.pl-15{padding-left:15px;}
+.pr-15{padding-right:15px;}
+.pt-15{padding-top:15px;}
+.pb-15{padding-bottom:15px;}
+
+.p-20{padding:20px;}
+.pl-20{padding-left:20px;}
+.pr-20{padding-right:20px;}
+.pt-20{padding-top:20px;}
+.pb-20{padding-bottom:20px;}
+
+.m-0{margin:0;}
+.ml-0{margin-left:0;}
+.mr-0{margin-right:0;}
+.mt-0{margin-top:0;}
+.mb-0{margin-bottom:0;}
+
+.m-5{margin:5;}
+.ml-5{margin-left:5px;}
+.mr-5{margin-right:5px;}
+.mt-5{margin-top:5px;}
+.mb-5{margin-bottom:5px;}
+
+.m-10{margin:10px;}
+.ml-10{margin-left:10px;}
+.mr-10{margin-right:10px;}
+.mt-10{margin-top:10px;}
+.mb-10{margin-bottom:10px;}
+
+.m-15{margin:15px;}
+.ml-15{margin-left:15px;}
+.mr-15{margin-right:15px;}
+.mt-15{margin-top:15px;}
+.mb-15{margin-bottom:15px;}
+
+.m-20{margin:20px;}
+.ml-20{margin-left:20px;}
+.mr-20{margin-right:20px;}
+.mt-20{margin-top:20px;}
+.mb-20{margin-bottom:20px;}
+
+.mt-35{margin-top:35px;}
+
+.text-l{text-align:left;}
+.text-r{text-align:right;}
+.text-c{text-align:center;}
+.text-j{text-align:justify;}
+
+.full-img{width:100%;}
+
+
+
+/*******login page start*******/
+.login_page{
+	width: 100%;
+    height: 100%;
+	position:absolute;
+	background:#999;
+}
+.login_header{
+	background-color: rgba(251, 251, 251, 0.85);
+	border-top: 2px solid #cf4e33;
+	position:fixed;
+	width:100%;
+	z-index:9;
+}
+
+/*****login slider*****/
+
+.carousel-fade .carousel-inner .item {
+    opacity: 0;
+    transition-property: opacity;
+}
+.carousel-fade .carousel-inner .active {
+    opacity: 1;
+}
+.carousel-fade .carousel-inner .active.left,
+.carousel-fade .carousel-inner .active.right {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+.carousel-fade .carousel-inner .next.left,
+.carousel-fade .carousel-inner .prev.right {
+    opacity: 1;
+}
+.carousel-fade .carousel-control {
+    z-index: 2;
+}
+
+@media all and (transform-3d),
+(-webkit-transform-3d) {
+    .carousel-fade .carousel-inner > .item.next,
+    .carousel-fade .carousel-inner > .item.active.right {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.prev,
+    .carousel-fade .carousel-inner > .item.active.left {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.next.left,
+    .carousel-fade .carousel-inner > .item.prev.right,
+    .carousel-fade .carousel-inner > .item.active {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+.item:nth-child(1) {
+    background: url(../images/mu_1.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(2) {
+    background: url(../images/mu_2.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(3) {
+    background: url(../images/mu_3.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(4) {
+    background: url(../images/mu_4.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(5) {
+    background: url(../images/mu_5.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(6) {
+    background: url(../images/mu_6.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+
+.carousel .item {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.login_footer{
+	background-color: #212121;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: #fafafa;
+	font-size:12px;
+    text-align: center;
+	z-index:999;
+}
+.login_form{
+	position: absolute;
+    top: 50%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.82);
+    width: 310px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+	z-index:99999;
+}
+.login_form p{
+	background-color: #8a531b;
+    color: #e0e0e0;
+    font-size: 17px;
+    text-align: center;
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topleft: 4px;
+    -moz-border-radius-topright: 4px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.login_form form{
+	width:256px;
+	margin: 0 auto;
+}
+.login_form .form-group .form-control{
+    background-color: #9e9e9e;
+    border: 0;
+    border-radius: 0;
+	color:#f5f5f5;
+}
+.login_form .form-group .form-control::-webkit-input-placeholder {
+  color: #d7dadb;
+}
+.login_form .form-group .form-control::-moz-placeholder {
+  color: #d7dadb;
+}
+.login_form .form-group .form-control:-ms-input-placeholder { 
+  color: #d7dadb;
+}
+.login_form .form-group .form-control:-moz-placeholder { 
+  color: #d7dadb;
+}
+.login_form .form-group .forgetpassword{
+	color: #234a6d;
+    font-size: 12px;
+    display:block;
+}
+.login_form .form-group .signin{
+	border: 0;
+    border-radius: 0;
+	background: #cf6e58; 
+	background: -moz-linear-gradient(top, #cf6e58 0%, #bf462d 100%);
+	background: -webkit-linear-gradient(top, #cf6e58 0%,#bf462d 100%);
+	background: linear-gradient(to bottom, #cf6e58 0%,#bf462d 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cf6e58', endColorstr='#bf462d',GradientType=0 );
+	outline:0;
+	box-shadow: 0px 0px 0px;
+    margin-bottom:10px;
+}
+.login_form .form-group .signin:hover{
+	background: #f79e8a; 
+	background: -moz-linear-gradient(top, #f79e8a 0%, #bf462d 100%);
+	background: -webkit-linear-gradient(top, #f79e8a 0%,#bf462d 100%);
+	background: linear-gradient(to bottom, #f79e8a 0%,#bf462d 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f79e8a', endColorstr='#bf462d',GradientType=0 );
+}
+
+/*******footer*******/
+footer{
+	background-color: #524d4d;
+    text-align: center;
+    font-size: 12px;
+    color: #e0e0e0;
+}
+
+
+
+
+@media screen and (max-width:767px)
+{
+    .login_form
+    {
+        left:50%;
+    }
+}

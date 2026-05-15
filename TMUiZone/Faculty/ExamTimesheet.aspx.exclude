@@ -1,0 +1,127 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" CodeFile="ExamTimesheet.aspx.cs" Inherits="Faculty_ExamTimesheet" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <asp:ScriptManager ID="ty" runat="server"></asp:ScriptManager>
+    <asp:UpdatePanel ID="fe" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+
+            <div class="panel-heading" style="background-color: #2b5b69">
+                <center>
+                    <div class="panel-title" style="fit-position: center;">
+                        <b>
+                            <p style="color: white; font-size: 20px">
+                                EXAMINATION  TIME SHEET
+                            </p>
+                        </b>
+                    </div>
+                </center>
+            </div>
+            <br />
+            <fieldset class="boxBodyInner">
+                <div class="row tmu-form ml-5 mr-5">
+                    <div class="col-sm-3 p-0">
+                        <div class="form-group clearfix">
+                            <label for="inputEmail3" class="col-form-label">Academic Year</label>
+                            <div class="col-sm-6">
+                                <asp:DropDownList ID="ddlAcademicYear" runat="server" CssClass="form-control" OnSelectedIndexChanged="ddlAcademicYear_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-0">
+                        <div class="form-group clearfix">
+                            <label for="inputEmail3" class="col-form-label">Course</label>
+                            <div class="col-sm-8">
+                                <asp:DropDownList ID="ddlCourse" runat="server" CssClass="form-control" OnSelectedIndexChanged="ddlCourse_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 p-0">
+                        <div class="form-group clearfix">
+                            <label for="inputEmail3" class="col-form-label">Semester</label>
+                            <div class="col-sm-7">
+                                <asp:DropDownList ID="ddlSem" CssClass="form-control" OnSelectedIndexChanged="ddlSem_SelectedIndexChanged" AutoPostBack="true" runat="server">
+                                    <asp:ListItem Value="" Text="--Select--"></asp:ListItem>
+                                    <asp:ListItem Value="0" Text="Even"></asp:ListItem>
+                                    <asp:ListItem Value="1" Text="ODD"></asp:ListItem>
+                                    <%--<asp:ListItem Value="III" Text="III"></asp:ListItem>
+                                    <asp:ListItem Value="IV" Text="IV"></asp:ListItem>
+                                    <asp:ListItem Value="V" Text="V"></asp:ListItem>
+                                    <asp:ListItem Value="VI" Text="VI"></asp:ListItem>
+                                    <asp:ListItem Value="VII" Text="VII"></asp:ListItem>
+                                    <asp:ListItem Value="VIII" Text="VIII"></asp:ListItem>
+                                    <asp:ListItem Value="IX" Text="IX"></asp:ListItem>
+                                    <asp:ListItem Value="X" Text="X"></asp:ListItem>--%>
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 p-0">
+                        <div class="form-group clearfix">
+                            <label for="inputEmail3" class="col-form-label">College Code</label>
+                            <div class="col-sm-8">
+                                <asp:DropDownList ID="DdlCollege" runat="server" AutoPostBack="true" OnSelectedIndexChanged="DdlCollege_SelectedIndexChanged" CssClass="form-control">
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 p-0 text-right">
+                        <asp:Button ID="BtnShow" runat="server" Text="Show" CssClass="btn" OnClick="BtnShow_Click" />
+                        <asp:Button ID="BtnSubmit" runat="server" Text="Approve"  Visible="false" OnClick="BtnSubmit_Click" CssClass="btn" />
+                        <asp:Button ID="BtnReject" runat="server"  Text="Reject" Visible="false"  OnClick="BtnReject_Click" CssClass="btn" />
+                    </div>
+
+                </div>
+
+                <fieldset class="boxBodyInner">
+                    <div class="text-center">
+                        <asp:GridView ID="GrdExamTimeSheet" runat="server" CssClass="table table-striped table-bordered table-hover" OnRowDataBound="GrdExamTimeSheet_RowDataBound" Style="width: 95%; margin-left: 2%; margin-right: 2%" EmptyDataText="No Data to display">
+                            <Columns>
+                                <asp:TemplateField HeaderText="S.no">
+                                    <ItemTemplate>
+                                        <%# Container.DataItemIndex +1 %>
+                                        <asp:HiddenField ID="hfstatus" Value='<%# Eval("[Status]") %>' runat="server" />
+
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                </fieldset>
+            </fieldset>
+            <div id="confirmModalB" class="modal fade confirm-modal" role="dialog">
+
+                <div class="modal-dialog modalPopup border-box">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" name="btn_close" id="Button1" class="close" data-dismiss="modal">&times;</button>
+
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-12">
+                                <asp:Panel ID="PnlMain" runat="server">
+                                    <div class="col-md-12 p-0">
+                                        <div class="col-sm-4 col-md-3">
+                                            <label>Remarks</label>
+                                        </div>
+                                        <div class="col-sm-8 col-md-9 form-group">
+                                            <asp:TextBox ID="txtRemarks" CssClass="form-control" MaxLength="150" runat="server"></asp:TextBox>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal-footer">
+                                        <asp:Button ID="BtnYes" runat="server" OnClick="BtnYes_Click" Text="Yes"
+                                            UseSubmitBehavior="false" data-dismiss="modal" class="btn btn-success" />
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                                    </div>
+
+
+                                </asp:Panel>
+                            </div>
+                        </div>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</asp:Content>
+

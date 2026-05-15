@@ -1,0 +1,1254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <schema elementFormDefault="qualified" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting" xmlns="http://www.w3.org/2001/XMLSchema">
+      <element name="PostBankPayment">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="PostBankPayment_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="JVPosting">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="JVPosting_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ChangeUOM">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ChangeUOM_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="CreateJournalFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="postingDate" type="date" />
+            <element minOccurs="1" maxOccurs="1" name="docType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="aCType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="aCNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="exDocNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="debitAmt" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="balAccType" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="balAccNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="dim1" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateJournalFee_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="DownloadToClientFileName">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="serverFileName" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="toFile" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DownloadToClientFileName_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportCustPaymentPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="tableNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportCustPaymentPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExportCustPaymentPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="custNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExportCustPaymentPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ImportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="tableNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="CreateJournalApplicationFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="jnBatchName" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="eNQNO" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="exDocNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="amt" type="decimal" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateJournalApplicationFee_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="boolean" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExportToExcelStudent">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExportToExcelStudent_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="StudentFine">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="fineAmount" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="txtRemarks" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="postingDate" type="date" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudentFine_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ReappearStudentFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="feeAmount" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="sem" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="yea" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ReappearStudentFee_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="InternalTotalMarks">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="group" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="colle" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="acYr" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="courseCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="stno" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="InternalTotalMarks_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="InternalTotalMarksOE">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="group" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="acYr" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="stno" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="InternalTotalMarksOE_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudentDegree">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="deAmount" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="feeCode" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudentDegree_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="StudentScrutinyFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="deAmount" type="decimal" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="StudentScrutinyFee_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="YearBack">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="cours" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="sem" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="yr" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="YearBack_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportTransferReciptPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="tableNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="appNo" type="int" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ImportTransferReciptPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExportTransferReciptPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="entryNo" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="custNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="appNo" type="int" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExportTransferReciptPDF_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="BarcodeGeneration">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="var_Hosp_Report" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="BarcodeGeneration_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateEmployeeAttendanceWeb">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="empCode" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateEmployeeAttendanceWeb_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExporTabulationReportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="resultCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="openElec" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="cTLD" type="boolean" />
+            <element minOccurs="1" maxOccurs="1" name="mooc" type="boolean" />
+            <element minOccurs="1" maxOccurs="1" name="bridge" type="boolean" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporTabulationReportPDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporAnalysisReportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="resultCode" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporAnalysisReportPDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudentFineAmount">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="cCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="fineDate" type="date" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStudentFineAmount_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporDecodePublishedDataPrincipal">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="resultCode" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporDecodePublishedDataPrincipal_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateWeighted">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="subjectType" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="courseCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="academicYear" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="collegeCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="semester" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="year" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateWeighted_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateTotalValues">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="subjectType" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="courseCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="academicYear" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="collegeCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="semester" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="year" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateTotalValues_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ExporSemesterMarksheetPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="enrNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="sem" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="year" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporSemesterMarksheetPDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporConsMarksheetReportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="enrNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporConsMarksheetReportPDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporConsMarksheetGradeReportPDF">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="enrNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ExporConsMarksheetGradeReportPDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="RepearMasrksheetPdf">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="enrollVar" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="acyVar" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="semVar" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="yearVar" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="RepearMasrksheetPdf_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MigrationCertificateStudentFee">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="studentNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="feeAmount" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="sem" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="yea" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="MigrationCertificateStudentFee_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="POCOPSOREPORT">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="course" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="aCY" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="fac_Code" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="percentage" type="decimal" />
+            <element minOccurs="1" maxOccurs="1" name="semestera47Yr" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="college" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="POCOPSOREPORT_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateBioMetric">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="employeeCode" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateBioMetric_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateWeighted_New">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="subjectType" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="courseCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="academicYear" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="collegeCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="semester" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="year" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="sectionCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="studentGroup" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateWeighted_New_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateTotalValues_New">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="subjectType" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="courseCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="academicYear" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="collegeCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="semester" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="year" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="subjectCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="docNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="sectionCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="studentGroup" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateTotalValues_New_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <message name="PostBankPayment">
+    <part name="parameters" element="tns:PostBankPayment" />
+  </message>
+  <message name="PostBankPayment_Result">
+    <part name="parameters" element="tns:PostBankPayment_Result" />
+  </message>
+  <message name="JVPosting">
+    <part name="parameters" element="tns:JVPosting" />
+  </message>
+  <message name="JVPosting_Result">
+    <part name="parameters" element="tns:JVPosting_Result" />
+  </message>
+  <message name="ChangeUOM">
+    <part name="parameters" element="tns:ChangeUOM" />
+  </message>
+  <message name="ChangeUOM_Result">
+    <part name="parameters" element="tns:ChangeUOM_Result" />
+  </message>
+  <message name="CreateJournalFee">
+    <part name="parameters" element="tns:CreateJournalFee" />
+  </message>
+  <message name="CreateJournalFee_Result">
+    <part name="parameters" element="tns:CreateJournalFee_Result" />
+  </message>
+  <message name="DownloadToClientFileName">
+    <part name="parameters" element="tns:DownloadToClientFileName" />
+  </message>
+  <message name="DownloadToClientFileName_Result">
+    <part name="parameters" element="tns:DownloadToClientFileName_Result" />
+  </message>
+  <message name="ImportCustPaymentPDF">
+    <part name="parameters" element="tns:ImportCustPaymentPDF" />
+  </message>
+  <message name="ImportCustPaymentPDF_Result">
+    <part name="parameters" element="tns:ImportCustPaymentPDF_Result" />
+  </message>
+  <message name="ExportCustPaymentPDF">
+    <part name="parameters" element="tns:ExportCustPaymentPDF" />
+  </message>
+  <message name="ExportCustPaymentPDF_Result">
+    <part name="parameters" element="tns:ExportCustPaymentPDF_Result" />
+  </message>
+  <message name="ImportPDF">
+    <part name="parameters" element="tns:ImportPDF" />
+  </message>
+  <message name="ImportPDF_Result">
+    <part name="parameters" element="tns:ImportPDF_Result" />
+  </message>
+  <message name="CreateJournalApplicationFee">
+    <part name="parameters" element="tns:CreateJournalApplicationFee" />
+  </message>
+  <message name="CreateJournalApplicationFee_Result">
+    <part name="parameters" element="tns:CreateJournalApplicationFee_Result" />
+  </message>
+  <message name="ExportToExcelStudent">
+    <part name="parameters" element="tns:ExportToExcelStudent" />
+  </message>
+  <message name="ExportToExcelStudent_Result">
+    <part name="parameters" element="tns:ExportToExcelStudent_Result" />
+  </message>
+  <message name="StudentFine">
+    <part name="parameters" element="tns:StudentFine" />
+  </message>
+  <message name="StudentFine_Result">
+    <part name="parameters" element="tns:StudentFine_Result" />
+  </message>
+  <message name="ReappearStudentFee">
+    <part name="parameters" element="tns:ReappearStudentFee" />
+  </message>
+  <message name="ReappearStudentFee_Result">
+    <part name="parameters" element="tns:ReappearStudentFee_Result" />
+  </message>
+  <message name="InternalTotalMarks">
+    <part name="parameters" element="tns:InternalTotalMarks" />
+  </message>
+  <message name="InternalTotalMarks_Result">
+    <part name="parameters" element="tns:InternalTotalMarks_Result" />
+  </message>
+  <message name="InternalTotalMarksOE">
+    <part name="parameters" element="tns:InternalTotalMarksOE" />
+  </message>
+  <message name="InternalTotalMarksOE_Result">
+    <part name="parameters" element="tns:InternalTotalMarksOE_Result" />
+  </message>
+  <message name="StudentDegree">
+    <part name="parameters" element="tns:StudentDegree" />
+  </message>
+  <message name="StudentDegree_Result">
+    <part name="parameters" element="tns:StudentDegree_Result" />
+  </message>
+  <message name="StudentScrutinyFee">
+    <part name="parameters" element="tns:StudentScrutinyFee" />
+  </message>
+  <message name="StudentScrutinyFee_Result">
+    <part name="parameters" element="tns:StudentScrutinyFee_Result" />
+  </message>
+  <message name="YearBack">
+    <part name="parameters" element="tns:YearBack" />
+  </message>
+  <message name="YearBack_Result">
+    <part name="parameters" element="tns:YearBack_Result" />
+  </message>
+  <message name="ImportTransferReciptPDF">
+    <part name="parameters" element="tns:ImportTransferReciptPDF" />
+  </message>
+  <message name="ImportTransferReciptPDF_Result">
+    <part name="parameters" element="tns:ImportTransferReciptPDF_Result" />
+  </message>
+  <message name="ExportTransferReciptPDF">
+    <part name="parameters" element="tns:ExportTransferReciptPDF" />
+  </message>
+  <message name="ExportTransferReciptPDF_Result">
+    <part name="parameters" element="tns:ExportTransferReciptPDF_Result" />
+  </message>
+  <message name="BarcodeGeneration">
+    <part name="parameters" element="tns:BarcodeGeneration" />
+  </message>
+  <message name="BarcodeGeneration_Result">
+    <part name="parameters" element="tns:BarcodeGeneration_Result" />
+  </message>
+  <message name="UpdateEmployeeAttendanceWeb">
+    <part name="parameters" element="tns:UpdateEmployeeAttendanceWeb" />
+  </message>
+  <message name="UpdateEmployeeAttendanceWeb_Result">
+    <part name="parameters" element="tns:UpdateEmployeeAttendanceWeb_Result" />
+  </message>
+  <message name="ExporTabulationReportPDF">
+    <part name="parameters" element="tns:ExporTabulationReportPDF" />
+  </message>
+  <message name="ExporTabulationReportPDF_Result">
+    <part name="parameters" element="tns:ExporTabulationReportPDF_Result" />
+  </message>
+  <message name="ExporAnalysisReportPDF">
+    <part name="parameters" element="tns:ExporAnalysisReportPDF" />
+  </message>
+  <message name="ExporAnalysisReportPDF_Result">
+    <part name="parameters" element="tns:ExporAnalysisReportPDF_Result" />
+  </message>
+  <message name="UpdateStudentFineAmount">
+    <part name="parameters" element="tns:UpdateStudentFineAmount" />
+  </message>
+  <message name="UpdateStudentFineAmount_Result">
+    <part name="parameters" element="tns:UpdateStudentFineAmount_Result" />
+  </message>
+  <message name="ExporDecodePublishedDataPrincipal">
+    <part name="parameters" element="tns:ExporDecodePublishedDataPrincipal" />
+  </message>
+  <message name="ExporDecodePublishedDataPrincipal_Result">
+    <part name="parameters" element="tns:ExporDecodePublishedDataPrincipal_Result" />
+  </message>
+  <message name="UpdateWeighted">
+    <part name="parameters" element="tns:UpdateWeighted" />
+  </message>
+  <message name="UpdateWeighted_Result">
+    <part name="parameters" element="tns:UpdateWeighted_Result" />
+  </message>
+  <message name="UpdateTotalValues">
+    <part name="parameters" element="tns:UpdateTotalValues" />
+  </message>
+  <message name="UpdateTotalValues_Result">
+    <part name="parameters" element="tns:UpdateTotalValues_Result" />
+  </message>
+  <message name="ExporSemesterMarksheetPDF">
+    <part name="parameters" element="tns:ExporSemesterMarksheetPDF" />
+  </message>
+  <message name="ExporSemesterMarksheetPDF_Result">
+    <part name="parameters" element="tns:ExporSemesterMarksheetPDF_Result" />
+  </message>
+  <message name="ExporConsMarksheetReportPDF">
+    <part name="parameters" element="tns:ExporConsMarksheetReportPDF" />
+  </message>
+  <message name="ExporConsMarksheetReportPDF_Result">
+    <part name="parameters" element="tns:ExporConsMarksheetReportPDF_Result" />
+  </message>
+  <message name="ExporConsMarksheetGradeReportPDF">
+    <part name="parameters" element="tns:ExporConsMarksheetGradeReportPDF" />
+  </message>
+  <message name="ExporConsMarksheetGradeReportPDF_Result">
+    <part name="parameters" element="tns:ExporConsMarksheetGradeReportPDF_Result" />
+  </message>
+  <message name="RepearMasrksheetPdf">
+    <part name="parameters" element="tns:RepearMasrksheetPdf" />
+  </message>
+  <message name="RepearMasrksheetPdf_Result">
+    <part name="parameters" element="tns:RepearMasrksheetPdf_Result" />
+  </message>
+  <message name="MigrationCertificateStudentFee">
+    <part name="parameters" element="tns:MigrationCertificateStudentFee" />
+  </message>
+  <message name="MigrationCertificateStudentFee_Result">
+    <part name="parameters" element="tns:MigrationCertificateStudentFee_Result" />
+  </message>
+  <message name="POCOPSOREPORT">
+    <part name="parameters" element="tns:POCOPSOREPORT" />
+  </message>
+  <message name="POCOPSOREPORT_Result">
+    <part name="parameters" element="tns:POCOPSOREPORT_Result" />
+  </message>
+  <message name="UpdateBioMetric">
+    <part name="parameters" element="tns:UpdateBioMetric" />
+  </message>
+  <message name="UpdateBioMetric_Result">
+    <part name="parameters" element="tns:UpdateBioMetric_Result" />
+  </message>
+  <message name="UpdateWeighted_New">
+    <part name="parameters" element="tns:UpdateWeighted_New" />
+  </message>
+  <message name="UpdateWeighted_New_Result">
+    <part name="parameters" element="tns:UpdateWeighted_New_Result" />
+  </message>
+  <message name="UpdateTotalValues_New">
+    <part name="parameters" element="tns:UpdateTotalValues_New" />
+  </message>
+  <message name="UpdateTotalValues_New_Result">
+    <part name="parameters" element="tns:UpdateTotalValues_New_Result" />
+  </message>
+  <portType name="VoucherPosting_Port">
+    <operation name="PostBankPayment">
+      <input name="PostBankPayment" message="tns:PostBankPayment" />
+      <output name="PostBankPayment_Result" message="tns:PostBankPayment_Result" />
+    </operation>
+    <operation name="JVPosting">
+      <input name="JVPosting" message="tns:JVPosting" />
+      <output name="JVPosting_Result" message="tns:JVPosting_Result" />
+    </operation>
+    <operation name="ChangeUOM">
+      <input name="ChangeUOM" message="tns:ChangeUOM" />
+      <output name="ChangeUOM_Result" message="tns:ChangeUOM_Result" />
+    </operation>
+    <operation name="CreateJournalFee">
+      <input name="CreateJournalFee" message="tns:CreateJournalFee" />
+      <output name="CreateJournalFee_Result" message="tns:CreateJournalFee_Result" />
+    </operation>
+    <operation name="DownloadToClientFileName">
+      <input name="DownloadToClientFileName" message="tns:DownloadToClientFileName" />
+      <output name="DownloadToClientFileName_Result" message="tns:DownloadToClientFileName_Result" />
+    </operation>
+    <operation name="ImportCustPaymentPDF">
+      <input name="ImportCustPaymentPDF" message="tns:ImportCustPaymentPDF" />
+      <output name="ImportCustPaymentPDF_Result" message="tns:ImportCustPaymentPDF_Result" />
+    </operation>
+    <operation name="ExportCustPaymentPDF">
+      <input name="ExportCustPaymentPDF" message="tns:ExportCustPaymentPDF" />
+      <output name="ExportCustPaymentPDF_Result" message="tns:ExportCustPaymentPDF_Result" />
+    </operation>
+    <operation name="ImportPDF">
+      <input name="ImportPDF" message="tns:ImportPDF" />
+      <output name="ImportPDF_Result" message="tns:ImportPDF_Result" />
+    </operation>
+    <operation name="CreateJournalApplicationFee">
+      <input name="CreateJournalApplicationFee" message="tns:CreateJournalApplicationFee" />
+      <output name="CreateJournalApplicationFee_Result" message="tns:CreateJournalApplicationFee_Result" />
+    </operation>
+    <operation name="ExportToExcelStudent">
+      <input name="ExportToExcelStudent" message="tns:ExportToExcelStudent" />
+      <output name="ExportToExcelStudent_Result" message="tns:ExportToExcelStudent_Result" />
+    </operation>
+    <operation name="StudentFine">
+      <input name="StudentFine" message="tns:StudentFine" />
+      <output name="StudentFine_Result" message="tns:StudentFine_Result" />
+    </operation>
+    <operation name="ReappearStudentFee">
+      <input name="ReappearStudentFee" message="tns:ReappearStudentFee" />
+      <output name="ReappearStudentFee_Result" message="tns:ReappearStudentFee_Result" />
+    </operation>
+    <operation name="InternalTotalMarks">
+      <input name="InternalTotalMarks" message="tns:InternalTotalMarks" />
+      <output name="InternalTotalMarks_Result" message="tns:InternalTotalMarks_Result" />
+    </operation>
+    <operation name="InternalTotalMarksOE">
+      <input name="InternalTotalMarksOE" message="tns:InternalTotalMarksOE" />
+      <output name="InternalTotalMarksOE_Result" message="tns:InternalTotalMarksOE_Result" />
+    </operation>
+    <operation name="StudentDegree">
+      <input name="StudentDegree" message="tns:StudentDegree" />
+      <output name="StudentDegree_Result" message="tns:StudentDegree_Result" />
+    </operation>
+    <operation name="StudentScrutinyFee">
+      <input name="StudentScrutinyFee" message="tns:StudentScrutinyFee" />
+      <output name="StudentScrutinyFee_Result" message="tns:StudentScrutinyFee_Result" />
+    </operation>
+    <operation name="YearBack">
+      <input name="YearBack" message="tns:YearBack" />
+      <output name="YearBack_Result" message="tns:YearBack_Result" />
+    </operation>
+    <operation name="ImportTransferReciptPDF">
+      <input name="ImportTransferReciptPDF" message="tns:ImportTransferReciptPDF" />
+      <output name="ImportTransferReciptPDF_Result" message="tns:ImportTransferReciptPDF_Result" />
+    </operation>
+    <operation name="ExportTransferReciptPDF">
+      <input name="ExportTransferReciptPDF" message="tns:ExportTransferReciptPDF" />
+      <output name="ExportTransferReciptPDF_Result" message="tns:ExportTransferReciptPDF_Result" />
+    </operation>
+    <operation name="BarcodeGeneration">
+      <input name="BarcodeGeneration" message="tns:BarcodeGeneration" />
+      <output name="BarcodeGeneration_Result" message="tns:BarcodeGeneration_Result" />
+    </operation>
+    <operation name="UpdateEmployeeAttendanceWeb">
+      <input name="UpdateEmployeeAttendanceWeb" message="tns:UpdateEmployeeAttendanceWeb" />
+      <output name="UpdateEmployeeAttendanceWeb_Result" message="tns:UpdateEmployeeAttendanceWeb_Result" />
+    </operation>
+    <operation name="ExporTabulationReportPDF">
+      <input name="ExporTabulationReportPDF" message="tns:ExporTabulationReportPDF" />
+      <output name="ExporTabulationReportPDF_Result" message="tns:ExporTabulationReportPDF_Result" />
+    </operation>
+    <operation name="ExporAnalysisReportPDF">
+      <input name="ExporAnalysisReportPDF" message="tns:ExporAnalysisReportPDF" />
+      <output name="ExporAnalysisReportPDF_Result" message="tns:ExporAnalysisReportPDF_Result" />
+    </operation>
+    <operation name="UpdateStudentFineAmount">
+      <input name="UpdateStudentFineAmount" message="tns:UpdateStudentFineAmount" />
+      <output name="UpdateStudentFineAmount_Result" message="tns:UpdateStudentFineAmount_Result" />
+    </operation>
+    <operation name="ExporDecodePublishedDataPrincipal">
+      <input name="ExporDecodePublishedDataPrincipal" message="tns:ExporDecodePublishedDataPrincipal" />
+      <output name="ExporDecodePublishedDataPrincipal_Result" message="tns:ExporDecodePublishedDataPrincipal_Result" />
+    </operation>
+    <operation name="UpdateWeighted">
+      <input name="UpdateWeighted" message="tns:UpdateWeighted" />
+      <output name="UpdateWeighted_Result" message="tns:UpdateWeighted_Result" />
+    </operation>
+    <operation name="UpdateTotalValues">
+      <input name="UpdateTotalValues" message="tns:UpdateTotalValues" />
+      <output name="UpdateTotalValues_Result" message="tns:UpdateTotalValues_Result" />
+    </operation>
+    <operation name="ExporSemesterMarksheetPDF">
+      <input name="ExporSemesterMarksheetPDF" message="tns:ExporSemesterMarksheetPDF" />
+      <output name="ExporSemesterMarksheetPDF_Result" message="tns:ExporSemesterMarksheetPDF_Result" />
+    </operation>
+    <operation name="ExporConsMarksheetReportPDF">
+      <input name="ExporConsMarksheetReportPDF" message="tns:ExporConsMarksheetReportPDF" />
+      <output name="ExporConsMarksheetReportPDF_Result" message="tns:ExporConsMarksheetReportPDF_Result" />
+    </operation>
+    <operation name="ExporConsMarksheetGradeReportPDF">
+      <input name="ExporConsMarksheetGradeReportPDF" message="tns:ExporConsMarksheetGradeReportPDF" />
+      <output name="ExporConsMarksheetGradeReportPDF_Result" message="tns:ExporConsMarksheetGradeReportPDF_Result" />
+    </operation>
+    <operation name="RepearMasrksheetPdf">
+      <input name="RepearMasrksheetPdf" message="tns:RepearMasrksheetPdf" />
+      <output name="RepearMasrksheetPdf_Result" message="tns:RepearMasrksheetPdf_Result" />
+    </operation>
+    <operation name="MigrationCertificateStudentFee">
+      <input name="MigrationCertificateStudentFee" message="tns:MigrationCertificateStudentFee" />
+      <output name="MigrationCertificateStudentFee_Result" message="tns:MigrationCertificateStudentFee_Result" />
+    </operation>
+    <operation name="POCOPSOREPORT">
+      <input name="POCOPSOREPORT" message="tns:POCOPSOREPORT" />
+      <output name="POCOPSOREPORT_Result" message="tns:POCOPSOREPORT_Result" />
+    </operation>
+    <operation name="UpdateBioMetric">
+      <input name="UpdateBioMetric" message="tns:UpdateBioMetric" />
+      <output name="UpdateBioMetric_Result" message="tns:UpdateBioMetric_Result" />
+    </operation>
+    <operation name="UpdateWeighted_New">
+      <input name="UpdateWeighted_New" message="tns:UpdateWeighted_New" />
+      <output name="UpdateWeighted_New_Result" message="tns:UpdateWeighted_New_Result" />
+    </operation>
+    <operation name="UpdateTotalValues_New">
+      <input name="UpdateTotalValues_New" message="tns:UpdateTotalValues_New" />
+      <output name="UpdateTotalValues_New_Result" message="tns:UpdateTotalValues_New_Result" />
+    </operation>
+  </portType>
+  <binding name="VoucherPosting_Binding" type="tns:VoucherPosting_Port">
+    <binding transport="http://schemas.xmlsoap.org/soap/http" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    <operation name="PostBankPayment">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:PostBankPayment" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="PostBankPayment">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="PostBankPayment_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="JVPosting">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:JVPosting" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="JVPosting">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="JVPosting_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ChangeUOM">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ChangeUOM" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ChangeUOM">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ChangeUOM_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="CreateJournalFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:CreateJournalFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="CreateJournalFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="CreateJournalFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="DownloadToClientFileName">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:DownloadToClientFileName" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="DownloadToClientFileName">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="DownloadToClientFileName_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ImportCustPaymentPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ImportCustPaymentPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ImportCustPaymentPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ImportCustPaymentPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExportCustPaymentPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExportCustPaymentPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExportCustPaymentPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExportCustPaymentPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ImportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ImportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ImportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ImportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="CreateJournalApplicationFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:CreateJournalApplicationFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="CreateJournalApplicationFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="CreateJournalApplicationFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExportToExcelStudent">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExportToExcelStudent" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExportToExcelStudent">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExportToExcelStudent_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="StudentFine">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:StudentFine" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="StudentFine">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="StudentFine_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ReappearStudentFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ReappearStudentFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ReappearStudentFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ReappearStudentFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="InternalTotalMarks">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:InternalTotalMarks" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="InternalTotalMarks">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="InternalTotalMarks_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="InternalTotalMarksOE">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:InternalTotalMarksOE" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="InternalTotalMarksOE">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="InternalTotalMarksOE_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="StudentDegree">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:StudentDegree" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="StudentDegree">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="StudentDegree_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="StudentScrutinyFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:StudentScrutinyFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="StudentScrutinyFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="StudentScrutinyFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="YearBack">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:YearBack" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="YearBack">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="YearBack_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ImportTransferReciptPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ImportTransferReciptPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ImportTransferReciptPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ImportTransferReciptPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExportTransferReciptPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExportTransferReciptPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExportTransferReciptPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExportTransferReciptPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="BarcodeGeneration">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:BarcodeGeneration" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="BarcodeGeneration">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="BarcodeGeneration_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateEmployeeAttendanceWeb">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateEmployeeAttendanceWeb" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateEmployeeAttendanceWeb">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateEmployeeAttendanceWeb_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporTabulationReportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporTabulationReportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporTabulationReportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporTabulationReportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporAnalysisReportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporAnalysisReportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporAnalysisReportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporAnalysisReportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateStudentFineAmount">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateStudentFineAmount" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateStudentFineAmount">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateStudentFineAmount_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporDecodePublishedDataPrincipal">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporDecodePublishedDataPrincipal" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporDecodePublishedDataPrincipal">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporDecodePublishedDataPrincipal_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateWeighted">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateWeighted" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateWeighted">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateWeighted_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateTotalValues">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateTotalValues" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateTotalValues">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateTotalValues_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporSemesterMarksheetPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporSemesterMarksheetPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporSemesterMarksheetPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporSemesterMarksheetPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporConsMarksheetReportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporConsMarksheetReportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporConsMarksheetReportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporConsMarksheetReportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="ExporConsMarksheetGradeReportPDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:ExporConsMarksheetGradeReportPDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="ExporConsMarksheetGradeReportPDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="ExporConsMarksheetGradeReportPDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="RepearMasrksheetPdf">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:RepearMasrksheetPdf" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="RepearMasrksheetPdf">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="RepearMasrksheetPdf_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="MigrationCertificateStudentFee">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:MigrationCertificateStudentFee" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="MigrationCertificateStudentFee">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="MigrationCertificateStudentFee_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="POCOPSOREPORT">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:POCOPSOREPORT" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="POCOPSOREPORT">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="POCOPSOREPORT_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateBioMetric">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateBioMetric" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateBioMetric">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateBioMetric_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateWeighted_New">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateWeighted_New" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateWeighted_New">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateWeighted_New_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="UpdateTotalValues_New">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/VoucherPosting:UpdateTotalValues_New" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="UpdateTotalValues_New">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="UpdateTotalValues_New_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+  </binding>
+  <service name="VoucherPosting">
+    <port name="VoucherPosting_Port" binding="tns:VoucherPosting_Binding">
+      <address location="http://172.0.1.102:8047/TMU/WS/TMU/Codeunit/VoucherPosting" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    </port>
+  </service>
+</definitions>

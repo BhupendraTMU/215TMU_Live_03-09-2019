@@ -1,0 +1,205 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" CodeFile="MonthlyPMSApproval.aspx.cs" Inherits="Faculty_MonthlyPMSApproval" %>
+
+
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <script type="text/javascript">
+        function HidePopup10() {
+
+            $('#confirmModal1').modal('hide');
+        }
+        function VisiblePopup10() {
+            $('#confirmModal1').modal('show');
+
+
+        }
+    </script>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <fieldset class="boxBody">
+        <asp:Label ID="Label1" runat="server"
+            Text="MONTHLY PMS APPROVAL" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"></asp:Label>
+
+    </fieldset>
+    <asp:Panel ID="pnlTitleList" runat="server" Visible="true">
+        <table>
+            <tr>
+                <td>
+
+                    <asp:GridView ID="grdPMSList" DataKeyNames="Employee_Code,Month,Year" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="Solid" BorderWidth="2px" CellPadding="3" Width="1000px" GridLines="Horizontal" EmptyDataText="There are no data records to display.">
+                        <Columns>
+                            <asp:TemplateField HeaderText="Sl. No." ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+
+                                <ItemTemplate>
+                                    <%# Container.DataItemIndex + 1 %>
+                                </ItemTemplate>
+                                <ItemStyle Width="2%" />
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Details" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lnkDetails"   CommandArgument='<%#Bind("Employee_Code") %>' OnCommand="lnkDetails_Command" runat="server">View</asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField DataField="Employee_Code" ItemStyle-Width="170px" HeaderText="Employee Code" ItemStyle-CssClass="column" HeaderStyle-CssClass="column" />
+                            <asp:BoundField DataField="Emp_name" HeaderText="Employee Name" ItemStyle-Width="300px" ItemStyle-CssClass="column" HeaderStyle-CssClass="column" />
+                            <asp:BoundField DataField="Academic_Year" HeaderText="Academic Year" ItemStyle-Width="250px" ItemStyle-CssClass="column" HeaderStyle-CssClass="column" />
+                            <asp:BoundField DataField="Approval_status" HeaderText="Approval Status" ItemStyle-Width="180px" ItemStyle-CssClass="column" HeaderStyle-CssClass="column" />
+
+
+
+                        </Columns>
+                        <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
+                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                        <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
+                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
+                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                    </asp:GridView>
+
+
+                </td>
+            </tr>
+
+
+        </table>
+
+
+    </asp:Panel>
+    <div id="confirmModal1" class="modal fade confirm-modal"  role="dialog">
+
+        <div class="modal-dialog modalPopup" style="width: 1250px; height: 450px">
+            &nbsp &nbsp &nbsp 
+            <asp:Label ID="lblmsg" runat="server" Font-Bold="true" Font-Size="Large" Text="Monthly PMS Approval Document List"></asp:Label>
+
+            <div style="text-align: right; padding-bottom: -40px">
+                <asp:Button ID="Button2" runat="server" Text="X" OnClientClick="HidePopup10(); return false;" Font-Size="Larger" />
+            </div>
+            <div class="clearfix" style="margin-bottom: 10px; margin-top: 10px; margin-left: 20px">
+
+                <div class="col-sm-12 p-0">
+                    <asp:GridView ID="gv_a1" runat="server" DataKeyNames="AutoNo" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="Solid" BorderWidth="2px" CellPadding="3" Width="1200px" GridLines="Horizontal" EmptyDataText="There are no data records to display.">
+                        <Columns>
+                            <asp:TemplateField HeaderText="Sl. No." ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+
+                                <ItemTemplate>
+                                    <%# Container.DataItemIndex + 1 %>
+                                    
+                                </ItemTemplate>
+                                <ItemStyle Width="2%" />
+                            </asp:TemplateField>
+
+                            
+                             <asp:TemplateField HeaderText="Empoyee Code" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblEmpoyee_Code" runat="server" Text='<%#Bind("Empoyee_Code") %>'></asp:Label>
+                                    <asp:HiddenField ID="hfAuto" runat="server" Value='<%# Eval("AutoNo") %>' />
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                               <asp:TemplateField HeaderText="Applicable For" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblApplicable_For" runat="server" Text='<%#Bind("Applicable_For") %>'></asp:Label>
+                                
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            
+                            <asp:TemplateField HeaderText="Type" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblType" runat="server" Text='<%#Bind("Type_Of_research") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Title" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblTitle" runat="server" Text='<%#Bind("Title") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Journal" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblAppNo" runat="server" Text='<%#Bind("ApplicationNo") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Volume" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblvolume" runat="server" Text='<%#Bind("volume") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Issue" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblIssue" runat="server" Text='<%#Bind("Issue") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Page No." ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblPage" runat="server" Text='<%#Bind("PageNo") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="ISSN No." ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblISSNNo" runat="server" Text='<%#Bind("ISSNNo") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Publication Date" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblDOP" runat="server" Text='<%#Bind("DOP") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Authors" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblAuthors" runat="server" Text='<%#Bind("No_of_auth") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Article" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblArticle" runat="server" Text='<%#Bind("ArticleLink") %>'></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Status" ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblStatus" runat="server" Text='<%#Bind("Status") %>' ></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField>
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lnk_A1_Downalod" runat="server" CommandArgument='<%#Bind("AutoNo") %>' OnCommand="lnk_A1_Downalod_Command">Download</asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                             <asp:TemplateField ItemStyle-Width="4%">
+                                <HeaderTemplate>                                    
+                                    Select
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="chkStudent" runat="server"  Enabled='<%# Eval("Status").ToString().Equals("Pending") %>' Checked="true"  />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                        </Columns>
+                        <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
+                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
+                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                        <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
+                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
+                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                    </asp:GridView>
+                </div>
+              
+
+
+            </div>
+            <div style="text-align:center">
+                 <asp:Button ID="btnApprove" runat="server" Text="Approve" Font-Bold="true" Height="32px" Font-Size="small"  class="btn btn-info" Width="120px" OnClick="btnApprove_Click"/>
+                 <asp:Button ID="btnReject" runat="server" Text="Reject" Font-Bold="true" Height="32px" Font-Size="small"  class="btn btn-info" Width="120px" OnClick="btnReject_Click"/>
+            </div>
+             
+        </div>
+        
+    </div>
+</asp:Content>
+

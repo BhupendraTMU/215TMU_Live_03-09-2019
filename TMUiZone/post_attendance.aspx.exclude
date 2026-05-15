@@ -1,0 +1,527 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/IndexMaster.master" AutoEventWireup="true" CodeFile="post_attendance.aspx.cs" Inherits="LeaveApproval" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <style type="text/css">
+
+#GridScrollProfile 
+{
+width:650px;
+height:100%;
+overflow:scroll;
+}
+
+
+#grdRejectedwrap 
+{
+width:650px;
+height:100%;
+overflow:scroll;
+}
+
+
+#grdResolvedwrap 
+{
+width:650px;
+height:100%;
+overflow:scroll;
+}
+
+
+ </style>
+
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
+    <fieldset class="boxBody">
+ <asp:Label ID="Label1" runat="server" 
+            Text="Post Attendance" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+
+ </fieldset>
+
+
+    <fieldset class="boxBody"> 
+
+<table cellpadding="0px" cellspacing="0px">  <tr>  <td  style="width:10px">  </td>
+<td  style="width:200px" valign="top"> 
+
+<table cellpadding="0px" cellspacing="0px" class="leftbg1" style="width:200px; height:430px">  <tr> <td style="width:10px"> </td> <td>
+
+
+<table cellpadding="0px" cellspacing="0px" >
+ <tr> <td style="height:10px"> </td></tr>
+ <tr> <td class="leftmMenu">   <img src="logo/Star.png" />
+    <asp:LinkButton ID="lnkProfileview" runat="server" onclick="lnkleaveview_Click" 
+        >Pending Attendance</asp:LinkButton></td></tr>
+    <tr> <td style="height:10px"> </td></tr>
+    
+     <tr> <td class="leftmMenu">  <img src="logo/Star.png" /> 
+    <asp:LinkButton ID="lnkApprovedProfiledetail" runat="server" 
+             onclick="lnkApprovedApproveddetail_Click" >Posted Attendance  </asp:LinkButton></td></tr>
+     <tr> <td style="height:10px"> </td></tr>
+
+    </table>
+ </td> <td style="width:10px"> </td></tr></table>
+
+
+
+    
+</td>  <td style="width:30px">  </td>
+ <td valign="top"> 
+ 
+ 
+    <asp:Panel ID="pnlProfileView" runat="server" CssClass="leftBackground" 
+         Visible="false">
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td style="width:10px"> </td> <td>
+    
+    <table cellpadding="0px" cellspacing="0px">  <tr> <td > 
+    
+   
+    <br />
+    <asp:Label ID="Label2" runat="server" 
+            Text="Pending Attendance" Font-Size="15pt" ForeColor="#093A62" 
+            Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+          
+  </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+    <tr> <td>  
+    
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td> <label>Select Records by </label> </td> <td style="width:90px"> </td> <td> 
+        <asp:RadioButton ID="rdEmployeeID" runat="server" Text="Employee Id" 
+            GroupName="ATTDC" oncheckedchanged="rdEmployeeID_CheckedChanged" 
+            AutoPostBack="True"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdEmployeeName" runat="server" Text="Employee Name" 
+            GroupName="ATTDC" oncheckedchanged="rdEmployeeName_CheckedChanged" 
+            AutoPostBack="True"/> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdDatewise" runat="server" Text="Date Wise " 
+            GroupName="ATTDC" oncheckedchanged="rdDatewise_CheckedChanged" 
+            AutoPostBack="True"/> </td><td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="CHKAllPending" runat="server" Text="All" 
+            GroupName="ATTDC" 
+            AutoPostBack="True" OnCheckedChanged="CHKAllPending_CheckedChanged"/> </td>
+        </tr></table>
+
+   
+        
+        
+        
+         </td></tr>
+         <tr> <td style="height:13px"> </td></tr>
+         <tr> <td class="leftm"> </td></tr>
+          <tr> <td style="height:20px"> </td></tr>
+
+          <tr> <td >  
+              <table cellpadding="0px" cellspacing="0px"> <tr> <td>  
+              <asp:Panel ID="pnlEmployeeidName" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>Enter Employee Id/ Name </label> </td> <td style="width:110px"> </td><td> 
+                   <asp:TextBox ID="txtSearchName" runat="server" Width="200px"></asp:TextBox></td> </tr></table>
+
+              </asp:Panel>
+
+                 <asp:Panel ID="pnlDate" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>From Date</label> </td> <td style="width:10px"> </td><td> 
+                   <asp:TextBox ID="txtfromDatePost" runat="server"></asp:TextBox>
+                   
+                     <cc1:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="txtfromDatePost" Format="yyyy-MM-dd">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender1" runat="server" WatermarkText="yyyy-MM-dd" TargetControlID="txtfromDatePost">
+      </cc1:TextBoxWatermarkExtender>
+
+                   </td>  <td style="width:30px"> </td> <td>To Date </td>  <td style=" width:10px"> </td><td>
+                       <asp:TextBox ID="txtTodatePost" runat="server"></asp:TextBox> 
+                       
+                        <cc1:CalendarExtender ID="CalendarExtender2" runat="server" TargetControlID="txtTodatePost" Format="yyyy-MM-dd">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender2" runat="server" WatermarkText="yyyy-MM-dd" TargetControlID="txtTodatePost">
+      </cc1:TextBoxWatermarkExtender>
+
+                       </td>  </tr></table>
+
+              </asp:Panel>
+
+          </td>   <td style="width:40px"> </td> <td>  
+              <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btnLogin" 
+                  Visible="False" onclick="btnSearch_Click"/></td></tr></table> </td></tr>
+
+                  <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+
+     <tr> <td style="height:13px"> </td></tr>
+
+          <tr> <td>
+          <table cellpadding="0px" cellspacing="0px">
+          <tr> <td > 
+              <asp:Button ID="btnApprove" runat="server" Text="Post" 
+                  Visible="False" onclick="btnApprove_Click" CssClass="btnLogin" />   </td>
+             
+           
+
+               </tr>
+
+              <tr> <td style="height:10px" colspan="3"> </td></tr>
+
+          <tr> <td colspan="3">
+
+             
+
+
+         
+             
+
+              
+
+       
+             <div id="GridScrollProfile">
+ 
+
+             <table cellpadding="0px" cellspacing="0px"><tr><td align="right">    </td></tr>
+
+                  <tr> <td >  
+
+                      
+
+                      
+                       <asp:Button ID="btnselectchecked" runat="server" OnClick="btnselectchecked_Click" Text="Select All" Visible="False" />
+                       <asp:Button ID="btnuncheked" runat="server" OnClick="btnuncheked_Click" Text="Un Select" Visible="False" />
+
+                       </td></tr>
+
+              </table> 
+
+
+
+
+
+              <asp:GridView ID="grdViewApproval" runat="server" AutoGenerateColumns="False" 
+                  CellPadding="4" Width="1000px" ForeColor="#333333" GridLines="None" 
+                     AllowPaging="True" onpageindexchanging="grdViewApproval_PageIndexChanging" 
+                     PageSize="12" 
+                     onselectedindexchanged="grdViewApproval_SelectedIndexChanged" OnRowCommand="grdViewApproval_RowCommand">
+                  <AlternatingRowStyle BackColor="White" />
+                  <Columns>
+                      <%--<asp:TemplateField>
+                          <ItemTemplate>
+                              <asp:Button ID="btnchangestatus" runat="server" Text="Change Status" CommandArgument='<%#Bind("Userid") %>' OnCommand="btnchangestatus_Command" />
+                             
+                          </ItemTemplate>
+                      </asp:TemplateField>--%>
+                     
+                      <%-- <asp:BoundField DataField="ApprovalStatus" HeaderText="Approval Status" />--%><%-- <asp:BoundField DataField="ProfileUpdateDate" HeaderText="Profile UpdateDate" />--%>
+                      <asp:TemplateField HeaderText="Userid">
+                          <ItemTemplate>
+                              <asp:CheckBox ID="chkMark" runat="server" Text='<%#Bind("Userid") %>' />
+                          </ItemTemplate>
+                      </asp:TemplateField>
+                        <asp:BoundField DataField="Uname" HeaderText="Name" />
+                         <asp:TemplateField HeaderText="Status">
+                          <ItemTemplate>
+                              <asp:Label ID="lblApprovalSTatus" runat="server" Text='<%#Bind("ApprovalStatus") %>'></asp:Label>
+                          </ItemTemplate>
+                      </asp:TemplateField>
+                      <asp:TemplateField HeaderText="Date">
+                          <ItemTemplate>
+                              <asp:Label ID="lblProfilechangedate" runat="server" Text='<%#Bind("Atte_Date") %>'></asp:Label>
+                          </ItemTemplate>
+                      </asp:TemplateField>
+                      <asp:BoundField DataField="fromTime" HeaderText="In Time" />
+                      <asp:BoundField DataField="ToTime" HeaderText="Out Time" />
+                   
+                      <asp:BoundField DataField="Working_Duration" HeaderText="Working Hours" />
+                  <%--    <asp:BoundField DataField="Remarks" HeaderText="Remarks" />--%>
+
+
+                         <asp:TemplateField HeaderText="Remarks" ItemStyle-HorizontalAlign="Left">
+                                                                                                <ItemTemplate>
+                                                                                                    <div style="width: 150px; overflow:auto; white-space: nowrap; text-overflow:clip">
+                                                                                                        <%# Eval("Remarks") %>
+                                                                                                    </div>
+                                                                                                </ItemTemplate>
+                                                                                                <ItemStyle HorizontalAlign="Left" />
+                                                                                            </asp:TemplateField>
+
+                     <%-- <asp:BoundField DataField="Status" HeaderText="Status" />--%>
+                       <asp:BoundField DataField="Job_location" HeaderText="Location" />
+                    <%--  <asp:BoundField DataField="CountStatusHR" HeaderText="HR Approval Status" />
+                      <asp:BoundField DataField="CountStatusHOD" HeaderText="HOD Approval Status" />--%>
+                    
+                      <asp:BoundField DataField="CompanyName" HeaderText="Company Name" Visible="false"/>
+                  </Columns>
+                  <EditRowStyle BackColor="#2461BF" />
+                  <EmptyDataTemplate>
+                      There is no record found..............
+                  </EmptyDataTemplate>
+                  <FooterStyle BackColor="#507CD1" ForeColor="White" Font-Bold="True" />
+                  <HeaderStyle BackColor="#C5122F" Font-Bold="True" ForeColor="White" 
+                      HorizontalAlign="Left" Font-Size="8pt" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"/>
+                  <PagerStyle BackColor="#C5122F" ForeColor="White" HorizontalAlign="Left" />
+                  <RowStyle BackColor="#EFF3FB" Font-Size="7.5pt" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"/>
+                  <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                  <SortedAscendingCellStyle BackColor="#F5F7FB" />
+                  <SortedAscendingHeaderStyle BackColor="#6D95E1" />
+                  <SortedDescendingCellStyle BackColor="#E9EBEF" />
+                  <SortedDescendingHeaderStyle BackColor="#4870BE" />
+              </asp:GridView> </div>
+          
+           </td></tr>
+          
+           </table>
+
+                
+       
+          </td></tr>
+   
+    </table>
+     </td> <td style="width:10px"> </td> </tr></table>
+
+    
+    </asp:Panel>
+
+
+
+    
+
+
+
+         <asp:Panel ID="pnlApprovedDetail" runat="server" CssClass="leftBackground" Visible="false">
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td style="width:10px"> </td> <td>
+    
+    <table cellpadding="0px" cellspacing="0px">  <tr> <td > 
+    
+   
+    <br />
+    <asp:Label ID="Label4" runat="server" 
+            Text="Posted Attendance" Font-Size="15pt" ForeColor="#093A62" 
+            Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+           
+  </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+    <tr> <td style="height:13px"> </td></tr>
+    <tr> <td>  
+    
+
+    <table cellpadding="0px" cellspacing="0px"> <tr> <td> <label>Select Records by  </label> </td> <td style="width:90px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedEmpid" runat="server" Text="Employee Id" 
+            GroupName="ATTDCra" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedEmpid_CheckedChanged" /> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedEMPName" runat="server" Text="Employee Name" 
+            GroupName="ATTDCra" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedEMPName_CheckedChanged" /> </td> <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdApprovedDatewise" runat="server" Text="Date Wise " 
+            GroupName="ATTDCra" 
+            AutoPostBack="True" oncheckedchanged="rdApprovedDatewise_CheckedChanged" 
+           /> </td>
+        <td style="width:30px"> </td> <td> 
+        <asp:RadioButton ID="rdAllApprove" runat="server" Text="All " 
+            GroupName="ATTDCra" 
+            AutoPostBack="True" OnCheckedChanged="rdAllApprove_CheckedChanged" 
+           /> </td>
+
+        </tr></table>
+
+   
+        
+        
+        
+         </td></tr>
+         <tr> <td style="height:13px"> </td></tr>
+         <tr> <td class="leftm"> </td></tr>
+          <tr> <td style="height:20px"> </td></tr>
+
+          <tr> <td >  <table cellpadding="0px" cellspacing="0px"> <tr> <td>  
+              <asp:Panel ID="pnlLeaveApprovedDetailEmpid" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>Enter Employee Id/ Name </label> </td> <td style="width:110px"> </td><td> 
+                   <asp:TextBox ID="txtResolvedSearch" runat="server" Width="200px"></asp:TextBox></td> </tr></table>
+
+              </asp:Panel>
+
+                 <asp:Panel ID="pnlLeaveApprovedDetailDatewise" runat="server" Visible="false">
+
+               <table cellpadding="0px" cellspacing="0px" > <tr> <td> <label>From Date</label> </td> <td style="width:10px"> </td><td> 
+                   <asp:TextBox ID="txtApprovedFromDate" runat="server"></asp:TextBox>
+                   
+                   <cc1:CalendarExtender ID="CalendarExtender5" runat="server" TargetControlID="txtApprovedFromDate" Format="yyyy-MM-dd">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender5" runat="server" WatermarkText="yyyy-MM-dd" TargetControlID="txtApprovedFromDate">
+      </cc1:TextBoxWatermarkExtender>
+                   </td>  <td style="width:30px"> </td> <td>To Date </td>  <td style=" width:10px"> </td><td>
+                       <asp:TextBox ID="txtApprovedToDate" runat="server"></asp:TextBox>
+                       <cc1:CalendarExtender ID="CalendarExtender6" runat="server" TargetControlID="txtApprovedToDate" Format="yyyy-MM-dd">
+      </cc1:CalendarExtender>
+      <cc1:TextBoxWatermarkExtender ID="TextBoxWatermarkExtender6" runat="server" WatermarkText="yyyy-MM-dd" TargetControlID="txtApprovedToDate">
+      </cc1:TextBoxWatermarkExtender>
+                       
+                        </td>  </tr></table>
+
+              </asp:Panel>
+
+          </td>   <td style="width:40px"> </td> <td>  
+              <asp:Button ID="btnApprovedSearch" runat="server" Text="Search" CssClass="btnLogin" 
+                  Visible="False" onclick="btnApprovedSearch_Click"/></td></tr></table> </td></tr>
+
+                  <tr> <td style="height:13px"> </td></tr>
+
+
+                  <tr> <td>  
+                  <div id="grdResolvedwrap"> 
+                   <asp:GridView ID="grdResolved" runat="server" AutoGenerateColumns="False" 
+                  CellPadding="4" Width="800px" ForeColor="#333333" GridLines="None" 
+                          AllowPaging="True" onpageindexchanging="grdResolved_PageIndexChanging" >
+                  <AlternatingRowStyle BackColor="White" />
+                  <Columns>
+                     <%-- <asp:BoundField DataField="ProfileUpdateDate" HeaderText="Profile UpdateDate" />--%>
+                   <%--   <asp:TemplateField HeaderText="Userid">
+                          <ItemTemplate>
+                              <asp:Label ID="Label6" runat="server" Text='<%#Bind("UserID") %>'></asp:Label>
+                          </ItemTemplate>
+                      </asp:TemplateField>--%>
+
+                      <%--<asp:BoundField DataField="Uname" HeaderText="Name" />--%>
+                     <%-- <asp:BoundField DataField="ApprovalStatus" HeaderText="Approval Status" />--%>
+                       <asp:BoundField DataField="Status" HeaderText="Attendance Status" />
+                      <asp:TemplateField HeaderText="Date">
+                          <ItemTemplate>
+                               <asp:Label ID="lblProfilechangedate" runat="server" Text='<%#Bind("Atte_Date") %>'></asp:Label>
+                          </ItemTemplate>
+                      </asp:TemplateField>
+                      
+                     <%-- <asp:BoundField DataField="CountStatusHOD" HeaderText="HOD Remarks" />
+                      <asp:BoundField DataField="CountStatusHR" HeaderText="HR Remarks" />
+                      <asp:BoundField DataField="Approval_User_Date" HeaderText="User Approval Date" />
+                      <asp:BoundField DataField="HOD_Remarks_Date" HeaderText="HOD Approval Date" />
+                      <asp:BoundField DataField="Hr_Remarks_Date" HeaderText="HR Approval Date" />--%>
+                        <asp:BoundField DataField="fromTime" HeaderText="In Time" />
+                      <asp:BoundField DataField="ToTime" HeaderText="Out Time" />
+                     <asp:BoundField DataField="Working_Duration" HeaderText="Working Hours" />
+                      <%--<asp:BoundField DataField="Remarks" HeaderText="Remarks" />--%>
+                         <asp:TemplateField HeaderText="Remarks" ItemStyle-HorizontalAlign="Left">
+                                                                                                <ItemTemplate>
+                                                                                                    <div style="width: 150px; overflow:auto; white-space: nowrap; text-overflow:clip">
+                                                                                                        <%# Eval("Remarks") %>
+                                                                                                    </div>
+                                                                                                </ItemTemplate>
+                                                                                                <ItemStyle HorizontalAlign="Left" />
+                                                                                            </asp:TemplateField>
+
+
+                     
+                     
+                        <asp:BoundField DataField="Job_location" HeaderText="Location" />
+                  </Columns>
+                  <EditRowStyle BackColor="#2461BF" />
+                  <EmptyDataTemplate>
+                      There is no record found..............
+                  </EmptyDataTemplate>
+                  <FooterStyle BackColor="#507CD1" ForeColor="White" Font-Bold="True" />
+                  <HeaderStyle BackColor="#C5122F" Font-Bold="True" ForeColor="White" 
+                      HorizontalAlign="Left" Font-Size="8pt" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"/>
+                  <PagerStyle BackColor="#C5122F" ForeColor="White" HorizontalAlign="Left" />
+                  <RowStyle BackColor="#EFF3FB" Font-Size="7.5pt" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"/>
+                  <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                  <SortedAscendingCellStyle BackColor="#F5F7FB" />
+                  <SortedAscendingHeaderStyle BackColor="#6D95E1" />
+                  <SortedDescendingCellStyle BackColor="#E9EBEF" />
+                  <SortedDescendingHeaderStyle BackColor="#4870BE" />
+              </asp:GridView>
+              </div>
+                  </td></tr>
+
+    <tr> <td class="leftm"> </td></tr>
+
+     <tr> <td style="height:13px"> </td></tr>
+
+          <tr> <td> 
+          
+          <table cellpadding="0px" cellspacing="0px"> <tr> <td>  </td></tr></table>
+          </td></tr>
+   
+    </table>
+     </td> <td style="width:10px"> </td> </tr></table>
+
+    
+    </asp:Panel>
+
+       <asp:Panel ID="pnlMain" runat="server" >
+
+      <table cellpadding="0px" cellspacing="0px" style="width:100%"> <tr> <td align="center"> <br /> <br /> 
+         &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  <img src="h.jpg" />    </td></tr></table>
+      
+
+     </asp:Panel>
+ 
+
+                      <asp:Panel ID="pnlrejectedDetail" runat="server" CssClass="modalPopup" Style="display: none">
+                      <table cellpadding="0px" cellspacing="0px" >
+                      <tr> <td>  
+                     <div class="header">
+       
+   <table cellpadding="0px" cellspacing="0px" style="width:400px"> <tr> <td>   <label><asp:Label ID="Label5" runat="server" 
+            Text="Reject Approval Detail" Font-Size="12pt"  ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" ></asp:Label>
+
+ </label>   </td> <td align="right"> 
+     
+     
+     <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/logo/close.png" Width="25px" Height="25px" />
+     </td></tr></table>
+                    </div></td></tr>
+                      
+                      <tr> <td style="height:10px"> </td></tr>
+                      <tr> <td>
+                      <div class="body">
+                        <table cellpadding="0px" cellspacing="0px"> <tr>  <td style="width:20px"> </td> <td><label>  Remarks </label></td> <td style="width:20px"> </td> <td>
+                          <asp:TextBox ID="txtRemarksRejected" runat="server" Height="150px" TextMode="MultiLine" 
+                              Width="320px"></asp:TextBox> </td> <td style="width:20px"> </td> </tr> </table>
+                              </div>
+                               </td></tr>
+ <tr> <td style="height:10px"> </td></tr>
+
+  <tr> <td >  
+  <div class="footer" align="right">
+  <asp:Button ID="btnRejectProfile1" runat="server" Text="Save" CssClass="btnLogin" 
+            onclick="btnRejectProfile1_Click" />
+     
+      </div>
+       </td></tr>
+      <tr> <td style="height:10px"> </td></tr>
+                       </table>
+                         
+                      </asp:Panel>
+
+
+    
+    
+
+
+ </td></tr></table>
+
+
+   
+    
+
+         
+       
+                           
+
+
+
+
+</fieldset>
+   
+
+     
+
+</asp:Content>
+

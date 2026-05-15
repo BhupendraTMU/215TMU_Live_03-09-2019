@@ -1,0 +1,916 @@
+﻿html, body {
+    overflow-x: hidden;
+}
+
+.main-content {
+    min-height: 540px;
+    height: auto;
+    padding-top: 65px;
+    /* background-color: #f1f3f6; */
+}
+
+.form-control {
+    border-radius: 0px !important;
+}
+
+.btn-upload {
+    height: 30px;
+    padding: 3px !important;
+    border-radius: 2px !important;
+}
+
+.logoTop {
+    float: left;
+    margin-left: -20px;
+    width: 80%;
+}
+
+@media screen and (max-width:767px) {
+    .logoTop {
+        margin-left: -10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .main-navigation {
+        position: fixed;
+        width: 225px;
+    }
+}
+
+.breadcrumb {
+    margin: 0 -15px;
+    border-radius: 0;
+    padding: 15px 15px 30px 15px;
+    /*padding: 15px 45px 15px 15px;*/
+    border-bottom: 1px solid #C8C7CC;
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+    top: 80px;
+}
+
+@media (max-width: 767px) {
+    .main-content {
+        padding: 110px 0 0 0 !important;
+    }
+}
+
+/*  Dashboard Css Start   */
+a.profile-img img {
+    width: 30px !important;
+    height: 30px !important;
+}
+
+#backToTop {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    cursor: pointer;
+    display: none;
+    width: 45px;
+    height: 45px;
+    padding: 8px 18px;
+    color: #fff;
+    font-size: 22px;
+    background: #949494;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+    #backToTop:hover {
+        background-color: #f58220;
+    }
+
+.modal-header {
+    min-height: 16.43px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.navbar-tools .dropdown-menu {
+    border-top: none;
+    margin-top: 1px;
+}
+
+/*  Dashboard Css End   */
+
+
+
+
+.go-top, .navigation-toggler {
+    background-color: #404040 !important;
+    color: #ffffff;
+}
+
+.breadcrumb > li + li:before {
+    padding: 0 0px;
+    color: #ccc;
+}
+
+.loader-img {
+    /*display: none;*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.55);
+    height: 100%;
+    z-index: 999999;
+}
+
+    .loader-img img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -50px;
+    }
+
+select.form-control {
+    padding: 0px 0px 0 5px;
+}
+
+.navbar-inverse {
+    background: #DDE3E7 !important;
+    border-color: transparent;
+}
+
+.navbar-fixed-top {
+    top: 30px;
+    border-width: 0 0 1px;
+}
+
+.navbar > .container .navbar-brand, .logo {
+    padding: 4px 0px 0px 20px;
+    margin-left: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 25px;
+    min-width: 210px;
+}
+
+.navbar-inverse .navbar-right li.dropdown.active > .dropdown-toggle, .navbar-inverse .navbar-right li.dropdown.open.active > .dropdown-toggle, .navbar-inverse .navbar-right li.dropdown.open > .dropdown-toggle {
+    background: transparent !important;
+    color: #fff;
+}
+
+.navbar-inverse .current-user .username > span {
+    color: #f58220;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: capitalize !important;
+}
+
+li.dropdown.current-user:hover, li.dropdown.current-user:active, li.dropdown.current-user:focus,
+li.dropdown.current-user a:hover, li.dropdown.current-user a:active, li.dropdown.current-user a:focus {
+    background: transparent;
+}
+
+.main-container {
+    margin-top: 80px;
+}
+
+li.dropdown.current-user .dropdown-toggle {
+    padding: 10px 4px 10px 9px;
+}
+
+.panel {
+    border-radius: 0px;
+}
+
+    .panel > .panel-heading {
+        border-radius: 0;
+    }
+
+@media (max-width: 480px) {
+    .current-user .username {
+        display: inline-block;
+    }
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+
+    .navigation-toggler {
+        display: block;
+        visibility: hidden;
+        height: 21px;
+    }
+}
+
+/*  Announcement Block START! */
+
+.latest-announcement {
+    background-color: #f58220;
+    height: 30px;
+    padding: 5px 15px;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+}
+
+.announcement {
+    color: #fff;
+    font-weight: bold;
+    width: 210px;
+    background: #f58220;
+}
+
+.announcemts-description {
+    color: #fff;
+}
+
+    .announcemts-description marquee {
+        float: right;
+        width: 84%;
+    }
+
+@media screen and (max-width:767px) {
+    .announcement {
+        display: none;
+    }
+
+    .announcemts-description marquee {
+        float: none;
+        width: 100%;
+    }
+}
+
+/*  Announcement Block END!   */
+
+
+/*  Sidebar Menu Start  */
+ul.main-navigation-menu > li.active > a .selected:before {
+    color: #f58220 !important;
+}
+
+ul.main-navigation-menu > li.active > a {
+    background: #f58220 !important;
+    border-top: none !important;
+    color: #fff;
+}
+
+ul.main-navigation-menu > li a > i {
+    color: #f58220;
+    font-weight: 400;
+}
+
+/*  Sidebar Menu End  */
+
+/*  Table Custom CSS Start!   */
+.table {
+    margin-bottom: 0px;
+}
+
+    .table > thead > tr > th, .table > tbody > tr > th {
+        background-color: #DDDDDD;
+    }
+
+
+    .table.table-bordered > tbody > tr:nth-child(2n+1) > td {
+        background-color: #f5f5f5 !important;
+    }
+
+    .table.table-bordered > tbody > tr:hover > th {
+        background-color: #DDDDDD !important;
+    }
+
+    .table.table-bordered > thead > tr > th, .table.table-bordered > tbody > tr > th, .table.table-bordered > tfoot > tr > th {
+        border: 1px solid #c1c1c1 !important;
+    }
+
+    .table.table-bordered.table-noColor > tbody > tr:nth-child(2n+1) > td {
+        background-color: transparent !important;
+    }
+
+    .table.table-bordered.table-noColor > tbody > tr:hover > th {
+        background-color: transparent !important;
+    }
+
+
+/*  Table Custom CSS End!   */
+
+.panel-heading i {
+    color: #f58220;
+    /*font-size: 16px;
+    font-weight: bold;*/
+}
+
+.no-paddingL {
+    padding-left: 0px;
+}
+
+.block-headerBottom hr {
+    padding-top: 0px;
+    margin-top: 0px;
+    border-top-color: #f58220;
+}
+
+.multiselect.dropdown-toggle {
+    width: 100%;
+    height: 28px;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 1px solid #D5D5D5;
+    border-radius: 0 0 0 0 !important;
+    color: #858585;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 5px 4px;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition-duration: 0.1s;
+    box-shadow: none;
+}
+
+select.multiselect.dropdown-toggle {
+    position: relative;
+}
+
+select.multiselect ~ .btn-group {
+    width: 100%;
+}
+
+.multiselect.dropdown-toggle .caret {
+    margin-left: 0;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+
+
+@media screen and (min-width:768px) {
+    .breadcrumb {
+        margin: 0px -15px 15px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width:767px) {
+    .breadcrumb {
+        margin: 50px -15px 10px;
+    }
+
+    .form-group {
+        margin-bottom: 9px;
+    }
+
+    .main-navigation {
+        position: fixed;
+        top: 132px;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        border-top: none;
+    }
+}
+
+
+/*---------------------------------------------------*/
+/*ul.main-navigation-menu > li:first-child > a > .selected {
+		display: block !important;
+	}
+	ul.main-navigation-menu > li:first-child:hover {
+		width: 35px;
+		position: relative;
+	}
+	ul.main-navigation-menu > li:first-child:hover .title {
+		display: block;
+	}
+	ul.main-navigation-menu > li:first-child:hover > a:after {
+		content: "";
+		bottom: -1px;
+		position: absolute;
+		left: 35px;
+		top: -1px;
+		width: 14px;
+		background: none;
+	}*/
+
+.table > tbody > tr > td, .table > tfoot > tr > td {
+    vertical-align: middle;
+}
+
+.overflow-table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+@media (min-width: 768px) {
+    .navigation-small ul.main-navigation-menu > li:hover {
+        width: 260px !important;
+        position: relative;
+    }
+
+        .navigation-small ul.main-navigation-menu > li:hover > ul.sub-menu {
+            width: 224px !important;
+        }
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+    ul.main-navigation-menu > li:first-child:hover .title {
+        display: inline-block;
+    }
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+    ul.main-navigation-menu > li:hover {
+        width: 260px !important;
+        position: relative;
+    }
+}
+
+
+@media screen and (max-width:767px) {
+    .navbar-inverse .nav > li.current-user > a i {
+        color: #fff !important;
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .swMain > ul li .stepDesc {
+        font-size: 12px;
+    }
+}
+
+/*--------------------------------------------------*/
+
+
+
+/*Fullcalendar Custom Css Start!*/
+
+#calendar .fc-toolbar .fc-left {
+    float: left;
+    width: 30%;
+}
+
+#calendar .fc-event, #calendar .fc-event-dot {
+    background-color: rgb(245, 130, 32) !important;
+    border: 1px solid rgb(245, 130, 32) !important;
+}
+
+#calendar .fc-state-down, #calendar .fc-state-active {
+    box-shadow: none !important;
+    outline: 0 none;
+    background-color: rgb(245, 130, 32) !important;
+    border-color: rgb(245, 130, 32) !important;
+    color: #FFFFFF !important;
+}
+
+#calendar .fc-head {
+    background: #f5f5f5 !important;
+}
+
+#calendar .fc-day-header.fc-widget-header {
+    padding: 5px !important;
+}
+
+#calendar .fc-toolbar h2 {
+    font-size: 21px !important;
+}
+
+#calendar .fc-divider.fc-widget-header {
+    background: #eee;
+    margin: 0px;
+    padding: 0px;
+}
+
+.select-month-cal {
+    max-width: 65px;
+    width: 100%;
+    padding: 3px 0;
+    border-radius: 3px;
+    margin-right: 2px;
+    display: inline-block;
+}
+
+.select-year-cal {
+    max-width: 65px;
+    width: 100%;
+    padding: 3px 0;
+    border-radius: 3px;
+    margin-right: 2px;
+    display: inline-block;
+}
+
+/*Fullcalendar Custom Css End!*/
+
+/*Confirm Modal Popup Custom Css Start!*/
+.modal.confirm-modal {
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+    .modal.confirm-modal:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle !important;
+        margin-right: -4px;
+    }
+
+.confirm-modal .modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle !important;
+    min-width: 240px;
+}
+
+.confirm-modal .modal-header {
+    padding: 10px 15px;
+}
+
+    .confirm-modal .modal-header .close {
+        margin-top: 1px !important;
+    }
+
+.confirm-modal .modal-footer {
+    padding: 10px 15px;
+    background: #FFF;
+}
+/*Confirm Modal Popup Custom Css End!*/
+
+/*Placeholder Custom Css Start!*/
+.form-control::-moz-placeholder {
+    color: #adabab !important;
+    opacity: 1;
+}
+
+.form-control:-ms-input-placeholder {
+    color: #adabab !important;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #adabab !important;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
+    border: 1px solid #D5D5D5;
+    color: #3c3a3a !important;
+}
+
+/*Placeholder Custom Css End!*/
+
+/*============================== add 27/April/2017 by Amit Chauhan=========================================*/
+.btn {
+    padding: 7px 12px;
+    line-height: 14px;
+}
+
+.btn-success {
+    background-color: #5a6f3b !important;
+    outline: none;
+    border: 0px;
+    height: 28px;
+}
+
+    .btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active {
+        background-color: rgba(90, 111, 59, 0.87) !important;
+        border: 0px;
+        outline: none;
+    }
+
+.btn-danger {
+    background-color: #820c0c !important;
+    border: 0px;
+}
+
+.btn-warning, .btn-primary, .btn-info, .btn-default, .btn-yellow {
+    background-color: #FFB848 !important;
+    border-color: #ffae2f !important;
+    color: #ffffff;
+    height: 28px;
+}
+
+    .btn-warning, .btn-primary, .btn-info, .btn-default, .btn-yellow:hover,
+    .btn-warning, .btn-primary, .btn-info, .btn-default, .btn-yellow:focus,
+    .btn-warning, .btn-primary, .btn-info, .btn-default, .btn-yellow:active,
+    .btn-warning, .btn-primary, .btn-info, .btn-default, .btn-yellow.active {
+        background-color: #ffae2f !important;
+        border: 0px;
+        outline: none;
+    }
+
+    .btn-yellow.disabled:hover, .btn-yellow.disabled:focus, .btn-yellow.disabled:active, .btn-yellow.disabled.active, .btn-yellow[disabled]:hover, .btn-yellow[disabled]:focus, .btn-yellow[disabled]:active, .btn-yellow[disabled].active, fieldset[disabled] .btn-yellow:hover, fieldset[disabled] .btn-yellow:focus, fieldset[disabled] .btn-yellow:active, fieldset[disabled] .btn-yellow.active {
+        background-color: #FFB848;
+        border-color: #FFB848;
+        color: #ffffff;
+        outline: none;
+    }
+/*==========================Bank Transfer Allotment page responsive code ==========================*/
+
+.container-fixed {
+    position: fixed;
+    width: 81.2%;
+    background: #fff;
+    z-index: 1;
+    top: 130px;
+    padding-top: 15px;
+    box-shadow: 0px 2px 1px 0px #adabab;
+}
+
+.padding-dropdown {
+    border: 1px solid #ddd;
+    padding: 26px 10px;
+    border-right: 0px;
+}
+
+.padding-left {
+    padding-left: 5px;
+}
+
+.padding-top {
+    clear: both;
+    padding-top: 1px;
+}
+
+.padding-inner {
+    padding: 8px 5px 8px 5px;
+    margin-bottom: 5px;
+}
+
+.full-width {
+    width: 100% !important;
+    margin: auto;
+}
+
+.input-width {
+    width: 72% !important;
+    float: right;
+}
+
+.input-width-60px {
+    width: 60px !important;
+    float: right;
+}
+
+.padding-inner2 {
+    border: 1px solid #ddd;
+    padding: 2px 2px;
+    padding-top: 7px;
+}
+
+.margin-top {
+    margin-top: 158px;
+}
+
+.more-less {
+    float: right;
+    color: #212121 !important;
+}
+
+.panel-text {
+    font-size: 12px !important;
+}
+
+@media only screen and (device-width:1300px) {
+    .container-fixed {
+        width: 80.3%;
+    }
+
+    .padding-0 {
+        padding: 0px;
+    }
+}
+
+@media only screen and (device-width:1024px) {
+    .input-width {
+        width: 60% !important;
+        float: right;
+    }
+
+    .input-width-60px {
+        width: 20px !important;
+        float: right;
+    }
+
+
+
+    .padding-inner2 .col-sm-4 {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
+
+@media screen and (max-width:920px) {
+    .input-width, .input-width-60px {
+        width: 100% !important;
+        float: none;
+    }
+
+    .padding-dropdown {
+        border: 1px solid #ddd;
+        padding: 20px 10px 20px 16px;
+        border-right: 1px;
+    }
+
+    .padding-inner {
+        padding: 8px 5px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .padding-inner2 {
+        border: 1px solid #ddd;
+        padding: 5px 2px;
+        padding-top: 15px;
+        min-height: 150px;
+    }
+}
+
+@media screen (device-width:768px) {
+    .padding-dropdown {
+        border: 1px solid #ddd;
+        padding: 20px 10px 20px 16px;
+        border-right: 1px;
+    }
+
+    .full-width {
+        width: 99.333333% !important;
+        margin: auto;
+    }
+}
+
+@media screen and (max-width:768px) {
+    .container-fixed {
+        position: relative;
+        width: 99.5%;
+        background: #fff;
+        z-index: 1;
+        top: 10px;
+        padding: 0px 15px;
+    }
+
+    .margin-top {
+        margin-top: 40px;
+    }
+
+    .full-width {
+        width: 96% !important;
+        margin: auto;
+    }
+
+    .padding-inner2 {
+        border: 1px solid #ddd;
+        padding: 4px 0px;
+    }
+
+    .padding-dropdown {
+        border: 1px solid #ddd;
+        padding: 20px 9px;
+    }
+
+    .padding-inner2 .col-sm-4 {
+        padding-top: 5px;
+    }
+
+    .padding-top .col-sm-4 {
+        padding-bottom: 15px;
+    }
+}
+
+.panel > .panel-heading {
+    border-radius: 0;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+}
+/*==========================Bank Transfer Allotment page responsive code END ==========================*/
+.btn-file-upload {
+    height: 28px;
+    background: #717c85;
+    border: 0;
+    font-size: 14px;
+    outline: none;
+    color: #fff;
+}
+
+.btn:focus, .btn:focus:active, .btn.active:focus {
+    outline: none;
+}
+
+.panel-tools {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+}
+
+ul.main-navigation-menu li > ul.sub-menu > li > a {
+    font-size: 13px;
+    padding-left: 30px !important;
+}
+/*==========================Bank Transfer Allotment page responsive code END ==========================*/
+.btn-file-upload {
+    height: 28px;
+    background: #717c85;
+    border: 0;
+    font-size: 14px;
+    outline: none;
+    color: #fff;
+}
+
+.btn:focus, .btn:focus:active, .btn.active:focus {
+    outline: none;
+}
+/*checkbox custom css*/
+.form-check {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+    .form-check .form-check-label {
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+        .form-check .form-check-label .form-check-input {
+            position: absolute;
+            margin-top: .25rem;
+            margin-left: -1.25rem;
+        }
+
+            .form-check .form-check-label .form-check-input input[type=checkbox] {
+                margin: 0;
+                cursor: pointer;
+            }
+
+        .form-check .form-check-label .checkbox-text {
+            margin-left: 5px;
+        }
+
+        .p-0{padding:0;}
+.pl-0{padding-left:0;}
+.pr-0{padding-right:0;}
+.pt-0{padding-top:0;}
+.pb-0{padding-bottom:0;}
+
+.p-5{padding:5px;}
+.pl-5{padding-left:5px;}
+.pr-5{padding-right:5px;}
+.pt-5{padding-top:5px;}
+.pb-5{padding-bottom:5px;}
+
+.p-10{padding:10px;}
+.pl-10{padding-left:10px;}
+.pr-10{padding-right:10px;}
+.pt-10{padding-top:10px;}
+.pb-10{padding-bottom:10px;}
+
+.p-15{padding:15px;}
+.pl-15{padding-left:15px;}
+.pr-15{padding-right:15px;}
+.pt-15{padding-top:15px;}
+.pb-15{padding-bottom:15px;}
+
+.p-20{padding:20px;}
+.pl-20{padding-left:20px;}
+.pr-20{padding-right:20px;}
+.pt-20{padding-top:20px;}
+.pb-20{padding-bottom:20px;}
+
+.m-0{margin:0;}
+.ml-0{margin-left:0;}
+.mr-0{margin-right:0;}
+.mt-0{margin-top:0;}
+.mb-0{margin-bottom:0;}
+
+.m-5{margin:5;}
+.ml-5{margin-left:5px;}
+.mr-5{margin-right:5px;}
+.mt-5{margin-top:5px;}
+.mb-5{margin-bottom:5px;}
+
+.m-10{margin:10px;}
+.ml-10{margin-left:10px;}
+.mr-10{margin-right:10px;}
+.mt-10{margin-top:10px;}
+.mb-10{margin-bottom:10px;}
+
+.m-15{margin:15px;}
+.ml-15{margin-left:15px;}
+.mr-15{margin-right:15px;}
+.mt-15{margin-top:15px;}
+.mb-15{margin-bottom:15px;}
+
+.m-20{margin:20px;}
+.ml-20{margin-left:20px;}
+.mr-20{margin-right:20px;}
+.mt-20{margin-top:20px;}
+.mb-20{margin-bottom:20px;}
+
+.mt-35{margin-top:35px;}
+
+.text-l{text-align:left;}
+.text-r{text-align:right;}
+.text-c{text-align:center;}
+.text-j{text-align:justify;}
