@@ -1,79 +1,130 @@
-# =========================
-# Visual Studio Temp Files
-# =========================
+# ==========================================
+# ASP.NET WebForms / Visual Studio .gitignore
+# Safe for OLD ASP.NET (.aspx) Projects
+# ==========================================
+
+# ==========================================
+# Visual Studio Temporary Files
+# ==========================================
 .vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
 *.cache
-*.pdb
-*.dbmdl
 *.bak
-*.log
 *.tmp
-*.tmp_proj
+*.log
+*.tlog
 *.pidb
 *.svclog
 
-# =========================
+# ==========================================
 # Build Folders
-# =========================
+# ==========================================
 obj/
 Debug/
 Release/
 x64/
 x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 
 # IMPORTANT:
 # bin folder ignore mat karo
-# old ASP.NET projects me DLLs required hoti hain
+# old ASP.NET WebForms projects often need DLLs
 
 #bin/
 
-# =========================
+# ==========================================
 # IIS Express
-# =========================
+# ==========================================
 /.vs/config/applicationhost.config
 
-# =========================
+# ==========================================
+# Visual Studio Generated Files
+# ==========================================
+Generated\ Files/
+Generated_Code/
+
+# ==========================================
 # Test Results
-# =========================
+# ==========================================
 TestResults/
+[Tt]est[Rr]esult*/
 *.trx
 *.coverage
+*.coveragexml
 
-# =========================
-# Node Modules
-# =========================
-node_modules/
-
-# =========================
+# ==========================================
 # SQL Server Files
-# =========================
+# ==========================================
 *.mdf
 *.ldf
 *.ndf
 
-# =========================
+# ==========================================
 # Publish Files
-# =========================
+# ==========================================
 publish/
 *.publishxml
 *.pubxml
+*.publishproj
 
-# =========================
-# Resharper
-# =========================
+# ==========================================
+# NuGet Packages
+# ==========================================
+
+# IMPORTANT:
+# packages folder ignore mat karo
+# old ASP.NET projects need packages/DLLs
+
+#packages/
+
+*.nupkg
+*.snupkg
+
+# ==========================================
+# Node Modules
+# ==========================================
+node_modules/
+
+# ==========================================
+# ReSharper
+# ==========================================
 _ReSharper*/
+*.DotSettings.user
 
-# =========================
+# ==========================================
 # OS Files
-# =========================
+# ==========================================
 Thumbs.db
 Desktop.ini
 
-# =========================
-# Keep Important Files
-# =========================
+# ==========================================
+# Logs
+# ==========================================
+*.err
+*.out
+
+# ==========================================
+# Optional Cache Files
+# ==========================================
+*.VC.db
+*.VC.opendb
+*.opendb
+*.sdf
+
+# ==========================================
+# Python Cache
+# ==========================================
+__pycache__/
+*.pyc
+
+# ==========================================
+# Keep Important Source Files
+# ==========================================
 !*.cs
 !*.vb
 !*.aspx
@@ -84,6 +135,7 @@ Desktop.ini
 !*.config
 !*.csproj
 !*.vbproj
+!*.sln
 !packages.config
 !Web.config
 !web.config
@@ -91,19 +143,41 @@ Desktop.ini
 !*.js
 !*.css
 !*.html
+!*.json
+!*.xml
+!*.resx
 
-# =========================
-# NuGet Packages
-# =========================
+# ==========================================
+# Keep Assets
+# ==========================================
+!assets/
+!Scripts/
+!Content/
+!bootstrap/
+!dist/
 
-# IMPORTANT:
-# packages folder ko ignore mat karo
-# old projects me dependencies missing ho jati hain
-
-#packages/
-
-# =========================
+# ==========================================
 # Optional Ignore
-# =========================
-*.nupkg
-*.snupkg
+# ==========================================
+*.pdb
+*.obj
+*.ilk
+*.meta
+*.pch
+*.ipdb
+*.iobj
+
+# ==========================================
+# Local History
+# ==========================================
+.localhistory/
+
+# ==========================================
+# Misc
+# ==========================================
+mono_crash.*
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+orleans.codegen.cs
