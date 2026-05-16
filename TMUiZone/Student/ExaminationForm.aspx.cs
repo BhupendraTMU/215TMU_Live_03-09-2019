@@ -51,9 +51,9 @@ public partial class ExaminationForm : System.Web.UI.Page
 
                         DataTable dt = new DataTable();
                         dt = CheckFormOpenClose();
-                        if (dt.Rows.Count > 0)
+                        if (dt.Rows.Count > 0 )
                         {
-                            if (dt.Rows[0]["OpenClose"].ToString() == "OPEN")
+                            if (dt.Rows[0]["OpenClose"].ToString() == "OPEN" )
                             {
                                 divSem.Visible = false;
                                 SemesterDropdown();
@@ -375,15 +375,9 @@ public partial class ExaminationForm : System.Web.UI.Page
             return;
         }
 
-
         SqlDataAdapter da1 = new SqlDataAdapter("select Nationality from [TMU$Student - COLLEGE] where [Enrollment No_]='" + Session["enroll"].ToString() + "' ", con);
         DataTable dt1 = new DataTable();
         da1.Fill(dt1);
-
-
-
-
-
 
         if (txtABCID.Text == "" && dt1.Rows[0]["Nationality"] == "IND")
         {
