@@ -355,11 +355,12 @@
                          </ul>
                      </li>
                       <li style="margin-left: 0px" id="licopomapping" runat="server" ><a href="../Faculty/Co_PO_Mapping.aspx"><b>CO PO Mapping</b></a> </li>
+                    <li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
                       <li class="dropdown" style="">
 
                           <a href="#" class="sf-with-ul" runat="server" id="Report" visible="false">Report<span class="sf-sub-indicator"  runat="server" id="span13">»</span></a>
                          <ul class="dropdown-menu">
-                     <li><a href="~/Faculty/AwardList.aspx" id="ReportInternalAssesment" runat="server" visible="false"><b>Main Award List</b></a></li>
+                              <li><a href="~/Faculty/AwardList.aspx" id="ReportInternalAssesment" runat="server" visible="false"><b>Main Award List</b></a></li>
                               <li><a href="~/Faculty/OBEReport.aspx" id="OBEReport" runat="server" visible="false"><b>OBE Report</b></a></li>
                      <li><a href="~/Faculty/Report.aspx" id="ReportInternalAward" runat="server" visible="false"><b>Internal Award List</b></a></li>
                      <li><a href="~/Faculty/ExternalAwardList.aspx" id="ExternalAwardList" runat="server" visible="false"><b>External Award List</b></a></li>

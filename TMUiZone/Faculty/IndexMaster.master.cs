@@ -850,7 +850,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     public void GetLinkData()
     {
 
-        DataTable dt = new DataTable();
+        DataTable dt = new DataTable();        
         dt = con.GetLink(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
         for (int i = 0; i < dt.Rows.Count; i++)
         {
@@ -1293,6 +1293,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             if (dt.Rows[i]["PageId"].ToString() == "ReportInternalAssesment") { ReportInternalAssesment.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "OBEReport") { OBEReport.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "ReportInternalAward") { ReportInternalAward.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "NEPExistsReport") { ReportInternalAward.Visible = true; }
 
             if (dt.Rows[i]["PageId"].ToString() == "ExternalAwardList") { ExternalAwardList.Visible = true; }
             //if (dt.Rows[i]["PageId"].ToString() == "ReAppearAwardList") { ReAppearAwardList.Visible = true; }
@@ -1361,6 +1362,10 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         if (Session["uid"].ToString() == "TMU08719")
         {
             TDSApproval.Visible = true;
+        }
+        if (Session["uid"].ToString() == "TMU00140")
+        {
+            NEPExistsReport.Visible = true;
         }
         if (Session["uid"].ToString() == "TMU04621")
         {
@@ -1436,7 +1441,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         if (Session["uid"].ToString() == "TMU00865")
         {
             StudentReExamination1.Visible = true;
-        }
+        }        
         //if (Session[].ToString() == "1")
         //{
         //    ReviewAttendance_New.Visible = false;
