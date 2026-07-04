@@ -28,6 +28,16 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 lnk_mentor_allocation.Visible = true;
             }
 
+            if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
+            {
+                //HR DepCode: D228,PAYROLL SECTION DepCode=D213,ACCOUNT SECTION DepCode=D039
+                IdPHDStudentNoDuesApproval.Visible = true;
+            }
+            //else
+            //{
+            //    IdPHDStudentNoDuesApproval.Visible = false;
+            //}
+
             con1.Open();
 
             SqlCommand cmdT = new SqlCommand("select count(*) as c from [HRMSPortal].dbo.[tble_Exit_Interview_Form] where [Employee Code]='" + Session["uid"].ToString() + "' AND Status='Submit' and (Hod_Status!='Rejected By HOD' and Hr_Status!='Rejected By HR')", con1);
@@ -198,7 +208,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             else
             {
                 NoDuesApprovalList.Visible = true;
-            }
+            }                      
 
             GetLinkData();//===================>Add New Function For Show Hide Link Using DataBase Role
             showlib();
@@ -1559,7 +1569,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
         {
-            string strSQL = "select count(*)  Employee_Code from HRMSPortal.dbo.Tbl_ResearchFellowEmployee  where [Employee_Code] ='" + Session["uid"].ToString() + "'";
+            string strSQL = "select count(*)  Employee_Code from [HRMSPortal].dbo.Tbl_ResearchFellowEmployee  where [Employee_Code] ='" + Session["uid"].ToString() + "'";
 
             {
                 SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
@@ -1576,7 +1586,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
         {
-            string strSQL = "select replace([Total Duration],'Days','')-DATEDIFF(day, [Date Of Resignation],getdate()) as ResigDay from  HRMSPortal.dbo.tble_Exit_Interview_Form  where [Employee Code] ='" + Session["uid"].ToString() + "' and Status='Submit' ";
+            string strSQL = "select replace([Total Duration],'Days','')-DATEDIFF(day, [Date Of Resignation],getdate()) as ResigDay from  [HRMSPortal].dbo.tble_Exit_Interview_Form  where [Employee Code] ='" + Session["uid"].ToString() + "' and Status='Submit' ";
             {
                 SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
                 DataTable dt = new DataTable();

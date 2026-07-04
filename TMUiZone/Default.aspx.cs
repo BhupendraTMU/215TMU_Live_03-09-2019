@@ -361,7 +361,6 @@ public partial class Default : System.Web.UI.Page
                 }
 
 
-                //  Session["NavDBName"] = "[EDUCOLLEGELIVE-R2_12012022].dbo."; //--------------Change [Live Database].dbo.
                 if (UserGroup == "FACULTY" || UserGroup == "COURSE CO" || UserGroup == "STAFF" || UserGroup == "PRINCIPAL" || UserGroup == "COUNSELLOR" || UserGroup == "HR" || UserGroup == "ADMIN" || UserGroup == "LAB INCHARGE" || UserGroup == "REGISTRAR" || UserGroup == "HOD" || UserGroup == "SECURITY" || UserGroup == "FINE" || UserGroup == "VC" || UserGroup == "DEAN")
                 {
 

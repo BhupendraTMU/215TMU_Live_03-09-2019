@@ -76,8 +76,19 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 }
                 else
                 {
-                    StudentNoDues.Visible = false;
+                    StudentNoDues.Visible = false;                    
                 }
+
+                if (Session["College"].ToString() == "TPHD")
+                {
+                    liIdStudentNoDuesPhd.Visible = true;                   
+                }
+                else
+                {
+                    string gdg = Session["College"].ToString();
+                    liIdStudentNoDuesPhd.Visible = false;
+                }
+
 
             }
         }
