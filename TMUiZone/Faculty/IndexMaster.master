@@ -314,7 +314,7 @@
 
 </ul>
  </li>
-<li style="margin-left:0px" id="liMentorshipDetails" runat="server" visible="false"><a href="../Faculty/MentorshipDetails.aspx"><b>Mentorship Details</b></a> </li> 
+<%--<li style="margin-left:0px" id="liMentorshipDetails" runat="server" visible="false"><a href="../Faculty/MentorshipDetails.aspx"><b>Mentorship Details</b></a> </li> --%>
               <%--- ------------------------------Examination/Admit Card------------------------ --%>
              <li class="dropdown" style="">
                  <a href="#" class="sf-with-ul" runat="server" id="Examination" >Examination<span class="sf-sub-indicator" runat="server" id="span9">»</span></a>
@@ -325,7 +325,9 @@
                            <ul class="dropdown-menu">
                      <li style="margin-left: 0px" id="ExaminationApprovalForm" runat="server" visible="false"><a href="../Faculty/ExaminationApprovalForm.aspx"><b>Approval</b></a> </li>
                      <li style="margin-left: 0px" id="ExaminationFormRelease" runat="server" visible="false"><a href="../Faculty/ExaminationFormRelease.aspx"><b>Release</b></a> </li>
-                    </ul>
+                    
+
+</ul>
                                </li>
                           <li class="dropdown" style="">
                          <a href="#" class="sf-with-ul" runat="server" id="Timesheet" visible="false">Date Sheet<span class="sf-sub-indicator"  runat="server" id="span12">»</span></a>
@@ -337,7 +339,8 @@
                       <li ><a href="../Faculty/InternalTimesheetRelease.aspx" id="InternalTimesheetRelease" runat="server" visible="false"><b>Internal Release</b></a> </li> 
                       <li><a href="../Faculty/InternalTimesheetApproval.aspx" id="InternalTimesheetApproval" runat="server" visible="false"><b>Internal Approval</b></a> </li>   
                     </ul>
-                       </li>  
+                       </li> 
+                     <li style="margin-left: 0px" id="DigilockerData" runat="server" visible="false"><a href="../Faculty/DigilockerData.aspx"><b>Digilocker Error Data</b></a> </li>
                     <li style="margin-left: 0px" id="EmployeeDutySchedule" runat="server" visible="false"><a href="../Faculty/EmployeeDutySchedule.aspx"><b>Duty Chart</b></a> </li>
                                
                      <li style="margin-left: 0px" id="MarksEntry" runat="server" visible="false"><a href="../Faculty/MarksEntry.aspx"><b>Marks Entry</b></a> </li>
@@ -355,12 +358,14 @@
                          </ul>
                      </li>
                       <li style="margin-left: 0px" id="licopomapping" runat="server" ><a href="../Faculty/Co_PO_Mapping.aspx"><b>CO PO Mapping</b></a> </li>
+<li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
                       <li class="dropdown" style="">
 
                           <a href="#" class="sf-with-ul" runat="server" id="Report" visible="false">Report<span class="sf-sub-indicator"  runat="server" id="span13">»</span></a>
                          <ul class="dropdown-menu">
                      <li><a href="~/Faculty/AwardList.aspx" id="ReportInternalAssesment" runat="server" visible="false"><b>Main Award List</b></a></li>
                               <li><a href="~/Faculty/OBEReport.aspx" id="OBEReport" runat="server" visible="false"><b>OBE Report</b></a></li>
+
                      <li><a href="~/Faculty/Report.aspx" id="ReportInternalAward" runat="server" visible="false"><b>Internal Award List</b></a></li>
                      <li><a href="~/Faculty/ExternalAwardList.aspx" id="ExternalAwardList" runat="server" visible="false"><b>External Award List</b></a></li>
                      <%--<li><a href="~/Faculty/ReAppearAwardList.aspx" id="ReAppearAwardList" runat="server" visible="false"><b>ReAppear Award List</b></a></li>--%>
@@ -478,6 +483,7 @@
             <li runat="server" id="FViewGrievances" visible="false" ><a href="../Faculty/ViewGrievances.aspx"><b>View Grievances </b></a></li>
         <li runat="server" id="exitinterviewform" ><a href="../Faculty/exitinterviewform.aspx"><b>Exit Form</b></a></li>
              <li><a href="~/Faculty/EmployeeCountHODWise.aspx" id="EmployeeCountHODWise" runat="server" visible="false" ><b>Employee HOD Wise</b></a> </li>
+<li><a href="~/Faculty/PayrollDashboard.aspx" id="PayrollReport" runat="server" visible="false" ><b>Payroll Report</b></a> </li>
 <%--<li runat="server" id="CovidCertificate" ><a href="../Faculty/CovidCertificateUpload.aspx"><b>Covid Certificate</b></a></li>--%>
             <li runat="server" id="lblLeaveBalance" visible="false"><a href="../Faculty/EmployeeLeaveBalance.aspx"><b>Leave Report(TMMC)</b></a></li>
           <li runat="server" id="TDSdetail" ><a href="../Faculty/TDSdetail.aspx"><b>TDS Detail</b></a></li> 
@@ -510,21 +516,45 @@
              <li><a href="https://idp.tmu.ac.in/#res" id="RemoteAccess" runat="server" target="_blank" visible="true" ><b>Remote Access</b></a></li>--%>
  </ul>
            </li>
+         <li><a href="~/Faculty/Announcement.aspx" id="A4" runat="server" visible="false" ><b>Announcement </b></a></li>   
              <li class="dropdown" >
       <a href="#" class="sf-with-ul" runat="server" id="liOthers" visible="false">OTHERS<span class="sf-sub-indicator"  runat="server" id="span4">»</span></a>
-        <ul class="dropdown-menu">       
+        <ul class="dropdown-menu"> 
+            
             <li><a href="~/Faculty/indentview.aspx" id="IndentRequest" runat="server" visible="false" ><b>Indent </b></a></li>
              <li><a href="~/Faculty/EquipmentIndent.aspx" id="EquipmentIndent" runat="server" visible="false" ><b>EQP Indent </b></a></li>
             <li><a href="~/Faculty/EquipmentApproval.aspx" id="EquipmentApproval" runat="server" visible="false" ><b>EQP Approval </b></a></li>
             <li><a href="~/Faculty/IndentApproval.aspx" id="IndentApproval" runat="server" visible="false" ><b>Indent Approval</b></a></li> 
             <li><a href="~/Faculty/IndentForIt.aspx" id="IndentIT" runat="server" visible="false" ><b> IT Indent  </b></a></li> 
              <li><a href="~/Faculty/Itindentapprovalform.aspx" id="IndentITApproval" runat="server" visible="false" ><b> IT Indent Approval  </b></a></li>
-            <li><a href="~/Faculty/Employee_ITAssest.aspx" id="Employee_ITAssest" runat="server"  ><b> Employee IT Asset </b></a></li>
+             <li><a href="~/Faculty/Employee_ITAssest.aspx" id="Employee_ITAssest" runat="server"><b> Employee IT Asset </b></a></li>
+           
+             <li class="dropdown" style="">
+     <a href="#" class="sf-with-ul" runat="server" id="A12" visible="true">Body Donors<span class="sf-sub-indicator"  runat="server" id="span22">»</span></a>
+     <ul class="dropdown-menu">
+      <li><a href="~/Faculty/BodyDonors.aspx" id="A11" runat="server" visible="true" ><b>Donor Registration</b></a></li>
+      <li><a href="~/Faculty/BodyRegistration.aspx" id="A13" runat="server" visible="true" ><b>Body Registration</b></a></li>
+      <li><a href="~/Faculty/BodyReception.aspx" id="A14" runat="server" visible="true" ><b>Body Reception</b></a></li>
+      <li><a href="~/Faculty/BodyStorageAllocation.aspx" id="A15" runat="server" visible="true" ><b>Storage Allocation</b></a></li>
+      <li><a href="~/Faculty/BodyTransfertoAnatomyDepartment.aspx" id="A16" runat="server" visible="true" ><b>Body Transfer to Anatomy Department</b></a></li> 
+      <li><a href="~/Faculty/BodyReturn.aspx" id="A17" runat="server" visible="true" ><b>Body Return</b></a></li> 
+  </ul>
+ </li>
+ <li class="dropdown" style="">
+        <a href="#" class="sf-with-ul" runat="server" id="A18" visible="true">Cadaver<span class="sf-sub-indicator"  runat="server" id="span23">»</span></a>
+        <ul class="dropdown-menu">
+         <li><a href="~/Faculty/CadaverRegistration.aspx" id="A19" runat="server" visible="true" ><b>Cadaver Registration</b></a></li>
+         <li><a href="~/Faculty/CadaverReception.aspx" id="A21" runat="server" visible="true" ><b>Cadaver Reception</b></a></li>
+     </ul>
+    </li>
+            
+
+
             <li><a href="~/Faculty/IssueTracker.aspx" id="IssueTracker" runat="server" visible="true" ><b>Issue Tracker</b></a></li>
             <li><a href="~/Faculty/IssueTrackerList.aspx" id="IssueTrackerList" runat="server" visible="true" ><b>Issue Tracker List</b></a></li>
-             <li style="margin-left: 0px" id="StudentReExamination1" runat="server" visible="false"><a href="../Faculty/StudentReExamination.aspx"><b>Reappear Exam Report</b></a> </li>
- 
-                    
+            <li style="margin-left: 0px" id="StudentReExamination1" runat="server" visible="false"><a href="../Faculty/StudentReExamination.aspx"><b>Reappear Exam Report</b></a> </li>
+            <li style="b"><a href="../Faculty/DigilockerErrorUpload.aspx" id="DigilockerErrorUpload" runat="server" visible="false"><b>Digilocker Error Upload</b></a></li>
+
             <li><a href="~/Faculty/NaacDashboard.aspx" id="NaacDashboard" runat="server" visible="false" ><b>Naac Dashboard</b></a></li>
             <li><a href="~/Faculty/ITIssueTracker.aspx" id="A3" runat="server" visible="true" ><b> IT Issue Tracker</b></a></li>
             <li><a href="~/Faculty/ITAsset.aspx" id="ITAsset" runat="server" visible="true" ><b>IT Assests Detail</b></a></li>
@@ -538,7 +568,8 @@
             <li runat="server" id="migration" visible="false"><a href="../Faculty/MigrationApproval.aspx"><b>Migration Approval</b></a></li>       
             <%--<li><a href="~/Faculty/Events.aspx" id="A5" runat="server" visible="true" ><b>Event</b></a></li>        --%>
             <li><a href="~/Faculty/EventList.aspx" id="EventList" runat="server" visible="true" ><b>Event</b></a></li> 
-             <li><a href="~/Faculty/Formvisibilty.aspx" id="Formvisibilty" runat="server" visible="false" ><b>Form visibilty Setup</b></a></li>        
+             <li><a href="~/Faculty/Formvisibilty.aspx" id="Formvisibilty" runat="server" visible="false" ><b>Form visibilty Setup</b></a></li> 
+             <li><a href="~/Faculty/NAACSurveyReport.aspx" id="SSSReport" runat="server" visible="false" ><b>SSS Report</b></a></li>
             <li><a href="~/Faculty/EventCreation.aspx" id="EventCreation" runat="server" visible="false" ><b>Create Event</b></a></li> 
               <li><a href="~/Faculty/Courier.aspx" id="Courier" runat="server" ><b>Courier Data</b></a></li> 
             <li><a href="~/Faculty/StudentInOutAprove.aspx" id="AOutgoing1" runat="server" visible="false" ><b>Warden Approval</b></a></li> 
@@ -578,9 +609,10 @@
               
             
             
+            
             </ul>
                      </li>
-
+<li style="b"><a href="../Faculty/ITEmployeePunchRecord.aspx" id="ITEmployeePunchRecord" runat="server" visible="false"><b>Dept. Visit Record</b></a></li>
             <li class="dropdown" >
       <a href="#" class="sf-with-ul" runat="server" id="A1" >Complaint List<span class="sf-sub-indicator"  runat="server" id="span20">»</span></a>
                 </li>
@@ -606,14 +638,14 @@
              <li><a href="../Faculty/SecondaryLoadReport.aspx" runat="server" id="SecondaryLoadReport" visible="false" ><b>My Secondary Load </b></a></li>
                 </ul>
                  </li>
-                    <li class="dropdown" >
+                    <%--<li class="dropdown" >
       <a href="#" class="sf-with-ul" runat="server" id="liSMS"  visible="false">SMS<span class="sf-sub-indicator"  runat="server" id="span7">»</span></a>
         <ul class="dropdown-menu">   
             <li style="b"><a href="~/Faculty/SmsEmployee.aspx" id="SmsEmployee" runat="server" visible="false" ><b>Employee</b></a></li>        
             <li><a href="~/Faculty/smsStudent.aspx" id="smsStudent" runat="server" visible="false" ><b>Student</b></a></li>      
             
             </ul>
-</li>       
+</li>       --%>
                                 <li class="dropdown" >
       <a href="#" class="sf-with-ul" runat="server" id="liFeedback"  visible="false">Feedback<span class="sf-sub-indicator"  runat="server" id="span11">»</span></a>
         <ul class="dropdown-menu">
@@ -623,12 +655,12 @@
             </ul>
                                     </li>
 
-            <li style="margin-left:0px" id="AcademicCalendar" runat="server" visible="false"><a href="../Faculty/EducalenderEntry.aspx"><b>Academic Calendar</b></a> </li> 
+            <%--<li style="margin-left:0px" id="AcademicCalendar" runat="server" visible="false"><a href="../Faculty/EducalenderEntry.aspx"><b>Academic Calendar</b></a> </li> --%>
             <li style="margin-left:0px" id="FacultyFileUpload" runat="server" visible="false"><a href="../Faculty/FacultyFileUpload.aspx"><b>Dissertation Upload</b></a> </li> 
             <li style="margin-left:0px" id="UserRoleMatrix" runat="server" visible="false"><a href="../Faculty/UserRoleMatrix.aspx"><b>User Role </b></a> </li> 
             <li style="margin-left:0px" id="MapCourseSubject" visible="false" runat="server"><a href="../Faculty/CourseSubjectGroup.aspx"><b>Create Subject Group</b></a> </li>
             <li style="margin-left:0px" id="FormActiveInactive" runat="server" visible="false"><a href="../Faculty/FormActiveInactive.aspx"><b>Form Role</b></a> </li> 
-            <li style="margin-left:0px" id="SubjectChoice" runat="server" visible="false"><a href="../Faculty/SubjectChoice.aspx"><b>Choice</b></a> </li> 
+            <%--<li style="margin-left:0px" id="SubjectChoice" runat="server" visible="false"><a href="../Faculty/SubjectChoice.aspx"><b>Choice</b></a> </li> --%>
             <li style="margin-left:0px" id="MapFacultySubject1" runat="server" visible="false"><a href="../Faculty/MapFacultySubject1.aspx"><b>Map Faculty Subject</b></a> </li> 
             <li style="margin-left:0px" id="SemRegApproval" runat="server" visible="false"><a href="../Faculty/SemRegistrationApproval.aspx"><b>Sem. Reg. Approval</b></a> </li>
           
@@ -696,7 +728,7 @@
 <li > <a href="ProfileApproval.aspx" id="lnkprofileaprovalblank" runat="server" visible="false">Profile Approval
       <asp:Label ID="lblProfileCount" runat="server"  ForeColor="Red" Visible="false"></asp:Label></a> </li>      
 <li > <asp:Label ID="lblReimbursmentCount" runat="server" ForeColor="Red" Visible="false" ></asp:Label></li>
-      
+  
 </ul>
                   
      

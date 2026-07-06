@@ -405,7 +405,12 @@
                                                     <asp:BoundField DataField="ApprovalStatus" HeaderText="Status" />
                                                     <asp:TemplateField HeaderText="HR Status">
                                                         <ItemTemplate>
-                                                            <asp:Label ID="lblStatus" runat="server" Text='<%# (Eval("Approved by").ToString() == "" ? "Pending" : Eval("ApprovalStatus").ToString()) %>'></asp:Label>
+                                                            <asp:Label ID="lblStatus" runat="server" Text='<%# (Eval("HRStatus").ToString()) %>'></asp:Label>
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
+                                                    <asp:TemplateField HeaderText="Final Status">
+                                                        <ItemTemplate>
+                                                            <asp:Label ID="lblFStatus" runat="server" Text='<%# (Eval("FinalStatus").ToString()) %>'></asp:Label>
                                                         </ItemTemplate>
                                                     </asp:TemplateField>
                                                     <%-- <asp:BoundField DataField="ApprovalStatus" HeaderText="Status" />--%>
@@ -548,39 +553,39 @@
                             </asp:Panel>
 
 
-                            <asp:Panel ID="pnlApproval" runat="server" Visible="false" style="width:1000px">
+                            <asp:Panel ID="pnlApproval" runat="server" Visible="false" Style="width: 1000px">
                                 <table cellpadding="0px" cellspacing="0px">
 
 
                                     <tr>
-                                       
-                                                    <td>Month</td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>
-                                                        <asp:DropDownList ID="ddlMonth" runat="server" Height="29px">
-                                                            <asp:ListItem Value="01">January</asp:ListItem>
-                                                            <asp:ListItem Value="02">February</asp:ListItem>
-                                                            <asp:ListItem Value="03">March</asp:ListItem>
-                                                            <asp:ListItem Value="04">April</asp:ListItem>
-                                                            <asp:ListItem Value="05">May</asp:ListItem>
-                                                            <asp:ListItem Value="06">June</asp:ListItem>
-                                                            <asp:ListItem Value="07">July</asp:ListItem>
-                                                            <asp:ListItem Value="08">August</asp:ListItem>
-                                                            <asp:ListItem Value="09">September</asp:ListItem>
-                                                            <asp:ListItem Value="10">October</asp:ListItem>
-                                                            <asp:ListItem Value="11">November</asp:ListItem>
-                                                            <asp:ListItem Value="12">December</asp:ListItem>
-                                                        </asp:DropDownList></td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>Year </td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>
-                                                        <asp:DropDownList ID="ddlYear1" runat="server" Height="29px"></asp:DropDownList>
-                                                    </td>
 
-                                                    <td style="width: 10px"></td>
-                                               
-                                      
+                                        <td>Month</td>
+                                        <td style="width: 10px"></td>
+                                        <td>
+                                            <asp:DropDownList ID="ddlMonth" runat="server" Height="29px">
+                                                <asp:ListItem Value="01">January</asp:ListItem>
+                                                <asp:ListItem Value="02">February</asp:ListItem>
+                                                <asp:ListItem Value="03">March</asp:ListItem>
+                                                <asp:ListItem Value="04">April</asp:ListItem>
+                                                <asp:ListItem Value="05">May</asp:ListItem>
+                                                <asp:ListItem Value="06">June</asp:ListItem>
+                                                <asp:ListItem Value="07">July</asp:ListItem>
+                                                <asp:ListItem Value="08">August</asp:ListItem>
+                                                <asp:ListItem Value="09">September</asp:ListItem>
+                                                <asp:ListItem Value="10">October</asp:ListItem>
+                                                <asp:ListItem Value="11">November</asp:ListItem>
+                                                <asp:ListItem Value="12">December</asp:ListItem>
+                                            </asp:DropDownList></td>
+                                        <td style="width: 10px"></td>
+                                        <td>Year </td>
+                                        <td style="width: 10px"></td>
+                                        <td>
+                                            <asp:DropDownList ID="ddlYear1" runat="server" Height="29px"></asp:DropDownList>
+                                        </td>
+
+                                        <td style="width: 10px"></td>
+
+
 
                                         <%-- <td style="width: 10px"></td>
                                         <td>
@@ -678,7 +683,7 @@
                                 </table>
                                 <table id="grdis">
                                     <tr>
-                                        <td style="width:100px">
+                                        <td style="width: 100px">
 
                                             <asp:GridView ID="grdApproval" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" OnPageIndexChanging="grdApproval_PageIndexChanging" PageSize="1" OnRowDataBound="grdApproval_RowDataBound">
                                                 <Columns>
@@ -778,7 +783,7 @@
 
 
                                 </table>
-    </asp:Panel>
+                            </asp:Panel>
 
 
                         </td>

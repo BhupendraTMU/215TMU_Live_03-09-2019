@@ -26,13 +26,13 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
-                // ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('access denied ?'); document.location.href='FacultyDetails.aspx';", true);
+               // ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('The page is currently under maintenance and will be operational on Friday, 29 May 2026.'); document.location.href='FacultyDetails.aspx';", true);
                 Session["ATT"] = "";
                 //bindDrpCourseList();  //added on 24 feb 2017
                 bindAcademicYear(); bindDrpCourseList();
                 onetime.Visible = false;
                 btnview.Visible = false;
-
+                
             }
         }
         catch (Exception ex)
@@ -340,6 +340,14 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                         {
 
                             btnview.Visible = true;
+                            if (ds.Tables[1].Rows[0]["Internal Mapping"].ToString() != "")
+                            {
+                                lnkviewCombine.Visible = true;
+                            }
+                            else
+                            {
+                                lnkviewCombine.Visible = false;
+                            }
                         }
 
                         else
@@ -3517,6 +3525,9 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                     drpCourseOpen.DataBind();
                     lnkview.Visible = true;
                     drpCourseOpen.Visible = true;
+
+                   
+
                 }
                 else
                 {
@@ -3530,6 +3541,59 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+        }
+    }
+    protected void lnkviewCombine_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            LinkButton btn = sender as LinkButton;
+            GridViewRow grow = btn.NamingContainer as GridViewRow;
+            //HiddenField hfsubject = (HiddenField)grow.FindControl("hfSubject");
+            Session["Subject"] = ddlSubject.SelectedValue;
+            Session["AcademicYear"] = drpAcademicYear.SelectedValue;
+            Session["drpCourse"] = drpCourse.SelectedValue;
+            Session["drpSemester"] = drpSemester.SelectedValue;
+            Session["FacultyCode"] = Session["uid"].ToString();
+            if (rdInternal.Checked == true)
+            {
+                Session["examType1"] = 1;
+            }
+            else
+            {
+                Session["examType1"] = 2;
+            }
+
+            Session["Section"] = drpSection.SelectedValue;
+            Session["StudGroup"] = ddlGroup.SelectedValue;
+
+            //DataTable dtNAV = new DataTable();
+            //SqlCommand cmdNAV = new SqlCommand("Proc_GetNAVCreditionalLive", con);
+            //cmdNAV.CommandType = CommandType.StoredProcedure;
+            //SqlDataAdapter daNAV = new SqlDataAdapter(cmdNAV);
+            //daNAV.Fill(dtNAV);
+            //VoucherPosting nvp = new VoucherPosting();
+            //nvp.UseDefaultCredentials = true;
+            //nvp.Url = dtNAV.Rows[0]["URL"].ToString();
+            //nvp.Credentials = new NetworkCredential(dtNAV.Rows[0]["UserID"].ToString(), dtNAV.Rows[0]["Password"].ToString());
+
+            //if (drpSemester.SelectedValue.Contains("YEAR"))
+            //{
+            //    nvp.UpdateTotalValues_New("NORMAL", drpCourse.SelectedValue, drpAcademicYear.SelectedValue, Session["GlobalDimension1Code"].ToString(), "", drpSemester.SelectedValue, ddlSubject.SelectedValue, "", drpSection.SelectedValue, ddlGroup.SelectedValue);
+            //}
+            //else
+            //{
+            //    nvp.UpdateTotalValues_New("NORMAL", drpCourse.SelectedValue, drpAcademicYear.SelectedValue, Session["GlobalDimension1Code"].ToString(), drpSemester.SelectedValue, "", ddlSubject.SelectedValue, "", drpSection.SelectedValue, ddlGroup.SelectedValue);
+            //}
+
+
+
+            ScriptManager.RegisterStartupScript(Page, GetType(), "JsStatus", "OpenNewWindowCombine()", true);
+        }
+        catch (Exception ex)
+        {
+            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Some thing went wrong,Please try after some time');", true);
+            return;
         }
     }
     protected void lnkview_Click(object sender, EventArgs e)
@@ -3566,7 +3630,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
             nvp.Url = dtNAV.Rows[0]["URL"].ToString();
             nvp.Credentials = new NetworkCredential(dtNAV.Rows[0]["UserID"].ToString(), dtNAV.Rows[0]["Password"].ToString());
 
-            nvp.UpdateTotalValues_New("OPENELEC", "", drpAcademicYear.SelectedValue, "", "", "", ddlSubject.SelectedValue, "", "", "");
+            nvp.UpdateTotalValues_New("OPENELEC", "", drpAcademicYear.SelectedValue, "", "", "", ddlSubject1.SelectedValue, "", "", "");
             ScriptManager.RegisterStartupScript(Page, GetType(), "JsStatus", "OpenNewWindow1()", true);
         }
         catch (Exception ex)

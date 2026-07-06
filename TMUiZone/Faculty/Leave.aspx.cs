@@ -1370,14 +1370,14 @@ public partial class LeaveApproval : System.Web.UI.Page
         //ashu on 19/09/2017--start
 
 
-        //SqlDataAdapter da = new SqlDataAdapter("SELECT [Attendance Date] FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] WHERE ((MONTH([Attendance Date]) = MONTH('"+txtfromDate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtfromDate.Text+ "'))  and   (MONTH([Attendance Date]) = MONTH('"+txtTodate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtTodate.Text+"'))) select DATENAME(MONTH, [Attendance Date]) + ' ' +   CAST(YEAR([Attendance Date]) AS VARCHAR(4)) AS MonthYear FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] ", con.Con);
-        //DataSet ds = new DataSet();
-        //da.Fill(ds);
+       // SqlDataAdapter da = new SqlDataAdapter("SELECT [Attendance Date] FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] WHERE ((MONTH([Attendance Date]) = MONTH('"+txtfromDate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtfromDate.Text+ "'))  and   (MONTH([Attendance Date]) = MONTH('"+txtTodate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtTodate.Text+"'))) select DATENAME(MONTH, [Attendance Date]) + ' ' +   CAST(YEAR([Attendance Date]) AS VARCHAR(4)) AS MonthYear FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] ", con.Con);
+       // DataSet ds = new DataSet();
+       // da.Fill(ds);
         //if (ds.Tables[0].Rows.Count == 0)
-        //{
-        //    ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You can Apply leave for month and year " + ds.Tables[1].Rows[0]["MonthYear"] + " !!');", true);
-        //    return;
-        //}
+       // {
+       //     ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You can Apply leave for month and year " + ds.Tables[1].Rows[0]["MonthYear"] + " !!');", true);
+       //     return;
+       // }
 
         if (ddLeavePeriod.SelectedValue == "(Full-Day)" && ddShiftType.SelectedValue != "0".ToString()) //ashu on 19/09/2017
         {

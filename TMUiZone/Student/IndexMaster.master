@@ -102,7 +102,7 @@
             if (!isValidFile) {
 
                 label = "Invalid File. Please upload a File with" +
-                 " extension:\n\n" + validFilesTypes.join(", ");
+                    " extension:\n\n" + validFilesTypes.join(", ");
                 alertify.error(label);
             }
             return isValidFile;
@@ -191,11 +191,11 @@
                                         <table cellpadding="0px" cellspacing="0px">
                                             <tr>
                                                 <td>
-                                                    <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" Width="350px"  /></td>
+                                                    <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" Width="350px" /></td>
                                                 <td style="width: 30px">
                                                     <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
                                                 </td>
-                                               <%-- <td style="width: 700px; vertical-align: bottom" align="center">
+                                                <%-- <td style="width: 700px; vertical-align: bottom" align="center">
                                                     <asp:LinkButton ID="lblPayTM" runat="server" OnClick="lblPayTM_Click"  Font-Size="X-Large" Font-Bold="true" Text="Sports Screening(Register Now)"></asp:LinkButton>
                                                     <br />
                                                 </td>--%>
@@ -265,7 +265,7 @@
 	</li>--%>
                                             <li style="margin-left: 0px"><a href="StudentDetailsView1.aspx"><b>Profile</b></a> </li>
                                             <li style="margin-left: 0px"><a href="ViewAttendance.aspx"><b>View Attendance</b></a> </li>
-                                           <li style="margin-left: 0px"><a href="FeeDetails.aspx"><b>Fee Details</b></a> </li>
+                                            <li style="margin-left: 0px"><a href="FeeDetails.aspx"><b>Fee Details</b></a> </li>
                                             <%--<li style="margin-left:0px"><a href="Events.aspx"><b>Events</b></a> </li>--%>
                                             <li style="margin-left: 0px"><a href="EventList.aspx"><b>Events</b></a> </li>
                                             <li style="margin-left: 0px"><a href="StudentTimeSheet.aspx"><b>Time Sheet</b></a> </li>
@@ -284,26 +284,26 @@
 
 
                                             <li style="margin-left: 0px" runat="server" id="NEPUndertaking"><a href="Undertaking_NEP_Option.aspx"><b>NEP Undertaking</b></a> </li>
-                                          <li class="dropdown" style="">
+                                            <li class="dropdown" style="">
                                                 <a href="#" class="sf-with-ul" runat="server" id="A1">Placement<span class="sf-sub-indicator" runat="server" id="span2"></span></a>
                                                 <ul class="dropdown-menu">
-                                                  <%--  <li style="margin-left: 0px"><a href="PlacementRegistration.aspx" ><b>Registration</b></a></li>--%>
+                                                    <%--  <li style="margin-left: 0px"><a href="PlacementRegistration.aspx" ><b>Registration</b></a></li>--%>
                                                     <li style="margin-left: 0px"><a href="PlacementForm.aspx"><b>CRC Form</b></a></li>
-                                                    
+
                                                 </ul>
                                             </li>
 
 
 
-<li class="dropdown" style="">
- <a href="#" class="sf-with-ul" runat="server" id="lnkmentormentee">Mentor-Mentee<span class="sf-sub-indicator"  runat="server" id="lnkmentermenteespan1"></span></a>
-                         <ul class="dropdown-menu">
-<li><a href="FA_MM_Introduction_Report_Code.aspx" id="lnk_mentor_introduction" runat="server"><b>Introduction</b></a></li> 
-<li style="margin-left:0px" ><a href="FA_MM_ST_Records.aspx" ><b>Meeting Record</b></a> </li>
- <li style="margin-left:0px" ><a href="FA_MM_ST_Attendance_Form.aspx" ><b>Attendance Undertaking</b></a> </li>
+                                            <li class="dropdown" style="">
+                                                <a href="#" class="sf-with-ul" runat="server" id="lnkmentormentee">Mentor-Mentee<span class="sf-sub-indicator" runat="server" id="lnkmentermenteespan1"></span></a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="FA_MM_Introduction_Report_Code.aspx" id="lnk_mentor_introduction" runat="server"><b>Introduction</b></a></li>
+                                                    <li style="margin-left: 0px"><a href="FA_MM_ST_Records.aspx"><b>Meeting Record</b></a> </li>
+                                                    <li style="margin-left: 0px"><a href="FA_MM_ST_Attendance_Form.aspx"><b>Attendance Undertaking</b></a> </li>
 
-                             </ul>
-                 </li>
+                                                </ul>
+                                            </li>
 
 
                                             <li class="dropdown" style="">
@@ -312,39 +312,53 @@
                                                     <li style="margin-left: 0px"><a href="StudentExamdatesheetInternal.aspx"><b>Internal Date Sheet</b></a></li>
                                                     <li style="margin-left: 0px"><a href="StudentExamdatesheetExternal.aspx"><b>External Date Sheet</b></a></li>
                                                     <li style="margin-left: 0px"><a href="ExaminationForm.aspx"><b>Exam Form Main</b></a> </li>
-                                                    <li style="margin-left: 0px"  ><a href="ReappearedExamination.aspx"><b>Exam Form Reappear</b></a></li>
-                                                  <%--  <li style="margin-left: 0px"><a href="ExamFormStatus.aspx"><b>Exam Form Status</b></a></li> --%>
+                                                    <li style="margin-left: 0px"><a href="ReappearedExamination.aspx"><b>Exam Form Reappear</b></a></li>
+                                                    <%--  <li style="margin-left: 0px"><a href="ExamFormStatus.aspx"><b>Exam Form Status</b></a></li> --%>
                                                 </ul>
                                             </li>
                                             <li style="margin-left: 0px"><a href="StudentAdmitCard.aspx"><b>Admitcard</b></a> </li>
                                             <li class="dropdown" style="">
                                                 <a href="#" class="sf-with-ul" runat="server" id="Result">Result<span class="sf-sub-indicator" runat="server" id="span1"></span></a>
                                                 <ul class="dropdown-menu">
-                                                    <li style="margin-left: 0px" ><a href="ExamResultDisplay.aspx" runat="server" visible="false" ><b>Internal Result</b></a> </li>
+                                                    <li style="margin-left: 0px"><a href="ExamResultDisplay.aspx" runat="server" visible="false"><b>Internal Result</b></a> </li>
                                                     <li style="margin-left: 0px"><a href="OnlineResultshow.aspx"><b>Online Result</b></a> </li>
                                                     <%--<li style="margin-left:0px" ><a href="ConsolidatemarkSheetFinal.aspx" ><b>Final Marksheet</b></a> </li>
                                                     <li style="margin-left: 0px"><a href="ConsolidatemarkSheet.aspx"><b>Final Status</b></a> </li>--%>
                                                 </ul>
                                             </li>
                                             <%--  <li style="margin-left:0px"><a href="Applycertificate.aspx"><b>Apply Certificate</b></a></li>--%>
-                                              <li class="dropdown">
+                                            <li class="dropdown">
                                                 <a href="#" class="sf-with-ul" runat="server" id="A2">LIBRARY<span class="sf-sub-indicator" runat="server" id="span3"></span></a>
-                                             
-<ul class="dropdown-menu">
- <li style="margin-left: 0px" id="Lib" runat="server"><a href="http://172.18.0.200/"><b>Library Login</b></a></li>  
+
+                                                <ul class="dropdown-menu">
+                                                    <li style="margin-left: 0px" id="Lib" runat="server"><a href="http://172.18.0.200/"><b>Library Login</b></a></li>
                                                     <li><a href="https://idp.tmu.ac.in/#res" id="A3" runat="server" target="_blank" visible="true"><b>Remote Access</b></a></li>
 
                                                 </ul>
 
                                             </li>
- <li style="margin-left:0px"><a href="StudentScholarship.aspx" runat="server" id="StudentScholarship" visible="false"><b>scholarship Form</b></a></li>
+                                            <li style="margin-left: 0px"><a href="StudentScholarship.aspx" runat="server" id="StudentScholarship" visible="false"><b>scholarship Form</b></a></li>
                                             <li style="margin-left: 0px" id="SemReg" runat="server"><a href="SemRegistration.aspx"><b>Sem Registration</b></a></li>
-                                             <li style="margin-left: 0px" id="liJobWork" runat="server"><a href="JobWork.aspx"><b>Maintenance</b></a></li>
-                                             <li style="margin-left:0px"><a href="StudentNoDues.aspx" runat="server" id="StudentNoDues" visible="false"><b>No Dues</b></a></li>
-                                             <li style="margin-left:0px"><a href="JainStudentAttendance.aspx" id="JinalayaAttendance" visible="true"><b>Jinalaya Attendance</b></a></li>
-                                            <li style="margin-left:0px"><a href="StudentGatePass.aspx" id="OutPass" runat="server" visible="true"><b>Out Pass</b></a></li>  
-</ul>
-  
+                                            <li style="margin-left: 0px" id="liJobWork" runat="server"><a href="JobWork.aspx"><b>Maintenance</b></a></li>
+                                            <li style="margin-left: 0px"><a href="StudentNoDues.aspx" runat="server" id="StudentNoDues" visible="false"><b>No Dues</b></a></li>
+                                            <li style="margin-left: 0px"><a href="JainStudentAttendance.aspx" id="JinalayaAttendance" visible="true"><b>Jinalaya Attendance</b></a></li>
+                                            <li style="margin-left: 0px"><a href="StudentGatePass.aspx" id="OutPass" runat="server" visible="true"><b>Out Pass</b></a></li>
+                                            <li class="menu-announcement">
+                                                <a href="StudentAnnouncements.aspx">
+                                                    <b>Announcements</b>
+
+                                                    <span class="notification-wrapper">
+                                                        <i class="fa fa-bell bell-icon "></i>
+                                                        <asp:Label ID="lblNotificationCount"
+                                                            runat="server"
+                                                            CssClass="notification-count"
+                                                            Text="0">
+                                                        </asp:Label>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+
 
                                     </div>
                                 </td>

@@ -85,6 +85,12 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
                 ModalPopupExtender1.Show();
                 main.Visible = false;
                 Social.Visible = true;
+
+                
+              
+
+             
+                
             }
 
         }

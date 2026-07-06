@@ -35,22 +35,26 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
                     txtApproveAMT.Visible = false;
                     txtVCApproveAMT.Visible = true;
                 }
+                if (Session["uid"].ToString() == "TMU06022")
+                {
+                    lnkAllData.Visible = true;
+                }
                 //if (Session["uid"].ToString() == "TMU00525" || Session["uid"].ToString() == "TMU00260" )
                 //{
                 //    divSupport.Visible = true;
 
 
 
-                //}
-                //else
-                //{
+                    //}
+                    //else
+                    //{
 
-                //        ListItem removeItem4 = drpDesignation.Items.FindByValue("Others");
-                //        drpDesignation.Items.Remove(removeItem4);
+                    //        ListItem removeItem4 = drpDesignation.Items.FindByValue("Others");
+                    //        drpDesignation.Items.Remove(removeItem4);
 
 
 
-                //}
+                    //}
 
             }
             catch (Exception ex)
@@ -177,9 +181,12 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
 
     protected void lnkApplication_Click(object sender, EventArgs e)
     {
+
         pnlApplicationList.Visible = true;
         pnlApplicationApproval.Visible = false;
         pnlRepport.Visible = false;
+        Panel1.Visible = false;
+       
 
     }
 
@@ -189,6 +196,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplicationList.Visible = false;
         pnlApplicationApproval.Visible = true;
         pnlRepport.Visible = false;
+        Panel1.Visible = false;
         BindListForApproval(Session["uid"].ToString());
 
     }
@@ -250,8 +258,9 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplication.Visible = false;
         pnlApplicationList.Visible = false;
         pnlApplicationApproval.Visible = false;
-        grdApplicationApproval.Visible = false;
+      
         pnlRepport.Visible = true;
+        Panel1.Visible = false;
         //SqlCommand cmd = new SqlCommand("proc_HOApplicationReport", con);
         //cmd.CommandType = CommandType.StoredProcedure;
         //cmd.Parameters.AddWithValue("@UserId", Session["uid"].ToString());
@@ -355,6 +364,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplicationList.Visible = false;
         pnlApplication.Visible = true;
         pnlRepport.Visible = false;
+        Panel1.Visible = false;
 
 
 
@@ -516,6 +526,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
             lblBranch.Text = dt.Rows[0]["branch"].ToString();
             lblIFSC.Text = dt.Rows[0]["ifsc"].ToString();
             lblEventtype.Text = dt.Rows[0]["eventType"].ToString();
+            txtRecommend.Text= dt.Rows[0]["registrarremark"].ToString();
 
 
 
@@ -523,7 +534,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
 
         btnApprove.Visible = false;
         btnRejectPop.Visible = false;
-        txtRemark.Visible = false;
+        divVCRemark.Visible = false;
 
 
 
@@ -568,12 +579,22 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
             lblBranch.Text = dt.Rows[0]["branch"].ToString();
             lblIFSC.Text = dt.Rows[0]["ifsc"].ToString();
             lblEventtype.Text = dt.Rows[0]["eventType"].ToString();
-
+            txtRecommend.Text = dt.Rows[0]["registrarremark"].ToString();
 
         }
         btnApprove.Visible = true;
         btnRejectPop.Visible = true;
-        txtRemark.Visible = true;
+        if (Session["uid"].ToString() == "TMU08026")
+        {
+            divVCRemark.Visible = true;
+            txtRecommend.Enabled = false;
+        }
+        else
+        {
+            divVCRemark.Visible = false;
+        }
+
+        
         ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
 
     }
@@ -750,5 +771,34 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
     protected void txtHonoAMT_TextChanged(object sender, EventArgs e)
     {
         txttravelAMT.Text = (Convert.ToDecimal(txtHonoAMT.Text) + Convert.ToDecimal(txttravelAll.Text)).ToString();
+    }
+
+    protected void lnkAllData_Click(object sender, EventArgs e)
+    {
+        Panel1.Visible = true;
+        pnlApplicationList.Visible = false;
+        pnlApplication.Visible = false;
+        pnlRepport.Visible = false;
+        pnlApplicationApproval.Visible = false;
+
+        BindListALL(Session["uid"].ToString());
+    }
+
+    public void BindListALL(string UserId)
+    {
+        SqlCommand cmd = new SqlCommand("[SP_GetHonorariumALL]", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Close();
+        da.Fill(dt);
+        if (dt.Rows.Count > 0)
+        {
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
     }
 }

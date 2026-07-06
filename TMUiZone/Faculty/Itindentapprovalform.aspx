@@ -191,11 +191,11 @@
 
                             </script>
 
-
+                            <div style="overflow:scroll;height:400px">
 
                             <asp:GridView ID="grdApproval" runat="server" AutoGenerateColumns="False" ForeColor="#333333" GridLines="None" DataKeyNames="DocumentNo"
                                 CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px"
-                                CellPadding="4" OnRowDataBound="grdApproval_RowDataBound" OnPageIndexChanging="grdApproval_PageIndexChanging" AllowPaging="True">
+                                CellPadding="4" OnRowDataBound="grdApproval_RowDataBound" OnPageIndexChanging="grdApproval_PageIndexChanging" >
                                 <Columns>
                                     <asp:TemplateField HeaderText="Indent No">
                                         <ItemTemplate>
@@ -257,7 +257,7 @@
                             </asp:GridView>
 
 
-
+                                </div>
 
 
                             <%--<script type="text/javascript" src="../jquery.min.js"></script>

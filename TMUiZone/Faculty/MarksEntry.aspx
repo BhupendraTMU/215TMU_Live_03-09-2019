@@ -291,7 +291,10 @@
 
             window.open('../Faculty/FacultyAwardlist.aspx'); return false;
         }
+        function OpenNewWindowCombine() {
 
+            window.open('../Faculty/FacultyCombineAwardlist.aspx'); return false;
+        }
         function funChkEnterAndMaxMarksNested(thisId, thisvalue) {
             var vtxtmark = thisId.id;
 
@@ -973,7 +976,7 @@
                             </td>
       <asp:DropDownList ID="drpCourseOpen" runat="server" Visible="false" Height="20px" Width="120px"></asp:DropDownList>
       <asp:LinkButton ID="lnkview" runat="server" OnClick="lnkview_Click" Text="View Main report"  Visible="false"></asp:LinkButton>
- 
+      
    
     
      </tr>
@@ -987,7 +990,10 @@
                      </asp:Panel>
             </fieldset>
              <div class="row" style="text-align:right;width:95%">
-                <asp:LinkButton ID="btnview" runat="server" OnClick="btnview_Click" Text="View Main report"  Visible="false"></asp:LinkButton>
+                <asp:LinkButton ID="btnview" runat="server" OnClick="btnview_Click" Text="View Main report"  Visible="false"></asp:LinkButton> &nbsp&nbsp&nbsp&nbsp&nbsp
+                
+                 <asp:LinkButton ID="lnkviewCombine" runat="server" OnClick="lnkviewCombine_Click" Text="View Combine report"  Visible="false"></asp:LinkButton>
+ 
             </div>
 
             <div class="row" style="text-align:right;width:95%">

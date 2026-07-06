@@ -68,7 +68,7 @@ public partial class Faculty_StudentInOutAproveGate : System.Web.UI.Page
     public void bindGatePassRequestList()
     {
 
-        string query = "SELECT case when [WardenStatus]=0 then 'Pending'  when [WardenStatus]=1 then 'Approve' when [WardenStatus]=2 then 'Reject'else 'Nothing' end WardenStatusText,'' CWardenStatusText,case when [InTime]=0 then 'Pending'  when [InTime]=1 then 'In' when [InTime]=2 then 'Reject' else 'Nothing' end  InTimeText,case when [OutTime]=0 then 'Pending'  when [OutTime]=1 then 'Out' when [OutTime]=2 then 'Reject' else 'Nothing' end OutTimeText,a1.ID, a1.[No_], [StudentName], [AcadmicYear], a1.[GatePassNo], [Class], [College], [Hostel], [RoomNo], [FormDate], [ToDate], [NoOfHours], [LunchStatus], [Reason], [WardenCode], [WardenStatus], [WardenRemark], [CWardenCode], [CWardenStatus], [CWardenRemark], a1.[GateMenCode], a1.OutTime, MAX(CASE WHEN a2.InOutStatus = 'out' THEN a2.DayDate END) AS OutTime1, a1.InTime, MAX(CASE WHEN a2.InOutStatus = 'in'  THEN a2.DayDate END) AS InTime1,  [CreatedBy], [CreatedAt], [UpdatedBy], [UpdatedAt] FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1 LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2 ON a1.GatePassNo = a2.GatePassNo WHERE (WardenStatus = 1 OR CWardenStatus = 1) GROUP BY a1.ID,a1.[No_],[StudentName],[AcadmicYear],a1.[GatePassNo],[Class],[College], [Hostel],[RoomNo],[FormDate],[ToDate],[NoOfHours],[LunchStatus],[Reason],a1.OutTime,a1.InTime, [WardenCode],[WardenStatus],[WardenRemark],[CWardenCode],[CWardenStatus],[CWardenRemark], a1.[GateMenCode],[CreatedBy],[CreatedAt],[UpdatedBy],[UpdatedAt] order by CreatedAt desc;";
+        string query = "SELECT case when [WardenStatus]=0 then 'Pending'  when [WardenStatus]=1 then 'Approve' when [WardenStatus]=2 then 'Reject'else 'Nothing' end WardenStatusText,'' CWardenStatusText,case when [InTime]=0 then 'Pending'  when [InTime]=1 then 'In' when [InTime]=2 then 'Reject' else 'Nothing' end  InTimeText,case when [OutTime]=0 then 'Pending'  when [OutTime]=1 then 'Out' when [OutTime]=2 then 'Reject' else 'Nothing' end OutTimeText,a1.ID, a1.[No_], [StudentName], [AcadmicYear], a1.[GatePassNo], [Class], [College], [Hostel], [RoomNo], [FormDate], [ToDate], [NoOfHours], [LunchStatus], [Reason], [WardenCode], [WardenStatus], [WardenRemark], [CWardenCode], [CWardenStatus], [CWardenRemark], a1.[GateMenCode], a1.OutTime, MAX(CASE WHEN a2.InOutStatus = 'out' THEN a2.DayDate END) AS OutTime1, a1.InTime, MAX(CASE WHEN a2.InOutStatus = 'in'  THEN a2.DayDate END) AS InTime1,  [CreatedBy], [CreatedAt], [UpdatedBy], [UpdatedAt] FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1 with(nolock) LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2  with(nolock) ON a1.GatePassNo = a2.GatePassNo WHERE (WardenStatus = 1 OR CWardenStatus = 1) GROUP BY a1.ID,a1.[No_],[StudentName],[AcadmicYear],a1.[GatePassNo],[Class],[College], [Hostel],[RoomNo],[FormDate],[ToDate],[NoOfHours],[LunchStatus],[Reason],a1.OutTime,a1.InTime, [WardenCode],[WardenStatus],[WardenRemark],[CWardenCode],[CWardenStatus],[CWardenRemark], a1.[GateMenCode],[CreatedBy],[CreatedAt],[UpdatedBy],[UpdatedAt] order by CreatedAt desc;";
 
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.CommandType = CommandType.Text;
@@ -171,8 +171,8 @@ public partial class Faculty_StudentInOutAproveGate : System.Web.UI.Page
                   ,[CreatedAt]
                   ,[UpdatedBy]
                   ,[UpdatedAt]
-            FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] gp 
-            INNER JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$Student - COLLEGE] s 
+            FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] gp  with(nolock)
+            INNER JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$Student - COLLEGE] s with(nolock)
                 ON s.No_ = gp.No_
           
        WHERE   GatePassNo = @gatPass";
@@ -249,7 +249,7 @@ public partial class Faculty_StudentInOutAproveGate : System.Web.UI.Page
                 con.Open();
                 cmd.ExecuteNonQuery();
                 txtGatePassNo.Text = "";
-                GetStudentByGatePassNo(gatePassNo);
+                //GetStudentByGatePassNo(gatePassNo);
                 //string MobileNo = "8077625096";
                 //string Msg = "This is to inform you that your ward, " + txtStudentName.Text + ", has been granted permission to going outside the hostel on " + dayDate + ". Out Time - " + outTime + " In Time - " + returntime + " - TEERTHANKER MAHAVEER UNIVERSITY";
 
@@ -304,7 +304,7 @@ public partial class Faculty_StudentInOutAproveGate : System.Web.UI.Page
                 con.Open();
                 cmd.ExecuteNonQuery();
                 txtGatePassNo.Text = "";
-                GetStudentByGatePassNo1(gatePassNo);
+                //GetStudentByGatePassNo1(gatePassNo);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Checked in successfully.');document.location.href='StudentInOutAproveGate.aspx';", true);
             }
             catch (SqlException ex)
@@ -355,8 +355,8 @@ SELECT
     [CreatedAt], 
     [UpdatedBy], 
     [UpdatedAt]
-FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1
-LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2 
+FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1 with(nolock)
+LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2 with(nolock)
        ON a1.GatePassNo = a2.GatePassNo
 WHERE a1.[ID] = @StudentNo
 GROUP BY 
@@ -775,8 +775,8 @@ GROUP BY
             a1.InTime,
             MAX(CASE WHEN a2.InOutStatus = 'in' THEN a2.DayDate END) AS InTime1,  
             [CreatedBy], [CreatedAt], [UpdatedBy], [UpdatedAt] 
-        FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1 
-        LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2 
+        FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInfo] a1 with(nolock)
+        LEFT JOIN [EDUCOLLEGELIVE-R2].[dbo].[TMU$StudentGatePassInOutInfo] a2 with(nolock)
             ON a1.GatePassNo = a2.GatePassNo 
         WHERE (WardenStatus = 1 OR CWardenStatus = 1)
     ";

@@ -2129,7 +2129,7 @@ public partial class Faculty_Research_Incentive : System.Web.UI.Page
             con.Open();
         cmd.ExecuteNonQuery();
         con.Close();
-        SqlDataAdapter da1 = new SqlDataAdapter("select applicant_name,(Select Title_of_paper from tbl_ResearchIncentive_Title where id=Application_Title) Title,(Select Name_of_journal from tbl_ResearchIncentive_Title where id=Application_Title) Journal,YEAR(convert(date,DOP,105)) 'Year',ApprovedAmount,(Select [Company E-Mail] from [EDUCOLLEGELIVE-R2].dbo.[Employee] where No_ collate Latin1_General_100_CS_AS=applicant_code)  CompanyEmail from tbl_Research_Incentive where Application_No_='" + TextBox3.Text + "'", con);
+        SqlDataAdapter da1 = new SqlDataAdapter("select applicant_name,(Select Title_of_paper from tbl_ResearchIncentive_Title where id=Application_Title) Title,(Select Name_of_journal from tbl_ResearchIncentive_Title where id=Application_Title) Journal,YEAR(convert(date,DOP,105)) 'Year',ApprovedAmount,(Select [Company E-Mail] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_100_CS_AS=applicant_code)  CompanyEmail from tbl_Research_Incentive where Application_No_='" + TextBox3.Text + "'", con);
         DataTable dt1 = new DataTable();
         da1.Fill(dt1);
 

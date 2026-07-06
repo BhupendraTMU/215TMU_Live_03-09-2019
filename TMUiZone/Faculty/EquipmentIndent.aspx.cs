@@ -634,7 +634,7 @@ public partial class Faculty_EquipmentIndent : System.Web.UI.Page
             con1.Open();
         }
 
-        string s = "SELECT  I.Description AS Name,  I.[No_] AS Itemcode,  I.[Inventory Posting Group],  SUM(L.[Remaining Quantity]) AS RemainingQty FROM  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item] I INNER JOIN  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item Ledger Entry] L  ON I.[No_] = L.[Item No_] WHERE   I.[Inventory Posting Group] = 'HOSEQP' and   [Item Category]!='ACCESSORIES' GROUP BY  I.Description, I.[No_], I.[Inventory Posting Group] HAVING SUM(L.[Remaining Quantity]) > 0";
+        string s = "SELECT  I.Description AS Name,  I.[No_] AS Itemcode,  I.[Inventory Posting Group],  SUM(L.[Remaining Quantity]) AS RemainingQty FROM  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item] I INNER JOIN  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item Ledger Entry] L  ON I.[No_] = L.[Item No_]   GROUP BY  I.Description, I.[No_], I.[Inventory Posting Group] HAVING SUM(L.[Remaining Quantity]) > 0";
 
         SqlCommand cmd = new SqlCommand(s, con1);
         SqlDataReader dr = cmd.ExecuteReader();
@@ -682,7 +682,7 @@ public partial class Faculty_EquipmentIndent : System.Web.UI.Page
         {
             con1.Open();
         }
-        string s = "SELECT  I.Description ,[No_],[Base Unit of Measure],[Gen_ Prod_ Posting Group],  SUM(L.[Remaining Quantity]) AS RemainingQty FROM  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item] I INNER JOIN  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item Ledger Entry] L  ON I.[No_] = L.[Item No_] WHERE I.[Inventory Posting Group] = 'HOSEQP' and   [Item Category]!='ACCESSORIES' and [No_]='" + Code + "' GROUP BY  I.Description, I.[No_], I.[Base Unit of Measure],I.[Gen_ Prod_ Posting Group]";
+        string s = "SELECT  I.Description ,[No_],[Base Unit of Measure],[Gen_ Prod_ Posting Group],  SUM(L.[Remaining Quantity]) AS RemainingQty FROM  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item] I INNER JOIN  [NAAC_ADV_TEST].dbo.[TMU Hospital$Item Ledger Entry] L  ON I.[No_] = L.[Item No_] WHERE    [Item Category]!='ACCESSORIES' and [No_]='" + Code + "' GROUP BY  I.Description, I.[No_], I.[Base Unit of Measure],I.[Gen_ Prod_ Posting Group]";
 
         SqlCommand cmd = new SqlCommand(s, con1);
         SqlDataReader dr = cmd.ExecuteReader();

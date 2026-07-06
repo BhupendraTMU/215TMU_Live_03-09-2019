@@ -2783,6 +2783,8 @@ public partial class LeaveApproval : System.Web.UI.Page
             String sDate = DateTime.Now.ToString();
             DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
 
+           CheckBox  chkMark = (CheckBox)e.Row.FindControl("chkMark");
+
             int day = datevalue.Day;
             int mn = datevalue.Month;
             int yy = datevalue.Year;
@@ -2790,14 +2792,14 @@ public partial class LeaveApproval : System.Web.UI.Page
             {
                 if (day > 5 && fmn < mn)
                 {
-                    e.Row.Visible = false;
+                    chkMark.Enabled = false;
                 }
             }
             else
             {
                 if (day > 4 && fmn < mn)
                 {
-                    e.Row.Visible = false;
+                    chkMark.Enabled = false;
                 }
             }
 

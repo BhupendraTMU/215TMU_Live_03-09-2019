@@ -289,17 +289,52 @@ public partial class Student_StudentAdmitCard : System.Web.UI.Page
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Select Sem/Year.')", true);
             return;
         }
-        //SqlDataAdapter da1 = new SqlDataAdapter("select count(*) C from [tbl_StudentUpdatedMobileNo] where  [studentno]='" + Session["enroll"].ToString() + "' and [semester] ='" + ddlSem.SelectedValue + "' and [status]=1 ", con);
-        //DataTable dt1 = new DataTable();
-        //da1.Fill(dt1);
-        //if (dt1.Rows[0]["C"].ToString() == "0")
-        //{
-        //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Verify your Mobile No.')", true);
-        //    pnl1.Visible = true;
-        //    return;
-        //}
-        //else
-        //{
+        try
+        {
+            SqlCommand cmd = new SqlCommand("Sp_FetchExaminationFeeDetailsmain", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            if (con.State == ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            cmd.Parameters.AddWithValue("@StudentNo", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@filtersemester", ddlSem.SelectedValue);
+            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Close();
+            da.Fill(dt);
+          
+            if (dt.Rows.Count > 0 )
+            {
+                if(Convert.ToInt32(dt.Rows[0]["Due Amount"]) > 0 && dt.Rows[0]["DRCC"].ToString()!="1")
+                {
+                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Clear Your Dues.')", true);
+                    return;
+                }
+            }
+          
+        }
+        catch(Exception)
+        {
+            Response.Redirect("StudentAdmitCard.aspx");
+        }
+
+
+
+
+
+            //SqlDataAdapter da1 = new SqlDataAdapter("select count(*) C from [tbl_StudentUpdatedMobileNo] where  [studentno]='" + Session["enroll"].ToString() + "' and [semester] ='" + ddlSem.SelectedValue + "' and [status]=1 ", con);
+            //DataTable dt1 = new DataTable();
+            //da1.Fill(dt1);
+            //if (dt1.Rows[0]["C"].ToString() == "0")
+            //{
+            //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Verify your Mobile No.')", true);
+            //    pnl1.Visible = true;
+            //    return;
+            //}
+            //else
+            //{
 
             bindAdmitcard();
             //pnl1.Visible = false;

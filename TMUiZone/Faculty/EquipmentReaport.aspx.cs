@@ -326,7 +326,7 @@ public partial class Faculty_EquipmentReaport : System.Web.UI.Page
     private void LoadFA(string equipmentNo)
     {
         // Example Query (apne table ke hisab se change karo)
-        string query = "select No_,Description,[Location Code], CASE  WHEN [Warranty Date] = '1753-01-01 00:00:00.000' THEN ''  ELSE CONVERT(VARCHAR(10), [Warranty Date], 103) END AS [Warranty Date],[Serial No_],CASE  WHEN [Next Service Date] = '1753-01-01 00:00:00.000' THEN ''  ELSE CONVERT(VARCHAR(10), [Next Service Date], 103) END AS [Next Service Date] ,Brand,Model, CASE WHEN [Date of Installation] = '1753-01-01 00:00:00.000' THEN ''  ELSE CONVERT(VARCHAR(10), [Date of Installation], 103)  END AS [Date of Installation],[Department Name] from [NAAC_ADV_TEST].dbo.[TMU Hospital$Fixed Asset] where [Item No]      = '" + equipmentNo + "'";
+        string query = "select No_,Description,[Location Code], CASE  WHEN [OEM Warranty] = '1753-01-01 00:00:00.000' THEN ''  ELSE CONVERT(VARCHAR(10),\r\n[OEM Warranty], 103) END AS [Warranty Date],[Serial No_],CASE  WHEN [Next Service Date] = '1753-01-01 00:00:00.000' THEN ''  ELSE \r\nCONVERT(VARCHAR(10), [Next Service Date], 103) END AS [Next Service Date] ,Brand,Model,\r\nCASE WHEN [Date of Installation] = '1753-01-01 00:00:00.000' THEN ''  ELSE CONVERT(VARCHAR(10), [Date of Installation], 103)  \r\nEND AS [Date of Installation],[Department Name] from [NAAC_ADV_TEST].dbo.[TMU Hospital$Fixed Asset] where [Item No]      = '" + equipmentNo + "'";
 
         DataTable dt = new DataTable();
 

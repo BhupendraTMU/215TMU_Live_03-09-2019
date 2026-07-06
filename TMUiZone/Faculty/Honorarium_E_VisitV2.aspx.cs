@@ -20,11 +20,31 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         {
             try
             {
-                
+ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('access denied ?'); document.location.href='FacultyDetails.aspx';", true);
+                //if (Session["UserGroup"].ToString() != "PRINCIPAL" && Session["UserGroup"].ToString() != "REGISTRAR" && Session["uid"].ToString() != "TMU00283" && Session["uid"].ToString() != "TMU08026" && Session["uid"].ToString() != "TMU00525" && Session["uid"].ToString() != "TMU05294" && Session["uid"].ToString() != "TMU00260" )
+                //{
+                //    ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('access denied ?'); document.location.href='FacultyDetails.aspx';", true);
+                //}
                 calculateAmt(drpDesignation.SelectedValue, drpMode.SelectedValue);
                 BindList(Session["uid"].ToString());
                 BindTaskList();
-                BindCollege();               
+                BindCollege();
+                //if (Session["uid"].ToString() == "TMU00525" || Session["uid"].ToString() == "TMU00260" )
+                //{
+                //    divSupport.Visible = true;
+
+
+
+                //}
+                //else
+                //{
+
+                //        ListItem removeItem4 = drpDesignation.Items.FindByValue("Others");
+                //        drpDesignation.Items.Remove(removeItem4);
+
+
+
+                //}
 
             }
             catch (Exception ex)
@@ -867,12 +887,6 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
     }
     protected void txtHonoAMT_TextChanged(object sender, EventArgs e)
     {
-        decimal honoAmt = 0;
-        decimal travelAll = 0;
-
-        decimal.TryParse(txtHonoAMT.Text, out honoAmt);
-        decimal.TryParse(txttravelAll.Text, out travelAll);
-
-        txttravelAMT.Text = (honoAmt + travelAll).ToString("F2");
+        txttravelAMT.Text = (Convert.ToDecimal(txtHonoAMT.Text) + Convert.ToDecimal(txttravelAll.Text)).ToString();
     }
 }

@@ -126,7 +126,7 @@ public partial class Faculty_EquipmentApproval : System.Web.UI.Page
             //}
             //else
             //{
-                SqlDataAdapter da = new SqlDataAdapter("select count([HOD Appr_ QTY]) as AppQty from [NAAC_ADV_TEST].dbo.[TMU Hospital$Equipment Indent Line] where[Document No] = '" + documentno + "' and [HOD Appr_ QTY] = 0 ", con1);
+                SqlDataAdapter da = new SqlDataAdapter("select count([HOD Appr_ QTY]) as AppQty from [NAAC_ADV_TEST].dbo.[TMU Hospital$Equipment Indent Line] with(nolock) where[Document No] = '" + documentno + "' and [HOD Appr_ QTY] = 0 ", con1);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -192,6 +192,27 @@ public partial class Faculty_EquipmentApproval : System.Web.UI.Page
                     }
                     else
                     {
+                        if (ddStatus.SelectedValue == "7")
+                        {
+                        cmd.CommandText = @"select [Remarks- HOD] HodRemark,
+                        [Remarks- Management] Management_remark,
+                        No_ DocumentNo,
+                        [Issue Date],
+                        [Issue Id],
+                        [Issue Name],
+                        [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Approved' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='6' THEN 'Partially Issued' WHEN [Status] ='7' THEN 'Rejected from BME' WHEN [Status] ='10' THEN 'Item Received'  ELSE '' END,[Issue For]
+                        from " + table + @" 
+                        where 
+                         convert(date,[Issue Date],103)>=@fromdate
+                        and convert(date,[Issue Date],103)<=@todate
+                        order by No_ desc";
+
+                           
+                            cmd.Parameters.AddWithValue("@fromdate", txtFromDate.Text);
+                            cmd.Parameters.AddWithValue("@todate", txtTillDate.Text);
+                        }
+                        else
+                        {
                         cmd.CommandText = @"select [Remarks- HOD] HodRemark,
                         [Remarks- Management] Management_remark,
                         No_ DocumentNo,
@@ -204,10 +225,10 @@ public partial class Faculty_EquipmentApproval : System.Web.UI.Page
                         and convert(date,[Issue Date],103)>=@fromdate
                         and convert(date,[Issue Date],103)<=@todate
                         order by No_ desc";
-
-                        cmd.Parameters.AddWithValue("@status", ddStatus.SelectedValue);
-                        cmd.Parameters.AddWithValue("@fromdate", txtFromDate.Text);
-                        cmd.Parameters.AddWithValue("@todate", txtTillDate.Text);
+                            cmd.Parameters.AddWithValue("@status", ddStatus.SelectedValue);
+                            cmd.Parameters.AddWithValue("@fromdate", txtFromDate.Text);
+                            cmd.Parameters.AddWithValue("@todate", txtTillDate.Text);
+                        }
                     }
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -221,7 +242,7 @@ public partial class Faculty_EquipmentApproval : System.Web.UI.Page
         }
         catch
         {
-            Alert("Error loading data");
+            Response.Redirect("EquipmentApproval.aspx");
         }
     }
     protected void grdViewIndentLine_PageIndexChanging(object sender, GridViewPageEventArgs e)

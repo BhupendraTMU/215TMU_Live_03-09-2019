@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Globalization;
 
 public partial class Faculty_exitinterviewform : System.Web.UI.Page
 {
@@ -65,7 +66,7 @@ public partial class Faculty_exitinterviewform : System.Web.UI.Page
                     else
                     {
 
-                        
+
                         DateTime doj1 = Convert.ToDateTime(dt.Rows[0]["Resignation Date"]);
                         txtapplyingresignation.Text = doj1.ToString("dd-MM-yyyy");
                     }
@@ -121,14 +122,22 @@ public partial class Faculty_exitinterviewform : System.Web.UI.Page
                         // txtapplyingresignation.Text = dr["Date Of Resignation"].ToString();
                         //lblDateofJoining.Text = dr["FormattedDate1"].ToString();
 
-                        DateTime doj = Convert.ToDateTime(dr["FormattedDate1"]);
+                        DateTime doj = DateTime.ParseExact(
+    dr["FormattedDate1"].ToString(),
+    "dd-MM-yyyy hh:mm:ss tt",
+    CultureInfo.InvariantCulture
+);
                         lblDateofJoining.Text = doj.ToString("dd-MM-yyyy");
 
                         //txtapplyingresignation.Text = dr["FormattedDate"].ToString();
+                        DateTime doj1 = DateTime.ParseExact(
+    dr["FormattedDate"].ToString(),
+    "dd-MM-yyyy hh:mm:ss tt",
+    CultureInfo.InvariantCulture
+);
 
-
-                        DateTime doj1 = Convert.ToDateTime(dr["FormattedDate"]);
-                        txtapplyingresignation.Text = doj.ToString("dd-MM-yyyy");
+                       
+                        txtapplyingresignation.Text = doj1.ToString("dd-MM-yyyy");
 
 
                         txtEmail.Text = dr["Email ID"].ToString();
@@ -196,12 +205,12 @@ public partial class Faculty_exitinterviewform : System.Web.UI.Page
                         lbldesignation.Text = dr["Designation"].ToString();
                         lblInstitution.Text = dr["Institution"].ToString();
                         lblnameofHOD.Text = dr["HOD"].ToString();
-                        
+
 
                         DateTime doj = Convert.ToDateTime(dr["Date Of Joining"]);
                         lblDateofJoining.Text = doj.ToString("dd-MM-yyyy");
 
-                        
+
 
                         DateTime doj1 = Convert.ToDateTime(dr["Date Of Resignation"]);
                         txtapplyingresignation.Text = doj1.ToString("dd-MM-yyyy");
