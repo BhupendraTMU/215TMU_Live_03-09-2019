@@ -358,12 +358,16 @@
                          </ul>
                      </li>
                       <li style="margin-left: 0px" id="licopomapping" runat="server" ><a href="../Faculty/Co_PO_Mapping.aspx"><b>CO PO Mapping</b></a> </li>
+<<<<<<< HEAD
 <li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
+=======
+                    <li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
+>>>>>>> 3fbf0d7c7286e703bf570b6c1bcac6b315bea3d0
                       <li class="dropdown" style="">
 
                           <a href="#" class="sf-with-ul" runat="server" id="Report" visible="false">Report<span class="sf-sub-indicator"  runat="server" id="span13">»</span></a>
                          <ul class="dropdown-menu">
-                     <li><a href="~/Faculty/AwardList.aspx" id="ReportInternalAssesment" runat="server" visible="false"><b>Main Award List</b></a></li>
+                              <li><a href="~/Faculty/AwardList.aspx" id="ReportInternalAssesment" runat="server" visible="false"><b>Main Award List</b></a></li>
                               <li><a href="~/Faculty/OBEReport.aspx" id="OBEReport" runat="server" visible="false"><b>OBE Report</b></a></li>
 
                      <li><a href="~/Faculty/Report.aspx" id="ReportInternalAward" runat="server" visible="false"><b>Internal Award List</b></a></li>
@@ -587,8 +591,10 @@
     <li><a href="~/Faculty/NoDues.aspx" id="No_Dues" runat="server" visible="false" ><b>No Dues</b></a></li>
  <li><a href="~/Faculty/NoDuesApproval.aspx" id="NoDuesApproval" runat="server" visible="true" ><b>No Dues Approval</b></a></li>
              <li><a href="~/Faculty/StudentNoDuesApproval.aspx" id="StudentNoDuesApproval" runat="server" visible="true" ><b>Student Dues Approval</b></a></li>
+
  <li><a href="~/Faculty/StudentNoDuesApprovalList.aspx" id="StudentNoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li> 
  <li><a href="~/Faculty/NoDuesApprovalList.aspx" id="NoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li>
+<li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD Student No Dues Approval</b></a></li>  
  <li><a href="~/Faculty/JainStudentAttendance.aspx" id="JainStudentAttendance" runat="server" visible="false" ><b>Jain Student Attendance List</b></a></li>
              <li><a href="~/Faculty/Research_Incentive.aspx" id="ResearchIncentive" runat="server" visible="false" ><b>Research Incentive</b></a></li>
 <li runat="server" id="LiSeedmoney"  ><a href="../Faculty/Seedmoney.aspx"  ><b>Seed Money</b></a></li>

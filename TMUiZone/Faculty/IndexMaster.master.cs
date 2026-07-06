@@ -28,6 +28,16 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 lnk_mentor_allocation.Visible = true;
             }
 
+            if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
+            {
+                //HR DepCode: D228,PAYROLL SECTION DepCode=D213,ACCOUNT SECTION DepCode=D039
+                IdPHDStudentNoDuesApproval.Visible = true;
+            }
+            //else
+            //{
+            //    IdPHDStudentNoDuesApproval.Visible = false;
+            //}
+
             con1.Open();
 
             SqlCommand cmdT = new SqlCommand("select count(*) as c from [HRMSPortal].dbo.[tble_Exit_Interview_Form] where [Employee Code]='" + Session["uid"].ToString() + "' AND Status='Submit' and (Hod_Status!='Rejected By HOD' and Hr_Status!='Rejected By HR')", con1);
@@ -199,7 +209,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             else
             {
                 NoDuesApprovalList.Visible = true;
-            }
+            }                      
 
             GetLinkData();//===================>Add New Function For Show Hide Link Using DataBase Role
             showlib();
@@ -858,7 +868,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     public void GetLinkData()
     {
 
-        DataTable dt = new DataTable();
+        DataTable dt = new DataTable();        
         dt = con.GetLink(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
         for (int i = 0; i < dt.Rows.Count; i++)
         {
@@ -1305,6 +1315,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             if (dt.Rows[i]["PageId"].ToString() == "ReportInternalAssesment") { ReportInternalAssesment.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "OBEReport") { OBEReport.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "ReportInternalAward") { ReportInternalAward.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "NEPExistsReport") { ReportInternalAward.Visible = true; }
 
             if (dt.Rows[i]["PageId"].ToString() == "ExternalAwardList") { ExternalAwardList.Visible = true; }
             //if (dt.Rows[i]["PageId"].ToString() == "ReAppearAwardList") { ReAppearAwardList.Visible = true; }
@@ -1452,6 +1463,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         if (Session["uid"].ToString() == "TMU00865")
         {
             StudentReExamination1.Visible = true;
+<<<<<<< HEAD
 
         }
         if (Session["uid"].ToString() == "TMU07001" || Session["uid"].ToString() == "TMU06106" || Session["uid"].ToString() == "TMU07417" || Session["uid"].ToString() == "TMU07473")
@@ -1463,6 +1475,9 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             DigilockerErrorUpload.Visible = true;
         }
 
+=======
+        }        
+>>>>>>> 3fbf0d7c7286e703bf570b6c1bcac6b315bea3d0
         //if (Session[].ToString() == "1")
         //{
         //    ReviewAttendance_New.Visible = false;
@@ -1580,7 +1595,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
         {
-            string strSQL = "select count(*)  Employee_Code from HRMSPortal.dbo.Tbl_ResearchFellowEmployee  where [Employee_Code] ='" + Session["uid"].ToString() + "'";
+            string strSQL = "select count(*)  Employee_Code from [HRMSPortal].dbo.Tbl_ResearchFellowEmployee  where [Employee_Code] ='" + Session["uid"].ToString() + "'";
 
             {
                 SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
@@ -1597,7 +1612,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
         {
-            string strSQL = "select replace([Total Duration],'Days','')-DATEDIFF(day, [Date Of Resignation],getdate()) as ResigDay from  HRMSPortal.dbo.tble_Exit_Interview_Form  where [Employee Code] ='" + Session["uid"].ToString() + "' and Status='Submit' ";
+            string strSQL = "select replace([Total Duration],'Days','')-DATEDIFF(day, [Date Of Resignation],getdate()) as ResigDay from  [HRMSPortal].dbo.tble_Exit_Interview_Form  where [Employee Code] ='" + Session["uid"].ToString() + "' and Status='Submit' ";
             {
                 SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
                 DataTable dt = new DataTable();
