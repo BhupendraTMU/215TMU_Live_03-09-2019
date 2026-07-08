@@ -81,12 +81,14 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
                 if (Session["College"].ToString() == "TPHD")
                 {
-                    liIdStudentNoDuesPhd.Visible = true;                   
+                    liIdStudentNoDuesPhd.Visible = true;
+                    IdCRACMeetingPHDStudent.Visible = true;
                 }
                 else
                 {
                     string gdg = Session["College"].ToString();
                     liIdStudentNoDuesPhd.Visible = false;
+                    IdCRACMeetingPHDStudent.Visible = false;
                 }
 
 
