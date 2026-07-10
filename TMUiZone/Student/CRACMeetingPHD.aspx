@@ -1,4 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Alumni_CRACMeeting" MasterPageFile="~/Alumni/IndexMaster.master" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Student/IndexMaster.master" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Student_CRACMeeting" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
         .phd-form .input-box {
@@ -53,7 +54,7 @@
              <div class="col-md-4">
                  <label class="field-label">CRAC Meeting :</label>
                  <asp:DropDownList ID="ddlCRACMeeting" runat="server" CssClass="form-control input-box" AutoPostBack="true" OnSelectedIndexChanged="ddlCRACMeeting_SelectedIndexChanged">
-                     <asp:ListItem Text="-- Select --" Value="" />
+                     <asp:ListItem Text="Select" Value="" />
                      <asp:ListItem Text="I-CRAC" Value="1" />
                      <asp:ListItem Text="II-CRAC" Value="2" />
                      <asp:ListItem Text="III-CRAC" Value="3" />
@@ -102,7 +103,7 @@
 
 
     <div style="margin-top: 18px">
-        <asp:GridView ID="gvPhdFees" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered table-condensed" OnRowDataBound="gvPhdFees_RowDataBound">
+        <asp:GridView ID="gvPhdFees" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered table-condensed" EmptyDataText="Fee setup is pending. Please contact the Accounts Department." OnRowDataBound="gvPhdFees_RowDataBound">
             <Columns>
                 <asp:BoundField HeaderText="Fee Description" DataField="FeeDescription" />
                  <asp:BoundField HeaderText="Fee Amount (Rs.)" DataField="FeeAmount" DataFormatString="{0:N2}" />
@@ -114,18 +115,19 @@
                 <asp:BoundField HeaderText="Payment Date" DataField="PaymentDate" />               
                 <asp:BoundField HeaderText="Academic Year" DataField="AcademicYear" />
                  <asp:BoundField HeaderText="Admitted Year" DataField="Admitted Year" />
-                <asp:TemplateField HeaderText="Action">
+               <%-- <asp:TemplateField HeaderText="Action">
                     <ItemTemplate>
                         <asp:LinkButton ID="lnkPayNow" runat="server" Text="Pay Now" CssClass="btn btn-xs btn-primary" OnClick="lnkPayNow_Click"
+                            Visible='<%# Eval("Status").ToString().ToLower().Contains("pending") %>'
                             CommandArgument='<%# Eval("FeeDescription") %>' />
                     </ItemTemplate>
-                </asp:TemplateField>
+                </asp:TemplateField>--%>
             </Columns>
         </asp:GridView>
     </div>
 
     <div style="margin-top: 12px; text-align: right">
-        <asp:Button ID="btnPhdSave" runat="server" Text="Save" CssClass="btn btn-primary" OnClick="btnPhdSave_Click" Visible="true" />
+        <asp:Button ID="btnPhdSave" runat="server" Text="Save" CssClass="btn btn-primary" OnClick="btnPhdSave_Click" Visible="false" />
     </div>
     </div>
     <!-- end PhD panel moved outside divnodues so it can be shown independently -->

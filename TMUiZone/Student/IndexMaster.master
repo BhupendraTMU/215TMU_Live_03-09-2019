@@ -313,6 +313,7 @@
                                                     <li style="margin-left: 0px"><a href="StudentExamdatesheetExternal.aspx"><b>External Date Sheet</b></a></li>
                                                     <li style="margin-left: 0px"><a href="ExaminationForm.aspx"><b>Exam Form Main</b></a> </li>
                                                     <li style="margin-left: 0px"  ><a href="ReappearedExamination.aspx"><b>Exam Form Reappear</b></a></li>
+                                                    <li style="margin-left: 0px"><a href="CRACMeetingPHD.aspx"><b>CRAC Meeting</b></a></li>
                                                   <%--  <li style="margin-left: 0px"><a href="ExamFormStatus.aspx"><b>Exam Form Status</b></a></li> --%>
                                                 </ul>
                                             </li>
