@@ -17,21 +17,20 @@
                 padding: 8px;
             }
 
-            ./*JainStudentList tr:nth-child(even) {
+        . /*JainStudentList tr:nth-child(even) {
                 background-color: #f2f2f2;
             }*/
+        .JainStudentList tr:hover {
+            background-color: #ddd;
+        }
 
-            .JainStudentList tr:hover {
-                background-color: #ddd;
-            }
-
-            .JainStudentList th {
-                padding-top: 12px;
-                padding-bottom: 12px;
-                text-align: left;
-                background-color: #04AA6D;
-                color: white;
-            }
+        .JainStudentList th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
 
         .btn {
             padding: 4px 10px;
@@ -106,41 +105,6 @@
                         <asp:Label ID="lblTarget" runat="server" Text='<%# Bind("[Target Value]") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Jan" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblJanuary" runat="server" Text='<%# Bind("[January]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:TemplateField HeaderText="Feb" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblFebruary" runat="server" Text='<%# Bind("[February]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:TemplateField HeaderText="March" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblMarch" runat="server" Text='<%# Bind("[March]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:TemplateField HeaderText="April" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblApril" runat="server" Text='<%# Bind("[April]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:TemplateField HeaderText="May" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblMay" runat="server" Text='<%# Bind("[May]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-
-                <asp:TemplateField HeaderText="June" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                    <ItemTemplate>
-                        <asp:Label ID="lblJune" runat="server" Text='<%# Bind("[June]") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
 
                 <asp:TemplateField HeaderText="July" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
@@ -177,6 +141,42 @@
                         <asp:Label ID="lblDecember" runat="server" Text='<%# Bind("[December]") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
+                <asp:TemplateField HeaderText="Jan" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblJanuary" runat="server" Text='<%# Bind("[January]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="Feb" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblFebruary" runat="server" Text='<%# Bind("[February]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="March" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblMarch" runat="server" Text='<%# Bind("[March]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="April" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblApril" runat="server" Text='<%# Bind("[April]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="May" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblMay" runat="server" Text='<%# Bind("[May]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="June" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblJune" runat="server" Text='<%# Bind("[June]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+
                 <asp:TemplateField HeaderText="Cumulative" ItemStyle-Width="2%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
                         <asp:Label ID="lblCumulative" runat="server" Text='<%# Bind("[Cumulative]") %>'></asp:Label>
@@ -187,7 +187,7 @@
 
 
             </Columns>
-            
+
         </asp:GridView>
     </div>
 </asp:Content>

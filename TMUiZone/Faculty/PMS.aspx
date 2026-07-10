@@ -305,8 +305,8 @@
 								   
 								   <td>
 									   <asp:DropDownList ID="drpMonth" runat="server" AutoPostBack="true"  CssClass="textbox">
-
-    <asp:ListItem Value="1">January</asp:ListItem>
+   <asp:ListItem Value="0" style="font-weight:bold;">Annual</asp:ListItem>
+   <%-- <asp:ListItem Value="1">January</asp:ListItem>
     <asp:ListItem Value="2">February</asp:ListItem>
     <asp:ListItem Value="3">March</asp:ListItem>
     <asp:ListItem Value="4">April</asp:ListItem>
@@ -317,7 +317,7 @@
     <asp:ListItem Value="9">September</asp:ListItem>
     <asp:ListItem Value="10">October</asp:ListItem>
     <asp:ListItem Value="11">November</asp:ListItem>
-    <asp:ListItem Value="12">December</asp:ListItem>
+    <asp:ListItem Value="12">December</asp:ListItem>--%>
 
 </asp:DropDownList>
 								   </td>
@@ -4096,7 +4096,125 @@
 
                         
    <asp:HiddenField ID="hfApplication" runat="server" ></asp:HiddenField>
-                    <div id="F_1" runat="server" visible="false">
+                   
+                       <div id="divcommon" runat="server" visible="false" class="card border-0 shadow rounded-3">
+
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="fa fa-paperclip"></i> Upload Attachment
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <asp:UpdatePanel ID="UpdatePanel4" runat="server">
+    <ContentTemplate>
+
+        <div class="row g-3">
+
+            <!-- Attachment -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">
+                    Attachment <span class="text-danger">*</span>
+                </label>
+
+                <asp:FileUpload ID="fuAttachment"
+                    runat="server"
+                    CssClass="form-control" />
+            </div>
+
+            <!-- Description -->
+            <div class="col-md-6">
+                <label class="form-label fw-bold">
+                    Brief Description
+                </label>
+
+                <asp:TextBox ID="txtBriefDescription"
+                    runat="server"
+                    CssClass="form-control"
+                    TextMode="MultiLine"
+                    Rows="2"
+                    placeholder="Enter brief description...">
+                </asp:TextBox>
+            </div>
+
+            <!-- Upload Button -->
+            <div class="col-md-2 d-flex align-items-end">
+                <asp:Button ID="btnUpload"
+                    runat="server"
+                    Text="Upload"
+                    CssClass="btn btn-success w-100"
+                    OnClick="btnUpload_Click" />
+            </div>
+
+        </div>
+
+    </ContentTemplate>
+
+    <Triggers>
+        <asp:PostBackTrigger ControlID="btnUpload" />
+        <asp:PostBackTrigger ControlID="gvAttachment" />
+    </Triggers>
+
+</asp:UpdatePanel>
+
+        <hr />
+
+        <div class="table-responsive">
+
+            <asp:GridView ID="gvAttachment"
+                runat="server"
+                AutoGenerateColumns="False"
+                CssClass="table table-hover table-bordered align-middle text-center"
+                HeaderStyle-CssClass="table-dark"
+                EmptyDataText="No attachment uploaded."
+                DataKeyNames="AutoNo">
+
+                <Columns>
+
+                    <asp:TemplateField HeaderText="S.No.">
+                        <ItemTemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </ItemTemplate>
+                        <ItemStyle Width="60px" />
+                    </asp:TemplateField>
+
+                    <asp:BoundField DataField="Attachment_FileName" HeaderText="File Name" />
+
+                    <asp:BoundField DataField="description"
+                        HeaderText="Brief Description" />
+
+                    <asp:TemplateField HeaderText="Download">
+                        <ItemTemplate>
+
+                            <asp:LinkButton
+                                ID="lnk_A1_Downalod"
+                                runat="server"
+                                CssClass="btn btn-sm btn-primary"
+                                CommandArgument='<%# Eval("AutoNo") %>'
+                                OnCommand="lnk_A1_Downalod_Command">
+
+                                <i class="fa fa-download"></i>
+                                View / Download
+
+                            </asp:LinkButton>
+
+                        </ItemTemplate>
+                        <ItemStyle Width="170px" />
+                    </asp:TemplateField>
+
+                </Columns>
+
+            </asp:GridView>
+
+        </div>
+
+    </div>
+
+</div>
+                           
+                        
+                        <div id="F_1" runat="server" visible="false">
 
 
                                 <div class="col-sm-3 p-0" style="margin-top:5px">
@@ -4401,7 +4519,7 @@
 </div>
 
                                 
-                   <div id="F_3" runat="server" visible="true"
+   <div id="F_3" runat="server" visible="false"
      class="mb-3 p-4"
      style="max-width:850px; margin:auto; border:1px solid #ddd; border-radius:8px; background:#f8f9fa;">
 
@@ -4506,11 +4624,11 @@
 
 </div>
 					
-					<div id="F_4" runat="server" visible="true"
+					<div id="F_4" runat="server" visible="false"
      class="mb-3 p-4"
      style="max-width:850px; margin:auto; border:1px solid #ddd; border-radius:8px; background:#f8f9fa;">
 
-    <asp:UpdatePanel ID="UpdatePanelF4" runat="server">
+    <asp:UpdatePanel ID="UpdatePanelF4" runat="server" >
         <ContentTemplate>
 
             <h5 class="mb-3 text-primary">F-4 Book / Edited Book Upload</h5>
@@ -4619,11 +4737,11 @@
                      
 
 
-			<div id="F_5" runat="server" visible="true"
+			<div id="F_5" runat="server" visible="false"
      class="mb-3 p-4"
      style="max-width:850px; margin:auto; border:1px solid #ddd; border-radius:8px; background:#f8f9fa;">
 
-    <asp:UpdatePanel ID="UpdatePanelF5" runat="server">
+    <asp:UpdatePanel ID="UpdatePanelF5" runat="server" >
         <ContentTemplate>
 
             <h5 class="mb-3 text-primary">F-5 Book / Edited Book</h5>
@@ -4748,11 +4866,11 @@
 </div>
 
 
-					<div id="F_6" runat="server" visible="true"
+					<div id="F_6" runat="server" visible="false"
      class="mb-3 p-4"
      style="max-width:850px; margin:auto; border:1px solid #ddd; border-radius:8px; background:#f8f9fa;">
 
-    <asp:UpdatePanel ID="UpdatePanelF6" runat="server">
+    <asp:UpdatePanel ID="UpdatePanelF6" runat="server" >
         <ContentTemplate>
 
             <h5 class="mb-3 text-primary">F-6 Book / Edited Book</h5>
@@ -4852,11 +4970,11 @@
 
 
 
-					<div id="F_7" runat="server" visible="true"
+					<div id="F_7" runat="server" visible="false"
      class="mb-3 p-4"
      style="max-width:850px; margin:auto; border:1px solid #ddd; border-radius:8px; background:#f8f9fa;">
 
-    <asp:UpdatePanel ID="UpdatePanelF7" runat="server">
+    <asp:UpdatePanel ID="UpdatePanelF7" runat="server" >
         <ContentTemplate>
 
             <h5 class="mb-3 text-primary">F-7 Book / Edited Book</h5>

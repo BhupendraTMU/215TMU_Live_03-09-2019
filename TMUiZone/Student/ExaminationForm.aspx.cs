@@ -294,7 +294,15 @@ public partial class ExaminationForm : System.Web.UI.Page
             }
             else
             {
-                btnSubmit.Visible = false;
+                if(Session["College"].ToString()=="TPHD")
+                {
+                    btnSubmit.Visible = true;
+                }
+                else
+                {
+                    btnSubmit.Visible = false;
+                }
+                
             }
         }
         catch (Exception ex) { }
@@ -417,8 +425,11 @@ public partial class ExaminationForm : System.Web.UI.Page
         }
         else
         {
-            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Fee details not avialable .')", true);
-            return;
+            if (Session["College"].ToString() != "TPHD")
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Fee details not avialable .')", true);
+                return;
+            }
         }
         if (chkDeclare.Checked == true)
         {

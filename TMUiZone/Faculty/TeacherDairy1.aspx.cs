@@ -78,7 +78,7 @@ public partial class Faculty_TeacherDairy : System.Web.UI.Page
         try
 
         {
-            byte[] bytes = GetData("select Picture as FacultyImage from [EDUCOLLEGELIVE-REAPP].dbo.TMU$Employee  WHERE [No_] = '" + Session["uid"].ToString() + "'").Rows[0]["FacultyImage"].ToString() == "" ? null : (byte[])GetData("select Picture as FacultyImage from [EDUCOLLEGELIVE-REAPP].dbo.TMU$Employee  WHERE [No_] = '" + Session["uid"].ToString() + "'").Rows[0]["FacultyImage"];
+            byte[] bytes = GetData("select Picture as FacultyImage from [EDUCOLLEGELIVE-R2].dbo.TMU$Employee  WHERE [No_] = '" + Session["uid"].ToString() + "'").Rows[0]["FacultyImage"].ToString() == "" ? null : (byte[])GetData("select Picture as FacultyImage from [EDUCOLLEGELIVE-R2].dbo.TMU$Employee  WHERE [No_] = '" + Session["uid"].ToString() + "'").Rows[0]["FacultyImage"];
             if (bytes != null)
             {
                 string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);

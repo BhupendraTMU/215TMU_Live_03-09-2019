@@ -445,12 +445,12 @@ public partial class StudentNoDuesPHD : System.Web.UI.Page
                         }
 
                         // If No Dues Id already exists in DB, disable/hide save and OTP send so student cannot re-save
-                        //if (noDuesExists)
-                        //{
-                            //var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = false;
-                            //var pnlMobileSendBtn = GetControl<Panel>("pnlPhdMobileSendBtn"); if (pnlMobileSendBtn != null) pnlMobileSendBtn.Visible = false;
-                            //var pnlEmailSendBtn = GetControl<Panel>("pnlPhdEmailSendBtn"); if (pnlEmailSendBtn != null) pnlEmailSendBtn.Visible = false;
-                        //}
+                        if (noDuesExists)
+                        {
+                            var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = false;
+                            var pnlMobileSendBtn = GetControl<Panel>("pnlPhdMobileSendBtn"); if (pnlMobileSendBtn != null) pnlMobileSendBtn.Visible = false;
+                            var pnlEmailSendBtn = GetControl<Panel>("pnlPhdEmailSendBtn"); if (pnlEmailSendBtn != null) pnlEmailSendBtn.Visible = false;
+                        }
 
                     }
                     catch { }

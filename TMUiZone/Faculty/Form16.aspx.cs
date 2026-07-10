@@ -144,6 +144,13 @@ public partial class Faculty_Form16 : System.Web.UI.Page
             grdmemberapprovallist.Columns[8].Visible = false;
             grdmemberapprovallist.Columns[9].Visible = false;
         }
+        else if (drpacsession.SelectedValue == "5")
+        {
+            grdmemberapprovallist.Columns[11].Visible = true;
+            grdmemberapprovallist.Columns[7].Visible = false;
+            grdmemberapprovallist.Columns[8].Visible = false;
+            grdmemberapprovallist.Columns[9].Visible = false;
+        }
         else
         {
             grdmemberapprovallist.Columns[9].Visible = false;
@@ -254,6 +261,46 @@ public partial class Faculty_Form16 : System.Web.UI.Page
                             Response.ContentType = "Application/pdf";
                             Response.AppendHeader("Content-Disposition", "attachment; filename=" + PanNo + ".pdf");
                             Response.TransmitFile(Server.MapPath("~/AllForm16/F16FY202425/" + PanNo + ".pdf"));
+                            string Size = Response.OutputStream.Length.ToString();
+                            Response.End();
+                        }
+                        catch (Exception ex)
+                        {
+                            string message1 = "No Data Found.";
+                            string script1 = "window.onload = function(){ alert('";
+                            script1 += message1;
+                            script1 += "')};";
+                            ClientScript.RegisterStartupScript(this.GetType(), "SuccessMessage", script1, true);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected void LinkButtonDownloadPdf26_Click(object sender, EventArgs e)
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+        {
+            using (SqlCommand cmd = new SqlCommand("select [PAN No] from [TMU$Employee] where No_='" + Session["uid"].ToString() + "'", con))
+            {
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.Read())
+                {
+                    string PanNo = dr["PAN No"].ToString();
+                    con.Close();
+                    if (PanNo != "")
+                    {
+                        try
+                        {
+                            System.Net.WebClient wc = new System.Net.WebClient();
+                            wc.OpenRead(Server.MapPath("~/AllForm16/F16FY202526/" + PanNo + ".pdf"));
+                            Int64 bytes_total = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
+                            Response.ContentType = "Application/pdf";
+                            Response.AppendHeader("Content-Disposition", "attachment; filename=" + PanNo + ".pdf");
+                            Response.TransmitFile(Server.MapPath("~/AllForm16/F16FY202526/" + PanNo + ".pdf"));
                             string Size = Response.OutputStream.Length.ToString();
                             Response.End();
                         }

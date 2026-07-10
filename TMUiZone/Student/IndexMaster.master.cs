@@ -108,7 +108,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             lblName.Text = Session["Name"].ToString();
             BINDimage();
             hidepageschoal();
-            
+            BindNotificationCount();
+
 
         }
         catch (Exception ex)
@@ -116,8 +117,33 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             Response.Redirect("~/Default.aspx");
         }
     }
- 
-  
+    public void BindNotificationCount()
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("usp_AnnouncementsNotification", con);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@StudentID", Convert.ToString(Session["uid"]));
+            cmd.Parameters.AddWithValue("@CollegeID", Convert.ToString(Session["College"]));
+            cmd.Parameters.AddWithValue("@CourseID", Convert.ToString(Session["CourseCode"]));
+            cmd.Parameters.AddWithValue("@Semester", Convert.ToString(Session["Semester"]));
+
+            con.Open();
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            con.Close();
+
+            lblNotificationCount.Text = count.ToString();
+            lblNotificationCount.Visible = true;
+        }
+        catch
+        {
+            con.Close();
+            lblNotificationCount.Text = "0";
+            lblNotificationCount.Visible = true;
+        }
+    }
+
     public void hidepageschoal()
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());

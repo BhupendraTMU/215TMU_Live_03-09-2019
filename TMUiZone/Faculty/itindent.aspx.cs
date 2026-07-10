@@ -1,6 +1,9 @@
-﻿using System;
+﻿using AjaxControlToolkit;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using System;
 using System.Activities.Expressions;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+
 
 public partial class Faculty_itindent : System.Web.UI.Page
 {
@@ -304,9 +308,37 @@ public partial class Faculty_itindent : System.Web.UI.Page
     {
         Response.Redirect("IndentForIt.aspx");
     }
-
     protected void btnAdd_Click(object sender, EventArgs e)
     {
+        string EMP = ddIssueid.SelectedValue.Trim();
+
+
+        
+
+
+        if (con1 != null && con1.State == ConnectionState.Closed)
+        {
+            con1.Open();
+        }
+
+        SqlCommand sqlCmd = new SqlCommand("select COUNT(*) as 'C' from [NAAC_ADV_TEST].dbo.[TMU Advertisement$Indent Header] where  [User Id]='"+ Session["uid"].ToString() + "' and Status =5 and [Issue Id] = '" + EMP + "' and [Academic Year] = '25-26'", con1);
+        SqlDataAdapter sqlDa = new SqlDataAdapter(sqlCmd);
+        DataTable dt1 = new DataTable();
+        sqlDa.Fill(dt1);
+        if (Convert.ToInt32(dt1.Rows[0]["C"]) > 0)
+        {
+            string message1 = "Second indent should not apply if the first indent is not received.Kindly get your item/asset received from your HOD";
+            string script1 = "window.onload = function(){ alert('";
+            script1 += message1;
+            script1 += "')};";
+            ClientScript.RegisterStartupScript(this.GetType(), "SuccessMessage", script1, true);
+            return;
+        }
+
+
+
+
+
         if (txtQuantityforRequistion.Text == "0")
         {
             string message1 = "Please Enter Quantity Min 1.";

@@ -53,42 +53,6 @@
             border: 1px solid #3AC0F2;
         }
     </style>
-    <style>
-        .step-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0;
-        }
-
-            .step-tabs .tab {
-                position: relative;
-                padding: 12px 25px;
-                background: #e5e5e5;
-                color: #666;
-                font-weight: 600;
-                text-decoration: none;
-                margin-right: 10px;
-                clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
-                transition: 0.3s;
-            }
-
-                /* Active tab */
-                .step-tabs .tab.active {
-                    background: #4CAF50;
-                    color: #fff;
-                }
-
-                /* Hover */
-                .step-tabs .tab:hover {
-                    background: #4CAF50;
-                    color: #fff;
-                }
-
-                /* Optional: smaller spacing on wrap */
-                .step-tabs .tab:last-child {
-                    margin-right: 0;
-                }
-    </style>
 
     <script type="text/javascript">
 
@@ -119,7 +83,8 @@
             //    return true;
             //}
         }
-        function enableControl() {
+        function enableControl()
+        {
             var remember = document.getElementById('ContentPlaceHolder1_chkHonorarium');
             if (remember.checked) {
                 document.getElementById('ContentPlaceHolder1_txtHonoAMT').disabled = false;
@@ -133,11 +98,11 @@
                 document.getElementById('ContentPlaceHolder1_flSupportDoc').disabled = false;
                 document.getElementById('ContentPlaceHolder1_ddlAttachtype').disabled = false;
                 document.getElementById('ContentPlaceHolder1_FileUpload1').disabled = false;
-
+                
             } else {
                 document.getElementById('ContentPlaceHolder1_txtHonoAMT').disabled = true;
                 document.getElementById('ContentPlaceHolder1_txttravelAll').disabled = true;
-
+                
                 document.getElementById('ContentPlaceHolder1_txtACHolderName').disabled = true;
                 document.getElementById('ContentPlaceHolder1_txtACCNumber').disabled = true;
                 document.getElementById('ContentPlaceHolder1_txtBankName').disabled = true;
@@ -146,7 +111,7 @@
                 document.getElementById('ContentPlaceHolder1_flSupportDoc').disabled = true;
                 document.getElementById('ContentPlaceHolder1_ddlAttachtype').disabled = true;
                 document.getElementById('ContentPlaceHolder1_FileUpload1').disabled = true;
-
+               
             }
         }
         function enableOtherControl() {
@@ -159,7 +124,7 @@
                 document.getElementById('ContentPlaceHolder1_txtOBranch').disabled = false;
                 document.getElementById('ContentPlaceHolder1_txtOIfsc').disabled = false;
                 document.getElementById('ContentPlaceHolder1_flApprovalCopy').disabled = false;
-
+                
 
             } else {
                 document.getElementById('ContentPlaceHolder1_txtOAmount').disabled = true;
@@ -186,47 +151,69 @@
 
     </fieldset>
 
-    <div class="step-tabs">
-
-
-        <asp:LinkButton ID="lnkApplication"
-            runat="server"
-            CssClass="tab" OnClick="lnkApplication_Click">
-       Application
-        </asp:LinkButton>
-
-        <asp:LinkButton ID="lnkApproval"
-            runat="server"
-            CssClass="tab" OnClick="lnkApproval_Click">
-  Approval
-        </asp:LinkButton>
-        <asp:LinkButton ID="lnkReport"
-            runat="server"
-            CssClass="tab" OnClick="lnkReport_Click">
-Report
-        </asp:LinkButton>
-
-        <asp:HiddenField ID="hdpnlid" runat="server" />
-
-    </div>
-
-    <asp:ScriptManager ID="ScriptManager1" runat="server">
-    </asp:ScriptManager>
-
     <table cellpadding="0px" cellspacing="0px">
+        <tr>
+            <td style="width: 30px"></td>
+            <td valign="top" style="width: 140px">
+                <table cellpadding="0px" cellspacing="0px">
+                    <tr>
+                        <td style="height: 10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApplication" Width="140px" runat="server" OnClick="lnkApplication_Click">Application</asp:LinkButton></td>
+                    </tr>
+                    <tr>
+                        <td style="height: 10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApproval" Width="140px" runat="server" OnClick="lnkApproval_Click">Approval</asp:LinkButton></td>
+                    </tr>
 
+                    <tr>
+                        <td style="height: 10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkReport" Width="140px" runat="server" OnClick="lnkReport_Click">Report</asp:LinkButton></td>
+                    </tr>
+                </table>
+
+            </td>
+            <td style="width: 30px"></td>
+            <td style="width: 1px; background-color: #f1f1f1"></td>
+            <td style="width: 30px"></td>
+            <td valign="top">
+
+
+
+
+
+
+
+
+
+                <table cellpadding="0px" cellspacing="0px">
+
+
+                    <tr>
+                        <td style="height: 10px">
+
+                            <asp:ScriptManager ID="ScriptManager1" runat="server">
+                            </asp:ScriptManager>
+
+                        </td>
+                    </tr>
+            </td>
+        </tr>
 
         <tr>
             <td>
                 <asp:Panel ID="pnlApplicationList" runat="server" Visible="true">
                     <table>
                         <tr>
-                            
-                               
-                                <td style="text-align:right">
-                                     <asp:Button ID="btnAddNew" OnClick="btnAddNew_Click" runat="server" Width="120px" Text="Add New" />
-                               
-                                <asp:GridView ID="grdApplicationList" DataKeyNames="ApplicationNo" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="Solid" BorderWidth="2px" CellPadding="3"  GridLines="Horizontal" EmptyDataText="There are no data records to display.">
+                            <td>
+                                <asp:Button ID="btnAddNew" OnClick="btnAddNew_Click" runat="server" Width="120px" Text="Add New" />
+
+                                <asp:GridView ID="grdApplicationList" DataKeyNames="ApplicationNo" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="Solid" BorderWidth="2px" CellPadding="3" Width="1000px" GridLines="Horizontal" EmptyDataText="There are no data records to display.">
                                     <Columns>
                                         <asp:TemplateField HeaderText="Sl. No." ItemStyle-CssClass="column" HeaderStyle-CssClass="column">
 
@@ -287,7 +274,7 @@ Report
                             </td>
                             <td style="width: 10px"></td>
                             <td>
-                                <asp:CheckBox ID="chkHonorarium" Text="Honorarium" onclick="return enableControl()" runat="server" />
+                                <asp:CheckBox ID="chkHonorarium" Text="Honorarium" onclick="return enableControl()"  runat="server" />
 
                             </td>
                             <td style="width: 10px"></td>
@@ -354,7 +341,7 @@ Report
                                                 <asp:DropDownList ID="drpDesignation" runat="server" CssClass="form-control" Width="200px" AutoPostBack="true" OnSelectedIndexChanged="drpDesignation_SelectedIndexChanged">
                                                     <asp:ListItem Text="Professor" Value="Professor"></asp:ListItem>
                                                     <asp:ListItem Text="Associate Professor" Value="Associate Professor"></asp:ListItem>
-                                                    <asp:ListItem Text="Assistant Professor" Value="Assistant Professor"></asp:ListItem>
+                                                    <asp:ListItem Text="Assistant Professor" Value="Assistant Professor"></asp:ListItem>                                                   
                                                     <asp:ListItem Text="Jain Supervisor" Value="Jain Supervisor"></asp:ListItem>
                                                     <asp:ListItem Text="Others" Value="Others"></asp:ListItem>
                                                 </asp:DropDownList>
@@ -441,9 +428,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Honorarium Amount </label>
-
+                                            
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txtHonoAMT" runat="server" Enabled="false" CssClass="form-control" AutoPostBack="true" onkeypress="return isNumberKey(event)" Width="200px" OnTextChanged="txtHonoAMT_TextChanged"></asp:TextBox>
+                                                <asp:TextBox ID="txtHonoAMT" runat="server" Enabled="false" CssClass="form-control" AutoPostBack="true" onkeypress="return isNumberKey(event)"  Width="200px" OnTextChanged="txtHonoAMT_TextChanged"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -453,9 +440,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Travel Allowance </label>
-
+                                            
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txttravelAll" runat="server" CssClass="form-control" Enabled="false" OnTextChanged="txttravelAll_TextChanged" AutoPostBack="true" onkeypress="return isNumberKey(event)" Width="200px"></asp:TextBox>
+                                                <asp:TextBox ID="txttravelAll" runat="server" CssClass="form-control" Enabled="false" OnTextChanged="txttravelAll_TextChanged" AutoPostBack="true" onkeypress="return isNumberKey(event)"  Width="200px"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -464,9 +451,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Total Amount </label>
-
+                                            
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txttravelAMT" runat="server" CssClass="form-control" Enabled="false" onkeypress="return isNumberKey(event)" Width="200px"></asp:TextBox>
+                                                <asp:TextBox ID="txttravelAMT" runat="server" CssClass="form-control" Enabled="false" onkeypress="return isNumberKey(event)"  Width="200px"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -475,9 +462,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Account Holder Name </label>
-
+                                            
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txtACHolderName" runat="server" Enabled="false" CssClass="form-control" Width="200px"></asp:TextBox>
+                                                <asp:TextBox ID="txtACHolderName" runat="server" Enabled="false" CssClass="form-control"  Width="200px"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -486,9 +473,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Account Number </label>
-
+                                           
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txtACCNumber" runat="server" Enabled="false" CssClass="form-control" onkeypress="return isNumberKey(event)" Width="200px"></asp:TextBox>
+                                                <asp:TextBox ID="txtACCNumber" runat="server" Enabled="false" CssClass="form-control" onkeypress="return isNumberKey(event)"  Width="200px"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -497,9 +484,9 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Bank Name </label>
-
+                                           
                                             <div class="col-sm-8">
-                                                <asp:TextBox ID="txtBankName" runat="server" Enabled="false" CssClass="form-control" Width="200px"></asp:TextBox>
+                                                <asp:TextBox ID="txtBankName" runat="server" Enabled="false" CssClass="form-control"  Width="200px"></asp:TextBox>
                                             </div>
                                         </div>
                                     </div>
@@ -508,7 +495,7 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Branch </label>
-
+                                            
                                             <div class="col-sm-8">
                                                 <asp:TextBox ID="txtBranch" runat="server" Enabled="false" CssClass="form-control" ValidationGroup="R1" Width="200px"></asp:TextBox>
                                             </div>
@@ -519,7 +506,7 @@ Report
                                         <div class="form-group clearfix">
 
                                             <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp IFSC Code </label>
-
+                                            
                                             <div class="col-sm-8">
                                                 <asp:TextBox ID="txtIFSC" runat="server" Enabled="false" CssClass="form-control" ValidationGroup="R1" Width="200px"></asp:TextBox>
                                             </div>
@@ -686,12 +673,12 @@ Report
 
 
 
-                    <div class="col-sm-12 p-0" style="text-align: right">
+                    <div class="col-sm-12 p-0" style="text-align:right">
                         <div class="form-group clearfix">
                             <label for="inputEmail3" class="col-form-label" style="font: bold; visibility: hidden; font-size: small">&nbsp&nbsp&nbsp  Registration fee details of the Conference/Seminar/Workshop </label>
 
                             <div class="col-sm-8">
-                                <asp:Button ID="btnSubmitApplication" runat="server" autocomplete="off" Text="Submit" BackColor="Green" ValidationGroup="R1" ForeColor="White" Font-Bold="true" Height="32px" Font-Size="Large" class="btn btn-info" Width="120px" AutoPostBack="true" OnClick="btnSubmitApplication_Click"></asp:Button>
+                                <asp:Button ID="btnSubmitApplication" runat="server" autocomplete="off" Text="Submit" BackColor="Green" ValidationGroup="R1" ForeColor="White" Font-Bold="true" Height="32px" Font-Size="Large" class="btn btn-info" Width="120px" AutoPostBack="true"  OnClick="btnSubmitApplication_Click"></asp:Button>
 
 
                             </div>

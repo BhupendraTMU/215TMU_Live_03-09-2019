@@ -27,19 +27,19 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             {
 
                 getnodueslist();
-               // showhr();
-               //// Showfinancehr();
-               // //submithrm();
-               // finance();
-               // //showfinance();
-               // //submitalldept();
-               // //alldept();
-               
-               // hrdept();
-               // hidehr();
+                // showhr();
+                //// Showfinancehr();
+                // //submithrm();
+                // finance();
+                // //showfinance();
+                // //submitalldept();
+                // //alldept();
 
-               // //resignationdata();
-               // //hidehr();
+                // hrdept();
+                // hidehr();
+
+                // //resignationdata();
+                // //hidehr();
             }
         }
         catch
@@ -85,6 +85,22 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
 
 
     }
+    //protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+    //{
+    //    if (e.Row.RowType == DataControlRowType.DataRow)
+    //    {
+    //        DataRowView drv = (DataRowView)e.Row.DataItem;
+
+    //        if (string.IsNullOrWhiteSpace(Convert.ToString(drv["ActdateofLeaving"])))
+    //        {
+    //            e.Row.CssClass = "whiteRow";
+    //        }
+    //        else
+    //        {
+    //            e.Row.CssClass = "greenRow";
+    //        }
+    //    }
+    //}
     public void getnodueslist()
     {
 
@@ -93,7 +109,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         cmd.Parameters.AddWithValue("@UserId", Session["uid"].ToString());
         if (con1.State == ConnectionState.Closed)
             con1.Open();
-        SqlDataAdapter daCL = new SqlDataAdapter(cmd); 
+        SqlDataAdapter daCL = new SqlDataAdapter(cmd);
         DataTable dtCL = new DataTable();
         daCL.Fill(dtCL);
         grdnodueslist.DataSource = dtCL;
@@ -109,7 +125,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
                 e.Row.BackColor = System.Drawing.Color.LightGreen;
                 e.Row.ForeColor = System.Drawing.Color.Black;
             }
-            else if(hfStatus.Value.Equals("PENDING"))
+            else if (hfStatus.Value.Equals("PENDING"))
             {
                 //e.Row.BackColor = System.Drawing.Color.Red;
                 //e.Row.ForeColor = System.Drawing.Color.White;
@@ -124,16 +140,17 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
     public void resignationdata()
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
-        string strSQL = "select  * from tble_Exit_Interview_Form where [Employee Code]='" + Session["uid"].ToString() + "'";
+        string strSQL = "select  * from tble_Exit_Interview_Form where [Employee Code]='" + txtemployeecode.Text + "'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);
         con.Close();
 
-        if (dt.Rows.Count >0)
+        if (dt.Rows.Count > 0)
         {
             //txtdateofleaving.Text = dt.Rows[0]["Date Of Resignation"].ToString();
-            txtdateofrelieving.Text = dt.Rows[0]["Date Of Resignation"].ToString();
+            txtdateofrelieving.Text = Convert.ToDateTime(dt.Rows[0]["Date Of Resignation"])
+                              .ToString("dd MMM yyyy");
         }
 
     }
@@ -179,17 +196,17 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         txtemployeecode.Text = dt.Rows[0]["Employee_Code"].ToString();
         txtnameofemployee.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
         Label33.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
-       //Label6.Text= dt.Rows[0]["Employee_Code"].ToString();
-       //Label29.Text= dt.Rows[0]["Name_Of_Employee"].ToString();
+        //Label6.Text= dt.Rows[0]["Employee_Code"].ToString();
+        //Label29.Text= dt.Rows[0]["Name_Of_Employee"].ToString();
         Label50.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
         //Label72.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
-        Label88.Text = dt.Rows[0]["Name_Of_Employee"].ToString(); 
+        Label88.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
         Label62.Text = dt.Rows[0]["Name_Of_Employee"].ToString();
         txtfathername.Text = dt.Rows[0]["Father_Name"].ToString();
         txtcollegedeptsection.Text = dt.Rows[0]["College_Department_Section"].ToString();
         txtbranch.Text = dt.Rows[0]["Branch"].ToString();
         txtdateofjoining.Text = dt.Rows[0]["DOJ"].ToString();
-        EmployeePostingGroup.Value= dt.Rows[0]["EmployeePostingGroup"].ToString();
+        EmployeePostingGroup.Value = dt.Rows[0]["EmployeePostingGroup"].ToString();
         if (EmployeePostingGroup.Value.ToString().Equals("NON-TEACH"))
         {
             SeedMoneyVisible.Visible = false;
@@ -198,11 +215,34 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         {
             SeedMoneyVisible.Visible = true;
         }
-        txtdateofleaving.Text = dt.Rows[0]["Date_Of_Leaving"].ToString();
+        if (dt.Rows[0]["Date_Of_Leaving"].ToString() != "")
+        {
+            txtdateofleaving.Text = Convert.ToDateTime(dt.Rows[0]["Date_Of_Leaving"]).ToString("dd MMM yyyy");
+        }
+        else
+        {
+            txtdateofleaving.Text = "";
+        }
+        if (dt.Rows[0]["HRResigndate"].ToString() != "")
+        {
+            txtHRResigndate.Text = Convert.ToDateTime(dt.Rows[0]["HRResigndate"]).ToString("dd MMM yyyy");
+        }
+        else
+        {
+            txtHRResigndate.Text = "";
+        }
 
-        txtHRResigndate.Text = dt.Rows[0]["HRResigndate"].ToString();
+        if (dt.Rows[0]["ActdateofLeaving"].ToString() != "")
+        {
 
-        txtActdateofLeaving.Text = dt.Rows[0]["ActdateofLeaving"].ToString();
+            txtActdateofLeaving.Text = Convert.ToDateTime(dt.Rows[0]["ActdateofLeaving"]).ToString("dd MMM yyyy");
+        }
+        else
+
+        {
+            txtActdateofLeaving.Text = "";
+        }
+
 
 
         //txtperaddress.Text = dt.Rows[0]["Permanent_Address"].ToString();
@@ -233,10 +273,10 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         hdfDesignation.Value = dt.Rows[0]["Designation"].ToString();
         binddata();
         //submithrm();
-        
+
         //submitalldept();
         hrdept();
-       
+
         getdeptlibrary();
         alldept();
         FORCOLLEGE();
@@ -245,10 +285,10 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         txtdatehr0.Text = String.Format("{0}", DateTime.Now.ToString("dd/MM/yyyy"));
         txtfinance.Text = String.Format("{0}", DateTime.Now.ToString("dd/MM/yyyy"));
         TextBox3.Text = String.Format("{0}", DateTime.Now.ToString("dd/MM/yyyy"));
-        
+
         showhr();
         finance();
-       // hidehr();
+        // hidehr();
         if (Session["uid"].ToString() == "TMU05721")
         {
             btn_Hrstatus.Visible = true;
@@ -365,14 +405,14 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         lblphddepartmentdesignation.Text = dtCL.Select("Particulars='Ph.D DEPARTMENT'").CopyToDataTable().Rows[0]["Designation"].ToString();
         lblphddepartmentnamecode.Text = dtCL.Select("Particulars='Ph.D DEPARTMENT'").CopyToDataTable().Rows[0]["Employee_Code"].ToString();
 
-        if ( txtdepartmentlibemployeecode.Text == Session["uid"].ToString())
+        if (txtdepartmentlibemployeecode.Text == Session["uid"].ToString())
         {
 
             DropDownList1.Enabled = true;
-            txtremarkdeptlibrary.Enabled = true; 
+            txtremarkdeptlibrary.Enabled = true;
             btn_submit1.Enabled = true;
             btnrejdeptlibar.Enabled = true;
-            
+
         }
         else
         {
@@ -381,7 +421,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkdeptlibrary.Enabled = false;
             btn_submit1.Enabled = false;
             btnrejdeptlibar.Enabled = false;
-           
+
         }
         if (lblcentlibnameemployeecode.Text == Session["uid"].ToString())
         {
@@ -405,7 +445,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             Button9.Enabled = true;
             txthostelmessID.Enabled = true;
             btnrejectmess.Enabled = true;
-            
+
 
         }
         if (Session["uid"].ToString() == "TMU00619")
@@ -416,7 +456,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             Button10.Enabled = true;
             txthostelofficeID.Enabled = true;
             btnrejecthosteloffice.Enabled = true;
-            
+
 
 
         }
@@ -427,7 +467,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarktransportoffice.Enabled = true;
             Button11.Enabled = true;
             btnrejecttransport.Enabled = true;
-           
+
 
         }
         if (Session["uid"].ToString() == "TMU00035")
@@ -437,7 +477,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkguesthouseic.Enabled = true;
             Button12.Enabled = true;
             btnrejcetgesthouse.Enabled = true;
-           
+
 
         }
         if (Session["uid"].ToString() == "TMU06287")
@@ -447,7 +487,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkfacultyhose.Enabled = true;
             Button13.Enabled = true;
             btnrejectfaculthou.Enabled = true;
-            
+
 
         }
         if (Session["uid"].ToString() == "TMU00784")
@@ -457,7 +497,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarksportic.Enabled = true;
             Button14.Enabled = true;
             btnrejsport.Enabled = true;
-            
+
 
         }
         if (Session["uid"].ToString() == "TMU04173")
@@ -467,7 +507,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkmedicalstore.Enabled = true;
             Button15.Enabled = true;
             btnrejmedicalstore.Enabled = true;
-            
+
 
         }
         if (Session["uid"].ToString() == "TMU00381")
@@ -477,7 +517,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkelectrictydepart.Enabled = true;
             Button16.Enabled = true;
             btnrejelectric.Enabled = true;
-            
+
 
         }
         if (Session["uid"].ToString() == "TMU00166")
@@ -487,7 +527,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkicardoffice.Enabled = true;
             Button17.Enabled = true;
             btniccardreject.Enabled = true;
-           
+
 
         }
         if (Session["uid"].ToString() == "TMU01979")
@@ -497,7 +537,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkit.Enabled = true;
             Button18.Enabled = true;
             btnrejectit.Enabled = true;
-          
+
 
         }
         if (Session["uid"].ToString() == "TMU00084")
@@ -507,7 +547,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkcashcounter.Enabled = true;
             Button20.Enabled = true;
             btnrejectcounter.Enabled = true;
-           
+
         }
         if (Session["uid"].ToString() == "TMU00530")
         {
@@ -516,7 +556,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkjtdirector.Enabled = true;
             btnrejectdirector.Enabled = true;
             Button21.Enabled = true;
-           
+
 
         }
 
@@ -528,14 +568,14 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtphddepartmentremark.Enabled = true;
             btnphd.Enabled = true;
             btnphdreject.Enabled = true;
-          
-         
+
+
 
 
         }
         if (Session["uid"].ToString() == "TMU05293")
         {
-                                             
+
             DropDownList4.Enabled = true;
             txtremarkseedmoney.Enabled = true;
             Button4.Enabled = true;
@@ -549,7 +589,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             txtremarkcentralstore.Enabled = true;
             Button6.Enabled = true;
             btnrejcentralstore.Enabled = true;
-           
+
         }
         if (Session["uid"].ToString() == "TMU00049")
         {
@@ -1503,7 +1543,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         if (Session["uid"].ToString() == "TMU00049")
         {
             hidehr();
-           
+
             Button1.Visible = true;
             Showfinancehr();
             txtfinance.Enabled = true;
@@ -1767,8 +1807,9 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         da1.Fill(dt1);
         con.Close();
 
-       // txtIssuedon.Text = dt1.Rows[0]["Issued_On"].ToString();
-        txtdateofrelieving.Text = dt1.Rows[0]["Proposed_Date_of_Relieving"].ToString();
+        // txtIssuedon.Text = dt1.Rows[0]["Issued_On"].ToString();
+        txtdateofrelieving.Text = Convert.ToDateTime(dt1.Rows[0]["Proposed_Date_of_Relieving"])
+                              .ToString("dd MMM yyyy");
         //txtdeputyRegistrar.Text = dt1.Rows[0]["Deputy_Registrar1"].ToString();
 
     }
@@ -2021,7 +2062,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
                 DropDownList4.SelectedItem.Text = dr4[0]["No_Dues"].ToString();
                 txtremarkseedmoney.Text = dr4[0]["Remark"].ToString();
                 txtseedmoneyID.Text = dr4[0]["ID"].ToString();
-                if(DropDownList4.SelectedItem.Text == "Granted")
+                if (DropDownList4.SelectedItem.Text == "Granted")
                 {
                     Button4.ForeColor = System.Drawing.Color.White;
                     Button4.BackColor = System.Drawing.Color.Green;
@@ -3450,7 +3491,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         {
             btn_Hrstatus.Visible = true;
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Fill Leaving Date')", true);
-          
+
             return;
         }
         if (txtHRResigndate.Text == "")
@@ -3482,7 +3523,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         con1.Close();
         sendmail();
         ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Your details have been saved successfully');document.location.href='NoDuesApproval.aspx';", true);
-        
+
     }
     public void ShowDept()
     {
@@ -3513,8 +3554,8 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
                         }
                     }
                 }
-            
-            
+
+
             }
             else
             {
@@ -3568,7 +3609,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
 
                         {
                             divfinance.Visible = true;
-                            Button1.Visible = false;                           
+                            Button1.Visible = false;
                         }
                         else
                         {
@@ -3582,19 +3623,19 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
     }
 
 
-  public void sendmail()
+    public void sendmail()
     {
         SmtpSection smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
         using (MailMessage mm = new MailMessage("naverp@tmu.ac.in", "dy.registrar.hr@tmu.ac.in,jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,hr@tmu.ac.in"))
         {
-        //using (MailMessage mm = new MailMessage("bhupendras.erp@tmu.ac.in", "bhupendras.erp@tmu.ac.in")) jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,,hr@tmu.ac.in
-        //{
+            //using (MailMessage mm = new MailMessage("bhupendras.erp@tmu.ac.in", "bhupendras.erp@tmu.ac.in")) jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,,hr@tmu.ac.in
+            //{
             mm.Subject = "No Dues Form Status: Active,Employee Code:" + txtemployeecode.Text + ",Employee Name: " + txtnameofemployee.Text + "";
-              mm.Body = "<HTML><div>Sir/ Madam,</div>";
+            mm.Body = "<HTML><div>Sir/ Madam,</div>";
             mm.Body += "<div>&nbsp;</div>";
             mm.Body += "<div>";
             mm.Body += "<p><span style='font-family: verdana, sans-serif;'>No&nbsp;Dues&nbsp;Form Status is now active for the following employee:</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>1. Employee Code: "+ txtemployeecode.Text + "</span></p>";
+            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>1. Employee Code: " + txtemployeecode.Text + "</span></p>";
             mm.Body += "<p><span style='font-family: verdana, sans-serif;'>2. Employee Name: " + txtnameofemployee.Text + "</span></p>";
             mm.Body += "<p><span style='font-family: verdana, sans-serif;'>3. Designation:" + hdfDesignation.Value + "</span></p>";
             mm.Body += "<p><span style='font-family: verdana, sans-serif;'>4. Department: " + txtcollegedeptsection.Text + "</span></p>";
@@ -3702,6 +3743,24 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         con.Close();
         ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "usernotfound", "alert('Your details have been Reject successfully.');document.location.href='NoDuesApproval.aspx';", true);
         GridViewdata.Show();
+
+
+    }
+
+    protected void update_Click(object sender, EventArgs e)
+    {
+        SqlCommand cmd = new SqlCommand("Pro_UpdateActualDateofLeaving", con1);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@Employee_Code", txtemployeecode.Text);
+        cmd.Parameters.AddWithValue("@ActdateofLeaving", txtActdateofLeaving.Text);
+        cmd.Parameters.AddWithValue("@UserID", Session["uid"].ToString());
+        if (con1.State == ConnectionState.Open)
+        { con1.Close(); }
+        con1.Open();
+        cmd.ExecuteNonQuery();
+        con1.Close();
+        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Actual Date of leaving update successfully');document.location.href='NoDuesApproval.aspx';", true);
+
 
 
     }

@@ -28,11 +28,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 lnk_mentor_allocation.Visible = true;
             }
 
-            if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
-            {
-                //HR DepCode: D228,PAYROLL SECTION DepCode=D213,ACCOUNT SECTION DepCode=D039
-                IdPHDStudentNoDuesApproval.Visible = true;
-            }
+            
             //else
             //{
             //    IdPHDStudentNoDuesApproval.Visible = false;
@@ -187,6 +183,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             {
                 UpdateProfile.Visible = true;
                 StudentdocumentVerify.Visible = true;
+                DigilockerData.Visible = true;
             }
             if (Session["uid"].ToString() == "TMU00035")
             {
@@ -223,6 +220,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     StudentDetaineeReport.Visible = false;
                     DailyAttendanceDetails.Visible = false;
                     StudentContinueAbsentReport.Visible = false;
+                    
                 }
             }
             if (Session["GlobalDimension1Code"].ToString() == "TMCT" || Session["GlobalDimension1Code"].ToString() == "TMEG")
@@ -234,6 +232,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 {
                     MapCourseSubject.Visible = false;
                     MapFacultySubject1.Visible = false;
+                    A4.Visible = true;
+                    DigilockerData.Visible = true;
                 }
                 if (dt.Rows[0]["UserRole"].ToString() == "HOD")
                 {
@@ -241,7 +241,11 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     MapFacultySubject1.Visible = true;
                 }
             }
-            if (Session["Departmentcode"].ToString().Trim() == "D213" && Session["uid"].ToString() != "TMU00241")
+            if (Session["UserGroup"].ToString() == "PRINCIPAL")
+            {
+                DigilockerData.Visible = true;
+            }
+                if (Session["Departmentcode"].ToString().Trim() == "D213" && Session["uid"].ToString() != "TMU00241")
             {
                 lnkCoClaimReport.Visible = true;
                 lnkLeaveReport.Visible = true;
@@ -856,7 +860,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         }
     }
 
-    //----------------------------Ashu Form Show-Hide------------on 06-04-2017---------------START
+  
     public void GetLinkData()
     {
 
@@ -899,7 +903,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     EditStudentAttendanceECA.Visible = true;
                 }
             }
-            if (dt.Rows[i]["PageId"].ToString() == "AcademicCalendar") { AcademicCalendar.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "AcademicCalendar") { AcademicCalendar.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "Employee_Punch_Data") { Employee_Punch_Data.Visible = true; }
 
             if (dt.Rows[i]["PageId"].ToString() == "Punch_Correction") { PunchCorrection.Visible = true; }
@@ -949,6 +953,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     if (Session["uid"].ToString() == "TMU08719")
                     {
                         EmployeeCountHODWise.Visible = true;
+                        PayrollReport.Visible = true;
                     }
                 }
                 else
@@ -1127,8 +1132,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             }
 
             if (dt.Rows[i]["PageId"].ToString() == "EmployeeDutySchedule") { EmployeeDutySchedule.Visible = true; }
-            if (dt.Rows[i]["PageId"].ToString() == "SmsEmployee") { liSMS.Visible = true; SmsEmployee.Visible = true; }
-            if (dt.Rows[i]["PageId"].ToString() == "smsStudent") { liSMS.Visible = true; smsStudent.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "SmsEmployee") { liSMS.Visible = true; SmsEmployee.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "smsStudent") { liSMS.Visible = true; smsStudent.Visible = true; }
 
             if (dt.Rows[i]["PageId"].ToString() == "StudentAttendanceMark") { StudentAttendanceMark.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "UploadAttendance") { UploadAttendance.Visible = true; }
@@ -1239,7 +1244,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             if (dt.Rows[i]["PageId"].ToString() == "MapCourseSubject") { MapCourseSubject.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "FormActiveInactive") { FormActiveInactive.Visible = true; }
 
-            if (dt.Rows[i]["PageId"].ToString() == "SubjectChoice") { SubjectChoice.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "SubjectChoice") { SubjectChoice.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "MapFacultySubject1") { MapFacultySubject1.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "SemRegistrationApproval") { SemRegApproval.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "Results") { ResultTab.Visible = true; }
@@ -1249,6 +1254,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             {
 
                 Formvisibilty.Visible = true;
+                SSSReport.Visible = true;
 
             }
             if (Session["uid"].ToString() == "TMU07987" || Session["uid"].ToString() == "TMU05721" || Session["uid"].ToString() == "TMU08719")
@@ -1258,8 +1264,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
             }
 
-            if (dt.Rows[i]["PageId"].ToString() == "liMentorshipDetails") { liMentorshipDetails.Visible = true; }
-            if (dt.Rows[i]["PageId"].ToString() == "AcademicCalendar") { AcademicCalendar.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "liMentorshipDetails") { liMentorshipDetails.Visible = true; }
+            //if (dt.Rows[i]["PageId"].ToString() == "AcademicCalendar") { AcademicCalendar.Visible = true; }
 
             if (dt.Rows[i]["PageId"].ToString() == "ExaminationApprovalForm") { ExaminationApprovalForm.Visible = true; ExamForm.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "StudentReExamination") { StudentReExamination.Visible = true; }
@@ -1283,11 +1289,13 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 AttendanceApproval.Visible = true;
 
             }
-            if (Session["uid"].ToString() == "TMU00865")
-            {
-                StudentReExamination1.Visible = true;
 
-            }
+
+
+
+
+
+
 
 
 
@@ -1451,17 +1459,26 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         if (Session["uid"].ToString() == "TMU00865")
         {
             StudentReExamination1.Visible = true;
-        }        
-        //if (Session[].ToString() == "1")
-        //{
-        //    ReviewAttendance_New.Visible = false;
-        //    ReviewAttendance_NewMD.Visible = true;
-        //    FacultyTimeSheet.Visible = false;
-        //    FacultyTimeSheetMD.Visible = true;
-        //    FacultyLessonPlan.Visible = false;
-        //    FacultyLessonPlanMD.Visible = true;
-        //}
-    }
+
+
+        }
+        if (Session["uid"].ToString() == "TMU07001" || Session["uid"].ToString() == "TMU06106" || Session["uid"].ToString() == "TMU07417" || Session["uid"].ToString() == "TMU07473")
+        {
+            ITEmployeePunchRecord.Visible = true;
+        }
+        if (Session["uid"].ToString() == "TMU00140" || Session["uid"].ToString() == "TMU09294" || Session["uid"].ToString() == "TMU09412" || Session["uid"].ToString() == "TMU00265")
+        {
+            DigilockerErrorUpload.Visible = true;
+        }
+        if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
+        {            
+            IdPHDStudentNoDuesApproval.Visible = true;
+        }
+
+    }        
+
+    
+
     public string GetLinkYesNo(string PageId)
     {
         SqlCommand cmd = new SqlCommand("SP_GetFormVisibilityYesNo", con1);

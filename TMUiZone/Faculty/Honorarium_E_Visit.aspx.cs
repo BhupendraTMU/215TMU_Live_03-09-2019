@@ -35,6 +35,14 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
                     txtApproveAMT.Visible = false;
                     txtVCApproveAMT.Visible = true;
                 }
+                if (Session["uid"].ToString() == "TMU06022")
+                {
+                    lnkAllData.Visible = true;
+                }
+                if (Session["uid"].ToString() == "TMU00460")
+                {
+                    lnkUpdatePayment.Visible = true;
+                }
                 //if (Session["uid"].ToString() == "TMU00525" || Session["uid"].ToString() == "TMU00260" )
                 //{
                 //    divSupport.Visible = true;
@@ -64,7 +72,6 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         SqlDataAdapter da = new SqlDataAdapter("SELECT distinct       [task] EventID,      [task] EventName  FROM [dbo].[tbl_honorarium_auth_process] where status=1", con);
         DataTable dt = new DataTable();
         da.Fill(dt);
-
         chkEventType.DataSource = dt;
         chkEventType.DataTextField = "EventName";
         chkEventType.DataValueField = "EventID";
@@ -109,9 +116,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
     {
         SqlCommand cmd = new SqlCommand("[SP_GetTaskListHonorarium]", con);
         cmd.CommandType = CommandType.StoredProcedure;
-
         con.Open();
-
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
         con.Close();
@@ -124,17 +129,12 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
             drpAppType.DataBind();
         }
     }
-
-
-
-
     public void BindListForApproval(string UserId)
     {
         SqlCommand cmd = new SqlCommand("[SP_GetHonorariumforApptoval]", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", UserId);
         con.Open();
-
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
         con.Close();
@@ -177,9 +177,12 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
 
     protected void lnkApplication_Click(object sender, EventArgs e)
     {
+        pnUpdatePayment.Visible = false;
         pnlApplicationList.Visible = true;
         pnlApplicationApproval.Visible = false;
         pnlRepport.Visible = false;
+        Panel1.Visible = false;
+
 
     }
 
@@ -189,6 +192,8 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplicationList.Visible = false;
         pnlApplicationApproval.Visible = true;
         pnlRepport.Visible = false;
+        Panel1.Visible = false;
+        pnUpdatePayment.Visible = false;
         BindListForApproval(Session["uid"].ToString());
 
     }
@@ -250,8 +255,9 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplication.Visible = false;
         pnlApplicationList.Visible = false;
         pnlApplicationApproval.Visible = false;
-        grdApplicationApproval.Visible = false;
+        pnUpdatePayment.Visible = false;
         pnlRepport.Visible = true;
+        Panel1.Visible = false;
         //SqlCommand cmd = new SqlCommand("proc_HOApplicationReport", con);
         //cmd.CommandType = CommandType.StoredProcedure;
         //cmd.Parameters.AddWithValue("@UserId", Session["uid"].ToString());
@@ -355,7 +361,8 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
         pnlApplicationList.Visible = false;
         pnlApplication.Visible = true;
         pnlRepport.Visible = false;
-
+        Panel1.Visible = false;
+        pnUpdatePayment.Visible = false;
 
 
 
@@ -516,6 +523,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
             lblBranch.Text = dt.Rows[0]["branch"].ToString();
             lblIFSC.Text = dt.Rows[0]["ifsc"].ToString();
             lblEventtype.Text = dt.Rows[0]["eventType"].ToString();
+            txtRecommend.Text = dt.Rows[0]["registrarremark"].ToString();
 
 
 
@@ -523,7 +531,7 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
 
         btnApprove.Visible = false;
         btnRejectPop.Visible = false;
-        txtRemark.Visible = false;
+        divVCRemark.Visible = false;
 
 
 
@@ -568,12 +576,22 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
             lblBranch.Text = dt.Rows[0]["branch"].ToString();
             lblIFSC.Text = dt.Rows[0]["ifsc"].ToString();
             lblEventtype.Text = dt.Rows[0]["eventType"].ToString();
-
+            txtRecommend.Text = dt.Rows[0]["registrarremark"].ToString();
 
         }
         btnApprove.Visible = true;
         btnRejectPop.Visible = true;
-        txtRemark.Visible = true;
+        if (Session["uid"].ToString() == "TMU08026")
+        {
+            divVCRemark.Visible = true;
+            txtRecommend.Enabled = false;
+        }
+        else
+        {
+            divVCRemark.Visible = false;
+        }
+
+
         ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
 
     }
@@ -750,5 +768,103 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
     protected void txtHonoAMT_TextChanged(object sender, EventArgs e)
     {
         txttravelAMT.Text = (Convert.ToDecimal(txtHonoAMT.Text) + Convert.ToDecimal(txttravelAll.Text)).ToString();
+    }
+
+    protected void lnkAllData_Click(object sender, EventArgs e)
+    {
+        Panel1.Visible = true;
+        pnlApplicationList.Visible = false;
+        pnlApplication.Visible = false;
+        pnlRepport.Visible = false;
+        pnlApplicationApproval.Visible = false;
+        pnUpdatePayment.Visible = false;
+        BindListALL(Session["uid"].ToString());
+    }
+
+    public void BindListALL(string UserId)
+    {
+        SqlCommand cmd = new SqlCommand("[SP_GetHonorariumALL]", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Close();
+        da.Fill(dt);
+        if (dt.Rows.Count > 0)
+        {
+            GridView1.DataSource = dt;
+            GridView1.DataBind();
+        }
+    }
+
+    protected void lnkUpdatePayment_Click(object sender, EventArgs e)
+    {
+        pnlApplication.Visible = false;
+        pnlApplicationList.Visible = false;
+        pnlApplicationApproval.Visible = false;
+        pnlRepport.Visible = false;
+        Panel1.Visible = false;
+        pnUpdatePayment.Visible = true;
+
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        BindGrid();
+    }
+    private void BindGrid()
+    {
+        string fromDate = TextBox1.Text;
+        string toDate = TextBox2.Text;
+
+        using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            using (SqlCommand cmd = new SqlCommand("proc_HOApplicationforPayment", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@UserId", Session["uid"].ToString());
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@toDate", toDate);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                grdUnpaid.DataSource = dt;
+                grdUnpaid.DataBind();
+            }
+        }
+    }
+    protected void btnUpdatePayment_Click(object sender, EventArgs e)
+    {
+        using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            con.Open();
+
+            foreach (GridViewRow row in grdUnpaid.Rows)
+            {
+                CheckBox chk = (CheckBox)row.FindControl("chkPayment");
+
+                if (chk != null && chk.Checked)
+                {
+                    string appNo = row.Cells[1].Text; // Checkbox ke baad AppNo column
+
+                    SqlCommand cmd = new SqlCommand(
+                        "UPDATE tbl_Honorarium_ApplicationData SET Status = 7 WHERE ApplicationNo = @ApplicationNo",
+                        con);
+
+                    cmd.Parameters.AddWithValue("@ApplicationNo", appNo);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        ScriptManager.RegisterStartupScript(this, GetType(), "msg",
+            "alert('Payment updated successfully.');", true);
+        BindGrid();
     }
 }

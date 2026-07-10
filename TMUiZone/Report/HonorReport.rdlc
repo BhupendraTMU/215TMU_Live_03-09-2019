@@ -102,7 +102,7 @@
                 </Style>
               </TextRun>
               <TextRun>
-                <Value>, 2024 </Value>
+                <Value>, 2026 </Value>
                 <Style>
                   <FontSize>8pt</FontSize>
                 </Style>
@@ -269,7 +269,7 @@
               <Width>0.26043in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.8822in</Width>
+              <Width>0.71107in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>0.50848in</Width>
@@ -278,10 +278,10 @@
               <Width>0.66463in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.72717in</Width>
+              <Width>0.76487in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.66149in</Width>
+              <Width>0.80409in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>0.54167in</Width>
@@ -290,22 +290,22 @@
               <Width>0.46226in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.4928in</Width>
+              <Width>0.72643in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.47074in</Width>
+              <Width>0.57491in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.50524in</Width>
+              <Width>0.71157in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.73114in</Width>
+              <Width>0.63022in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.86459in</Width>
+              <Width>0.79763in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.82292in</Width>
+              <Width>0.4375in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>0.53842in</Width>
@@ -315,6 +315,9 @@
             </TablixColumn>
             <TablixColumn>
               <Width>0.67708in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.0625in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -610,7 +613,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Amt</Value>
+                              <Value>Claimed Honorarium</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -645,7 +648,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>T/A</Value>
+                              <Value>Claimed TA</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -680,7 +683,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Final Amount</Value>
+                              <Value>Approved Amount Hon+TA</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -890,7 +893,20 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Approving  Auth</Value>
+                              <Value>Recomm.</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Auth</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
@@ -902,6 +918,41 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox12</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>DimGray</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Remark</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                                <Color>White</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox6</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1303,7 +1354,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1466,12 +1516,45 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Remark">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Remark.Value</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Remark</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
+            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -1504,7 +1587,7 @@
         <DataSetName>DataSet_Result</DataSetName>
         <Top>1.41146in</Top>
         <Height>0.5in</Height>
-        <Width>10.48834in</Width>
+        <Width>11.55084in</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
@@ -1514,14 +1597,18 @@
       </Tablix>
     </ReportItems>
     <Height>4.17709in</Height>
-    <Style />
+    <Style>
+      <Border>
+        <Style>None</Style>
+      </Border>
+    </Style>
   </Body>
-  <Width>10.49877in</Width>
+  <Width>11.79042in</Width>
   <Page>
-    <PageHeight>8.5in</PageHeight>
-    <PageWidth>11in</PageWidth>
-    <LeftMargin>0.25in</LeftMargin>
-    <RightMargin>0.25in</RightMargin>
+    <PageHeight>8.27in</PageHeight>
+    <PageWidth>12.69in</PageWidth>
+    <LeftMargin>0.5in</LeftMargin>
+    <RightMargin>0.5in</RightMargin>
     <TopMargin>0.5in</TopMargin>
     <BottomMargin>0.5in</BottomMargin>
     <Style />
@@ -1617,6 +1704,10 @@
         </Field>
         <Field Name="Mobile">
           <DataField>Mobile</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remark">
+          <DataField>Remark</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

@@ -37,7 +37,7 @@ public partial class Faculty_Employee_Verification : System.Web.UI.Page
 
                 int day = today.Day;
 
-                bool isAllowed = (day >= 20) || (day <= 5);
+                bool isAllowed = (day >= 20) || (day <= 7);
 
                 if (isAllowed)
                 {

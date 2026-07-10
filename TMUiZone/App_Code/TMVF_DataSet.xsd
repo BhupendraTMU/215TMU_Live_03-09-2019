@@ -48,8 +48,9 @@
               <xs:element name="Month" msprop:Generator_ColumnPropNameInTable="MonthColumn" msprop:Generator_ColumnPropNameInRow="Month" msprop:Generator_UserColumnName="Month" msprop:Generator_ColumnVarNameInTable="columnMonth" type="xs:string" minOccurs="0" />
               <xs:element name="ApprovalDate" msprop:Generator_ColumnPropNameInTable="ApprovalDateColumn" msprop:Generator_ColumnPropNameInRow="ApprovalDate" msprop:Generator_UserColumnName="ApprovalDate" msprop:Generator_ColumnVarNameInTable="columnApprovalDate" type="xs:string" minOccurs="0" />
               <xs:element name="ApprovingAuth" msprop:Generator_ColumnPropNameInTable="ApprovingAuthColumn" msprop:Generator_ColumnPropNameInRow="ApprovingAuth" msprop:Generator_UserColumnName="ApprovingAuth" msprop:Generator_ColumnVarNameInTable="columnApprovingAuth" type="xs:string" minOccurs="0" />
-              <xs:element name="Mail" msprop:Generator_ColumnPropNameInRow="Mail" msprop:Generator_ColumnPropNameInTable="MailColumn" msprop:Generator_ColumnVarNameInTable="columnMail" msprop:Generator_UserColumnName="Mail" type="xs:string" minOccurs="0" />
-              <xs:element name="Mobile" msprop:Generator_ColumnPropNameInRow="Mobile" msprop:Generator_ColumnPropNameInTable="MobileColumn" msprop:Generator_ColumnVarNameInTable="columnMobile" msprop:Generator_UserColumnName="Mobile" type="xs:string" minOccurs="0" />
+              <xs:element name="Mail" msprop:Generator_UserColumnName="Mail" msprop:Generator_ColumnPropNameInTable="MailColumn" msprop:Generator_ColumnPropNameInRow="Mail" msprop:Generator_ColumnVarNameInTable="columnMail" type="xs:string" minOccurs="0" />
+              <xs:element name="Mobile" msprop:Generator_UserColumnName="Mobile" msprop:Generator_ColumnPropNameInTable="MobileColumn" msprop:Generator_ColumnPropNameInRow="Mobile" msprop:Generator_ColumnVarNameInTable="columnMobile" type="xs:string" minOccurs="0" />
+              <xs:element name="Remark" msprop:Generator_ColumnPropNameInRow="Remark" msprop:Generator_ColumnPropNameInTable="RemarkColumn" msprop:Generator_ColumnVarNameInTable="columnRemark" msprop:Generator_UserColumnName="Remark" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

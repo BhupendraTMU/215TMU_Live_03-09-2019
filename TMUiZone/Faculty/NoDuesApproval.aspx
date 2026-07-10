@@ -165,6 +165,14 @@
         .auto-style53 {
             width: 149px;
         }
+
+        .whiteRow {
+            background-color: #ffffff !important;
+        }
+
+        .greenRow {
+            background-color: #d4edda !important;
+        }
     </style>
 
     <script type="text/javascript">
@@ -309,7 +317,8 @@
                         <td style="width: 20px"></td>
                         <td>
                             <asp:TextBox ID="txtdateofrelieving" runat="server" BorderColor="Black" Width="200px" Format="dd MMM yyyy"></asp:TextBox>
-                                    <asp:HiddenField ID="hdfDesignation" runat="server" />
+                            <asp:CalendarExtender ID="CalendarExtender6" runat="server" TargetControlID="txtdateofrelieving" Format="dd MMM yyyy"></asp:CalendarExtender>
+                            <asp:HiddenField ID="hdfDesignation" runat="server" />
                         </td>
 
                         <td style="width: 10px"></td>
@@ -319,7 +328,7 @@
                         <td style="width: 10px"></td>
                         <td>
                             <asp:TextBox ID="txtdateofleaving" runat="server" BorderColor="Black" Width="200px" Format="dd MMM yyyy"></asp:TextBox>
-                            <asp:CalendarExtender ID="CalendarExtender5" runat="server" TargetControlID="txtdateofleaving" ></asp:CalendarExtender>
+                            <asp:CalendarExtender ID="CalendarExtender5" runat="server" TargetControlID="txtdateofleaving" Format="dd MMM yyyy"></asp:CalendarExtender>
 
                             <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="txtdateofleaving" ErrorMessage="Required" SetFocusOnError="True" ValidationGroup="odapps"></asp:RequiredFieldValidator>
                         </td>
@@ -337,13 +346,17 @@
                         <td style="width: 10px"></td>
                         <td>
                             <label style="line-height: 25px">Actual Date of Leaving:</label>
+
                         </td>
                         <td style="width: 10px"></td>
                         <td>
                             <asp:TextBox ID="txtActdateofLeaving" runat="server" BorderColor="Black" Width="200px" Format="dd MMM yyyy"></asp:TextBox>
                             <asp:CalendarExtender ID="CalendarExtender2" runat="server" TargetControlID="txtActdateofLeaving" Format="dd MMM yyyy"></asp:CalendarExtender>
-
-                           
+                            <asp:Button ID="btnupdate"
+                                runat="server"
+                                Text="Update"
+                                CssClass="btn btn-primary btn-sm"
+                                OnClick="update_Click" />
                         </td>
                     </tr>
                 </table>
@@ -575,7 +588,7 @@
                                     </div>
                                 </asp:TableCell>
                             </asp:TableRow>
-                      
+
                             <asp:TableRow ID="SeedMoneyVisible">
                                 <asp:TableCell Style="border: 1px solid">3.</asp:TableCell>
                                 <asp:TableCell Style="border: 1px solid">
@@ -1362,7 +1375,7 @@
                             </asp:TableRow>
 
 
-                            
+
                             <asp:TableRow>
                                 <asp:TableCell Style="border: 1px solid">22.</asp:TableCell>
                                 <asp:TableCell Style="border: 1px solid">

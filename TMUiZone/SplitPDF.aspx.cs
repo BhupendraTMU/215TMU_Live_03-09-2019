@@ -11,8 +11,8 @@ public partial class SplitPDF : System.Web.UI.Page
 {
     protected void btnSplit_Click(object sender, EventArgs e)
     {
-        string sourcePath = Server.MapPath("~/Uploads/master.pdf");
-        string outputFolder = Server.MapPath("~/SplitPDF/");
+        string sourcePath = Server.MapPath("~/Uploads/1TO250.pdf");
+        string outputFolder = Server.MapPath("~/SplitPDF/1TO250/");
 
         if (!Directory.Exists(outputFolder))
             Directory.CreateDirectory(outputFolder);
