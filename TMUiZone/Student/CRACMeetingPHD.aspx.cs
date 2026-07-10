@@ -22,7 +22,7 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                     {
                         divPhd.Visible = true;
                         bindPhdData();
-                        //btnPhdSave.Visible = false;
+                        
                     }
                     else
                     {
@@ -119,13 +119,6 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                                     break;
                                 }
                             }
-                        }
-
-                        // If CRACMeeting not exists in DB, enabled save button
-                        if (!IsCRACMeetingExist)
-                        {
-                            //var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = true;
-                            btnPhdSave.Visible = true;
                         }
                         if (!string.IsNullOrEmpty(ddlCRACMeeting.SelectedValue))
                         {
