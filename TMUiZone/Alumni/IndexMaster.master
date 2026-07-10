@@ -228,6 +228,7 @@
                                             <li style="margin-left: 0px" id="RegistraAlumniFeedback" runat="server" visible="false"><a href="AlumniFeedback.aspx"><b>Feedback</b></a></li>
                                             <li style="margin-left: 0px" id="StudentNoDues" runat="server" visible="false"><a href="StudentNoDues.aspx"><b>No Dues</b></a></li>
                                              <li style="margin-left: 0px" id="liIdStudentNoDuesPhd" runat="server" visible="false"><a href="StudentNoDuesPHD.aspx"><b>No Dues PHD</b></a></li>
+                                             <li style="margin-left: 0px" id="IdCRACMeetingPHDStudent" runat="server" visible="false"><a href="CRACMeetingPHD.aspx"><b>CRAC Meeting</b></a></li>
                                             <li style="margin-left: 0px" id="Assessment" runat="server" visible="false" ><a href="Applycertificate.aspx"><b>Migration Certificate</b></a></li>
 
 
