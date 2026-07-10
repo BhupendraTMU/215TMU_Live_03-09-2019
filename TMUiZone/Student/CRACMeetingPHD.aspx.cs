@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class Alumni_CRACMeeting : System.Web.UI.Page
+public partial class Student_CRACMeeting : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -22,11 +22,12 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
                     {
                         divPhd.Visible = true;
                         bindPhdData();
+                        //btnPhdSave.Visible = false;
                     }
                     else
                     {
                         divPhd.Visible = false;
-                        ScriptManager.RegisterStartupScript(this,GetType(),"msg", "alert('The Ph.D. CRAC Meeting form is available only from 1 January to 10 January and from 1 July to 10 July. Please submit your form during these periods');", true);
+                        ScriptManager.RegisterStartupScript(this, GetType(), "msg", "alert('The Ph.D. CRAC Meeting form is available only from 1 January to 10 January and from 1 July to 10 July. Please submit your form during these periods');", true);
                     }
                 }
                 else
@@ -78,7 +79,7 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
                     var ctlPhdGender = GetControl<TextBox>("txtPhdGender"); if (ctlPhdGender != null) ctlPhdGender.Text = getFirstCol(new[] { "Gender" });
                     var ctlPhdCollegeDept = GetControl<TextBox>("txtPhdCollegeDept"); if (ctlPhdCollegeDept != null) ctlPhdCollegeDept.Text = getFirstCol(new[] { "CollegeName" });
                     var ctlPhdCourseName = GetControl<TextBox>("txtPhdCourseName"); if (ctlPhdCourseName != null) ctlPhdCourseName.Text = getFirstCol(new[] { "CourseName" });
-                    var ctlPhdStudentNo = GetControl<TextBox>("txtPhdStudentNo"); if (ctlPhdStudentNo != null) ctlPhdStudentNo.Text = getFirstCol(new[] { "StudentNo" });  
+                    var ctlPhdStudentNo = GetControl<TextBox>("txtPhdStudentNo"); if (ctlPhdStudentNo != null) ctlPhdStudentNo.Text = getFirstCol(new[] { "StudentNo" });
                     var ctlPhdAcademicYear1 = GetControl<TextBox>("txtPhdAcademicYear1"); if (ctlPhdAcademicYear1 != null) ctlPhdAcademicYear1.Text = getFirstCol(new[] { "AcademicYear1" });
                     //var ctlPhdMobile = GetControl<TextBox>("txtPhdMobile"); if (ctlPhdMobile != null) ctlPhdMobile.Text = getFirstCol(new[] { "Mobile Number" });
                     //var ctlPhdEmail = GetControl<TextBox>("txtPhdEmail"); if (ctlPhdEmail != null) ctlPhdEmail.Text = getFirstCol(new[] { "E-Mail Address" });
@@ -87,7 +88,7 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
                     var ctlCourseCode = GetControl<HiddenField>("hfCourseCode");
                     if (ctlCourseCode != null) ctlCourseCode.Value = courseCode;
                     else if (Session["CourseCode"] == null) Session["CourseCode"] = courseCode;
-                   
+
                     try
                     {
                         bool IsCRACMeetingExist = false;
@@ -114,16 +115,21 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
                                 if (li != null && li.Text.Equals(name, StringComparison.OrdinalIgnoreCase))
                                 {
                                     ddlCRACMeeting.SelectedValue = li.Value;
-                                    IsCRACMeetingExist = true;
+                                    IsCRACMeetingExist = true;                                
                                     break;
                                 }
                             }
                         }
 
-                        // If CRACMeeting already exists in DB, disable/hide save so student cannot re-save
-                        if (IsCRACMeetingExist)
+                        // If CRACMeeting not exists in DB, enabled save button
+                        if (!IsCRACMeetingExist)
                         {
-                            var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = false;
+                            //var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = true;
+                            btnPhdSave.Visible = true;
+                        }
+                        if (!string.IsNullOrEmpty(ddlCRACMeeting.SelectedValue))
+                        {
+                            bindPhdFees(Convert.ToInt32(ddlCRACMeeting.SelectedValue), IsCRACMeetingExist);
                         }
                     }
                     catch { }
@@ -143,20 +149,24 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
             int cracNo;
             if (int.TryParse(ddlCRACMeeting.SelectedValue, out cracNo))
             {
-                bindPhdFees(cracNo);
+                bool existFlag = false;
+                 existFlag = IsCRACMeetingAlreadySaved(cracNo); 
+                bindPhdFees(cracNo, existFlag);
             }
             else
             {
-                // clear grid
-                gvPhdFees.DataSource = null;
+                gvPhdFees.DataSource = new DataTable();
+                gvPhdFees.EmptyDataText = "Please select a CRAC Meeting.";
                 gvPhdFees.DataBind();
+                btnPhdSave.Visible = false;
+                
             }
         }
         catch { }
     }
 
 
-    public void bindPhdFees(int CreacMeentinNo)
+    public void bindPhdFees(int CreacMeentinNo, bool IsCRACMeetingExist)
     {
         try
         {
@@ -213,12 +223,26 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
 
                     gvPhdFees.DataSource = mappedDt;
                     gvPhdFees.DataBind();
+
+                    decimal pendingAmount = Convert.ToDecimal(mappedDt.Rows[0]["PendingAmount"]);
+                    string status = mappedDt.Rows[0]["Status"].ToString();
+                    if (!IsCRACMeetingExist)
+                    {
+                        btnPhdSave.Visible = (pendingAmount == 0 && status.Equals("Paid", StringComparison.OrdinalIgnoreCase));
+                    }
+                        
                 }
                 else
                 {
                     // ensure grid cleared when no fees
-                    gvPhdFees.DataSource = null;
+                    gvPhdFees.DataSource = new DataTable(); 
                     gvPhdFees.DataBind();
+                    btnPhdSave.Visible = false;
+
+                    if (gvPhdFees.Rows.Count == 0)
+                    {
+                        gvPhdFees.EmptyDataText = "Fee setup is pending. Please contact the Accounts Department.";
+                    }
                 }
             }
         }
@@ -229,6 +253,17 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
         }
     }
 
+    private bool IsCRACMeetingAlreadySaved(int cracMeetingNo)
+    {
+        using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString()))
+        using (SqlCommand cmd = new SqlCommand(@" SELECT COUNT(1) FROM tbl_PhDStudentCRACMeeting WHERE EnrollmentNo=@EnrollmentNo  AND CRACMeetingNo=@CRACMeetingNo AND IsActive=1", con))
+        {
+            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
+            cmd.Parameters.AddWithValue("@CRACMeetingNo", cracMeetingNo);
+            con.Open();
+            return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+        }
+    }
     protected void gvPhdFees_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowType != DataControlRowType.DataRow) return;
@@ -241,14 +276,12 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
             decimal pending = 0m;
             decimal.TryParse(dataItem["PendingAmount"].ToString(), out pending);
 
-            var lnk = e.Row.FindControl("lnkPayNow") as LinkButton;
-            if (lnk != null)
-            {
-                // Enable Pay Now only when pending is 0
-                lnk.Enabled = (pending == 0m);
-                // Optionally hide when no pending and status not 'Paid'
-                // lnk.Visible = (pending == 0m);
-            }
+            //var lnk = e.Row.FindControl("lnkPayNow") as LinkButton;
+            //if (lnk != null)
+            //{
+            //    // Enable Pay Now only when pending is 0
+            //    lnk.Enabled = (pending == 0m);                
+            //}
         }
         catch { }
     }
@@ -293,35 +326,35 @@ public partial class Alumni_CRACMeeting : System.Web.UI.Page
         return defaultValue;
     }
 
-    protected void lnkPayNow_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            // Get the fee description from LinkButton CommandArgument
-            LinkButton lnkPayNow = (LinkButton)sender;
-            string feeDescription = lnkPayNow.CommandArgument;
+    //protected void lnkPayNow_Click(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        // Get the fee description from LinkButton CommandArgument
+    //        LinkButton lnkPayNow = (LinkButton)sender;
+    //        string feeDescription = lnkPayNow.CommandArgument;
 
-            // Get enrollment number and other details
-            string enrollmentNo = Session["enroll"] != null ? Session["enroll"].ToString() : string.Empty;
-            string collegeCode = Session["College"] != null ? Session["College"].ToString() : string.Empty;
-            string courseCode = Session["CourseCode"] != null ? Session["CourseCode"].ToString() : string.Empty;
+    //        // Get enrollment number and other details
+    //        string enrollmentNo = Session["enroll"] != null ? Session["enroll"].ToString() : string.Empty;
+    //        string collegeCode = Session["College"] != null ? Session["College"].ToString() : string.Empty;
+    //        string courseCode = Session["CourseCode"] != null ? Session["CourseCode"].ToString() : string.Empty;
 
-            // Redirect to payment page with parameters
-            // Adjust the URL based on your payment page location
-            string paymentPageUrl = string.Format("~/Payment/PayFees.aspx?enroll={0}&college={1}&course={2}&fee={3}",
-                Uri.EscapeDataString(enrollmentNo),
-                Uri.EscapeDataString(collegeCode),
-                Uri.EscapeDataString(courseCode),
-                Uri.EscapeDataString(feeDescription));
+    //        // Redirect to payment page with parameters
+    //        // Adjust the URL based on your payment page location
+    //        string paymentPageUrl = string.Format("~/Payment/PayFees.aspx?enroll={0}&college={1}&course={2}&fee={3}",
+    //            Uri.EscapeDataString(enrollmentNo),
+    //            Uri.EscapeDataString(collegeCode),
+    //            Uri.EscapeDataString(courseCode),
+    //            Uri.EscapeDataString(feeDescription));
 
-            Response.Redirect(paymentPageUrl);
-        }
-        catch (Exception ex)
-        {
-            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "payError",
-                "alert('Error opening payment page: " + ex.Message.Replace("'", "\"") + "');", true);
-        }
-    }
+    //        Response.Redirect(paymentPageUrl);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "payError",
+    //            "alert('Error opening payment page: " + ex.Message.Replace("'", "\"") + "');", true);
+    //    }
+    //}
 
     protected void btnPhdSave_Click(object sender, EventArgs e)
     {
