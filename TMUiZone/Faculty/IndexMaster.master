@@ -358,11 +358,10 @@
                          </ul>
                      </li>
                       <li style="margin-left: 0px" id="licopomapping" runat="server" ><a href="../Faculty/Co_PO_Mapping.aspx"><b>CO PO Mapping</b></a> </li>
-<<<<<<< HEAD
-<li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
-=======
-                    <li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
->>>>>>> 3fbf0d7c7286e703bf570b6c1bcac6b315bea3d0
+
+                     <li><a href="~/Faculty/NEPExistsReport.aspx" id="NEPExistsReport" runat="server" visible="false"><b>NEP Exist Report</b></a></li>
+
+                    
                       <li class="dropdown" style="">
 
                           <a href="#" class="sf-with-ul" runat="server" id="Report" visible="false">Report<span class="sf-sub-indicator"  runat="server" id="span13">»</span></a>
@@ -594,13 +593,13 @@
 
  <li><a href="~/Faculty/StudentNoDuesApprovalList.aspx" id="StudentNoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li> 
  <li><a href="~/Faculty/NoDuesApprovalList.aspx" id="NoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li>
-<li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD Student No Dues Approval</b></a></li>  
+<li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD No Dues Approval</b></a></li>  
  <li><a href="~/Faculty/JainStudentAttendance.aspx" id="JainStudentAttendance" runat="server" visible="false" ><b>Jain Student Attendance List</b></a></li>
              <li><a href="~/Faculty/Research_Incentive.aspx" id="ResearchIncentive" runat="server" visible="false" ><b>Research Incentive</b></a></li>
 <li runat="server" id="LiSeedmoney"  ><a href="../Faculty/Seedmoney.aspx"  ><b>Seed Money</b></a></li>
 <li runat="server" id="Li11"  ><a href="../Faculty/FinancialAssistance.aspx"  ><b>Financial Assistance</b></a></li>
 <li runat="server" id="LiBoS"  ><a href="../Faculty/Honorarium_E_Visit.aspx"  ><b>Honorarium Application</b></a></li>
-<li runat="server" id="LiBoSV2"  ><a href="../Faculty/Honorarium_E_VisitV2.aspx"  ><b>Honorarium Application(V2)</b></a></li>
+<%--<li runat="server" id="LiBoSV2"  ><a href="../Faculty/Honorarium_E_VisitV2.aspx"  ><b>Honorarium Application(V2)</b></a></li>--%>
 <li style="b"><a href="../Faculty/ComplaintForms.aspx" id="EqCompl" runat="server" visible="false"><b>Equipment Complaint</b></a></li>
 <li style="margin-left:0px" id="ViewGrievances" runat="server" visible="false"><a href="../Faculty/ViewGrievances.aspx" ><b>View Grievances</b></a> </li>
             <li> </li>

@@ -106,7 +106,20 @@
             border: 1px solid #3AC0F2;
         }
     </style>
+    <script type="text/javascript">
+        function SelectAll(source) {
 
+            var grid = document.getElementById('<%= grdUnpaid.ClientID %>');
+            var checkBoxes = grid.getElementsByTagName("input");
+
+            for (var i = 0; i < checkBoxes.length; i++) {
+                if (checkBoxes[i].type == "checkbox" &&
+                    checkBoxes[i] != source) {
+                    checkBoxes[i].checked = source.checked;
+                }
+            }
+        }
+</script>
     <script type="text/javascript">
 
         function isNumberKey(evt) {
@@ -185,26 +198,33 @@
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApplication" Width="140px" runat="server" OnClick="lnkApplication_Click">Application</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApplication" Width="140px" CausesValidation="false" runat="server" OnClick="lnkApplication_Click">Application</asp:LinkButton></td>
                     </tr>
                     <tr>
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApproval" Width="140px" runat="server" OnClick="lnkApproval_Click">Approval</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkApproval" Width="140px" CausesValidation="false" runat="server" OnClick="lnkApproval_Click">Approval</asp:LinkButton></td>
                     </tr>
 
                     <tr>
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkReport" Width="140px" runat="server" OnClick="lnkReport_Click">Report</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkReport" Width="140px" CausesValidation="false" runat="server" OnClick="lnkReport_Click">Report</asp:LinkButton></td>
                     </tr>
                     <tr>
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkAllData" Visible="false" Width="140px" runat="server" OnClick="lnkAllData_Click">All</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkAllData" Visible="false" CausesValidation="false" Width="140px" runat="server" OnClick="lnkAllData_Click">All</asp:LinkButton></td>
+                    </tr>
+
+                    <tr>
+                        <td style="height: 10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkUpdatePayment" CausesValidation="false" Visible="false" Width="140px" runat="server" OnClick="lnkUpdatePayment_Click">Update Payment</asp:LinkButton></td>
                     </tr>
                 </table>
 
@@ -322,12 +342,6 @@
                             <div class="col-sm-8">
 
                                 <asp:DropDownList ID="drpAppType" runat="server" CssClass="form-control" Width="200px" AutoPostBack="true" OnSelectedIndexChanged="drpAppType_SelectedIndexChanged">
-                                    <%--<asp:ListItem Text="CRC" Value="CRC"></asp:ListItem>
-                                    <asp:ListItem Text="BoS" Value="BoS"></asp:ListItem>
-                                    <asp:ListItem Text="AC" Value="AC"></asp:ListItem>
-                                    <asp:ListItem Text="EC" Value="EC"></asp:ListItem>
-                                    <asp:ListItem Text="LTS" Value="LTS"></asp:ListItem>
-                                    <asp:ListItem Text="IIC" Value="IIC"></asp:ListItem>--%>
                                 </asp:DropDownList>
 
                             </div>
@@ -378,14 +392,14 @@
                                 ControlToValidate="txtOrganization"
                                 ErrorMessage=" *"
                                 ForeColor="Red">
-            </asp:RequiredFieldValidator>
+                            </asp:RequiredFieldValidator>
                         </label>
 
                         <asp:TextBox ID="txtOrganization"
                             runat="server"
                             CssClass="form-control"
                             ValidationGroup="R1">
-        </asp:TextBox>
+                        </asp:TextBox>
 
                     </div>
                     <div class="col-sm-3 p-0">
@@ -764,11 +778,130 @@
 
                 </asp:Panel>
 
+
+
+                <asp:Panel ID="pnUpdatePayment" runat="server" Visible="false">
+
+                    <fieldset class="boxBody">
+                        <legend><strong>Update Payment</strong></legend>
+
+                        <div class="container-fluid" style="width: 1000px">
+
+                            <!-- Search Section -->
+                            <div class="row">
+
+                                <div class="col-md-4 col-sm-6">
+                                    <label>From Date</label>
+                                    <asp:TextBox ID="TextBox1" runat="server"
+                                        CssClass="form-control"
+                                        TextMode="Date"></asp:TextBox>
+
+                                    <asp:RequiredFieldValidator
+                                        ID="RequiredFieldValidator11"
+                                        runat="server"
+                                        ControlToValidate="TextBox1"
+                                        ErrorMessage="*"
+                                        ForeColor="Red" />
+                                </div>
+
+                                <div class="col-md-4 col-sm-6">
+                                    <label>To Date</label>
+                                    <asp:TextBox ID="TextBox2" runat="server"
+                                        CssClass="form-control"
+                                        TextMode="Date"></asp:TextBox>
+
+                                    <asp:RequiredFieldValidator
+                                        ID="RequiredFieldValidator12"
+                                        runat="server"
+                                        ControlToValidate="TextBox2"
+                                        ErrorMessage="*"
+                                        ForeColor="Red" />
+                                </div>
+
+                                <div class="col-md-4 col-sm-12" style="margin-top: 25px;">
+                                    <asp:Button ID="Button2"
+                                        runat="server"
+                                        Text="Search"
+                                        CssClass="btn btn-success"
+                                        OnClick="Button2_Click" />
+                                    &nbsp
+                                    <asp:Button ID="btnUpdatePayment"
+                                        runat="server"
+                                        Text="Update Payment"
+                                        CssClass="btn btn-primary"
+                                        OnClick="btnUpdatePayment_Click"
+                                        OnClientClick="return confirm('Are you sure you want to update payment for the selected records?');" />
+                                </div>
+
+
+
+
+
+                            </div>
+
+                            <br />
+
+                            <!-- Grid -->
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="table-responsive">
+
+                                        <asp:GridView ID="grdUnpaid"
+                                            runat="server"
+                                            Width="100%"
+                                            AutoGenerateColumns="false"
+                                            CssClass="table table-bordered table-striped table-hover">
+
+                                            <Columns>
+                                                <asp:TemplateField>
+                                                    <HeaderTemplate>
+                                                        <asp:CheckBox ID="chkAll" runat="server"
+                                                            onclick="SelectAll(this);" />
+                                                    </HeaderTemplate>
+
+                                                    <ItemTemplate>
+                                                        <asp:CheckBox ID="chkPayment"
+                                                            runat="server" />
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:BoundField DataField="AppNo" HeaderText="Application No" />
+                                                <asp:BoundField DataField="applicationfor" HeaderText="Application For" />
+                                                <asp:BoundField DataField="name" HeaderText="Name" />
+                                                <asp:BoundField DataField="designation" HeaderText="Designation" />
+                                                <asp:BoundField DataField="organization" HeaderText="Organization" />
+
+
+                                                <asp:BoundField DataField="totalamt" HeaderText="Approved Amount" />
+                                                <asp:BoundField DataField="acname" HeaderText="Account Name" />
+                                                <asp:BoundField DataField="acnumber" HeaderText="Account No" />
+                                                <asp:BoundField DataField="bank" HeaderText="Bank" />
+                                                <asp:BoundField DataField="ifsc" HeaderText="IFSC" />
+
+                                                <asp:BoundField DataField="ApprovalDate" HeaderText="Approval Date" />
+                                            </Columns>
+
+                                        </asp:GridView>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+
+                </asp:Panel>
+
+
+
+
                 <asp:Panel ID="Panel1" runat="server" Visible="false">
                     <table>
                         <tr>
                             <td>
-                               
+
 
                                 <asp:GridView ID="GridView1" DataKeyNames="ApplicationNo" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="Solid" BorderWidth="2px" CellPadding="3" Width="1000px" GridLines="Horizontal" EmptyDataText="There are no data records to display.">
                                     <Columns>
@@ -1056,7 +1189,7 @@
                                     CssClass="form-control"
                                     TextMode="MultiLine"
                                     Rows="4">
-        </asp:TextBox>
+                                </asp:TextBox>
                             </div>
 
                             <div class="col-md-3" id="divVCRemark" runat="server">
@@ -1069,7 +1202,7 @@
                                         ControlToValidate="txtRemark"
                                         ErrorMessage=" * Required"
                                         ForeColor="Red">
-            </asp:RequiredFieldValidator>
+                                    </asp:RequiredFieldValidator>
                                 </label>
 
                                 <asp:TextBox ID="txtRemark"
@@ -1077,7 +1210,7 @@
                                     CssClass="form-control"
                                     TextMode="MultiLine"
                                     Rows="4">
-        </asp:TextBox>
+                                </asp:TextBox>
                             </div>
 
                         </div>

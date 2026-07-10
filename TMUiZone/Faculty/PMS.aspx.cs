@@ -43,7 +43,7 @@ public partial class PMS : System.Web.UI.Page
                 else
                 {
                     btnCreateNew.Visible = true;
-                        //(DateTime.Now.Day >= 19 && DateTime.Now.Day <= 30);
+                    //(DateTime.Now.Day >= 19 && DateTime.Now.Day <= 30);
                 }
             }
         }
@@ -62,13 +62,13 @@ public partial class PMS : System.Web.UI.Page
             cmd.Parameters.Add("@ID", Session["uid"].ToString());
             cmd.Parameters.Add("@month", hfmonth.Value);
             cmd.Parameters.Add("@academicyear", dd_AcademicYear.SelectedValue.Trim());
-            
+
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt1 = new DataTable();
             con.Open();
             da.Fill(dt1);
             con.Close();
-            if(dt1.Rows.Count>0)
+            if (dt1.Rows.Count > 0)
             {
                 foreach (DataRow row in dt1.Rows)
                 {
@@ -499,7 +499,7 @@ public partial class PMS : System.Web.UI.Page
     private void BindFinancialYears_For_Filter()
     {
         // Get the current year
-        int currentYear = DateTime.Now.Year-1;
+        int currentYear = DateTime.Now.Year - 1;
 
         // Create a list to hold financial years
         List<string> financialYears = new List<string>();
@@ -8853,7 +8853,7 @@ lbl_ff_even_sem.Text.Trim()
         SqlCommand cmd = new SqlCommand("sp_Get_PMS_DataWithID", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@ID", ID.Trim());
-        con.Open();   
+        con.Open();
         SqlDataReader dr = cmd.ExecuteReader();
         return dr;
     }
@@ -9363,7 +9363,7 @@ lbl_ff_even_sem.Text.Trim()
 
 
 
-            
+
 
 
 
@@ -9385,8 +9385,14 @@ lbl_ff_even_sem.Text.Trim()
             assesmentDisable();
             HR_Disable();
             Btn_Save.Visible = true;
-            //visible false for temp by Bhupii
-            Btn_Approval.Visible = false;
+            if (lblMonth.Text == "Annual")
+            {
+                Btn_Approval.Visible = true;
+            }
+            else
+            {
+                Btn_Approval.Visible = false;
+            }
             ViewState["Applicable_For_Department"] = "TEACH";
             btn_Fu_A1.Visible = true;
             btnAttachmentSave_Fu_A1.Visible = true;
@@ -9410,7 +9416,9 @@ lbl_ff_even_sem.Text.Trim()
                 HR_Disable();
                 Btn_Save.Visible = true;
                 //visible false for temp by Bhupii
+
                 Btn_Approval.Visible = false;
+
                 ViewState["Applicable_For_Department"] = "RM";
             }
             if (checkReportingManager <= 0)
@@ -9419,7 +9427,9 @@ lbl_ff_even_sem.Text.Trim()
                 assesmentDisable();
                 HR_Disable();
                 Btn_Save.Visible = false;
+
                 Btn_Approval.Visible = false;
+
                 ViewState["Applicable_For_Department"] = "TEACH";
             }
         }
@@ -9435,14 +9445,18 @@ lbl_ff_even_sem.Text.Trim()
                 HR_Enable();
                 Btn_Save.Visible = true;
                 //visible false for temp by Bhupii
-                Btn_Approval.Visible = false;
+
+                Btn_Approval.Visible = true;
+
                 ViewState["Applicable_For_Department"] = "HR";
             }
             if (Session["Departmentcode"].ToString().Trim() != "D228")
             {
                 HR_Disable();
                 Btn_Save.Visible = false;
+
                 Btn_Approval.Visible = false;
+
 
             }
         }
@@ -9457,14 +9471,18 @@ lbl_ff_even_sem.Text.Trim()
             if (Session["uid"].ToString().Trim() == "TMU08026")
             {
                 //visible false for temp by Bhupii
+
                 Btn_Approval.Visible = false;
+
                 Btn_Save.Visible = false;
                 ViewState["Applicable_For_Department"] = "VC";
             }
             else
             {
                 Btn_Save.Visible = false;
+
                 Btn_Approval.Visible = false;
+
             }
         }
         if (IsFaculty_Approval == "TRUE" && IsAssessment_Approval.Trim() == "TRUE" && IsHR_Approval.Trim() == "TRUE" && IsVC_Approval == "TRUE")
@@ -9474,7 +9492,9 @@ lbl_ff_even_sem.Text.Trim()
             Faculty_Disabledata();
             assesmentDisable();
             HR_Disable();
+
             Btn_Approval.Visible = false;
+
             Btn_Save.Visible = false;
         }
         GetUploadFileData();
@@ -10372,7 +10392,7 @@ lbl_ff_even_sem.Text.Trim()
     protected void btnCreateNew_Click(object sender, EventArgs e)
     {
 
-        int currentYear = DateTime.Now.Year-1;
+        int currentYear = DateTime.Now.Year - 1;
 
         ddl_academic_session.Text = currentYear.ToString().Substring(2) + "-" + (currentYear + 1).ToString().Substring(2);
         lblMonth.Text = drpMonth.SelectedItem.Text;
@@ -10825,6 +10845,20 @@ lbl_ff_even_sem.Text.Trim()
         con.DisConnect();
     }
 
+    public void Get_Common_Attachment(string Applicable_For, string EmployeeID, string AcademicYear)
+    {
+        pms_connection con = new pms_connection();
+        SqlDataReader dr = sp_GetAttachmentByApplicable_for_PMS(Applicable_For.Trim(), EmployeeID.Trim(), AcademicYear.Trim());
+        DataTable dt = new DataTable();
+        dt.Load(dr);
+        gvAttachment.DataSource = dt;
+        gvAttachment.DataBind();
+        dr.Close();
+        con.DisConnect();
+    }
+
+
+
     public void Get_A_2_Attachment(string Applicable_For, string EmployeeID, string AcademicYear)
     {
         pms_connection con = new pms_connection();
@@ -10901,20 +10935,95 @@ lbl_ff_even_sem.Text.Trim()
         string autoNo = e.CommandArgument.ToString();
         DownloadFile(Convert.ToInt32(autoNo));
     }
+    protected void btnUpload_Click(object sender, EventArgs e)
+    {
+        if (!fuAttachment.HasFile)
+        {
+            ScriptManager.RegisterStartupScript(this, GetType(), "msg",
+                "alert('Please select an attachment.');", true);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(txtBriefDescription.Text))
+        {
+            ScriptManager.RegisterStartupScript(this, GetType(), "msg",
+                "alert('Please enter brief description.');", true);
+            return;
+        }
+
+
+
+        if (fuAttachment.HasFile)
+        {
+            string fileExtension = System.IO.Path.GetExtension(fuAttachment.FileName).ToLower();
+
+
+            string[] allowedExtensions = { ".pdf", ".jpg", ".jpeg", ".png" };
+
+
+            if (allowedExtensions.Contains(fileExtension))
+            {
+                if (fuAttachment.PostedFile.ContentLength <= 204800) // 200 KB file size check
+                {
+                    string fileName = Path.GetFileName(fuAttachment.PostedFile.FileName);
+                    string fileType = Path.GetExtension(fileName);
+                    byte[] fileData = fuAttachment.FileBytes;
+                    pms_connection con = new pms_connection();
+                    SqlCommand cmd = new SqlCommand("sp_InsertAttachment_PMS_back", con.Con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ReferenceID", 123); // example ReferenceID
+                    cmd.Parameters.AddWithValue("@Attachment_FileName", fileName);
+                    cmd.Parameters.AddWithValue("@Attachment_FileType", fileType);
+                    cmd.Parameters.AddWithValue("@Attachment_Data", fileData);
+                    cmd.Parameters.AddWithValue("@Empoyee_Code", lbl_emp_code.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Academic_Year", ddl_academic_session.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Applicable_For", lblApplicablefor.Text.Trim());
+                    cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
+                    cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
+                    cmd.Parameters.AddWithValue("@month", hfmonth.Value);
+                    cmd.Parameters.AddWithValue("@desc", txtBriefDescription.Text);
+
+                    con.Connect();
+                    cmd.ExecuteNonQuery();
+                    con.DisConnect();
+                    Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+                    GetUploadFileData();
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('File size must be less than or equal to 200 KB.');", true);
+                }
+            }
+            else
+            {
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Only PDF and image files are allowed.');", true);
+
+            }
+        }
+        else
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please select a file to upload.');", true);
+
+        }
+        md_FileUpload.Show();
+    }
 
     protected void btn_Fu_A1_Click(object sender, EventArgs e)
     {
-
+        VisibleFalse("a_1");
         lblApplicablefor.Text = "a_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
 
     }
 
     protected void fu_b1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_1");
         lblApplicablefor.Text = "b_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
 
     }
@@ -10922,134 +11031,150 @@ lbl_ff_even_sem.Text.Trim()
 
     protected void fu_b3_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_3");
         lblApplicablefor.Text = "b_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_b2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_2");
         lblApplicablefor.Text = "b_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_b4_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_4");
         lblApplicablefor.Text = "b_4";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_b5_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_5");
         lblApplicablefor.Text = "b_5";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_b6_Click(object sender, EventArgs e)
     {
+        VisibleFalse("b_6");
         lblApplicablefor.Text = "b_6";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_c1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("c_1");
         lblApplicablefor.Text = "c_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_c2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("c_2");
         lblApplicablefor.Text = "c_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_1");
         lblApplicablefor.Text = "d_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_2");
         lblApplicablefor.Text = "d_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d3_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_3");
         lblApplicablefor.Text = "d_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d4_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_4");
         lblApplicablefor.Text = "d_4";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d5_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_5");
         lblApplicablefor.Text = "d_5";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_d6_Click(object sender, EventArgs e)
     {
+        VisibleFalse("d_6");
         lblApplicablefor.Text = "d_6";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_e1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("e_1");
         lblApplicablefor.Text = "e_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
-    public void visiblefalse()
+    public void VisibleFalse(string id)
     {
-        F_1.Visible = false;
-        F_2.Visible = false;
-        F_3.Visible = false;
-        F_4.Visible = false;
-        F_5.Visible = false;
-        F_6.Visible = false;
-        F_7.Visible = false;
-        h_1.Visible = false;
-        h_2.Visible = false;
-        h_3.Visible = false;
-        h_4.Visible = false;
-        h_5.Visible = false;
-        h_6.Visible = false;
-        h_7.Visible = false;
-        h_8.Visible = false;
-        h_9.Visible = false;
-        i_1.Visible = false;
-        i_2.Visible = false;
-        i_3.Visible = false;
-        i_4.Visible = false;
-        i_5.Visible = false;
-        j_1.Visible = false;
-        j_2.Visible = false;
-        k_3.Visible = false; k_4.Visible = false; k_5.Visible = false; k_6.Visible = false; k_7.Visible = false; k_8.Visible = false;
+        Control[] controls =
+        {
+        F_1, F_2, F_3, F_4, F_5, F_6, F_7,
+        h_1, h_2, h_3, h_4, h_5, h_6, h_7, h_8, h_9,
+        i_1, i_2, i_3, i_4, i_5,
+        j_1, j_2,
+        k_3, k_4, k_5, k_6, k_7, k_8, k_9, k_10, k_11
+    };
+
+        bool found = false;
+
+        foreach (Control ctrl in controls)
+        {
+            if (ctrl.ID.Equals(id, StringComparison.OrdinalIgnoreCase))
+            {
+                ctrl.Visible = true;
+                found = true;
+            }
+            else
+            {
+                ctrl.Visible = false;
+            }
+        }
+
+        // Agar passed ID upar wale controls me nahi mili
+        divcommon.Visible = !found;
     }
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_f1_Click(object sender, EventArgs e)
     {
         lblApplicablefor.Text = "f_1";
         Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_1.Visible = true;
+        VisibleFalse("F_1");
+
         md_FileUpload.Show();
     }
 
@@ -11057,8 +11182,8 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_2";
         Get_A_2_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_2.Visible = true;
+        VisibleFalse("F_2");
+
         md_FileUpload.Show();
     }
 
@@ -11066,8 +11191,8 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_3";
         Get_A_3_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_3.Visible = true;
+        VisibleFalse("F_3");
+
         md_FileUpload.Show();
     }
 
@@ -11075,8 +11200,8 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_4";
         Get_A_4_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_4.Visible = true;
+        VisibleFalse("F_4");
+
         md_FileUpload.Show();
     }
 
@@ -11084,8 +11209,8 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_5";
         Get_A_5_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_5.Visible = true;
+        VisibleFalse("F_5");
+
         md_FileUpload.Show();
     }
 
@@ -11093,8 +11218,8 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_6";
         Get_A_6_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_6.Visible = true;
+        VisibleFalse("F_6");
+
         md_FileUpload.Show();
     }
 
@@ -11102,31 +11227,32 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "f_7";
         Get_A_7_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
-        F_7.Visible = true;
+        VisibleFalse("F_7");
+
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_g1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("g_1");
         lblApplicablefor.Text = "g_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_g2_Click(object sender, EventArgs e)
     {
-
+        VisibleFalse("g_2");
         lblApplicablefor.Text = "g_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_g3_Click(object sender, EventArgs e)
     {
-
+        VisibleFalse("g_3");
         lblApplicablefor.Text = "g_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
@@ -11135,7 +11261,7 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "h_1";
         Get_h_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_1");
         h_1.Visible = true;
         md_FileUpload.Show();
     }
@@ -11144,7 +11270,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_2";
         Get_h_2_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_2");
         h_2.Visible = true;
         md_FileUpload.Show();
     }
@@ -11153,7 +11279,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_3";
         Get_h_3_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_3");
         h_3.Visible = true;
         md_FileUpload.Show();
     }
@@ -11162,7 +11288,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_4";
         Get_h_4_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_4");
         h_4.Visible = true;
         md_FileUpload.Show();
     }
@@ -11171,7 +11297,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_5";
         Get_h_5_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_5");
         h_5.Visible = true;
         md_FileUpload.Show();
     }
@@ -11180,7 +11306,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_6";
         Get_h_6_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_6");
         h_6.Visible = true;
         md_FileUpload.Show();
     }
@@ -11189,7 +11315,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_7";
         Get_h_7_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_7");
         h_7.Visible = true;
         md_FileUpload.Show();
     }
@@ -11198,7 +11324,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_8";
         Get_h_8_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_8");
         h_8.Visible = true;
         md_FileUpload.Show();
     }
@@ -11207,7 +11333,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "h_9";
         Get_h_9_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("h_9");
         h_9.Visible = true;
         md_FileUpload.Show();
     }
@@ -11216,7 +11342,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "i_1";
         Get_i_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("i_1");
         i_1.Visible = true;
         md_FileUpload.Show();
     }
@@ -11225,7 +11351,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "i_2";
         Get_i_2_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("i_2");
         i_2.Visible = true;
         md_FileUpload.Show();
     }
@@ -11235,7 +11361,7 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "i_3";
         Get_i_3_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("i_3");
         i_3.Visible = true;
         md_FileUpload.Show();
     }
@@ -11245,7 +11371,7 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "i_4";
         Get_i_4_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("i_4");
         i_4.Visible = true;
         md_FileUpload.Show();
     }
@@ -11255,7 +11381,7 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "i_5";
         Get_i_5_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("i_5");
         i_5.Visible = true;
         md_FileUpload.Show();
     }
@@ -11265,7 +11391,7 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "j_1";
         Get_j_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("j_1");
         j_1.Visible = true;
         md_FileUpload.Show();
     }
@@ -11275,22 +11401,24 @@ lbl_ff_even_sem.Text.Trim()
 
         lblApplicablefor.Text = "j_2";
         Get_j_2_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("j_2");
         j_2.Visible = true;
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_k1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("k_1");
         lblApplicablefor.Text = "k_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_k2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("k_2");
         lblApplicablefor.Text = "k_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
@@ -11298,7 +11426,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_3";
         Get_k_3_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_3");
         k_3.Visible = true;
         md_FileUpload.Show();
     }
@@ -11307,7 +11435,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_4";
         Get_k_4_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_4");
         k_4.Visible = true;
         md_FileUpload.Show();
     }
@@ -11316,7 +11444,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_5";
         Get_k_5_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_5");
         k_5.Visible = true;
         md_FileUpload.Show();
     }
@@ -11325,7 +11453,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_6";
         Get_k_6_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_6");
         k_6.Visible = true;
         md_FileUpload.Show();
     }
@@ -11334,7 +11462,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_7";
         Get_k_7_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_7");
         k_7.Visible = true;
         md_FileUpload.Show();
     }
@@ -11343,7 +11471,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_8";
         Get_k_8_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_8");
         k_8.Visible = true;
         md_FileUpload.Show();
     }
@@ -11352,7 +11480,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_9";
         Get_k_9_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_9");
         k_9.Visible = true;
         md_FileUpload.Show();
     }
@@ -11361,7 +11489,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_10";
         Get_k_10_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_10");
         k_10.Visible = true;
         md_FileUpload.Show();
     }
@@ -11370,113 +11498,129 @@ lbl_ff_even_sem.Text.Trim()
     {
         lblApplicablefor.Text = "k_11";
         Get_k_11_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-        visiblefalse();
+        VisibleFalse("k_11");
         k_11.Visible = true;
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_l1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("l_1");
         lblApplicablefor.Text = "l_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_l2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("l_2");
         lblApplicablefor.Text = "l_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_l3_Click(object sender, EventArgs e)
     {
+        VisibleFalse("l_3");
         lblApplicablefor.Text = "l_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_m1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("m_1");
         lblApplicablefor.Text = "m_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_m2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("m_2");
         lblApplicablefor.Text = "m_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_m3_Click(object sender, EventArgs e)
     {
+        VisibleFalse("m_3");
         lblApplicablefor.Text = "m_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_m4_Click(object sender, EventArgs e)
     {
+        VisibleFalse("m_4");
         lblApplicablefor.Text = "m_4";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_n1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("n_1");
         lblApplicablefor.Text = "n_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_n2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("n_2");
         lblApplicablefor.Text = "n_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaB_ResearchAndDevelopment_FileUpload_n3_Click(object sender, EventArgs e)
     {
+
+        VisibleFalse("n_3");
         lblApplicablefor.Text = "n_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaD_Administration_FileUpload_o1_Click(object sender, EventArgs e)
     {
+        VisibleFalse("o_1");
         lblApplicablefor.Text = "o_1";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaD_Administration_FileUpload_o2_Click(object sender, EventArgs e)
     {
+        VisibleFalse("o_2");
         lblApplicablefor.Text = "o_2";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaD_Administration_FileUpload_o3_Click(object sender, EventArgs e)
     {
+        VisibleFalse("o_3");
         lblApplicablefor.Text = "o_3";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaD_Administration_FileUpload_o4_Click(object sender, EventArgs e)
     {
+        VisibleFalse("o_4");
         lblApplicablefor.Text = "o_4";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
     protected void fu_CriteriaD_Administration_FileUpload_o5_Click(object sender, EventArgs e)
     {
+        VisibleFalse("o_5");
         lblApplicablefor.Text = "o_5";
-        Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        Get_Common_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         md_FileUpload.Show();
     }
 
@@ -13259,7 +13403,7 @@ lbl_ff_even_sem.Text.Trim()
         if (DropDownList24.SelectedValue == "1")
         {
             txt_CriteriaB_ResearchAndDevelopment_RequiredActivitiesInNumbers_j1.Enabled = true;
-           
+
             fu_CriteriaB_ResearchAndDevelopment_FileUpload_j1.Visible = true;
             Button18.Visible = false;
 
@@ -13499,14 +13643,14 @@ lbl_ff_even_sem.Text.Trim()
         pms_connection con = new pms_connection();
         SqlCommand cmd = new SqlCommand("sp_updateNoActivity_PMS", con.Con);
         cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.AddWithValue("@ReferenceID", 123);       
+        cmd.Parameters.AddWithValue("@ReferenceID", 123);
         cmd.Parameters.AddWithValue("@Empoyee_Code", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@Academic_Year", ddl_academic_session.Text.Trim());
         cmd.Parameters.AddWithValue("@Applicable_For", "f.1");
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
-        cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));        
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13528,7 +13672,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13548,7 +13692,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13568,7 +13712,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13588,7 +13732,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13608,7 +13752,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13628,7 +13772,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13648,7 +13792,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13668,7 +13812,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13688,7 +13832,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13708,7 +13852,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13728,7 +13872,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13748,7 +13892,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13768,7 +13912,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13788,7 +13932,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13808,7 +13952,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13828,7 +13972,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13848,7 +13992,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13868,7 +14012,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13888,7 +14032,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13908,7 +14052,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13928,7 +14072,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13948,7 +14092,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13968,7 +14112,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -13988,7 +14132,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -14008,7 +14152,7 @@ lbl_ff_even_sem.Text.Trim()
         cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
         cmd.Parameters.AddWithValue("@CreatedBy_Name", lbl_faculty_name.Text.Trim());
         cmd.Parameters.AddWithValue("@Created_Date", DateTime.Now.ToString("dd MMM yyyy HH:mm"));
-        cmd.Parameters.AddWithValue("@month",  hfmonth.Value);
+        cmd.Parameters.AddWithValue("@month", hfmonth.Value);
         cmd.Parameters.AddWithValue("@ActivityType", "1");
         con.Connect();
         cmd.ExecuteNonQuery();
@@ -14138,7 +14282,7 @@ lbl_ff_even_sem.Text.Trim()
 
     protected void btnSave_Click(object sender, EventArgs e)
     {
-       
+
 
 
         if (fileUpload.HasFile)
@@ -14159,11 +14303,11 @@ lbl_ff_even_sem.Text.Trim()
                     pms_connection con = new pms_connection();
                     SqlCommand cmd = new SqlCommand("sp_InsertAttachment_F2", con.Con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                  
+
                     cmd.Parameters.AddWithValue("@Attachment_FileName", fileName);
                     cmd.Parameters.AddWithValue("@Attachment_FileType", fileType);
-                    cmd.Parameters.AddWithValue("@Attachment_Data", fileData);                  
-                    cmd.Parameters.AddWithValue("@Academic_Year", ddl_academic_session.Text.Trim());                   
+                    cmd.Parameters.AddWithValue("@Attachment_Data", fileData);
+                    cmd.Parameters.AddWithValue("@Academic_Year", ddl_academic_session.Text.Trim());
                     cmd.Parameters.AddWithValue("@CreatedBy_ID", lbl_emp_code.Text.Trim());
                     cmd.Parameters.AddWithValue("@Url", txtUrl.Text.Trim());
                     cmd.Parameters.AddWithValue("@PublishDate", txtDate.Text.Trim());
@@ -14174,18 +14318,18 @@ lbl_ff_even_sem.Text.Trim()
                     cmd.Parameters.AddWithValue("@ActivityType", 2);
                     con.Connect();
                     cmd.ExecuteNonQuery();
-                    con.DisConnect();                  
+                    con.DisConnect();
                     lblApplicablefor.Text = "f_2";
                     Save_InDraft();
                     Get_A_1_Attachment(lblApplicablefor.Text.Trim(), lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
-                   
+
                     lblerror.Text = "";
                     md_FileUpload.Show();
                 }
                 else
                 {
                     lblerror.Text = "File size must be less than or equal to 200 KB.";
-                   
+
                     md_FileUpload.Show();
                 }
             }
@@ -14193,7 +14337,7 @@ lbl_ff_even_sem.Text.Trim()
             {
 
                 lblerror.Text = "Only PDF and image files are allowed.";
-              
+
                 md_FileUpload.Show();
 
             }
@@ -14206,8 +14350,8 @@ lbl_ff_even_sem.Text.Trim()
             md_FileUpload.Show();
 
         }
-        
-        
+
+
 
 
 
@@ -14340,7 +14484,7 @@ lbl_ff_even_sem.Text.Trim()
         }
 
         lblErrorF3.Text = "Saved Successfully";
-        
+
     }
 
     private void BindGridF3()
@@ -14477,7 +14621,7 @@ lbl_ff_even_sem.Text.Trim()
         {
             DownloadF4(id);
         }
-       
+
     }
     private void DownloadF4(int id)
     {
@@ -14561,7 +14705,7 @@ lbl_ff_even_sem.Text.Trim()
         {
             DownloadF5(id);
         }
-        
+
     }
     protected void gvF6_RowCommand(object sender, GridViewCommandEventArgs e)
     {

@@ -28,11 +28,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 lnk_mentor_allocation.Visible = true;
             }
 
-            if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
-            {
-                //HR DepCode: D228,PAYROLL SECTION DepCode=D213,ACCOUNT SECTION DepCode=D039
-                IdPHDStudentNoDuesApproval.Visible = true;
-            }
+            
             //else
             //{
             //    IdPHDStudentNoDuesApproval.Visible = false;
@@ -1463,7 +1459,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         if (Session["uid"].ToString() == "TMU00865")
         {
             StudentReExamination1.Visible = true;
-<<<<<<< HEAD
+
 
         }
         if (Session["uid"].ToString() == "TMU07001" || Session["uid"].ToString() == "TMU06106" || Session["uid"].ToString() == "TMU07417" || Session["uid"].ToString() == "TMU07473")
@@ -1474,20 +1470,15 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         {
             DigilockerErrorUpload.Visible = true;
         }
+        if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
+        {            
+            IdPHDStudentNoDuesApproval.Visible = true;
+        }
 
-=======
-        }        
->>>>>>> 3fbf0d7c7286e703bf570b6c1bcac6b315bea3d0
-        //if (Session[].ToString() == "1")
-        //{
-        //    ReviewAttendance_New.Visible = false;
-        //    ReviewAttendance_NewMD.Visible = true;
-        //    FacultyTimeSheet.Visible = false;
-        //    FacultyTimeSheetMD.Visible = true;
-        //    FacultyLessonPlan.Visible = false;
-        //    FacultyLessonPlanMD.Visible = true;
-        //}
-    }
+    }        
+
+    
+
     public string GetLinkYesNo(string PageId)
     {
         SqlCommand cmd = new SqlCommand("SP_GetFormVisibilityYesNo", con1);
