@@ -593,7 +593,8 @@
 
  <li><a href="~/Faculty/StudentNoDuesApprovalList.aspx" id="StudentNoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li> 
  <li><a href="~/Faculty/NoDuesApprovalList.aspx" id="NoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li>
-<li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD No Dues Approval</b></a></li>  
+<li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD No Dues Approval</b></a></li> 
+ <li><a href="~/Faculty/ViewStudentCRACFormDetails.aspx" id="IdViewPHDStudentCRACForm" runat="server" visible="true" ><b>View CRAC Meeting</b></a></li>            
  <li><a href="~/Faculty/JainStudentAttendance.aspx" id="JainStudentAttendance" runat="server" visible="false" ><b>Jain Student Attendance List</b></a></li>
              <li><a href="~/Faculty/Research_Incentive.aspx" id="ResearchIncentive" runat="server" visible="false" ><b>Research Incentive</b></a></li>
 <li runat="server" id="LiSeedmoney"  ><a href="../Faculty/Seedmoney.aspx"  ><b>Seed Money</b></a></li>

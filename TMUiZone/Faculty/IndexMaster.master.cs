@@ -1475,6 +1475,15 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             IdPHDStudentNoDuesApproval.Visible = true;
         }
 
+       //SqlDataAdapter adapCRAC = new SqlDataAdapter("select Principal from [EDUCOLLEGELIVE-R2].dbo.[User Role Matrix]  where   Principal='" + Session["uid"].ToString() + "' and [Global Dimenison 1 Code]='" + Session["College"].ToString() + "' and [Course Code]='" + Session["CourseCode"].ToString() + "'  ", con.Con);
+
+        SqlDataAdapter adapCRAC = new SqlDataAdapter("select Principal from [EDUCOLLEGELIVE-R2].dbo.[User Role Matrix]  where   Principal='" + Session["uid"].ToString() + "' ", con.Con);
+        DataTable dtCrac = new DataTable();
+        //adapCRAC.Fill(dtCrac);
+        if (dtCrac.Rows.Count>0 || Session["uid"].ToString() == "TMU00283")
+        {            
+            IdViewPHDStudentCRACForm.Visible = true;
+        }
     }        
 
     
