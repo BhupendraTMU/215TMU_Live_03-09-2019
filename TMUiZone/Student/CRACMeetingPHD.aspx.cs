@@ -32,8 +32,7 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                 }
                 else
                 {
-                    // if accessed by other colleges, redirect back to main No Dues
-                    //Response.Redirect("~/Alumni/StudentNoDues.aspx");
+                    
                 }
             }
         }

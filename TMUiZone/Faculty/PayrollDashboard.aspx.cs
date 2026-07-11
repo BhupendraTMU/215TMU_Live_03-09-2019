@@ -18,6 +18,8 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
             BindAcademicYear();
             BindMonth();
             BindGrid();
+            
+
         }
     }
     private void BindAcademicYear()
@@ -47,7 +49,7 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
         ddlMonth.Items.Add(new ListItem("November", "11"));
         ddlMonth.Items.Add(new ListItem("December", "12"));
 
-        ddlMonth.SelectedValue = DateTime.Now.ToString("MMMM");
+        ddlMonth.SelectedValue = DateTime.Now.Month.ToString(); 
     }
 
     protected void btnSearch_Click(object sender, EventArgs e)
@@ -72,17 +74,28 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
         cmd.Parameters.AddWithValue("@Year", ddlAcademicYear.SelectedValue);
 
         SqlDataAdapter da = new SqlDataAdapter(cmd);
-        DataTable dt = new DataTable();
-        da.Fill(dt);
+
+        DataSet ds = new DataSet();
+        da.Fill(ds);
+
+
 
         // Calculate Totals
         decimal totalSalary = 0;
         decimal totalHRA = 0;
+        decimal totalSalary1 = 0;
+        decimal totalHRA1 = 0;
 
-        if (dt.Rows.Count > 0)
+        if (ds.Tables[0].Rows.Count > 0)
         {
-            totalSalary = Convert.ToDecimal(dt.Compute("SUM(Salary)", ""));
-            totalHRA = Convert.ToDecimal(dt.Compute("SUM([Fixed HRA Amount])", ""));
+            totalSalary = Convert.ToDecimal(ds.Tables[0].Compute("SUM(Salary)", ""));
+            totalHRA = Convert.ToDecimal(ds.Tables[0].Compute("SUM([Fixed HRA Amount])", ""));
+        }
+
+        if(ds.Tables[1].Rows.Count > 0)
+        {
+            totalSalary1 = Convert.ToDecimal(ds.Tables[1].Compute("SUM(Salary)", ""));
+            totalHRA1 = Convert.ToDecimal(ds.Tables[1].Compute("SUM([Fixed HRA Amount])", ""));
         }
 
         // Create Summary Table
@@ -99,7 +112,7 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
         dtSummary.Rows.Add(
             "A.",
             "Fixed HRA criteria (Perquisite provided through salary sheets)",
-            dt.Rows.Count,
+            ds.Tables[0].Rows.Count,
             totalSalary,
             totalHRA,
             totalSalary + totalHRA
@@ -114,7 +127,7 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
 
         dtSummary.Rows.Add("C.",
             "Fixed HRA provided by GVC sir in June 2025 at the time of Increment",
-            0.0, 0.0, 0.0, 0.0);
+            ds.Tables[1].Rows.Count, totalSalary1, totalHRA1, totalSalary1 + totalHRA1);
 
         dtSummary.Rows.Add("D.",
             "Vacant Flat Details (As per Hospitality Department by Shri Pawan Gupta Ji)",
