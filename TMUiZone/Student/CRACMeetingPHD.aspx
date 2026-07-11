@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Student/IndexMaster.master" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Student_CRACMeeting" %>
+﻿<%@ Page Title="CRAC Meeting" Language="C#" MasterPageFile="~/Student/IndexMaster.master" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Student_CRACMeeting" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
@@ -94,7 +94,7 @@
     <div id="divPhd" runat="server" class="print-form">
 
         <div class="form-header">
-            PHD RESEARCH SCHOLAR - NO DUES FORM
+            CRAC Meeting
         </div>
 
         <div class="form-body">

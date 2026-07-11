@@ -1,6 +1,4 @@
-<%@ Page Title="PhD Student No Dues Approval" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" 
-    AutoEventWireup="true" CodeFile="PHDStudentNoDuesApproval.aspx.cs" 
-    Inherits="Faculty_PHDStudentNoDuesApproval" %>
+<%@ Page Title="View Student CRAC Meeting" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master"   AutoEventWireup="true" CodeFile="ViewStudentCRACFormDetails.aspx.cs"   Inherits="Faculty_ViewStudentCRACFormDetails" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style>
@@ -151,7 +149,7 @@
                     <div class="panel-title">
                         <b>
                             <p style="color: white; font-size: 20px">
-                                PHD STUDENT NO DUES APPROVAL
+                                View Student CRAC Meeting
                             </p>
                         </b>
                     </div>
@@ -170,9 +168,9 @@
                         <!-- New pill-styled search matching screenshot -->
                         <div class="search-pill">
                             <div class="search-label">Enrollment No:</div>
-                            <asp:TextBox ID="txtEnrollmentSearch" runat="server" CssClass="search-input" autocomplete="off" placeholder="" ></asp:TextBox>
-                            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn-search" OnClick="btnSearch_Click" />
-                            <asp:Button ID="btnClear" runat="server" Text="Clear" CssClass="btn-clear-small" OnClick="btnClear_Click" />
+                            <asp:TextBox ID="txtSearchEnrollmentCRAC" runat="server" CssClass="search-input" autocomplete="off" placeholder="" ></asp:TextBox>
+                            <asp:Button ID="btnSearchCRAC" runat="server" Text="Search" CssClass="btn-search" OnClick="btnSearchCRAC_Click" />
+                            <asp:Button ID="btnClearCRAC" runat="server" Text="Clear" CssClass="btn-clear-small" OnClick="btnClearCRAC_Click" />
                         </div>
                     </div>
                 </div>
@@ -181,7 +179,7 @@
                     // Design-only: clear any browser autofill after load and keep modals unaffected
                     window.addEventListener('load', function () {
                         try {
-                            var el = document.getElementById('<%= txtEnrollmentSearch.ClientID %>');
+                            var el = document.getElementById('<%= txtSearchEnrollmentCRAC.ClientID %>');
                             if (el) {
                                 // Clear immediately and multiple times to defeat browser autofill
                                 try { el.value = ''; el.removeAttribute('value'); } catch (e) { }
@@ -198,19 +196,18 @@
 
                  <div class="row ml-5 mr-5">
                      <div class="col-sm-12">
-                         <asp:Label ID="lblMessage" runat="server" ForeColor="Green" Font-Bold="true"></asp:Label>
-                         <asp:Label ID="lblError" runat="server" ForeColor="Red" Font-Bold="true"></asp:Label>
+                         <asp:Label ID="lblMsgCRAC" runat="server" ForeColor="Green" Font-Bold="true"></asp:Label>
+                         <asp:Label ID="lblErrCRAC" runat="server" ForeColor="Red" Font-Bold="true"></asp:Label>
                      </div>
                  </div>
                 <div class="row ml-5 mr-5 mt-3">
                     <div class="col-sm-12">
                         <div style="overflow-x: auto;">
                             <!-- Enrollment search input and buttons are placed above the GridView and approval-grid CSS class is applied -->
-                            <asp:GridView ID="gvNoDuesApproval" runat="server" CssClass="table table-striped approval-grid"
-                                AutoGenerateColumns="False" OnRowCommand="gvNoDuesApproval_RowCommand"
-                                OnRowDataBound="gvNoDuesApproval_RowDataBound" Width="100%"
-                                DataKeyNames="Id,StudentNo,CollegeCode,CourseCode,FathersName"
-                                AllowPaging="True" PageSize="10" OnPageIndexChanging="gvNoDuesApproval_PageIndexChanging">
+                            <asp:GridView ID="gvCRACMeeting" runat="server" CssClass="table table-striped approval-grid"
+                                AutoGenerateColumns="False" OnRowCommand="gvCRACMeeting_RowCommand"    Width="100%"
+                                DataKeyNames="Id,StudentNo,CollegeCode,CourseCode,FathersName,CRACMeetingName,CRACMeetingNo"
+                                AllowPaging="True" PageSize="10" OnPageIndexChanging="gvCRACMeeting_PageIndexChanging">
                                 <HeaderStyle BackColor="#2b5b69" ForeColor="White" Font-Bold="true" />
                                 <RowStyle CssClass="approval-grid-row" />
                                 <Columns>
@@ -222,32 +219,13 @@
                                     <asp:BoundField DataField="AcademicYear" HeaderText="Academic Year" />
                                     <asp:BoundField DataField="MobileNo" HeaderText="Mobile" />
                                     <asp:BoundField DataField="EmailId" HeaderText="Email" />
-                                    <asp:TemplateField HeaderText="Status">
-                                        <ItemTemplate>
-                                            <span class="status-badge ">
-                                                <%# Eval("ApprovalStatusText") %>
-                                            </span>
-                                        </ItemTemplate>
-                                    </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Actions" ItemStyle-CssClass="actions-column" HeaderStyle-CssClass="actions-column-header">
+                                    <asp:BoundField DataField="CRACMeetingName" HeaderText="CRAC Meeting" />                                   
+                                    <asp:TemplateField HeaderText="Actions" ItemStyle-CssClass="actions-column" HeaderStyle-CssClass="actions-column-header">
                                         <ItemTemplate>
                                             <asp:LinkButton ID="lnkView" runat="server" Text="Details" CssClass="btn btn-sm btn-info btn-action"
                                                 CommandName="ViewDetails" CommandArgument='<%# Eval("Id") %>'  />
-                                            <asp:LinkButton ID="lnkApprove" runat="server" Text="Approve" CssClass="btn btn-sm btn-success btn-action"
-                                                CommandName="ApproveRecord" CommandArgument='<%# Eval("Id") %>' />
-                                            <asp:LinkButton ID="lnkReject" runat="server" Text="Reject" CssClass="btn btn-sm btn-danger btn-action"
-                                                CommandName="RejectRecord" CommandArgument='<%# Eval("Id") %>'  />
                                         </ItemTemplate>
-                                    </asp:TemplateField>
-
-                                    <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center" HeaderStyle-HorizontalAlign="Center" ItemStyle-CssClass="checkbox-column" HeaderStyle-CssClass="checkbox-column-header">
-                                        <HeaderTemplate>
-                                            <input type="checkbox" id="chkAll" onclick="toggleSelectAll(this);" />
-                                        </HeaderTemplate>
-                                        <ItemTemplate>
-                                            <asp:CheckBox ID="chkSelect" runat="server" CssClass="item-checkbox" onclick="onItemCheckboxChange();" />
-                                        </ItemTemplate>
-                                    </asp:TemplateField>
+                                    </asp:TemplateField>                                 
                                 </Columns>
                                 <EmptyDataTemplate>
                                     <div style="padding: 20px; text-align: center; color: #666;">
@@ -255,19 +233,14 @@
                                     </div>
                                 </EmptyDataTemplate>
                             </asp:GridView>
-                            <div class="d-flex justify-content-end mt-2">
-                                <asp:Button ID="btnApproveSelected" runat="server" Text="Approve Selected" CssClass="btn btn-success mr-2"
-                                    OnClick="btnApproveSelected_Click" />
-                                <asp:Button ID="btnRejectSelected" runat="server" Text="Reject Selected" CssClass="btn btn-danger"
-                                    OnClick="btnRejectSelected_Click" />
-                            </div>
+                            <!-- Actions removed: page is view-only printable list -->
                         </div>
                     </div>
                 </div>
             </fieldset>
         </ContentTemplate>
         <Triggers>
-            <asp:PostBackTrigger ControlID="gvNoDuesApproval" />
+            <asp:PostBackTrigger ControlID="gvCRACMeeting" />
         </Triggers>
     </asp:UpdatePanel>
 
@@ -289,7 +262,7 @@
                                     <div class="form-section">
                                         <label>Student Name:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailStudentName" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailStudentNameCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -297,7 +270,7 @@
                                     <div class="form-section">
                                         <label>Enrollment No:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailEnrollmentNo" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailEnrollmentNoCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -308,7 +281,7 @@
                                     <div class="form-section">
                                         <label>Father's Name:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailFathersName" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailFathersNameCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -316,7 +289,7 @@
                                     <div class="form-section">
                                          <label>Academic Year:</label>
                                          <div class="form-value">
-                                             <asp:Label ID="lblDetailAcademicYear" runat="server"></asp:Label>
+                                             <asp:Label ID="lblDetailAcademicYearCRAC" runat="server"></asp:Label>
                                          </div>
                                     </div>
                                 </div>
@@ -327,7 +300,7 @@
                                     <div class="form-section">
                                         <label>College:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailCollege" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailCollegeCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -335,7 +308,7 @@
                                     <div class="form-section">
                                         <label>Course:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailCourse" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailCourseCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -344,9 +317,21 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-section">
+                                        <label>CRAC Meeting:</label>
+                                        <div class="form-value">
+                                            <asp:Label ID="lblDetailCRACMeeting" runat="server"></asp:Label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-section">
                                         <label>Email:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailEmail" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailEmailCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -354,7 +339,7 @@
                                     <div class="form-section">
                                         <label>Mobile:</label>
                                         <div class="form-value">
-                                            <asp:Label ID="lblDetailMobile" runat="server"></asp:Label>
+                                            <asp:Label ID="lblDetailMobileCRAC" runat="server"></asp:Label>
                                         </div>
                                     </div>
                                 </div>
@@ -364,7 +349,7 @@
                             <h6 style="color: #2b5b69; font-weight: bold; margin-top: 20px;">Fee Details:</h6>
 
                             <div style="overflow-x: auto; margin-top: 15px;">
-                                <asp:GridView ID="gvFeeDetails" runat="server" CssClass="table table-striped table-sm"
+                                <asp:GridView ID="gvFeeDetailsCRAC" runat="server" CssClass="table table-striped table-sm"
                                     AutoGenerateColumns="False" Width="100%">
                                     <HeaderStyle BackColor="#2b5b69" ForeColor="White" Font-Bold="true" Font-Size="Small" />
                                     <Columns>
@@ -419,11 +404,7 @@
                         </ContentTemplate>
                     </asp:UpdatePanel>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <asp:Button ID="btnConfirmApproval" runat="server" Text="Confirm" CssClass="btn btn-primary"
-                        OnClick="btnConfirmApproval_Click" />
-                </div>
+                
             </div>
         </div>
     </div>
@@ -439,7 +420,7 @@
         }
 
         function toggleSelectAll(chkAll) {
-            var grid = document.getElementById('<%= gvNoDuesApproval.ClientID %>');
+            var grid = document.getElementById('<%= gvCRACMeeting.ClientID %>');
             if (!grid) return;
             var inputs = grid.getElementsByTagName('input');
             for (var i = 0; i < inputs.length; i++) {
