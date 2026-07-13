@@ -8,8 +8,8 @@
         }
 
         .approval-grid th {
-            background-color: #ffc107; /* project yellow header */
-            color: #000;
+            background-color: #ED7600; /* project yellow header */
+            color: white;
             padding: 12px 10px;
             text-align: left;
             font-weight: bold;
@@ -53,7 +53,7 @@
         }
 
         .status-pending {
-            background-color: #ffc107;
+            background-color: #ED7600;
             color: black;
         }
 
@@ -68,7 +68,7 @@
         }
 
         .modal-title {
-            color: #2b5b69;
+            color: White;
             font-weight: bold;
         }
 
@@ -76,7 +76,7 @@
             background-color: #f9f9f9;
             padding: 15px;
             margin: 10px 0;
-            border-left: 4px solid #2b5b69;
+            /*border-left: 4px solid #2b5b69;*/
         }
 
         .form-section label {
@@ -144,7 +144,7 @@
     <asp:ScriptManager ID="scriptManager" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="updatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <div class="panel-heading" style="background-color: #2b5b69">
+            <div class="panel-heading" style="background-color: #ED7600">
                 <center>
                     <div class="panel-title">
                         <b>
@@ -208,7 +208,7 @@
                                 AutoGenerateColumns="False" OnRowCommand="gvCRACMeeting_RowCommand"    Width="100%"
                                 DataKeyNames="Id,StudentNo,CollegeCode,CourseCode,FathersName,CRACMeetingName,CRACMeetingNo"
                                 AllowPaging="True" PageSize="10" OnPageIndexChanging="gvCRACMeeting_PageIndexChanging">
-                                <HeaderStyle BackColor="#2b5b69" ForeColor="White" Font-Bold="true" />
+                                <HeaderStyle BackColor="#ED7600" ForeColor="White" Font-Bold="true" />
                                 <RowStyle CssClass="approval-grid-row" />
                                 <Columns>
                                     <asp:BoundField DataField="Id" HeaderText="ID" Visible="false" />
@@ -248,7 +248,7 @@
     <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #2b5b69; color: white;">
+                <div class="modal-header" style="background-color: #ED7600; color: white;">
                     <h5 class="modal-title">Student Details & Fee Information</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -351,7 +351,7 @@
                             <div style="overflow-x: auto; margin-top: 15px;">
                                 <asp:GridView ID="gvFeeDetailsCRAC" runat="server" CssClass="table table-striped table-sm"
                                     AutoGenerateColumns="False" Width="100%">
-                                    <HeaderStyle BackColor="#2b5b69" ForeColor="White" Font-Bold="true" Font-Size="Small" />
+                                    <HeaderStyle BackColor="#ed7600" ForeColor="White" Font-Bold="true" Font-Size="Small" />
                                     <Columns>
                                         <asp:BoundField DataField="Fee Description" HeaderText="Fee Description" />
                                         <asp:BoundField DataField="FeeAmount" HeaderText="Fee Amount" DataFormatString="{0:C}" />
@@ -378,7 +378,7 @@
     <div class="modal fade" id="approvalModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #2b5b69; color: white;">
+                <div class="modal-header" style="background-color: #ED7600; color: white;">
                     <h5 class="modal-title">Approval Action</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -460,15 +460,15 @@
         <style>
             /* Adjust header color to project yellow and provide spacing for status badge */
             .approval-grid th {
-                background-color: #ffc107 !important;
-                color: #000 !important;
+                background-color: #ED7600 !important;
+                color: WHITE !important;
                 padding: 10px !important;
             }
 
             .approval-grid .status-badge {
                 display: inline-block;
                 margin-top: 4px;
-                background-color: #ffc107;
+                background-color: #ED7600;
                 color: #000;
                 padding: 5px 8px;
                 border-radius: 4px;
