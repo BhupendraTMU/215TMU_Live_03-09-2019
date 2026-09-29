@@ -766,7 +766,7 @@ public partial class Student_StudentNoDuesTMMC : System.Web.UI.Page
         try
         {
             var fromEmail = "naverp@tmu.ac.in";
-            var fromPassword = "nwar yzam bcez rqop";
+            var fromPassword = "ghkl eukc gadv filn";
 
             // Initialize the SMTP client with the server details
             var smtpClient = new SmtpClient("smtp.gmail.com") // Use your SMTP server here

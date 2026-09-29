@@ -177,7 +177,7 @@
                     <asp:LinkButton ID="lnkEmployees"
                         runat="server"
                         Text='<%# Eval("Employees") %>'
-                        CommandArgument='<%# Eval("Employees") %>'
+                        CommandArgument='<%# Eval("ReportType") %>'
                         OnClick="lnkEmployees_Click">
         </asp:LinkButton>
                 </ItemTemplate>

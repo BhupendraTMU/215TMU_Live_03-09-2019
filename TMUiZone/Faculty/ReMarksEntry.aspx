@@ -1080,6 +1080,8 @@
                                 </ItemTemplate>
                                 <ItemStyle Width="3%" />
                             </asp:TemplateField>
+
+                           
                             <asp:BoundField DataField="Enrollment No" HeaderText="Enrollment No" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
                             <asp:BoundField DataField="Student Name" HeaderText="Student Name" ItemStyle-CssClass="visible-lg" />
                             <asp:BoundField DataField="AdmittedYear" HeaderText="Admitted Year" ItemStyle-CssClass="visible-lg" />

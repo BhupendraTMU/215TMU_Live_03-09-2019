@@ -2204,7 +2204,7 @@ public partial class Faculty_SyudentNoDuesApproval : System.Web.UI.Page
     {
 
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        string strSQL = "select Distinct Principal,(select [First Name] from TMU$Employee where No_=T.Principal) as P,(select [Job Title_Grade Desc] from TMU$Employee where No_=T.Principal) as Title from [TMU$User Role Matrix]  as T where Status=1 and [Global Dimenison 1 Code] ='" + txtcollegedept.Text + "'";
+        string strSQL = "select Distinct Principal,(select [First Name] from TMU$Employee where No_=T.Principal) as P,(select [Job Title_Grade Desc] from TMU$Employee where No_=T.Principal) as Title from [TMU$User Role Matrix]  as T where Status=1 and [Global Dimenison 1 Code] ='" + txtcollegedept.Text + "' and Principal!='TMU00002'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);

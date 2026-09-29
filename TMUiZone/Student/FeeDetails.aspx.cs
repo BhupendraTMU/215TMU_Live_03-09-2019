@@ -41,7 +41,7 @@ public partial class Student_FeeDetails : System.Web.UI.Page
             //Response.Redirect("~/Student/Error.aspx", false);
             //HttpContext.Current.ApplicationInstance.CompleteRequest();
             //Live
-            if (Session["uid"].ToString() != "ST/046560" )
+            if (Session["College"].ToString() != "TPHD")
             {
                 Response.Redirect("Error.aspx", false);
                 HttpContext.Current.ApplicationInstance.CompleteRequest();
@@ -50,7 +50,7 @@ public partial class Student_FeeDetails : System.Web.UI.Page
             key.Value = ConfigurationManager.AppSettings["MERCHANT_KEY"];
             // lblName.Text = Session["Name"].ToString() + " (" + Session["AcademicYear"].ToString() + ")";
             lblPaidFee.Text = "Paid Fee (" + Session["AcademicYear"].ToString() + " )";
-            lblUnpaidFee.Text = "Unpaid  Fee";
+            //lblUnpaidFee.Text = "Unpaid  Fee";
             if (!IsPostBack)
             {
                 string result;
@@ -133,127 +133,320 @@ public partial class Student_FeeDetails : System.Web.UI.Page
     }
     protected void btnPay_Click(object sender, EventArgs e)
     {
-        String response = "";
-        String strResponse = "";
+        string response = "";
+        string strResponse = "";
         string orderid = "TMUFEE" + DateTime.Now.Ticks.ToString();
+
         int temp = 0;
+
+        // ============================================================
+        // PAYU TEST CONFIGURATION
+        // ============================================================
+
+        string merchantKey = "bGxnW3";
+        string salt = "zssT9zGfAsLwvoFzYLbC0ndS0nVbaIGn";
+
+        string baseUrl = "https://secure.payu.in/_payment";
+
+        string successUrl =
+            "https://portal2.tmu.ac.in/Student/ResponsePage.aspx";
+
+        string failureUrl =
+            "https://portal2.tmu.ac.in/Student/ResponsePage.aspx";
+
+
+        // ============================================================
+        // PAYMENT DETAILS
+        // ============================================================
+
+        string amount = Amt.Value;
+
+        string firstname = "";
+
+        if (Session["Name"] != null)
+            firstname = Session["Name"].ToString();
+
+        string email = EmailID;
+        string phone = MobileNo;
+
+        string productinfo = "TMU Fee";
+
+        // PayU UDF fields
+        string udf1 = "";
+        string udf2 = "";
+        string udf3 = "";
+        string udf4 = "";
+        string udf5 = "";
+
+
         try
         {
+            // ========================================================
+            // INSERT PAYMENT LOG
+            // ========================================================
+
             con.Open();
-            SqlCommand cmd = new SqlCommand("INSERT INTO [OnlinePaymentLog]([Payment Date],[Amount],[Status],[UserID],[GATEWAY],[GatewayStatus],[OrderID],[CLE Entry No],[Semester FEE],[Year FEE],[Temp 1],[Temp 2],[Temp 3],[Orgnized Date])VALUES(GETUTCDATE(),1 ,0 ,'" + Session["uid"].ToString() + "' ,'PAYTM'  ,0 ,'" + orderid + "','',(select Semester from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "'),(select Year from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "'),'',0,(select [Student Name] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "'), DATEADD(Minute,330,Getdate()))", con);
+
+            SqlCommand cmd = new SqlCommand(@"
+            INSERT INTO [OnlinePaymentLog]
+            (
+                [Payment Date],
+                [Amount],
+                [Status],
+                [UserID],
+                [GATEWAY],
+                [GatewayStatus],
+                [OrderID],
+                [CLE Entry No],
+                [Semester FEE],
+                [Year FEE],
+                [Temp 1],
+                [Temp 2],
+                [Temp 3],
+                [Orgnized Date]
+            )
+            VALUES
+            (
+                GETUTCDATE(),
+                @Amount,
+                0,
+                @UserID,
+                'PAYU',
+                0,
+                @OrderID,
+                '',
+                (
+                    SELECT Semester
+                    FROM [TMU$Student - COLLEGE]
+                    WHERE [No_] = @UserID
+                ),
+                (
+                    SELECT Year
+                    FROM [TMU$Student - COLLEGE]
+                    WHERE [No_] = @UserID
+                ),
+                '',
+                0,
+                (
+                    SELECT [Student Name]
+                    FROM [TMU$Student - COLLEGE]
+                    WHERE [No_] = @UserID
+                ),
+                DATEADD(MINUTE,330,GETDATE())
+            )", con);
+
+            cmd.Parameters.AddWithValue(
+                "@Amount",
+                Convert.ToDecimal(amount)
+            );
+
+            cmd.Parameters.AddWithValue(
+                "@UserID",
+                Session["uid"].ToString()
+            );
+
+            cmd.Parameters.AddWithValue(
+                "@OrderID",
+                orderid
+            );
+
             temp = cmd.ExecuteNonQuery();
+
             con.Close();
+
+
+            // ========================================================
+            // IF LOG INSERTED SUCCESSFULLY
+            // ========================================================
+
             if (temp == 1)
             {
-                RequestURL objRequestURL = new RequestURL();
-                response = objRequestURL.SendRequest
-                          (
-                                    "T"
-                                  , "T955031"
-                                  , orderid
-                                  , Session["Name"].ToString()
-                                  , "1"
-                                  , "INR"
-                                  , orderid
-                                  , "https://portal2.tmu.ac.in/Student/ResponsePage.aspx"
-                                  , ""
-                                  , ""
-                                  , "FIRST_1.00_0.0"
-                                  , "29-05-2024"
-                                   , EmailID
-                                  , MobileNo
-                                  , "470"
-                                  , ""
-                                  , ""
-                                  , ""
-                                  , "1025180466GPADTD"
-                                  , "3232693456UWOWHC"
+                // ====================================================
+                // PAYU HASH
+                // ====================================================
 
-                          );
-                strResponse = response.ToUpper();
-                bool IsValid = false;
-
-                if (strResponse.StartsWith("ERROR"))
-                {
-                    if (strResponse == "ERROR073")
-                    {
-                        IsValid = false;
-                        // lblError.Text = null;
-                        response = objRequestURL.SendRequest
-                           (
-                          "T"
-                                  , "T955031"
-                                  , orderid
-                                  , Session["Name"].ToString()
-                                  , "1"
-                                  , "INR"
-                                  , orderid
-                                  , "https://portal2.tmu.ac.in/Student/ResponsePage.aspx"
-                                  , ""
-                                  , ""
-                                  , "FIRST_1.00_0.0"
-                                  , "29-05-2024"
-                                   , EmailID
-                                  , MobileNo
-                                  , "470"
-                                  , ""
-                                  , ""
-                                  , ""
-                                  , "1025180466GPADTD"
-                                  , "3232693456UWOWHC"
-
-                          );
-                        strResponse = response.ToUpper();
-                    }
-                    else
-                    {
-                        // lblResponse.Text = response;
-                    }
-                }
-                else
-                {
-                    IsValid = true;
-                }
+                string hashString =
+                    merchantKey + "|" +
+                    orderid + "|" +
+                    amount + "|" +
+                    productinfo + "|" +
+                    firstname + "|" +
+                    email + "|" +
+                    udf1 + "|" +
+                    udf2 + "|" +
+                    udf3 + "|" +
+                    udf4 + "|" +
+                    udf5 +
+                    "||||||" +
+                    salt;
 
 
-                if (IsValid)
-                {
-                    Session["Merchant_Code"] = "T3348";
-                    Session["IsKey"] = "1025180466GPADTD";
-                    Session["IsIv"] = "3232693456UWOWHC";
+                string hash = GenerateSHA512(hashString);
 
-                    Response.Write("<form name='s1_2' id='s1_2' action='" + response + "' method='post'> ");
-                    Response.Write("<script type='text/javascript' language='javascript' >document.getElementById('s1_2').submit();");
-                    Response.Write("</script>");
-                    Response.Write("<script language='javascript' >");
-                    Response.Write("</script>");
-                    Response.Write("</form> ");
-                }
 
-                else
-                {
-                    if (response == "")
-                    {
-                        //lblResponse.Text = "Transaction Fail " + "ERROR:";
-                    }
-                    else
-                    {
-                        // lblResponse.Text = response;
-                    }
-                }
+                // ====================================================
+                // CREATE PAYU FORM
+                // ====================================================
+
+                StringBuilder form = new StringBuilder();
+
+                form.Append("<form id='payuForm' " +
+                            "name='payuForm' " +
+                            "method='post' " +
+                            "action='" + baseUrl + "'>");
+
+                // KEY
+                form.Append(
+                    "<input type='hidden' name='key' value='" +
+                    HttpUtility.HtmlEncode(merchantKey) +
+                    "' />"
+                );
+
+                // TXNID
+                form.Append(
+                    "<input type='hidden' name='txnid' value='" +
+                    HttpUtility.HtmlEncode(orderid) +
+                    "' />"
+                );
+
+                // AMOUNT
+                form.Append(
+                    "<input type='hidden' name='amount' value='" +
+                    HttpUtility.HtmlEncode(amount) +
+                    "' />"
+                );
+
+                // PRODUCT INFO
+                form.Append(
+                    "<input type='hidden' name='productinfo' value='" +
+                    HttpUtility.HtmlEncode(productinfo) +
+                    "' />"
+                );
+
+                // FIRST NAME
+                form.Append(
+                    "<input type='hidden' name='firstname' value='" +
+                    HttpUtility.HtmlEncode(firstname) +
+                    "' />"
+                );
+
+                // EMAIL
+                form.Append(
+                    "<input type='hidden' name='email' value='" +
+                    HttpUtility.HtmlEncode(email) +
+                    "' />"
+                );
+
+                // PHONE
+                form.Append(
+                    "<input type='hidden' name='phone' value='" +
+                    HttpUtility.HtmlEncode(phone) +
+                    "' />"
+                );
+
+                // SUCCESS URL
+                form.Append(
+                    "<input type='hidden' name='surl' value='" +
+                    HttpUtility.HtmlEncode(successUrl) +
+                    "' />"
+                );
+
+                // FAILURE URL
+                form.Append(
+                    "<input type='hidden' name='furl' value='" +
+                    HttpUtility.HtmlEncode(failureUrl) +
+                    "' />"
+                );
+
+                // HASH
+                form.Append(
+                    "<input type='hidden' name='hash' value='" +
+                    HttpUtility.HtmlEncode(hash) +
+                    "' />"
+                );
+
+
+                // ====================================================
+                // UDF FIELDS
+                // ====================================================
+
+                form.Append(
+                    "<input type='hidden' name='udf1' value='" +
+                    HttpUtility.HtmlEncode(udf1) +
+                    "' />"
+                );
+
+                form.Append(
+                    "<input type='hidden' name='udf2' value='" +
+                    HttpUtility.HtmlEncode(udf2) +
+                    "' />"
+                );
+
+                form.Append(
+                    "<input type='hidden' name='udf3' value='" +
+                    HttpUtility.HtmlEncode(udf3) +
+                    "' />"
+                );
+
+                form.Append(
+                    "<input type='hidden' name='udf4' value='" +
+                    HttpUtility.HtmlEncode(udf4) +
+                    "' />"
+                );
+
+                form.Append(
+                    "<input type='hidden' name='udf5' value='" +
+                    HttpUtility.HtmlEncode(udf5) +
+                    "' />"
+                );
+
+
+                // ====================================================
+                // AUTO SUBMIT
+                // ====================================================
+
+                form.Append("</form>");
+
+                form.Append(
+                    "<script type='text/javascript'>" +
+                    "document.getElementById('payuForm').submit();" +
+                    "</script>"
+                );
+
+
+                Response.Write(form.ToString());
+                Response.End();
             }
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+                con.Close();
 
             throw;
         }
+    }
+    private string GenerateSHA512(string input)
+    {
+        using (SHA512 sha512 = SHA512.Create())
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(input);
 
+            byte[] hashBytes =
+                sha512.ComputeHash(bytes);
 
-        //BindTable();
-        //bindAccountNo();
-        //PayUmoney();
-        //Amt.Value = "0";
+            StringBuilder builder =
+                new StringBuilder();
+
+            foreach (byte b in hashBytes)
+            {
+                builder.Append(
+                    b.ToString("x2")
+                );
+            }
+
+            return builder.ToString();
+        }
     }
     public void BindTable()
     {

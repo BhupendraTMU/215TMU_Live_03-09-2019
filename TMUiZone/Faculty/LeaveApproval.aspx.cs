@@ -1288,9 +1288,9 @@ public partial class LeaveApproval : System.Web.UI.Page
             DateTime Applieddateto = DateTime.ParseExact(To_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
             SqlDataReader drSlGNRT = SHow_SalaryProcessingMonth_PayEmployeeNet(tbleEmployeePunchData, ApplieddateFrom.ToString("MM"), ApplieddateFrom.ToString("yyyy"), chkUSerID, Applieddateto.ToString("MM"), Applieddateto.ToString("yyyy"));
-           
-            
-            
+
+
+
             drSlGNRT.Read();
             if (drSlGNRT.HasRows)
             {
@@ -2783,7 +2783,7 @@ public partial class LeaveApproval : System.Web.UI.Page
             String sDate = DateTime.Now.ToString();
             DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
 
-           CheckBox  chkMark = (CheckBox)e.Row.FindControl("chkMark");
+            CheckBox chkMark = (CheckBox)e.Row.FindControl("chkMark");
 
             int day = datevalue.Day;
             int mn = datevalue.Month;
@@ -2809,7 +2809,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                 lnkDownloadgrid.Visible = false;
             }
 
-            if (lblleaveAttachmentFilename.Text.Trim() != "")
+            if (lblleaveAttachmentFilename.Text.Trim() != "" || lblLeaveTypegrid.Text == "AL")
             {
                 lnkDownloadgrid.Visible = true;
             }
@@ -3158,6 +3158,98 @@ public partial class LeaveApproval : System.Web.UI.Page
 
 
         Response.End();
+    }
+    protected void lnkDownload_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            int id = int.Parse((sender as LinkButton).CommandArgument);
+            byte[] bytes;
+            string fileName, contentType;
+            SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
+            Conn.Open();
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.CommandText = "IF EXISTS(   SELECT 1    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '')BEGIN    SELECT       FileName,        FileData,        FileType    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '';END ELSE BEGIN    SELECT        AttachmentFilename AS FileName,        Attachmentdata AS FileData,        AttachmentFileType AS FileType    FROM tble_Leave_Approval    WHERE AutoNo = @AutoNo      AND ISNULL(AttachmentFilename, '') <> '';END";
+                cmd.Parameters.AddWithValue("@AutoNo", id);
+                cmd.Connection = Conn;
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    sdr.Read();
+                    bytes = (byte[])sdr["FileData"];
+                    contentType = sdr["FileType"].ToString();
+                    fileName = sdr["FileName"].ToString();
+                }
+                con.DisConnect();
+
+            }
+            Response.Clear();
+            Response.Buffer = true;
+            Response.Charset = "";
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.ContentType = contentType;
+            Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+            Response.BinaryWrite(bytes);
+            Response.Flush();
+            Response.End();
+        }
+        catch (Exception)
+        {
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Attachment not found ');", true);
+
+        }
+    }
+    protected void lnkAttachment_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+
+        string autoNo = btn.CommandArgument;
+
+        DataTable dt = new DataTable();
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            string query = @"
+            Select * from (
+
+SELECT 
+                ID,
+                DocumentType AttachmentFilename
+            FROM tbl_Leave_AL_Documents
+            WHERE AutoNo = @AutoNo
+          
+		  union
+		  SELECT 
+               AutoNo ID,
+                AttachmentFilename AttachmentFilename
+          FROM tble_Leave_Approval
+            WHERE AutoNo = @AutoNo) T where isnull(T.AttachmentFilename,'')!=''
+		  
+		  
+		  ORDER BY ID DESC";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+
+        gvAttachments.DataSource = dt;
+        gvAttachments.DataBind();
+
+        ScriptManager.RegisterStartupScript(
+            this,
+            this.GetType(),
+            "OpenAttachmentModal",
+            "$('#attachmentModal').modal('show');",
+            true
+        );
     }
 
 }

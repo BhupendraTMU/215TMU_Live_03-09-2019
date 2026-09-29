@@ -4393,25 +4393,119 @@ public class ServicePoratal : IServicePoratal
     }
 
 
-    public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, byte[] LeaveAttachment, string AttachmentName, string AttachmentType, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch)
+    //public void Insert_tble_Leave_Approval(string From_Date, string To_Date, string Leave_Period, string Reason, string Address_Phone_No, string No_Of_Days_Leave_Period, string Total_Balance, string HODUserid, string HODUserid1, string Company_Name, string SerialNo, string Create_Date, string HR_Userid, string Status, string UName, string UserID, string Leave_Type, string user_Emailid, string HREmailid, string HODEmailID, string HRName, string HODName, byte[] LeaveAttachment, string AttachmentName, string AttachmentType, string Arrangement, string Half_Day_type_Code, string Half_Day_type_Desc, string PreLunch, string PostLunch)
+    //{
+    //    Connect();
+    //    string sqlq = "";
+    //    if (HODUserid == "TMU03651" && (Leave_Type == "CL" || Leave_Type == "ML"))
+    //    {
+    //        sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','Approved','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, '" + HODUserid + "')";
+    //    }
+    //    else
+    //    {
+    //        sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','" + Status + "','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, ( select  case when (select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff] else [SA for Non-Teach Staff] end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='" + Leave_Type + "'  ))";
+
+    //    }
+
+    //    cmd = new SqlCommand(sqlq, Conn);
+    //    cmd.ExecuteNonQuery();
+
+    //}
+    public void Insert_tble_Leave_Approval(
+    string From_Date,
+    string To_Date,
+    string Leave_Period,
+    string Reason,
+    string Address_Phone_No,
+    string No_Of_Days_Leave_Period,
+    string Total_Balance,
+    string HODUserid,
+    string HODUserid1,
+    string Company_Name,
+    string SerialNo,
+    string Create_Date,
+    string HR_Userid,
+    string Status,
+    string UName,
+    string UserID,
+    string Leave_Type,
+    string user_Emailid,
+    string HREmailid,
+    string HODEmailID,
+    string HRName,
+    string HODName,
+    byte[] LeaveAttachment,
+    string AttachmentName,
+    string AttachmentType,
+    string Arrangement,
+    string Half_Day_type_Code,
+    string Half_Day_type_Desc,
+    string PreLunch,
+    string PostLunch)
     {
         Connect();
-        string sqlq = "";
-        if (HODUserid == "TMU03651" && (Leave_Type == "CL" || Leave_Type == "ML"))
-        {
-            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','Approved','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, '" + HODUserid + "')";
+
+        using (SqlCommand cmd = new SqlCommand(
+            "Insert_tble_Leave_Approval", Conn))        {
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@From_Date", From_Date);
+            cmd.Parameters.AddWithValue("@To_Date", To_Date);
+            cmd.Parameters.AddWithValue("@Leave_Period", Leave_Period);
+            cmd.Parameters.AddWithValue("@Reason", Reason);
+            cmd.Parameters.AddWithValue("@Address_Phone_No", Address_Phone_No);
+            cmd.Parameters.AddWithValue("@No_Of_Days_Leave_Period", No_Of_Days_Leave_Period);
+            cmd.Parameters.AddWithValue("@Total_Balance", Total_Balance);
+            cmd.Parameters.AddWithValue("@HODUserid", HODUserid);
+            cmd.Parameters.AddWithValue("@HODUserid1", HODUserid1);
+            cmd.Parameters.AddWithValue("@Company_Name", Company_Name);
+            cmd.Parameters.AddWithValue("@SerialNo", SerialNo);
+            cmd.Parameters.AddWithValue("@Create_Date", Create_Date);
+            cmd.Parameters.AddWithValue("@HR_Userid", HR_Userid);
+            cmd.Parameters.AddWithValue("@Status", Status);
+            cmd.Parameters.AddWithValue("@UName", UName);
+            cmd.Parameters.AddWithValue("@UserID", UserID);
+            cmd.Parameters.AddWithValue("@Leave_Type", Leave_Type);
+            cmd.Parameters.AddWithValue("@user_Emailid", user_Emailid);
+            cmd.Parameters.AddWithValue("@HREmailid", HREmailid);
+            cmd.Parameters.AddWithValue("@HODEmailID", HODEmailID);
+            cmd.Parameters.AddWithValue("@HRName", HRName);
+            cmd.Parameters.AddWithValue("@HODName", HODName);
+            cmd.Parameters.Add(
+                "@LeaveAttachment",
+                SqlDbType.VarBinary).Value =
+                (object)LeaveAttachment ?? DBNull.Value;
+
+            cmd.Parameters.AddWithValue(
+                "@AttachmentName",
+                (object)AttachmentName ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@AttachmentType",
+                (object)AttachmentType ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@Arrangement",
+                (object)Arrangement ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@Half_Day_type_Code",
+                (object)Half_Day_type_Code ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@Half_Day_type_Desc",
+                (object)Half_Day_type_Desc ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@PreLunch",
+                (object)PreLunch ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue(
+                "@PostLunch",
+                (object)PostLunch ?? DBNull.Value);
+
+            cmd.ExecuteNonQuery();
         }
-        else
-        {
-            sqlq = "insert into tble_Leave_Approval (From_Date,To_Date,Leave_Period,Reason,Address_Phone_No, No_Of_Days_Leave_Period,Total_Balance,HODUserid,HODUserid1,Company_Name,SerialNo,Create_Date,HR_Userid,Status,UName,UserID,Leave_Type,user_Emailid,HREmailid,HODEmailID,HRName,HODName,Attachment,AttachmentName,AttachmentType,Arrangement,Half_Day_type_Code,Half_Day_type_Desc,PreLunch,PostLunch,FinalApprovalStatus,FinalApprovalId) values('" + From_Date + "','" + To_Date + "','" + Leave_Period + "','" + Reason + "','" + Address_Phone_No + "', '" + No_Of_Days_Leave_Period + "','" + Total_Balance + "','" + HODUserid + "','" + HODUserid1 + "','" + Company_Name + "','" + SerialNo + "','" + Create_Date + "','" + HR_Userid + "','" + Status + "','" + UName + "','" + UserID + "','" + Leave_Type + "','" + user_Emailid + "','" + HREmailid + "','" + HODEmailID + "','" + HRName + "','" + HODName + "','" + LeaveAttachment + "','" + AttachmentName + "','" + AttachmentType + "','" + Arrangement + "','" + Half_Day_type_Code + "','" + Half_Day_type_Desc + "','" + PreLunch + "','" + PostLunch + "',0, ( select  case when (select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + UserID + "') ='TEACH' then [SA for Teaching Staff] else [SA for Non-Teach Staff] end from [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Leave] where [Leave Code] ='" + Leave_Type + "'  ))";
-
-        }
-
-        cmd = new SqlCommand(sqlq, Conn);
-        cmd.ExecuteNonQuery();
-
     }
-
     public SqlDataReader Show_AttachmentNo(string AutoNo)
     {
         Connect();
@@ -4862,10 +4956,10 @@ public class ServicePoratal : IServicePoratal
 
     }
     //Dhirendra 19-11-2016
-    public SqlDataReader Show_MAlLeaveMaxid()
+    public SqlDataReader Show_MAlLeaveMaxid(string UserId)
     {
         Connect();
-        cmd = new SqlCommand("select MAX(AutoNo) as AutoNo from tble_Leave_Approval", Conn);
+        cmd = new SqlCommand("select MAX(AutoNo) as AutoNo from tble_Leave_Approval where UserId='"+ UserId + "'", Conn);
         SqlDataReader dr = cmd.ExecuteReader();
         return dr;
     }

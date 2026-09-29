@@ -177,6 +177,7 @@ public partial class Faculty_StudentFeedBackList : System.Web.UI.Page
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@FacultyCode", lblEmpCode);
         cmd.Parameters.AddWithValue("@AcademicYear", ddlAcademicYear.SelectedValue);
+        cmd.Parameters.AddWithValue("@EvenOdd", ddsem.SelectedValue);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
 

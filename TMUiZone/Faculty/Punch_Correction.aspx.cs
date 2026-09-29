@@ -7,6 +7,12 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.IO;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using iTextSharp.text;
+using System.Net.Mail;
+
+
 
 
 public partial class Faculty_Punch_Correction : System.Web.UI.Page
@@ -16,6 +22,7 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
     Connection navconn;
     SqlConnection con1 = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
     SqlConnection con2 = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
+   
     protected void Page_Load(object sender, EventArgs e)
     {
         try
@@ -29,7 +36,7 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
             {
 
 
-                
+                pnlPreview.Visible = false;
 
                 BindYear();
                 ddlMonth.SelectedValue = System.DateTime.Now.ToString("MM");
@@ -98,7 +105,10 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
         }
 
     }
-
+    protected void btnClosePreview_Click(object sender, EventArgs e)
+    {
+        pnlPreview.Visible = false;
+    }
     public void BindYear()
     {
 
@@ -502,6 +512,15 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
     }
     protected void btnSendForApproval_Click(object sender, EventArgs e)
     {
+
+        if (!fuDocument.HasFile && drpPunchType.SelectedValue=="1")
+        {
+            ScriptManager.RegisterStartupScript(this, GetType(), "msg",
+                "alert('Please upload a document.');", true);
+            return;
+        }
+
+
         DateTime dt1 = DateTime.Parse(txtFromTime.Text.ToString());
         DateTime dt3 = DateTime.Parse(txtFromTime1.Text.ToString());
         DateTime dt4 = DateTime.Parse(txtToTime.Text.ToString());
@@ -758,6 +777,35 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
                 cmdT.Dispose();
                 con2.Close();
             }
+
+
+
+            string filename = Path.GetFileName(fuDocument.PostedFile.FileName);
+            string contentType = fuDocument.PostedFile.ContentType;
+            using (Stream fs = fuDocument.PostedFile.InputStream)
+            {
+                using (BinaryReader br = new BinaryReader(fs))
+                {
+                    byte[] bytes = br.ReadBytes((Int32)fs.Length);                   
+
+                    SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
+                    Conn.Open();                   
+                    string query = "update tbl_PunchCorrect_Application set AttachmentFilename=@AttachmentFilename ,AttachmentFileType=@AttachmentFileType,Attachmentdata=@Attachmentdata where Userid='" + Session["uid"].ToString() + "' and Atte_Date=convert(varchar,convert(date, '" + txtFromDate.Text.Trim() + "'), 23) ";
+                   
+                    using (SqlCommand cmd = new SqlCommand(query))
+                    {
+                        cmd.Connection = Conn;
+                        cmd.Parameters.AddWithValue("@AttachmentFilename", filename);
+                        cmd.Parameters.AddWithValue("@AttachmentFileType", contentType);
+                        cmd.Parameters.AddWithValue("@Attachmentdata", bytes);
+
+                        cmd.ExecuteNonQuery();
+                        con.DisConnect();
+                    }
+                }
+            }
+
+
             clear();
         }
 
@@ -1452,5 +1500,139 @@ public partial class Faculty_Punch_Correction : System.Web.UI.Page
     protected void btnGet_Click(object sender, EventArgs e)
     {
         Show_HODData();
+    }
+    public void DownloadAttachment(string id)
+    {
+
+
+        byte[] bytes;
+        string fileName, contentType;
+        using (SqlConnection con2 = new SqlConnection(ConfigurationManager.AppSettings["strportal"]))
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.CommandText = "SELECT * FROM tbl_PunchCorrect_Application WHERE ID=@ID  ";
+                cmd.Parameters.AddWithValue("@ID", id);
+                cmd.Connection = con2;
+                con2.Open();
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (!sdr.HasRows)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Document not found')", true);
+                        return;
+                    }
+                    sdr.Read();
+                    bytes = (byte[])sdr["Attachmentdata"];
+                    contentType = sdr["AttachmentFileType"].ToString();
+                    fileName = sdr["AttachmentFilename"].ToString();
+
+                       
+
+
+
+                }
+                con2.Close();
+            }
+        }
+        Response.Clear();
+        Response.Buffer = true;
+        Response.Charset = "";
+        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        Response.ContentType = contentType;
+        Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+        Response.BinaryWrite(bytes);
+        Response.Flush();
+        Response.End();
+    }
+    protected void grdView_Status_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "Preview")
+        {
+            string id = e.CommandArgument.ToString();
+            hdfid.Value = id;
+            //DownloadAttachment(id);
+            byte[] bytes;
+            string fileName, contentType;
+            using (SqlConnection con2 = new SqlConnection(ConfigurationManager.AppSettings["strportal"]))
+            {
+                using (SqlCommand cmd2 = new SqlCommand())
+                {
+                    cmd2.CommandText = "SELECT * FROM tbl_PunchCorrect_Application WHERE ID=@ID and isnull(AttachmentFilename,'')!='' ";
+                    cmd2.Parameters.AddWithValue("@ID", id);
+                    cmd2.Connection = con2;
+                    con2.Open();
+                    using (SqlDataReader sdr = cmd2.ExecuteReader())
+                    {
+                        if (!sdr.HasRows)
+                        {
+                            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Document not found')", true);
+                            return;
+                        }
+                        sdr.Read();
+                        bytes = (byte[])sdr["Attachmentdata"];
+                        contentType = sdr["AttachmentFileType"].ToString();
+                        fileName = sdr["AttachmentFilename"].ToString();
+
+                    }
+                    con2.Close();
+                }
+            }
+
+            if (bytes != null)
+            {
+                pnlPreview.Visible = true;
+                string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
+                img.ImageUrl = "data:image/png;base64," + base64String;
+            }
+        }
+    }
+
+    protected void btnDownload_Click(object sender, EventArgs e)
+    {
+        DownloadAttachment(hdfid.Value);
+    }
+
+    protected void grdApproval_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "Preview")
+        {
+            string id = e.CommandArgument.ToString();
+            hdfid.Value = id;
+            //DownloadAttachment(id);
+            byte[] bytes;
+            string fileName, contentType;
+            using (SqlConnection con2 = new SqlConnection(ConfigurationManager.AppSettings["strportal"]))
+            {
+                using (SqlCommand cmd2 = new SqlCommand())
+                {
+                    cmd2.CommandText = "SELECT * FROM tbl_PunchCorrect_Application WHERE ID=@ID and isnull(AttachmentFilename,'')!='' ";
+                    cmd2.Parameters.AddWithValue("@ID", id);
+                    cmd2.Connection = con2;
+                    con2.Open();
+                    using (SqlDataReader sdr = cmd2.ExecuteReader())
+                    {
+                        if (!sdr.HasRows)
+                        {
+                            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Document not found')", true);
+                            return;
+                        }
+                        sdr.Read();
+                        bytes = (byte[])sdr["Attachmentdata"];
+                        contentType = sdr["AttachmentFileType"].ToString();
+                        fileName = sdr["AttachmentFilename"].ToString();
+
+                    }
+                    con2.Close();
+                }
+            }
+
+            if (bytes != null)
+            {
+                pnlPreview.Visible = true;
+                string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
+                img.ImageUrl = "data:image/png;base64," + base64String;
+            }
+        }
     }
 }

@@ -292,7 +292,7 @@ UseSubmitBehavior="false"/>   <asp:Button ID="btnreject" runat="server" Text="Re
                       <asp:TemplateField HeaderText="Attachment" ItemStyle-HorizontalAlign="Left">
                           <ItemTemplate>
                               <asp:Label ID="lblleaveAttachmentFilename" runat="server" Text='<%#Bind("AttachmentFilename") %>' Visible="false"></asp:Label>
-                              <asp:LinkButton ID="lnkDownloadgrid" runat="server" Text="Download" OnClick="DownloadFile"
+                              <asp:LinkButton ID="lnkDownloadgrid" runat="server" Text="Download" OnClick="lnkAttachment_Click"
                     CommandArgument='<%# Eval("AutoNo") %>'></asp:LinkButton>
                            <%--   <asp:Button ID="btnViewAttachment" runat="server" CommandArgument='<%#Bind("AutoNo") %>' OnCommand="btnViewAttachment_Command" Text='<%# Eval("Upload") %>' />--%>
                               </div>
@@ -973,6 +973,75 @@ UseSubmitBehavior="false" />
 
      </asp:Panel>
     
+    <div class="modal fade" id="attachmentModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
 
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button"
+                    class="close"
+                    data-dismiss="modal">
+                    &times;
+           
+                </button>
+
+                <h4 class="modal-title">Attachments
+            </h4>
+            </div>
+
+            <div class="modal-body">
+
+                <asp:GridView
+                    ID="gvAttachments"
+                    runat="server"
+                    AutoGenerateColumns="False"
+                    CssClass="table table-bordered table-striped"
+                    EmptyDataText="No attachment found">
+
+                    <Columns>
+
+                        <asp:BoundField
+                            DataField="AttachmentFilename"
+                            HeaderText="File Name" />
+
+                        <asp:TemplateField HeaderText="Action">
+
+                            <ItemTemplate>
+
+                                <asp:LinkButton
+                                    ID="lnkDownload"
+                                    runat="server"
+                                    Text="Download"
+                                    CssClass="btn btn-sm btn-success"
+                                    CommandArgument='<%# Eval("ID") %>'
+                                    OnClick="lnkDownload_Click">
+                            </asp:LinkButton>
+
+                            </ItemTemplate>
+
+                        </asp:TemplateField>
+
+                    </Columns>
+
+                </asp:GridView>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                    class="btn btn-default"
+                    data-dismiss="modal">
+                    Close
+           
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
 </asp:Content>
 

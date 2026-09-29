@@ -8,6 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>TMU</title>
+
     <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
@@ -266,6 +267,7 @@
     <li style="margin-left:0px" id="StudentExtraAttendanceMark" runat="server" visible="false"><a href="../Faculty/StudentExtraAttendanceMark.aspx"><b>GD / PD Lecture</b></a> </li>
     <li style="margin-left:0px" id="StudentCombinedAttendanceMark" runat="server" visible="false"><a href="../Faculty/StudentCombinedAttendanceMark.aspx"><b>Combined Attendance</b></a> </li>
     <li style="margin-left:0px" id="ReviewAttendance" runat="server" visible="false"><a href="../Faculty/ReviewAttendance.aspx"><b>Review Attendance</b></a> </li>  
+<li style="margin-left:0px" id="DetalAttendance" runat="server" visible="false"><a href="../Faculty/DentalFacultyPunch.aspx"><b>Faculty Punch</b></a> </li> 
        <li style="margin-left:0px" id="ReviewAttendance_New" runat="server" visible="false"><a href="../Faculty/ReviewAttendance_New.aspx"><b>Review Attendance</b></a> </li> 
  <li style="margin-left:0px" id="NoDetain" runat="server" visible="false"><a href="../Faculty/NoDetain.aspx"><b>Detainee List Approval </b></a> </li> 
  <li style="margin-left: 0px" id="AttendanceApproval" runat="server" visible="false"><a href="../Faculty/AttendanceApproval.aspx"><b>Attendance Approval</b></a> </li>
@@ -440,6 +442,7 @@
           <li><a href="~/Faculty/EmployeeLeaveDetail.aspx" id="EmployeeLeaveDetail" runat="server" visible="false" ><b>Employee Leave Detail</b></a> </li>  
                 <li><a href="~/Faculty/LeaveReport.aspx" id="lnkLeaveReport" runat="server" visible="false"><b>Leave Report</b></a></li>
              <li><a href="~/Faculty/CoStatus.aspx" id="CoStatus" runat="server" visible="false"><b>CO Status</b></a></li>
+             <li><a href="~/Faculty/UploadCo.aspx" id="UploadCo" runat="server" visible="false"><b>Upload CO</b></a></li>
             <li><a href="~/Faculty/COReport.aspx" id="lnkCoClaimReport" runat="server" visible="false"><b>CO Claim Report</b></a></li>
             <li><a href="~/Faculty/Employee_Punch_Data.aspx" id="Employee_Punch_Data" runat="server" visible="false"><b>Punch Data</b></a></li>
              <li><a href="~/Faculty/Punch_Correction.aspx" id="PunchCorrection" runat="server" ><b>Punch Correction</b></a></li>
@@ -594,7 +597,8 @@
  <li><a href="~/Faculty/StudentNoDuesApprovalList.aspx" id="StudentNoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li> 
  <li><a href="~/Faculty/NoDuesApprovalList.aspx" id="NoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li>
 <li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD No Dues Approval</b></a></li> 
- <li><a href="~/Faculty/ViewStudentCRACFormDetails.aspx" id="IdViewPHDStudentCRACForm" runat="server" visible="true" ><b>View CRAC Meeting</b></a></li>            
+
+ <li><a href="~/Faculty/ViewStudentCRACFormDetails.aspx" id="IdViewPHDStudentCRACForm" runat="server" visible="true" ><b>View CRAC Meeting</b></a></li>   
  <li><a href="~/Faculty/JainStudentAttendance.aspx" id="JainStudentAttendance" runat="server" visible="false" ><b>Jain Student Attendance List</b></a></li>
              <li><a href="~/Faculty/Research_Incentive.aspx" id="ResearchIncentive" runat="server" visible="false" ><b>Research Incentive</b></a></li>
 <li runat="server" id="LiSeedmoney"  ><a href="../Faculty/Seedmoney.aspx"  ><b>Seed Money</b></a></li>

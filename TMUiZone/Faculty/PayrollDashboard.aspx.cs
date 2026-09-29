@@ -104,6 +104,7 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
         dtSummary.Columns.Add("SNo");
         dtSummary.Columns.Add("Description");
         dtSummary.Columns.Add("Employees", typeof(int));
+        dtSummary.Columns.Add("ReportType", typeof(int));
         dtSummary.Columns.Add("SalaryAmount", typeof(decimal));
         dtSummary.Columns.Add("FixedHRA", typeof(decimal));
         dtSummary.Columns.Add("MonthlyCTC", typeof(decimal));
@@ -113,6 +114,7 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
             "A.",
             "Fixed HRA criteria (Perquisite provided through salary sheets)",
             ds.Tables[0].Rows.Count,
+            1,
             totalSalary,
             totalHRA,
             totalSalary + totalHRA
@@ -123,15 +125,15 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
 
         dtSummary.Rows.Add("B.",
             "RFA criteria (As per Hospitality Department by Shri Pawan Gupta Ji Payment through cheque)",
-            0.0, 0.0, 0.0, 0.0);
+            0.0, 2, 0.0, 0.0, 0.0);
 
         dtSummary.Rows.Add("C.",
             "Fixed HRA provided by GVC sir in June 2025 at the time of Increment",
-            ds.Tables[1].Rows.Count, totalSalary1, totalHRA1, totalSalary1 + totalHRA1);
+            ds.Tables[1].Rows.Count, 3, totalSalary1, totalHRA1, totalSalary1 + totalHRA1);
 
         dtSummary.Rows.Add("D.",
             "Vacant Flat Details (As per Hospitality Department by Shri Pawan Gupta Ji)",
-            0.0, 0.0, 0.0, 0.0);
+            0.0, 4, 0.0, 0.0, 0.0);
 
         gvSummary.DataSource = dtSummary;
         gvSummary.DataBind();
@@ -141,6 +143,11 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
     protected void gvSummary_RowDataBound(object sender,
         System.Web.UI.WebControls.GridViewRowEventArgs e)
     {
+
+
+
+
+
         // Footer total logic here if required
     }
     protected void lnkEmployees_Click(object sender, EventArgs e)
@@ -149,17 +156,65 @@ public partial class Faculty_PayrollDashboard : System.Web.UI.Page
 
         int employees = Convert.ToInt32(lnk.CommandArgument);
 
-        Session["Month"] = ddlMonth.SelectedValue;
+        if (employees == 1)
+        {
+            Session["Month"] = ddlMonth.SelectedValue;
 
-        Session["Year"] = ddlAcademicYear.SelectedValue;
+            Session["Year"] = ddlAcademicYear.SelectedValue;
 
-        string url = "~/Faculty/Fixed_HRA_report.aspx";
+            string url = "~/Faculty/Fixed_HRA_report.aspx";
 
-        ScriptManager.RegisterStartupScript(
-            this,
-            this.GetType(),
-            "OpenReport",
-            "window.open('" + ResolveUrl(url) + "', '_blank');",
-            true);
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OpenReport",
+                "window.open('" + ResolveUrl(url) + "', '_blank');",
+                true);
+        }
+        if (employees == 2)
+        {
+            Session["Month"] = ddlMonth.SelectedValue;
+
+            Session["Year"] = ddlAcademicYear.SelectedValue;
+
+            string url = "~/Faculty/Fixed_HRA_report.aspx";
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OpenReport",
+                "window.open('" + ResolveUrl(url) + "', '_blank');",
+                true);
+        }
+        if (employees == 3)
+        {
+            Session["Month"] = ddlMonth.SelectedValue;
+
+            Session["Year"] = ddlAcademicYear.SelectedValue;
+
+            string url = "~/Faculty/AccomdationList.aspx";
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OpenReport",
+                "window.open('" + ResolveUrl(url) + "', '_blank');",
+                true);
+        }
+        if (employees == 4)
+        {
+            Session["Month"] = ddlMonth.SelectedValue;
+
+            Session["Year"] = ddlAcademicYear.SelectedValue;
+
+            string url = "~/Faculty/Fixed_HRA_report.aspx";
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "OpenReport",
+                "window.open('" + ResolveUrl(url) + "', '_blank');",
+                true);
+        }
     }
 }

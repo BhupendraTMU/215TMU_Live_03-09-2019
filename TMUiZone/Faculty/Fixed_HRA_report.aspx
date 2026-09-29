@@ -23,19 +23,19 @@
         .heading {
             text-align: center;
             font-size: 28px;
-            font-weight: bold;
+           /* font-weight: bold;*/
         }
 
         .subheading {
             text-align: center;
             font-size: 22px;
-            font-weight: bold;
+          /*  font-weight: bold;*/
         }
 
         .section {
             text-align: center;
             font-size: 18px;
-            font-weight: bold;
+           /* font-weight: bold;*/
             background-color: #f3f3f3;
         }
 
@@ -46,7 +46,7 @@
 
         .headerrow {
             background-color: #d9d9d9;
-            font-weight: bold;
+           /* font-weight: bold;*/
         }
 
         @media print {

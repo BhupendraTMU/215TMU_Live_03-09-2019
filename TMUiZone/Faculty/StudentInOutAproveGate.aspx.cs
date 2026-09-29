@@ -546,7 +546,7 @@ GROUP BY
             {
                 smtp.Host = smtpSection.Network.Host;
                 smtp.EnableSsl = smtpSection.Network.EnableSsl;
-                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "nwar yzam bcez rqop");
+                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "ghkl eukc gadv filn");
                 smtp.UseDefaultCredentials = smtpSection.Network.DefaultCredentials;
                 smtp.Credentials = networkCred;
                 smtp.Port = smtpSection.Network.Port;
@@ -708,7 +708,7 @@ GROUP BY
                 smtp.Host = smtpSection.Network.Host;
                 smtp.EnableSsl = smtpSection.Network.EnableSsl;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("naverp@tmu.ac.in", "nwar yzam bcez rqop"); // actual SMTP credentials
+                smtp.Credentials = new NetworkCredential("naverp@tmu.ac.in", "ghkl eukc gadv filn"); // actual SMTP credentials
                 smtp.Port = smtpSection.Network.Port;
                 smtp.Send(mm);
 

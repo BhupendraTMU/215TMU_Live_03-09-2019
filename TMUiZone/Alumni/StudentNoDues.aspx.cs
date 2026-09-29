@@ -116,7 +116,7 @@ public partial class StudentNoDues : System.Web.UI.Page
     {
 
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        string strSQL = "select Distinct Principal,(select [First Name] from TMU$Employee where No_=T.Principal) as P,(select [Job Title_Grade Desc] from TMU$Employee where No_=T.Principal) as Title from [TMU$User Role Matrix]  as T where [Global Dimenison 1 Code] ='" + txtcollegedept.Text + "'";
+        string strSQL = "select Distinct Principal,(select [First Name] from TMU$Employee where No_=T.Principal) as P,(select [Job Title_Grade Desc] from TMU$Employee where No_=T.Principal) as Title from [TMU$User Role Matrix]  as T where [Global Dimenison 1 Code] ='" + txtcollegedept.Text + "' and Principal!='TMU00002'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);
@@ -891,7 +891,7 @@ public partial class StudentNoDues : System.Web.UI.Page
         try
         {
             var fromEmail = "naverp@tmu.ac.in";
-            var fromPassword = "nwar yzam bcez rqop";
+            var fromPassword = "ghkl eukc gadv filn";
 
             // Initialize the SMTP client with the server details
             var smtpClient = new SmtpClient("smtp.gmail.com") // Use your SMTP server here

@@ -364,6 +364,7 @@
                                     <ItemTemplate>
                                         <asp:Label ID="LblSemester1" runat="server" Text='<%# Bind("[Semester]") %>'></asp:Label>
                                         <asp:HiddenField ID="hdtAp" runat="server" Value='<%# Bind("[Detained]") %>' ></asp:HiddenField>
+                                       <asp:HiddenField ID="hfMOOC" runat="server" Value='<%# Bind("mooc") %>' ></asp:HiddenField>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:TemplateField Visible="false">
@@ -609,6 +610,8 @@
        <Triggers>
          <asp:PostBackTrigger ControlID="BtnSubmit" />
         <asp:PostBackTrigger ControlID="BtnPrint" />
+              <asp:PostBackTrigger ControlID="ddlSem" />
+           
             </Triggers>
     </asp:UpdatePanel>
 </asp:Content>

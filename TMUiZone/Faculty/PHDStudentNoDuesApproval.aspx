@@ -151,7 +151,7 @@
                     <div class="panel-title">
                         <b>
                             <p style="color: white; font-size: 20px">
-                                PHD STUDENT NO DUES APPROVAL
+                                PhD STUDENT NO DUES APPROVAL
                             </p>
                         </b>
                     </div>

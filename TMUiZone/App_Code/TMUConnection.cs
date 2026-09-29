@@ -95,8 +95,10 @@ public class TMUConnection
         if (Conn.State == ConnectionState.Closed)
             Conn.Open();
         //SqlCommand cmd = new SqlCommand("select Code from [TMU$Academic Year] where Closed=0",Conn);
-        SqlCommand cmd = new SqlCommand("select cast(( YEAR( GETDATE() ) % 100 ) as varchar) +'-'+ cast(( YEAR( GETDATE() ) % 100 )+1 as varchar)", Conn);        
-        string s=cmd.ExecuteScalar().ToString();
+        //SqlCommand cmd = new SqlCommand("select cast(( YEAR( GETDATE() ) % 100 ) as varchar) +'-'+ cast(( YEAR( GETDATE() ) % 100 )+1 as varchar)", Conn);        
+        SqlCommand cmd = new SqlCommand("usp_GetAcademicYear", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        string s = cmd.ExecuteScalar().ToString();
         Conn.Close();
         return s;
     }

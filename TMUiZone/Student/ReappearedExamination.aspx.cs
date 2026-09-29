@@ -1,403 +1,509 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Net;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
-using System.Net;
-//Test
-//using WEBStudentFine;//Test
-using ReapReference;
 using AjaxControlToolkit;
+using ReapReference;
 
 public partial class ReappearedExamination : System.Web.UI.Page
 {
-
-    static string EnrollmentNo = "";
-    string StudentNo = "";
     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+    private readonly string CS = ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         try
         {
-            if (Session["enroll"].ToString() == null)
+            if (Session["enroll"] == null || Session["uid"] == null)
             {
-                Response.Redirect("../Default.aspx");
+                Response.Redirect("../Default.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
             }
 
-            else
+            if (!IsPostBack)
             {
+                DataTable dt = CheckFormOpenClose();
 
-                if (!IsPostBack)
+                if (dt.Rows.Count == 0)
                 {
-                    DataTable dt = new DataTable();
-                    dt = CheckFormOpenClose();
-                    if (dt.Rows.Count > 0)
-                    {
-                        if (dt.Rows[0]["OpenClose"].ToString() == "OPEN")
-                        {
-                            EnrollmentNo = Session["enroll"].ToString();
-                            StudentNo = Session["uid"].ToString();
-                            ReappearSemesterDropdown();
-
-                            getDeclaration();
-                            getExaminationDetail();
-                            getStudentInformation();
-                            getReappearDetail();
-                            getPreviousExaminationDetails();
-                            getExaminationFeeDetails();
-                            getStudentImage();
-                        }
-                        else if (dt.Rows[0]["LOCK"].ToString() == "1")
-                        {
-                            PnlMain.Visible = false;
-                            PnlMsg.Visible = true;
-                            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Consolidated mark sheet already generated with Audit')", true);
-                            btnSubmit.Visible = false;
-                        }
-                        else
-                        {
-                            PnlMain.Visible = false;
-                            PnlMsg.Visible = true;
-                            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Reappear Examination Form is yet to be Open')", true);
-                            btnSubmit.Visible = false;
-                        }
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Reappear Examination Form is yet to be Open')", true);
-                        btnSubmit.Visible = false;
-                        PnlMain.Visible = false;
-                        PnlMsg.Visible = true;
-                    }
+                    ShowMessage("The Reappear Examination Form is yet to be Open");
+                    return;
                 }
 
+                if (dt.Rows[0]["LOCK"].ToString() == "1")
+                {
+                    PnlMain.Visible = false;
+                    PnlMsg.Visible = true;
+                    btnSubmit.Visible = false;
 
+                    ScriptManager.RegisterClientScriptBlock(
+                        this,
+                        GetType(),
+                        "msg",
+                        "alert('Consolidated mark sheet already generated with Audit');",
+                        true);
+
+                    return;
+                }
+
+                if (dt.Rows[0]["OpenClose"].ToString() != "OPEN")
+                {
+                    ShowMessage("The Reappear Examination Form is yet to be Open");
+                    return;
+                }
+
+                ReappearSemesterDropdown();
+
+                GetDeclaration();
+                GetExaminationDetail();
+                GetStudentInformation();
+                GetReappearDetail();
+                GetPreviousExaminationDetails();
+                GetExaminationFeeDetails();
+                GetStudentImage();
             }
         }
         catch (Exception ex)
         {
-            Response.Redirect("../Default.aspx");
+            // TODO : Log Error
 
+            Response.Redirect("../Default.aspx", false);
+            Context.ApplicationInstance.CompleteRequest();
         }
+    }
 
+    private void ShowMessage(string msg)
+    {
+        PnlMain.Visible = false;
+        PnlMsg.Visible = true;
+        btnSubmit.Visible = false;
+
+        string safeMsg = HttpUtility.JavaScriptStringEncode(msg);
+
+        ScriptManager.RegisterClientScriptBlock(
+            this,
+            GetType(),
+            Guid.NewGuid().ToString(),
+            string.Format("alert('{0}');", safeMsg),
+            true);
     }
 
     public DataTable CheckFormOpenClose()
     {
-        SqlCommand cmd = new SqlCommand("sp_ValidateFormDateREAP", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.Add("@loginid", Session["uid"].ToString());
-        cmd.Parameters.Add("@FormName", "RE-APPEAR");
-        SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
-        //con.Open();
-        da.Fill(dt);
-        con.Close();
+
+        using (SqlConnection con = new SqlConnection(CS))
+        using (SqlCommand cmd = new SqlCommand("sp_ValidateFormDateREAP", con))
+        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+        {
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@loginid", Session["uid"].ToString());
+            cmd.Parameters.AddWithValue("@FormName", "RE-APPEAR");
+
+            da.Fill(dt);
+        }
+
         return dt;
     }
+
     public void ReappearSemesterDropdown()
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("sp_FetchReappearSemesterFromSubjectcollege", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            con.Open();
-            da.Fill(dt);
-            DataRow newRow = dt.NewRow();
-            newRow[0] = "--Select--";
-            newRow[1] = "--Select--";
-            dt.Rows.InsertAt(newRow, 0);
-            con.Close();
-            ddlSem.DataSource = dt;
-            ddlSem.DataTextField = "Sem";
-            ddlSem.DataValueField = "Semester";
-            ddlSem.DataBind();
-            if (dt.Rows.Count > 0)
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("sp_FetchReappearSemesterFromSubjectcollege", con))
+            using (SqlDataAdapter da = new SqlDataAdapter(cmd))
             {
-                if (ddlSem.SelectedIndex == 0)
-                {
-                    div_visible_TF.Visible = false;
-                    btnSubmit.Visible = false;
-                    BtnPrint.Visible = false;
-                }
-                else
-                {
-                    div_visible_TF.Visible = true;
-                    btnSubmit.Visible = true;
-                    BtnPrint.Visible = true;
-                }
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue(
+                    "@EnrollmentNo",
+                    Session["enroll"].ToString());
+
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                DataRow dr = dt.NewRow();
+                dr["Sem"] = "--Select--";
+                dr["Semester"] = "";
+
+                dt.Rows.InsertAt(dr, 0);
+
+                ddlSem.DataSource = dt;
+                ddlSem.DataTextField = "Sem";
+                ddlSem.DataValueField = "Semester";
+                ddlSem.DataBind();
+
+                div_visible_TF.Visible = false;
+                btnSubmit.Visible = false;
+                BtnPrint.Visible = false;
             }
-            else
-            {
-                Response.Redirect("../Default.aspx");
-            }
-
-
-
-        }
-        catch (Exception e)
-        {
-
-        }
-
-    }
-
-    public void getStudentInformation()
-    {
-        try
-        {
-            con.Close();
-            SqlCommand cmd = new SqlCommand("Sp_ExaminationDataFetch_Reap", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            con.Open();
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["uid"].ToString());
-            cmd.Parameters.AddWithValue("@Sem", ddlSem.SelectedValue);
-            SqlDataReader reader = cmd.ExecuteReader();
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            if (reader.Read())
-            {
-                LblType.Text = reader["ExaminationType"].ToString();
-                TxtSession.Text = reader["Academic Year"].ToString();
-                //  txtSNo.Text = reader["No_"].ToString();
-                txtExaminationName.Text = reader["Course Name"].ToString();
-                if (ddlSem.SelectedValue != "")
-                {
-                    txtSemester.Text = ddlSem.SelectedItem.Text; //reader["Sem"].ToString();
-                }
-                // hfsem.Value = reader["Semester"].ToString();
-
-                TxtBranch.Text = reader["Course Code"].ToString();
-                TxtEnrollmentNo.Text = reader["Enrollment No_"].ToString();
-                TxtStudentName.Text = reader["Student Name"].ToString();
-                lblName.Text = reader["Student Name"].ToString();
-                TxtFathersName.Text = reader["Fathers Name"].ToString();
-                TxtMothersName.Text = reader["Mothers Name"].ToString();
-                TxtHindiName.Text = reader["StudentHindiName"].ToString();
-                TxtHindiFathersName.Text = reader["FatherHindiName"].ToString();
-                TxtHindiMothersName.Text = reader["MotherHindiName"].ToString();
-                //TxtAdharNo.Text = reader["Aadhar No_"].ToString();
-                TxtPostalAddress.Text = reader["PAdress"].ToString();
-                TxtContactNo.Text = reader["Mobile Number"].ToString();
-                TxtPermanentAdd.Text = reader["Adress"].ToString();
-
-                string ImgStudent = reader["Student Image"].ToString();
-                con.Close();
-                reader.Close();
-            }
-            else
-            {
-
-            }
-        }
-        catch
-        {
-        }
-    }
-    public void getExaminationDetail()
-    {
-        try
-        {
-            SqlCommand cmd = new SqlCommand("Sp_FetchExaminationDetails_Reap", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["uid"].ToString());
-            cmd.Parameters.AddWithValue("@Filtersemester", ddlSem.SelectedValue);
-            cmd.Parameters.AddWithValue("@AdacdemicYear", Session["AcademicYear"].ToString());
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            con.Open();
-            da.Fill(dt);
-            con.Close();
-            GrdAppliedExamination.DataSource = dt;
-            GrdAppliedExamination.DataBind();
-            if (dt.Rows.Count > 0)
-            {
-                btnCinvoice.Visible = true;
-            }
-            else
-            {
-                btnCinvoice.Visible = false;
-            }
-
         }
         catch (Exception ex)
         {
-
+            // TODO : Log Error
         }
     }
 
-    public void getReappearDetail()
-    {
-
-        try
-        {
-
-            SqlCommand cmd = new SqlCommand("Sp_FetchExaminationDetails_ReapInvoice", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
-            cmd.Parameters.AddWithValue("@Filtersemester", ddlSem.SelectedValue);
-            cmd.Parameters.AddWithValue("@AdacdemicYear", Session["AcademicYear"].ToString());
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            con.Open();
-            da.Fill(dt);
-            con.Close();
-            GrdAppliedRep.DataSource = dt;
-            GrdAppliedRep.DataBind();
-            if (dt.Rows.Count > 0)
-            {
-                btnSubmit.Visible = true;
-                SubmitCheck();
-
-            }
-            else
-            {
-                if (ddlSem.SelectedIndex > 0)
-                {
-                    //btnSubmit.Visible = true;
-                    CheckBox chkDeclare = (CheckBox)GrdDeclaration.HeaderRow.FindControl("chkDeclare");
-                    chkDeclare.Checked = false;
-                    chkDeclare.Enabled = true;
-                    PanelHide.Visible = false;
-                    BtnPrint.Visible = false;
-                }
-                else
-                {
-                    btnSubmit.Visible = false;
-                }
-
-            }
-
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
-
-
-    public void getPreviousExaminationDetails()
+    public void GetStudentInformation()
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("Sp_PreviousExaminationDetail_Reap", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
-
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-
-            DataTable dt = new DataTable();
-
-            con.Open();
-            da.Fill(dt);
-            con.Close();
-            GrdPreviousExam.DataSource = dt;
-            GrdPreviousExam.DataBind();
-            // }
-
-        }
-        catch (Exception e)
-        {
-
-        }
-        //finally
-        //{
-        //    con.Close();
-
-        //}
-
-
-    }
-
-    public void getExaminationFeeDetails()
-    {
-        try
-        {
-            SqlCommand cmd = new SqlCommand("Sp_FetchExaminationFeeDetails_Reap", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@StudentNo", Session["uid"].ToString());
-            cmd.Parameters.AddWithValue("@Filtersemester", ddlSem.SelectedValue);
-            //SqlDataReader reader = cmd.ExecuteReader();
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-
-
-
-            if (con != null && con.State == ConnectionState.Closed)
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_ExaminationDataFetch_Reap", con))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                   .Value = Session["uid"].ToString();
+
+                cmd.Parameters.Add("@Sem", SqlDbType.VarChar, 20)
+                   .Value = ddlSem.SelectedValue;
+
+
                 con.Open();
-            }
-            da.Fill(dt);
-            con.Close();
-            GridViewFees.DataSource = dt;
-            GridViewFees.DataBind();
 
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        LblType.Text = reader["ExaminationType"].ToString();
+
+                        TxtSession.Text = reader["Academic Year"].ToString();
+
+                        txtExaminationName.Text = reader["Course Name"].ToString();
+
+                        if (!string.IsNullOrEmpty(ddlSem.SelectedValue))
+                        {
+                            txtSemester.Text = ddlSem.SelectedItem.Text;
+                        }
+
+                        TxtBranch.Text = reader["Course Code"].ToString();
+
+                        TxtEnrollmentNo.Text = reader["Enrollment No_"].ToString();
+
+                        TxtStudentName.Text = reader["Student Name"].ToString();
+
+                        lblName.Text = reader["Student Name"].ToString();
+
+                        TxtFathersName.Text = reader["Fathers Name"].ToString();
+
+                        TxtMothersName.Text = reader["Mothers Name"].ToString();
+
+                        TxtHindiName.Text = reader["StudentHindiName"].ToString();
+
+                        TxtHindiFathersName.Text = reader["FatherHindiName"].ToString();
+
+                        TxtHindiMothersName.Text = reader["MotherHindiName"].ToString();
+
+                        TxtPostalAddress.Text = reader["PAdress"].ToString();
+
+                        TxtContactNo.Text = reader["Mobile Number"].ToString();
+
+                        TxtPermanentAdd.Text = reader["Adress"].ToString();
+
+
+                        string ImgStudent = reader["Student Image"].ToString();
+                    }
+                }
+            }
         }
         catch (Exception ex)
         {
+            // Log exception
+            // Example:
+            // Response.Write(ex.Message);
+        }
+    }
+    public void GetExaminationDetail()
+    {
+        try
+        {
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_FetchExaminationDetails_Reap", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                   .Value = Session["uid"].ToString();
+
+                cmd.Parameters.Add("@Filtersemester", SqlDbType.VarChar, 20)
+                   .Value = ddlSem.SelectedValue;
+
+                cmd.Parameters.Add("@AdacdemicYear", SqlDbType.VarChar, 20)
+                   .Value = Session["AcademicYear"].ToString();
+
+
+                DataTable dt = new DataTable();
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+
+                GrdAppliedExamination.DataSource = dt;
+                GrdAppliedExamination.DataBind();
+
+
+                btnCinvoice.Visible = dt.Rows.Count > 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error
+            // Example:
+            // lblMessage.Text = ex.Message;
 
         }
     }
-    public void getStudentImage()
+
+    public void GetReappearDetail()
     {
-
-        string id = Session["enroll"].ToString();
-        byte[] bytes = GetData("select [Student Image]  from [TMU$Student - COLLEGE] where [Enrollment No_]='" + id + "'").Rows[0]["Student Image"].ToString() == "" ? null : (byte[])GetData("select [Student Image]  from [TMU$Student - COLLEGE] where [Enrollment No_]='" + id + "'").Rows[0]["Student Image"];
-        if (bytes != null)
+        try
         {
-            string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
-            ImgStudent.ImageUrl = "data:image/png;base64," + base64String;
-        }
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_FetchExaminationDetails_ReapInvoice", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
 
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                   .Value = Session["enroll"].ToString();
+
+                cmd.Parameters.Add("@Filtersemester", SqlDbType.VarChar, 20)
+                   .Value = ddlSem.SelectedValue;
+
+                cmd.Parameters.Add("@AdacdemicYear", SqlDbType.VarChar, 20)
+                   .Value = Session["AcademicYear"].ToString();
+
+
+                DataTable dt = new DataTable();
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+
+                GrdAppliedRep.DataSource = dt;
+                GrdAppliedRep.DataBind();
+
+
+                if (dt.Rows.Count > 0)
+                {
+                    btnSubmit.Visible = true;
+                    SubmitCheck();
+                }
+                else
+                {
+                    btnSubmit.Visible = false;
+
+                    if (ddlSem.SelectedIndex > 0)
+                    {
+                        if (GrdDeclaration.HeaderRow != null)
+                        {
+                            CheckBox chkDeclare =
+                                (CheckBox)GrdDeclaration.HeaderRow.FindControl("chkDeclare");
+
+                            if (chkDeclare != null)
+                            {
+                                chkDeclare.Checked = false;
+                                chkDeclare.Enabled = true;
+                            }
+                        }
+
+                        PanelHide.Visible = false;
+                        BtnPrint.Visible = false;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log Exception
+            // Example:
+            // lblMessage.Text = ex.Message;
+        }
+    }
+
+    public void GetPreviousExaminationDetails()
+    {
+        try
+        {
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_PreviousExaminationDetail_Reap", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                   .Value = Session["enroll"].ToString();
+
+
+                DataTable dt = new DataTable();
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+
+                GrdPreviousExam.DataSource = dt;
+                GrdPreviousExam.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log Exception
+            // Example: WriteLog(ex.Message);
+        }
+    }
+
+    public void GetExaminationFeeDetails()
+    {
+        try
+        {
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_FetchExaminationFeeDetails_Reap", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+
+                cmd.Parameters.Add("@StudentNo", SqlDbType.VarChar, 50)
+                   .Value = Session["uid"].ToString();
+
+
+                cmd.Parameters.Add("@Filtersemester", SqlDbType.VarChar, 20)
+                   .Value = ddlSem.SelectedValue;
+
+
+                DataTable dt = new DataTable();
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+
+                GridViewFees.DataSource = dt;
+                GridViewFees.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log Exception
+            // Example: WriteLog(ex.Message);
+        }
+    }
+    public void GetStudentImage()
+    {
+        try
+        {
+            string enrollmentNo = Session["enroll"].ToString();
+
+            if (string.IsNullOrEmpty(enrollmentNo))
+                return;
+
+
+            byte[] bytes = null;
+
+
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT [Student Image] FROM [TMU$Student - COLLEGE] WHERE [Enrollment No_]=@EnrollmentNo", con))
+            {
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                   .Value = enrollmentNo;
+
+
+                con.Open();
+
+                object result = cmd.ExecuteScalar();
+
+
+                if (result != null && result != DBNull.Value)
+                {
+                    bytes = (byte[])result;
+                }
+            }
+
+
+            if (bytes != null && bytes.Length > 0)
+            {
+                string base64String = Convert.ToBase64String(bytes);
+
+                ImgStudent.ImageUrl = "data:image/png;base64," + base64String;
+            }
+            else
+            {
+                ImgStudent.ImageUrl = "~/Images/no-image.png";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log Exception
+        }
     }
     private DataTable GetData(string query)
     {
         DataTable dt = new DataTable();
+
         try
         {
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString()))
             {
-                using (SqlCommand cmd = new SqlCommand(query))
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    cmd.CommandType = CommandType.Text;
+
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                     {
-                        cmd.CommandType = CommandType.Text;
-                        cmd.Connection = con;
-                        sda.SelectCommand = cmd;
                         sda.Fill(dt);
                     }
                 }
-                // return dt;
             }
         }
-        catch { }
-        finally
+        catch (Exception ex)
         {
-            con.Close();
+            // log error
         }
+
         return dt;
     }
-    public void getDeclaration()
+    public void GetDeclaration()
     {
-        SqlCommand cmd = new SqlCommand("Sp_ExaminationDeclaration_Reap", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.AddWithValue("@DeclareType", "Examination");
-        con.Open();
-        cmd.ExecuteNonQuery();
-        SqlDataAdapter da = new SqlDataAdapter(cmd);
-        DataTable dt = new DataTable();
-        da.Fill(dt);
-        GrdDeclaration.DataSource = dt;
-        GrdDeclaration.DataBind();
-        con.Close();
+        try
+        {
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("Sp_ExaminationDeclaration_Reap", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@DeclareType", SqlDbType.VarChar, 50)
+                   .Value = "Examination";
+
+                DataTable dt = new DataTable();
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+
+                GrdDeclaration.DataSource = dt;
+                GrdDeclaration.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log Exception
+            // Example: WriteLog(ex.Message);
+        }
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
@@ -406,6 +512,17 @@ public partial class ReappearedExamination : System.Web.UI.Page
 
         DataTable dt = GetData("SELECT COUNT(*) as 'C' FROM [dbo].[TMU$Gen_ Journal Line] where [Account No_]='" + Session["uid"].ToString() + "' and [Academic Year]=(Select [Academic Year] from [TMU$Student - COLLEGE] where No_='" + Session["uid"].ToString() + "')    and Course=(Select [Course Code] from [TMU$Student - COLLEGE] where No_='" + Session["uid"].ToString() + "')   and   (Semester='" + ddlSem.SelectedValue + "' or [Year Code]='" + ddlSem.SelectedValue + "' )");
 
+        int mooc = 0;
+
+        foreach (GridViewRow row in GrdAppliedRep.Rows)
+        {
+
+            HiddenField hfMOOC = (row.Cells[0].FindControl("hfMOOC") as HiddenField);
+            if(hfMOOC.Value!="1")
+            {
+                mooc = 1;
+            }
+        }
 
         if (Convert.ToInt32(dt.Rows[0]["C"]) > 0)
         {
@@ -418,7 +535,7 @@ public partial class ReappearedExamination : System.Web.UI.Page
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Kindly Declare The Policy box ')", true);
             return;
         }
-        if (GridViewFees.Rows.Count == 0)
+        if (GridViewFees.Rows.Count == 0 && mooc!=0)
         {
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please Contact to Your HOD.')", true);
             return;
@@ -451,7 +568,10 @@ public partial class ReappearedExamination : System.Web.UI.Page
         cmd1.Parameters.AddWithValue("@Sem", ddlSem.SelectedValue);
         SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
         DataTable dt1 = new DataTable();
-        con.Open();
+        if (con.State == ConnectionState.Closed)
+        {
+            con.Open();
+        }
         da1.Fill(dt1);
         con.Close();
         if (dt1.Rows.Count > 0)
@@ -536,20 +656,15 @@ public partial class ReappearedExamination : System.Web.UI.Page
                     con.Close();
                 }
 
-                getExaminationDetail();
-                getReappearDetail();
+                GetExaminationDetail();
+                GetReappearDetail();
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Your Reappear Exam Form Submitted')", true);
             }
             catch (Exception ex)
             {
             }
 
-            //}
-            //else
-            //{
-            //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('First Clear Your  Dues.')", true);
-            //    return;
-            //}
+
 
         }
         else
@@ -561,74 +676,153 @@ public partial class ReappearedExamination : System.Web.UI.Page
 
 
     }
-
     public void SubmitCheck()
     {
-        SqlCommand cmd = new SqlCommand("sp_SubmitCheck_Reap", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        con.Open();
         try
         {
-            cmd.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
-            cmd.Parameters.AddWithValue("@SemYear", ddlSem.SelectedValue);
-            if (cmd.ExecuteScalar().ToString() == "0")
+            int result = 1;
+
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand("sp_SubmitCheck_Reap", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                    .Value = Session["enroll"].ToString();
+
+                cmd.Parameters.Add("@SemYear", SqlDbType.VarChar, 20)
+                    .Value = ddlSem.SelectedValue;
+
+
+                con.Open();
+
+                object obj = cmd.ExecuteScalar();
+
+                if (obj != null)
+                {
+                    result = Convert.ToInt32(obj);
+                }
+            }
+
+
+            CheckBox chkDeclare = null;
+
+            if (GrdDeclaration.HeaderRow != null)
+            {
+                chkDeclare = (CheckBox)GrdDeclaration.HeaderRow.FindControl("chkDeclare");
+            }
+
+
+            if (result == 0)
             {
                 btnSubmit.Visible = false;
-                CheckBox chkDeclare = (CheckBox)GrdDeclaration.HeaderRow.FindControl("chkDeclare");
-                chkDeclare.Checked = true;
-                chkDeclare.Enabled = false;
+
+                if (chkDeclare != null)
+                {
+                    chkDeclare.Checked = true;
+                    chkDeclare.Enabled = false;
+                }
+
                 PanelHide.Visible = true;
                 BtnPrint.Visible = true;
             }
             else
             {
                 btnSubmit.Visible = true;
-                CheckBox chkDeclare = (CheckBox)GrdDeclaration.HeaderRow.FindControl("chkDeclare");
-                chkDeclare.Checked = false;
-                chkDeclare.Enabled = true;
+
+                if (chkDeclare != null)
+                {
+                    chkDeclare.Checked = false;
+                    chkDeclare.Enabled = true;
+                }
+
                 PanelHide.Visible = false;
                 BtnPrint.Visible = false;
             }
+
         }
-        catch (Exception ex) { }
-        finally { con.Close(); }
-
+        catch (Exception ex)
+        {
+            // Log Exception
+            // WriteLog(ex.Message);
+            throw;
+        }
     }
-
 
     protected void ddlSem_SelectedIndexChanged(object sender, EventArgs e)
     {
-        DataTable dt = GetData("select top 1 [Hold Result],[Hold Remarks] from[TMU$Posted Student Ext_Int Line] where[Enrollement No_] = '" + Session["enroll"].ToString() + "' and (Semester = '" + ddlSem.SelectedValue + "' or Year ='" + ddlSem.SelectedValue + "' )");
-
-        if (dt.Rows[0]["Hold Result"].ToString() == "1")
+        try
         {
-            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage",
-"alert('Your Result is Hold due to "+ dt.Rows[0]["Hold Remarks"].ToString() + "'); window.location='ReappearedExamination.aspx';", true);
-            return;
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(CS))
+            using (SqlCommand cmd = new SqlCommand(@"
+            SELECT TOP 1 
+                [Hold Result],
+                [Hold Remarks]
+            FROM [TMU$Posted Student Ext_Int Line] With(NOLOCK)
+            WHERE [Enrollement No_] = @EnrollmentNo
+            AND (Semester = @Semester OR Year = @Semester)", con))
+            {
+                cmd.Parameters.Add("@EnrollmentNo", SqlDbType.VarChar, 50)
+                    .Value = Session["enroll"].ToString();
+
+                cmd.Parameters.Add("@Semester", SqlDbType.VarChar, 20)
+                    .Value = ddlSem.SelectedValue;
+
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+
+
+            if (dt.Rows.Count > 0)
+            {
+                if (dt.Rows[0]["Hold Result"].ToString() == "1")
+                {
+                    string remarks = HttpUtility.JavaScriptStringEncode(
+                        dt.Rows[0]["Hold Remarks"].ToString()
+                    );
+
+                    ScriptManager.RegisterClientScriptBlock(
+                        this,
+                        this.GetType(),
+                        "alertMessage",
+                        "alert('Your Result is Hold due to {remarks}'); window.location='ReappearedExamination.aspx';",
+                        true
+                    );
+
+                    return;
+                }
+            }
+
+
+
+            if (ddlSem.SelectedIndex > 0)
+            {
+                div_visible_TF.Visible = true;
+
+                GetReappearDetail();
+                GetExaminationDetail();
+                GetExaminationFeeDetails();
+                GetPreviousExaminationDetails();
+                GetStudentInformation();
+            }
+            else
+            {
+                div_visible_TF.Visible = false;
+                BtnPrint.Visible = false;
+                btnSubmit.Visible = false;
+            }
+
         }
-
-
-
-
-
-
-
-        if (ddlSem.SelectedIndex > 0)
+        catch (Exception ex)
         {
-            div_visible_TF.Visible = true;
-            getReappearDetail();
-            getExaminationDetail();
-            getExaminationFeeDetails();
-            getPreviousExaminationDetails();
-            getStudentInformation();
+            // Log Exception
+            throw;
         }
-        else
-        {
-            div_visible_TF.Visible = false;
-            BtnPrint.Visible = false;
-            btnSubmit.Visible = false;
-        }
-
     }
 
     protected void chkAll_CheckedChanged(object sender, EventArgs e)
@@ -739,35 +933,17 @@ public partial class ReappearedExamination : System.Web.UI.Page
                 }
             }
         }
-        //SqlCommand cmdInvoice = new SqlCommand("Sp_FetchExaminationFeeDetails_Reap", con);
-        //cmdInvoice.CommandType = CommandType.StoredProcedure;
 
-        //cmdInvoice.Parameters.AddWithValue("@StudentNo", Session["uid"].ToString());
-        //cmdInvoice.Parameters.AddWithValue("@Filtersemester", ddlSem.SelectedValue);
-        ////SqlDataReader reader = cmd.ExecuteReader();
-        //SqlDataAdapter da = new SqlDataAdapter(cmdInvoice);
-        //DataTable dt11 = new DataTable();
-        //if (con.State == ConnectionState.Open)
-        //{
-        //    con.Close();
-        //}
-
-        //con.Open();
-        //da.Fill(dt11);
-        //con.Close();
-        //if (dt11.Rows.Count > 0)
-        //{
-        //    Response.Redirect("ReappearedExamination.aspx");
-        //}
-        //else
-        //{
         SqlCommand cmd1 = new SqlCommand("sp_FetchReappearPaperFee", con);
         cmd1.CommandType = CommandType.StoredProcedure;
         cmd1.Parameters.AddWithValue("@EnrollmentNo", Session["enroll"].ToString());
         cmd1.Parameters.AddWithValue("@Sem", ddlSem.SelectedValue);
         SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
         DataTable dt1 = new DataTable();
-        con.Open();
+        if (con.State == ConnectionState.Closed)
+        {
+            con.Open();
+        }
         da1.Fill(dt1);
         con.Close();
         if (dt1.Rows.Count == 0)
@@ -775,11 +951,7 @@ public partial class ReappearedExamination : System.Web.UI.Page
             ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Fee set up does not create please contact to Admin')", true);
             return;
         }
-        //if (Convert.ToInt32(dt1.Rows[0]["Flag"]) > 0)
-        //{
-        //    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Invoice already created,please contact to account section.')", true); return;
 
-        //}
 
         if (Convert.ToInt32(dt1.Rows[0]["Amount"]) == 0)
         {
@@ -803,12 +975,12 @@ public partial class ReappearedExamination : System.Web.UI.Page
             dsubmit = Convert.ToDecimal(dt1.Rows[0]["DTAmount"]);
             decimal hdtnee = 0;
             int s = 0;
-
+            int s1 = 0;
             foreach (GridViewRow row in GrdAppliedExamination.Rows)
             {
                 CheckBox chkRow = (row.Cells[0].FindControl("chkStudent") as CheckBox);
                 HiddenField hdte = (row.Cells[0].FindControl("hddetani") as HiddenField);
-                
+
                 HiddenField hfMOOC = (row.Cells[0].FindControl("hfMOOC") as HiddenField);
                 HiddenField hSt = (row.Cells[0].FindControl("hdStyp") as HiddenField);
                 HiddenField hdResult = (row.Cells[0].FindControl("hdResult") as HiddenField);
@@ -872,10 +1044,14 @@ public partial class ReappearedExamination : System.Web.UI.Page
                             s++;
                         }
                     }
+                    else
+                    {
+                        s1 = 1;
+                    }
                 }
 
             }
-            if (s == 0)
+            if (s == 0 && s1 != 1)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Please selected subject ')", true); return;
 
@@ -957,11 +1133,11 @@ public partial class ReappearedExamination : System.Web.UI.Page
 
 
 
-                    getExaminationDetail();
-                    getReappearDetail();
+                    GetExaminationDetail();
+                    GetReappearDetail();
 
 
-                    getExaminationFeeDetails();
+                    GetExaminationFeeDetails();
 
                 }
             }
@@ -1037,4 +1213,6 @@ public partial class ReappearedExamination : System.Web.UI.Page
 
         }
     }
+
+
 }

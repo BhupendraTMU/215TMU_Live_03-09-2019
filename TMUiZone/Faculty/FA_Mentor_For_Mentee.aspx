@@ -30,13 +30,9 @@
         }
     </script>
     <link href="pms.css" rel="stylesheet" />
-    <style>
+    <style type="text/css">
         :root {
-            /*--max-width:900px;
-    --muted:#555;
-    --accent:#111;
-    --gap:14px;
-    --signature-height:70px;*/
+            
         }
 
         body {
@@ -469,6 +465,302 @@
             }
         }
     </style>
+
+    <style type="text/css">
+
+    /* =========================
+       Main Mentee Management
+       ========================= */
+
+    .mentee-main-container {
+        width: 100%;
+        max-width: 980px;
+        margin: 15px auto;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Page Heading */
+    .mentee-heading {
+        background: #f58a00;
+        color: #ffffff;
+        font-size: 17px;
+        font-weight: bold;
+        padding: 9px 13px;
+        margin: 0 0 15px 0;
+        border-radius: 3px 3px 0 0;
+        text-align: left;
+    }
+
+    /* Filter Box */
+    .mentee-filter-box {
+        background: #f7f7f7;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        padding: 12px 14px;
+        margin-bottom: 8px;
+    }
+
+    .mentee-filter-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 5px 7px;
+    }
+
+    .mentee-filter-table td {
+        vertical-align: middle;
+        padding: 3px;
+    }
+
+    .mentee-label {
+        font-size: 12px;
+        font-weight: bold;
+        color: #333333;
+        white-space: nowrap;
+    }
+
+    .mentee-textbox {
+        height: 32px;
+        width: 145px;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        padding: 5px 8px;
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+
+    .mentee-dropdown {
+        height: 32px;
+        width: 150px;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        padding: 4px 6px;
+        font-size: 12px;
+        background: #ffffff;
+        box-sizing: border-box;
+    }
+
+    /* Get Record Button */
+    .mentee-get-btn {
+        background: #e74c3c !important;
+        border: 1px solid #d43f3a !important;
+        color: #ffffff !important;
+        font-size: 11px !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 7px 13px !important;
+        border-radius: 3px !important;
+        white-space: nowrap;
+    }
+
+    .mentee-get-btn:hover {
+        background: #c9302c !important;
+    }
+
+    /* Green Buttons */
+    .mentee-green-btn {
+        background: #5cb85c !important;
+        border: 1px solid #4cae4c !important;
+        color: #ffffff !important;
+        font-size: 11px !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 7px 12px !important;
+        border-radius: 3px !important;
+    }
+
+    /* Top Action Buttons */
+    .mentee-action-area {
+        text-align: right;
+        min-height: 5px;
+        margin: 5px 0 10px 0;
+    }
+
+    .mentee-action-area table {
+        width: auto !important;
+        margin-left: auto;
+    }
+
+    .mentee-action-area td {
+        padding-left: 5px;
+    }
+
+    /* Count Area */
+    .mentee-count-area {
+        text-align: right;
+        font-size: 12px;
+        color: #333333;
+        padding: 5px 5px 12px 0;
+    }
+
+    .mentee-count-number {
+        color: #f58a00;
+        font-weight: bold;
+    }
+
+    /* Student Search Box */
+    .mentee-student-search {
+        background: #f7f7f7;
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+
+    .mentee-student-search table {
+        width: 100%;
+    }
+
+    .mentee-student-search td {
+        vertical-align: middle;
+        padding: 2px 5px;
+    }
+
+    .mentee-search-textbox {
+        height: 30px;
+        width: 150px;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+
+    .mentee-search-label {
+        font-size: 12px;
+        font-weight: bold;
+        color: #333333;
+    }
+
+    /* =========================
+       GridView
+       ========================= */
+
+    .mentee-grid-container {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #dddddd;
+        background: #ffffff;
+    }
+
+    .mentee-grid {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 11px;
+        background: #ffffff;
+    }
+
+    .mentee-grid th {
+        background: #f58a00 !important;
+        color: #ffffff !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        padding: 8px 6px !important;
+        border: 1px solid #dddddd !important;
+        white-space: nowrap;
+    }
+
+    .mentee-grid td {
+        border: 1px solid #dddddd !important;
+        padding: 7px 5px !important;
+        text-align: center;
+        vertical-align: middle;
+        color: #333333;
+    }
+
+    .mentee-grid tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .mentee-grid tr:hover {
+        background: #fff7e8;
+    }
+
+    /* Grid Buttons */
+    .mentee-grid .btn-primary {
+        background: #337ab7 !important;
+        border: 1px solid #2e6da4 !important;
+        color: #ffffff !important;
+        font-size: 10px !important;
+        padding: 5px 7px !important;
+        margin: 1px 0 !important;
+        border-radius: 3px !important;
+        width: 100%;
+        white-space: normal;
+    }
+
+    .mentee-grid .btn-primary:hover {
+        background: #286090 !important;
+    }
+
+    .mentee-grid .btn-success {
+        background: #5cb85c !important;
+        border: 1px solid #4cae4c !important;
+        color: #ffffff !important;
+        font-size: 10px !important;
+        padding: 6px 9px !important;
+        border-radius: 3px !important;
+        white-space: nowrap;
+    }
+
+    /* Mentee Records column */
+    .mentee-grid td:nth-child(8) {
+        min-width: 190px;
+    }
+
+    /* Reports column */
+    .mentee-grid td:nth-child(9) {
+        min-width: 90px;
+    }
+
+    /* Empty Data */
+    .mentee-grid .empty-data {
+        padding: 20px !important;
+        color: #777777;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 900px) {
+
+        .mentee-main-container {
+            width: 96%;
+        }
+
+        .mentee-filter-table {
+            display: block;
+        }
+
+        .mentee-filter-table tr,
+        .mentee-filter-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .mentee-filter-table td {
+            padding: 4px 0;
+        }
+
+        .mentee-textbox,
+        .mentee-dropdown {
+            width: 100%;
+        }
+
+        .mentee-get-btn {
+            margin-top: 5px;
+        }
+        .mentee-grid th:last-child,
+.mentee-grid td:last-child {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    padding: 5px !important;
+    text-align: center !important;
+}
+    }
+
+</style>
+
+
     <script type="text/javascript">
 
 
@@ -484,166 +776,356 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-    <div class="container">
-        <!-- Main div of web-form -->
-        <h3 class="text-center"><b>Mentee Management</b></h3>
+    <div class="mentee-main-container">
 
-        <table class="table-borderless" style="width: 100%;">
-            <!-- Table for alignment -->
-            <tr>
-                <td>
-                    <asp:Label ID="lbl_mentorFormentee_studentEnrollmentName" runat="server" Text="Filter by Student No./Enrollment No./Name: " Font-Bold="true"></asp:Label>
-                </td>
-                <td>
-                    <asp:TextBox ID="txt_mentorFormentee_studentEnrollmentName" runat="server" Width="200px"></asp:TextBox>
-                </td>
+   
+    <div class="mentee-heading">
+        Mentee Management
+    </div>
 
-                <td>
-                    <asp:Label ID="lbl_mentorFormentee_course" runat="server" Text="Program: " Font-Bold="true"></asp:Label>
-                </td>
-                <td>
-                    <asp:DropDownList ID="ddl_mentorFormentee_course" Font-Bold="true" runat="server" Width="200px"></asp:DropDownList>
-                </td>
 
-                <td>
-                    <asp:Label ID="lbl_mentorFormentee_academicYear" runat="server" Text="Admitted Year: " Font-Bold="true"></asp:Label>
-                </td>
-                <td>
-                    <asp:DropDownList ID="ddl_mentorFormentee_academicYear" runat="server" Font-Bold="true"></asp:DropDownList>
-                </td>
+    <div class="mentee-filter-box">
 
-                <td>
-                    <asp:Button ID="btn_mentorFormentee_get" runat="server" CssClass="btn btn-danger btn-sm text-uppercase" Text="Get Record" OnClick="btn_mentorFormentee_get_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="7" align="right">
-
-                    <table class="table-borderless" style="text-align: center" width="100%">
-                        <tr align="center" style="display: inline">
-                            <td>
-                                <asp:Button ID="btn_All_MM_Records" runat="server" CssClass=" btn btn-success btn-sm text-uppercase" Text="Get All Mentee Meeting Records" OnClick="btn_All_MM_Records_Click1" Visible="false" />
-                            </td>
-                            <td>
-                                <asp:Button ID="btn_All_ActivityRecords" runat="server" CssClass="btn btn-success btn-sm text-uppercase" OnClick="btn_All_ActivityRecords_Click" Text="Get All Mentee Activity Records." Visible="false" />
-
-                            </td>
-                        </tr>
-
-                    </table>
-                </td>
-            </tr>
+        <table class="mentee-filter-table">
 
             <tr>
-                <td colspan="7">
-                    <div class="container" style="width: 100%; overflow-x: auto;">
-                        <asp:GridView ID="grdView_mentorForMentee" AutoGenerateColumns="false" runat="server" Width="100%" CssClass="gridview">
-                            <Columns>
-                                <asp:TemplateField Visible="false">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lbl_AutoNo" runat="server" Text='<%# Eval("[AutoNo]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
 
-                                <asp:TemplateField HeaderText="Student No">
-                                    <ItemTemplate>
-
-                                        <asp:Label ID="lblGrd_menterForMentee_studentno" runat="server" Text='<%# Eval("[No]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Student Name">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblGrd_menterForMentee_studentName" runat="server" Text='<%#Eval("[StudentName]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Father Name">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblGrd_menterForMentee_fatherName" runat="server" Text='<%#Eval("[FatherName]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Mother Name">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblGrd_menterForMentee_motherName" runat="server" Text='<%#Eval("[MotherName]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Mobile No">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblGrd_menterForMentee_mobileNo" runat="server" Text='<%#Eval("[MobileNo]")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Date of Birth">
-                                    <ItemTemplate>
-                                        <asp:Label ID="lblGrd_menterForMentee_dateOfBirth" runat="server" Text='<%#Eval("[DOB]","{0:dd MMM yyyy}")%>'></asp:Label>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Mentee Records">
-                                    <ItemTemplate>
-
-                                        <asp:Button ID="btn_mentorForMentee_attendanceUndertaking" runat="server"
-                                            Text="Attendance Undertaking" OnClick="btn_mentorForMentee_attendanceUndertaking_Click" CssClass="btn btn-primary btn-sm" />
-                                        <br />
-                                        <asp:Button ID="btn_mentorForMentee_MMrecord" runat="server"
-                                            Text="Mentorship Meeting Record" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_mentorForMentee_MMrecord_Click" />
-
-                                        <br />
-                                        <asp:Button ID="btn_mentorForMentee_recordCoActivities" runat="server"
-                                            Text="Co-Curricular/Extra-Curricular Activities Record" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_mentorForMentee_recordCoActivities_Click" />
-                                        <br />
-                                        <asp:Button ID="btn_mentorForMentee_studentBymentee" runat="server"
-                                            Text="Special Needs/Advice/Help Required By Mentee" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_mentorForMentee_studentBymentee_Click" />
-                                        <br />
-                                        <asp:Button ID="btn_SpecialAchievements" runat="server"
-                                            Text="Special Achievements of Student" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_SpecialAchievements_Click" />
-                                        <br />
-                                        <asp:Button ID="btn_Students_Assessment" runat="server"
-                                            Text="Student Assessment Report" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_Students_Assessment_Click" />
-                                        <br />
-                                        <asp:Button ID="btn_mentorForMentee_result" runat="server"
-                                            Text="Academic Results" OnClick="btn_mentorForMentee_result_Click" CssClass="btn btn-primary btn-sm" />
-                                        <br />
-                                        <asp:Button ID="btn_View_Attendance" runat="server"
-                                            Text="View Attendance" CssClass="btn btn-primary btn-sm"
-                                            OnClick="btn_View_Attendance_Click" />
-
-
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:TemplateField HeaderText="Reports">
-                                    <ItemTemplate>
-                                        <div>
-                                            <asp:Button ID="btn_mentorForMentee_viewReports" runat="server" Text="View Report"
-                                                CssClass="btn btn-success btn-sm" OnClick="btn_mentorForMentee_viewReports_Click" />
-                                        </div>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-
-                            </Columns>
-                            <EmptyDataTemplate>
-                                <asp:Label ID="lbl_emplydatatemplate" runat="server" Font-Bold="true" Text="There are no records found."></asp:Label>
-                            </EmptyDataTemplate>
-                        </asp:GridView>
-                    </div>
-
+                <td>
+                    <asp:Label
+                        ID="lbl_mentorFormentee_studentEnrollmentName"
+                        runat="server"
+                        Text="Student No./Enrollment No./Name"
+                        CssClass="mentee-label">
+                    </asp:Label>
                 </td>
+
+                <td>
+                    <asp:TextBox
+                        ID="txt_mentorFormentee_studentEnrollmentName"
+                        runat="server"
+                        CssClass="mentee-textbox">
+                    </asp:TextBox>
+                </td>
+
+
+                <td>
+                    <asp:Label
+                        ID="lbl_mentorFormentee_course"
+                        runat="server"
+                        Text="Program"
+                        CssClass="mentee-label">
+                    </asp:Label>
+                </td>
+
+                <td>
+                    <asp:DropDownList
+                        ID="ddl_mentorFormentee_course"
+                        runat="server"
+                        Font-Bold="true"
+                        CssClass="mentee-dropdown">
+                    </asp:DropDownList>
+                </td>
+
+
+               
+                <td>
+                    <asp:Label
+                        ID="lbl_mentorFormentee_academicYear"
+                        runat="server"
+                        Text="Admitted Year"
+                        CssClass="mentee-label">
+                    </asp:Label>
+                </td>
+
+                <td>
+                    <asp:DropDownList
+                        ID="ddl_mentorFormentee_academicYear"
+                        runat="server"
+                        Font-Bold="true"
+                        CssClass="mentee-dropdown">
+                    </asp:DropDownList>
+                </td>
+
+                
+                <td>
+                    <asp:Button
+                        ID="btn_mentorFormentee_get"
+                        runat="server"
+                        Text="Get Record"
+                        CssClass="btn btn-danger btn-sm text-uppercase mentee-get-btn"
+                        OnClick="btn_mentorFormentee_get_Click" />
+                </td>
+
             </tr>
 
         </table>
 
+    </div>
+
+
+  
+    <div class="mentee-action-area">
+
+        <table class="table-borderless">
+
+            <tr>
+
+                <td>
+                    <asp:Button
+                        ID="btn_All_MM_Records"
+                        runat="server"
+                        CssClass="btn btn-success btn-sm text-uppercase mentee-green-btn"
+                        Text="Get All Mentee Meeting Records"
+                        OnClick="btn_All_MM_Records_Click1"
+                        Visible="false" />
+                </td>
+
+                <td>
+                    <asp:Button
+                        ID="btn_All_ActivityRecords"
+                        runat="server"
+                        CssClass="btn btn-success btn-sm text-uppercase mentee-green-btn"
+                        OnClick="btn_All_ActivityRecords_Click"
+                        Text="Get All Mentee Activity Records"
+                        Visible="false" />
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>  
+
+    <div class="mentee-grid-container">
+
+        <asp:GridView
+            ID="grdView_mentorForMentee"
+            AutoGenerateColumns="false"
+            runat="server"
+            Width="100%"
+            CssClass="mentee-grid">
+
+            <Columns>
+
+                
+                <asp:TemplateField Visible="false">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lbl_AutoNo"
+                            runat="server"
+                            Text='<%# Eval("[AutoNo]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+             
+                <asp:TemplateField HeaderText="Student No">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_studentno"
+                            runat="server"
+                            Text='<%# Eval("[No]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+                
+                <asp:TemplateField HeaderText="Student Name">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_studentName"
+                            runat="server"
+                            Text='<%#Eval("[StudentName]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+           
+                <asp:TemplateField HeaderText="Father Name">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_fatherName"
+                            runat="server"
+                            Text='<%#Eval("[FatherName]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+               
+                <asp:TemplateField HeaderText="Mother Name">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_motherName"
+                            runat="server"
+                            Text='<%#Eval("[MotherName]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+              
+                <asp:TemplateField HeaderText="Mobile No">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_mobileNo"
+                            runat="server"
+                            Text='<%#Eval("[MobileNo]")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+               
+                <asp:TemplateField HeaderText="Date of Birth">
+
+                    <ItemTemplate>
+
+                        <asp:Label
+                            ID="lblGrd_menterForMentee_dateOfBirth"
+                            runat="server"
+                            Text='<%#Eval("[DOB]","{0:dd MMM yyyy}")%>'>
+                        </asp:Label>
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+
+                
+                <asp:TemplateField HeaderText="Mentee Records">
+
+                    <ItemTemplate>
+
+                        <asp:Button
+                            ID="btn_mentorForMentee_attendanceUndertaking"
+                            runat="server"
+                            Text="Attendance Undertaking"
+                            OnClick="btn_mentorForMentee_attendanceUndertaking_Click"
+                            CssClass="btn btn-primary btn-sm" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_mentorForMentee_MMrecord"
+                            runat="server"
+                            Text="Mentorship Meeting Record"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_mentorForMentee_MMrecord_Click" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_mentorForMentee_recordCoActivities"
+                            runat="server"
+                            Text="Co-Curricular/Extra-Curricular Activities Record"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_mentorForMentee_recordCoActivities_Click" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_mentorForMentee_studentBymentee"
+                            runat="server"
+                            Text="Special Needs/Advice/Help Required By Mentee"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_mentorForMentee_studentBymentee_Click" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_SpecialAchievements"
+                            runat="server"
+                            Text="Special Achievements of Student"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_SpecialAchievements_Click" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_Students_Assessment"
+                            runat="server"
+                            Text="Student Assessment Report"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_Students_Assessment_Click" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_mentorForMentee_result"
+                            runat="server"
+                            Text="Academic Results"
+                            OnClick="btn_mentorForMentee_result_Click"
+                            CssClass="btn btn-primary btn-sm" />
+
+                        <br />
+
+                        <asp:Button
+                            ID="btn_View_Attendance"
+                            runat="server"
+                            Text="View Attendance"
+                            CssClass="btn btn-primary btn-sm"
+                            OnClick="btn_View_Attendance_Click" />
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>  
+                <asp:TemplateField HeaderText="Reports" ItemStyle-Width="40px" HeaderStyle-Width="60px">
+                    <ItemTemplate>
+                        <asp:Button
+                            ID="btn_mentorForMentee_viewReports"
+                            runat="server"
+                            Text="View Report"
+                            CssClass="btn btn-success btn-sm"
+                            OnClick="btn_mentorForMentee_viewReports_Click" />
+
+                    </ItemTemplate>
+
+                </asp:TemplateField>
+
+            </Columns>
+
+
+            <EmptyDataTemplate>
+
+                <div class="empty-data">
+                    There are no records found.
+                </div>
+
+            </EmptyDataTemplate>
+
+        </asp:GridView>
 
     </div>
+
+</div>
 
     <div id="confirmModal1" class="modal fade confirm-modal" role="dialog">
 
@@ -676,25 +1158,25 @@
                                     <br />
                                     <br />
                                     <header>
-        
-      <div class="left">
-        <div>
-          <strong>The Director/Principal/HOD</strong><br />
-         
-        </div>
-        <div class="college">
-          <asp:Label runat="server" type="text" id="CollegeDepartment" name="CollegeDepartment"  style="flex: 1;padding: 4px 0;border: none;background: transparent;outline: none;" ></asp:Label>
-        <%--  Teerthanker Mahaveer University, Moradabad.--%>
-        </div>
-          <div style="margin-top:5px">
-              Teerthanker Mahaveer University, Moradabad.
-          </div>
-      </div>
 
-      <div class="right">
-      <label for="Date1" style="margin-right:8px;width:10px">Date:</label><asp:TextBox runat="server"  id="Date1" name="Date1" placeholder="Date" style="flex: 1;padding: 4px 0;border: none;background: transparent;outline: none;width:65px;" /> 
-      </div>
-    </header>
+                                        <div class="left">
+                                            <div>
+                                                <strong>The Director/Principal/HOD</strong><br />
+
+                                            </div>
+                                            <div class="college">
+                                                <asp:Label runat="server" type="text" ID="CollegeDepartment" name="CollegeDepartment" Style="flex: 1; padding: 4px 0; border: none; background: transparent; outline: none;"></asp:Label>
+                                                <%--  Teerthanker Mahaveer University, Moradabad.--%>
+                                            </div>
+                                            <div style="margin-top: 5px">
+                                                Teerthanker Mahaveer University, Moradabad.
+                                            </div>
+                                        </div>
+
+                                        <div class="right">
+                                            <label for="Date1" style="margin-right: 8px; width: 10px">Date:</label><asp:TextBox runat="server" ID="Date1" name="Date1" placeholder="Date" Style="flex: 1; padding: 4px 0; border: none; background: transparent; outline: none; width: 65px;" />
+                                        </div>
+                                    </header>
 
                                     <h2 class="subject">Subject: - Undertaking for maintaining 75% attendance.</h2>
 
@@ -705,9 +1187,9 @@
                                         This is to state that I, <span id="studentName1" runat="server"></span>
                                         and my father/mother Sh./Smt. <span style="min-width: 200px; font-size: 1px bold" id="fatherName1" runat="server"></span>
                                         have complete knowledge about the Teerthanker Mahaveer University Ordinance governing the attendance of students,
-      according to which I have to attend at least 75% of the classes individually in each course during the entire semester/year
-      of the programme; failing which I will not be allowed to appear in internal and/or external examinations of the University
-      in the course(s) wherein my attendance is less than 75%.
+                                        according to which I have to attend at least 75% of the classes individually in each course during the entire semester/year
+                                        of the programme; failing which I will not be allowed to appear in internal and/or external examinations of the University
+                                        in the course(s) wherein my attendance is less than 75%.
                                     </p>
 
                                     <p style="margin-top: 8px;">
@@ -744,10 +1226,10 @@
                                                     <%-- <asp:Label ID="lblPer" runat="server" Text='<%# Eval("Per") %>'></asp:Label>--%>
                                                 </ItemTemplate>
                                                 <%-- <FooterTemplate>
-                 <div style="text-align: right; width: 150px">
-                     <asp:Label ID="lblTotalqty" runat="server" Text="sdhjdh" Font-Bold="true" />
-                 </div>
-             </FooterTemplate>--%>
+                                                      <div style="text-align: right; width: 150px">
+                                                          <asp:Label ID="lblTotalqty" runat="server" Text="sdhjdh" Font-Bold="true" />
+                                                      </div>
+                                                  </FooterTemplate>--%>
                                             </asp:TemplateField>
 
                                         </Columns>
@@ -842,200 +1324,200 @@
 
 
 
-     <div id="confirmModal2" class="modal fade confirm-modal" role="dialog">
+    <div id="confirmModal2" class="modal fade confirm-modal" role="dialog">
 
-     <div class="modal-dialog modalPopup" style="width: 1000px; height: 800px">
-         <div style="text-align: right; padding-bottom: -40px">
-             <asp:Button ID="Button2" runat="server" Text="X" OnClientClick="HidePopup2();" Font-Size="Larger" />
-         </div>
-         <div class="clearfix" style="margin-bottom: 10px; margin-top: 10px; overflow: scroll; height: 700px; margin-left: 20px">
+        <div class="modal-dialog modalPopup" style="width: 1000px; height: 800px">
+            <div style="text-align: right; padding-bottom: -40px">
+                <asp:Button ID="Button2" runat="server" Text="X" OnClientClick="HidePopup2();" Font-Size="Larger" />
+            </div>
+            <div class="clearfix" style="margin-bottom: 10px; margin-top: 10px; overflow: scroll; height: 700px; margin-left: 20px">
 
-             <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-                 <Triggers>
-                 </Triggers>
-                 <ContentTemplate>
-                     <div class="col-sm-12 p-0">
-                         <div class="form-group clearfix">
+                <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                    <Triggers>
+                    </Triggers>
+                    <ContentTemplate>
+                        <div class="col-sm-12 p-0">
+                            <div class="form-group clearfix">
 
-                             <div class="col-sm-12" style="text-align: center">
-                                 <asp:Label ID="Label1" runat="server" Text="Sem/Year :"></asp:Label>
-                                 &nbsp&nbsp&nbsp&nbsp
+                                <div class="col-sm-12" style="text-align: center">
+                                    <asp:Label ID="Label1" runat="server" Text="Sem/Year :"></asp:Label>
+                                    &nbsp&nbsp&nbsp&nbsp
                                  <asp:DropDownList ID="DropDownList1" runat="server" Font-Bold="true" Height="32px" Font-Size="small" Width="220px">
                                  </asp:DropDownList>
-                                 <br />
-                                 <br />
-                             </div>
+                                    <br />
+                                    <br />
+                                </div>
 
-                             <div id="printarea" class="sheet">
-                                 <div style="text-align: center; font-size: x-large; font-weight: bold; text-decoration: underline;">
-                                     Attendance Undertaking
-                                 </div>
-                                 <br />
-                                 <br />
-                                 <header>
-     
-   <div class="left">
-     <div>
-       <strong>The Director/Principal/HOD</strong><br />
-      
-     </div>
-     <div class="college">
-       <asp:Label runat="server" type="text" id="Label2" name="CollegeDepartment"  style="flex: 1;padding: 4px 0;border: none;background: transparent;outline: none;" ></asp:Label>
-     <%--  Teerthanker Mahaveer University, Moradabad.--%>
-     </div>
-       <div style="margin-top:5px">
-           Teerthanker Mahaveer University, Moradabad.
-       </div>
-   </div>
+                                <div id="printarea" class="sheet">
+                                    <div style="text-align: center; font-size: x-large; font-weight: bold; text-decoration: underline;">
+                                        Attendance Undertaking
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <header>
 
-   <div class="right">
-   <label for="Date1" style="margin-right:8px;width:10px">Date:</label><asp:TextBox runat="server"  id="TextBox1" name="Date1" placeholder="Date" style="flex: 1;padding: 4px 0;border: none;background: transparent;outline: none;width:65px;" /> 
-   </div>
- </header>
+                                        <div class="left">
+                                            <div>
+                                                <strong>The Director/Principal/HOD</strong><br />
 
-                                 <h2 class="subject">Subject: - Undertaking for maintaining 80% attendance.</h2>
+                                            </div>
+                                            <div class="college">
+                                                <asp:Label runat="server" type="text" ID="Label2" name="CollegeDepartment" Style="flex: 1; padding: 4px 0; border: none; background: transparent; outline: none;"></asp:Label>
+                                                <%--  Teerthanker Mahaveer University, Moradabad.--%>
+                                            </div>
+                                            <div style="margin-top: 5px">
+                                                Teerthanker Mahaveer University, Moradabad.
+                                            </div>
+                                        </div>
 
-                                 <p class="lead">
-                                     Respected Sir/Madam,
-                                 </p>
-                                 <p style="font-size: 14px;">
-                                     This is to state that I, <span id="Span1" runat="server"></span>
-                                     and my father/mother Sh./Smt. <span style="min-width: 200px; font-size: 1px bold" id="Span2" runat="server"></span>
-                                     have complete knowledge about the Teerthanker Mahaveer University Ordinance governing the attendance of students,
-   according to which I have to attend at least 80% of the classes individually in each course during the entire semester/year
-   of the programme; failing which I will not be allowed to appear in internal and/or external examinations of the University
-   in the course(s) wherein my attendance is less than 80%.
-                                 </p>
+                                        <div class="right">
+                                            <label for="Date1" style="margin-right: 8px; width: 10px">Date:</label><asp:TextBox runat="server" ID="TextBox1" name="Date1" placeholder="Date" Style="flex: 1; padding: 4px 0; border: none; background: transparent; outline: none; width: 65px;" />
+                                        </div>
+                                    </header>
 
-                                 <p style="margin-top: 8px;">
-                                     As on date, my attendance in various courses is as mentioned in the table below:
-                                 </p>
-                                 <asp:GridView ID="GridView1" CssClass="attendance" aria-label="Attendance table" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF"
-                                     EmptyDataText="There are no data records to display." BorderStyle="None" BorderWidth="1px" CellPadding="3"
-                                     GridLines="Horizontal">
-                                     <AlternatingRowStyle BackColor="#F7F7F7" />
-                                     <Columns>
-                                         <asp:TemplateField HeaderText="S.No" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-center">
-                                             <ItemTemplate>
-                                                 <%# Container.DataItemIndex +1 %>
-                                             </ItemTemplate>
-                                         </asp:TemplateField>
-                                         <asp:TemplateField HeaderText="Course Name" ItemStyle-Width="5%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                                             <ItemTemplate>
-                                                 <asp:Label ID="lblCourse" runat="server" Text='<%# Bind("[Course Name]") %>'></asp:Label>
-                                             </ItemTemplate>
-                                         </asp:TemplateField>
+                                    <h2 class="subject">Subject: - Undertaking for maintaining 80% attendance.</h2>
 
-                                         <asp:TemplateField HeaderText="Course Code" ItemStyle-Width="3%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                                             <ItemTemplate>
-                                                 <asp:Label ID="lblCourseCode" runat="server" Text='<%# Bind("[Course Code]") %>'></asp:Label>
+                                    <p class="lead">
+                                        Respected Sir/Madam,
+                                    </p>
+                                    <p style="font-size: 14px;">
+                                        This is to state that I, <span id="Span1" runat="server"></span>
+                                        and my father/mother Sh./Smt. <span style="min-width: 200px; font-size: 1px bold" id="Span2" runat="server"></span>
+                                        have complete knowledge about the Teerthanker Mahaveer University Ordinance governing the attendance of students,
+                                        according to which I have to attend at least 80% of the classes individually in each course during the entire semester/year
+                                        of the programme; failing which I will not be allowed to appear in internal and/or external examinations of the University
+                                        in the course(s) wherein my attendance is less than 80%.
+                                    </p>
+
+                                    <p style="margin-top: 8px;">
+                                        As on date, my attendance in various courses is as mentioned in the table below:
+                                    </p>
+                                    <asp:GridView ID="GridView1" CssClass="attendance" aria-label="Attendance table" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF"
+                                        EmptyDataText="There are no data records to display." BorderStyle="None" BorderWidth="1px" CellPadding="3"
+                                        GridLines="Horizontal">
+                                        <AlternatingRowStyle BackColor="#F7F7F7" />
+                                        <Columns>
+                                            <asp:TemplateField HeaderText="S.No" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-center">
+                                                <ItemTemplate>
+                                                    <%# Container.DataItemIndex +1 %>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Course Name" ItemStyle-Width="5%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblCourse" runat="server" Text='<%# Bind("[Course Name]") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
+                                            <asp:TemplateField HeaderText="Course Code" ItemStyle-Width="3%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblCourseCode" runat="server" Text='<%# Bind("[Course Code]") %>'></asp:Label>
 
 
 
-                                             </ItemTemplate>
-                                         </asp:TemplateField>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
 
-                                         <asp:TemplateField HeaderText="Percent" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
-                                             <ItemTemplate>
-                                                 <asp:Label ID="lblPer" runat="server" Text='<%# "" + Eval("Per") + " % "%>'></asp:Label>
-                                                 <%-- <asp:Label ID="lblPer" runat="server" Text='<%# Eval("Per") %>'></asp:Label>--%>
-                                             </ItemTemplate>
-                                             <%-- <FooterTemplate>
+                                            <asp:TemplateField HeaderText="Percent" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lblPer" runat="server" Text='<%# "" + Eval("Per") + " % "%>'></asp:Label>
+                                                    <%-- <asp:Label ID="lblPer" runat="server" Text='<%# Eval("Per") %>'></asp:Label>--%>
+                                                </ItemTemplate>
+                                                <%-- <FooterTemplate>
               <div style="text-align: right; width: 150px">
                   <asp:Label ID="lblTotalqty" runat="server" Text="sdhjdh" Font-Bold="true" />
               </div>
           </FooterTemplate>--%>
-                                         </asp:TemplateField>
+                                            </asp:TemplateField>
 
-                                     </Columns>
-                                     <FooterStyle ForeColor="Green" Font-Bold="true" Font-Size="Medium" BorderStyle="Solid" BorderColor="Black" BackColor="LightGray" />
-                                     <HeaderStyle BackColor="LightGray" Font-Bold="True" ForeColor="Black" HorizontalAlign="Left" Font-Size="Large" Height="40px" VerticalAlign="Bottom" />
-                                     <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
-                                     <RowStyle ForeColor="#4A3C8C" Font-Bold="true" Font-Size="Small" BorderStyle="Solid" BorderColor="Black" />
-                                     <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
-                                     <SortedAscendingCellStyle BackColor="#F4F4FD" />
-                                     <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
-                                     <SortedDescendingCellStyle BackColor="#D8D8F0" />
-                                     <SortedDescendingHeaderStyle BackColor="#3E3277" />
-                                 </asp:GridView>
-                                 <p class="note" style="font-size: 14px;">
-                                     It would be my personal responsibility to ensure 80% attendance separately in each course during the programme otherwise I shall have no right/claim to appear in the internal and/or external examinations of the university in the course(s) less than 80% attendance.
-                                 </p>
+                                        </Columns>
+                                        <FooterStyle ForeColor="Green" Font-Bold="true" Font-Size="Medium" BorderStyle="Solid" BorderColor="Black" BackColor="LightGray" />
+                                        <HeaderStyle BackColor="LightGray" Font-Bold="True" ForeColor="Black" HorizontalAlign="Left" Font-Size="Large" Height="40px" VerticalAlign="Bottom" />
+                                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
+                                        <RowStyle ForeColor="#4A3C8C" Font-Bold="true" Font-Size="Small" BorderStyle="Solid" BorderColor="Black" />
+                                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
+                                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
+                                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
+                                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
+                                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
+                                    </asp:GridView>
+                                    <p class="note" style="font-size: 14px;">
+                                        It would be my personal responsibility to ensure 80% attendance separately in each course during the programme otherwise I shall have no right/claim to appear in the internal and/or external examinations of the university in the course(s) less than 80% attendance.
+                                    </p>
 
-                                 <p style="font-size: 14px;">
-                                     I further, undertake that it shall be my responsibility to inform my parents regarding my short attendance as mentioned above.
-                                 </p>
+                                    <p style="font-size: 14px;">
+                                        I further, undertake that it shall be my responsibility to inform my parents regarding my short attendance as mentioned above.
+                                    </p>
 
-                                 <p style="font-size: 14px;">
-                                     I am signing this undertaking after reading the University Ordinance on attendance and other matters.
-                                 </p>
+                                    <p style="font-size: 14px;">
+                                        I am signing this undertaking after reading the University Ordinance on attendance and other matters.
+                                    </p>
 
-                                 <div class="verifications" aria-label="Verification blocks">
-                                     <div class="sign-block1">
-                                         <div class="meta">
-                                             <div class="item">
+                                    <div class="verifications" aria-label="Verification blocks">
+                                        <div class="sign-block1">
+                                            <div class="meta">
+                                                <div class="item">
 
-                                                 <label for="studentName">Student’s Name :</label>
-                                                 <asp:TextBox runat="server" type="text" ID="TextBox2" placeholder="student Name" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="program">Program :</label>
-                                                 <asp:TextBox runat="server" type="text" ID="TextBox3" placeholder="program" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="branch">Branch (if any):</label>
-                                                 <asp:TextBox runat="server" type="text" ID="TextBox4" placeholder="branch" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="semester">Semester/Year :</label>
-                                                 <asp:TextBox runat="server" type="text" ID="TextBox5" placeholder="Semester/Year" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="studentMobile">Student’s Mobile No :</label>
-                                                 <asp:TextBox runat="server" type="tel" ID="TextBox6" placeholder="Student Mobile" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="studentEmail">Student’s E-Mail ID :</label>
-                                                 <asp:TextBox runat="server" type="email" ID="TextBox7" placeholder="Student Email" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="fatherMobile">Father’s Mobile No :</label>
-                                                 <asp:TextBox runat="server" type="tel" ID="TextBox8" placeholder="Father Mobile" ReadOnly="true"></asp:TextBox>
-                                             </div>
-                                             <div class="item">
-                                                 <label for="fatherEmail">Father’s E-Mail ID :</label>
-                                                 <asp:TextBox runat="server" ID="TextBox9" placeholder="Father Email"></asp:TextBox>
-                                             </div>
-                                         </div>
-                                     </div>
+                                                    <label for="studentName">Student’s Name :</label>
+                                                    <asp:TextBox runat="server" type="text" ID="TextBox2" placeholder="student Name" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="program">Program :</label>
+                                                    <asp:TextBox runat="server" type="text" ID="TextBox3" placeholder="program" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="branch">Branch (if any):</label>
+                                                    <asp:TextBox runat="server" type="text" ID="TextBox4" placeholder="branch" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="semester">Semester/Year :</label>
+                                                    <asp:TextBox runat="server" type="text" ID="TextBox5" placeholder="Semester/Year" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="studentMobile">Student’s Mobile No :</label>
+                                                    <asp:TextBox runat="server" type="tel" ID="TextBox6" placeholder="Student Mobile" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="studentEmail">Student’s E-Mail ID :</label>
+                                                    <asp:TextBox runat="server" type="email" ID="TextBox7" placeholder="Student Email" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="fatherMobile">Father’s Mobile No :</label>
+                                                    <asp:TextBox runat="server" type="tel" ID="TextBox8" placeholder="Father Mobile" ReadOnly="true"></asp:TextBox>
+                                                </div>
+                                                <div class="item">
+                                                    <label for="fatherEmail">Father’s E-Mail ID :</label>
+                                                    <asp:TextBox runat="server" ID="TextBox9" placeholder="Father Email"></asp:TextBox>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                     <div class="sign-block">
-                                         <div class="sign-label">Declaration</div>
-                                         <div>
-                                             <asp:CheckBox runat="server" ID="CheckBox2" Checked="true" Enabled="false" />
-                                             I have read and understood the undertaking furnished above by me, and that I fully understand its implications.
-                                         </div>
-                                     </div>
+                                        <div class="sign-block">
+                                            <div class="sign-label">Declaration</div>
+                                            <div>
+                                                <asp:CheckBox runat="server" ID="CheckBox2" Checked="true" Enabled="false" />
+                                                I have read and understood the undertaking furnished above by me, and that I fully understand its implications.
+                                            </div>
+                                        </div>
 
-                                 </div>
+                                    </div>
 
-                             </div>
-                             <div class="sign-block2" style="width: 100%">
-                                 <asp:Button ID="Button3" runat="server" Visible="false" CssClass="button btn-success" UseSubmitBehavior="false" OnClientClick="PrintDiv();" Text="Print" Style="float: right;" />
-                                 <asp:Button ID="Button4" runat="server" Visible="false" CssClass="button btn-success" UseSubmitBehavior="false" Text="Submit" Style="float: right;" />
-                                 <br />
-                                 <br />
-                             </div>
-                         </div>
-                     </div>
+                                </div>
+                                <div class="sign-block2" style="width: 100%">
+                                    <asp:Button ID="Button3" runat="server" Visible="false" CssClass="button btn-success" UseSubmitBehavior="false" OnClientClick="PrintDiv();" Text="Print" Style="float: right;" />
+                                    <asp:Button ID="Button4" runat="server" Visible="false" CssClass="button btn-success" UseSubmitBehavior="false" Text="Submit" Style="float: right;" />
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
 
 
-                 </ContentTemplate>
+                    </ContentTemplate>
 
-             </asp:UpdatePanel>
-         </div>
-     </div>
- </div>
+                </asp:UpdatePanel>
+            </div>
+        </div>
+    </div>
 
 
 </asp:Content>

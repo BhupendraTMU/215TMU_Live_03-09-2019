@@ -292,12 +292,16 @@ public class Connection
         return dr;
     }
 
-    public SqlDataReader Show_HRID(string tbl_Name ,string EmPID)
+    public SqlDataReader Show_HRID(string tbl_Name, string EmPID)
     {
         Connect();
 
-        string s = "select * from " + tbl_Name + " where [Web Portal Type]='2' and [No_]='" + EmPID + "'";
-        cmd = new SqlCommand(s, Conn);
+        //string s = "select * from " + tbl_Name + " where [Web Portal Type]='2' and [No_]='" + EmPID + "'";
+        //cmd = new SqlCommand(s, Conn);
+        cmd = new SqlCommand("dbo.usp_Show_HRID", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@tbl_Name", tbl_Name);
+        cmd.Parameters.AddWithValue("@EmPID", EmPID);
         SqlDataReader dr = cmd.ExecuteReader();
         return dr;
     }
@@ -306,8 +310,12 @@ public class Connection
     {
         Connect();
 
-        string s = "select * from " + tbl_Name + " where [No_]='" + hodid + "'";
-        cmd = new SqlCommand(s, Conn);
+        //string s = "select * from " + tbl_Name + " where [No_]='" + hodid + "'";
+        //cmd = new SqlCommand(s, Conn);
+        cmd = new SqlCommand("dbo.usp_Show_HODEmail", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@tbl_Name", tbl_Name);
+        cmd.Parameters.AddWithValue("@hodid", hodid);
         SqlDataReader dr = cmd.ExecuteReader();
         return dr;
     }
@@ -901,8 +909,11 @@ public class Connection
     public String UserGroup(string userid)
     {
         Connect(); String UserGroup = "";
-        string Query = "select [User Group] from [Portal Users]  where [Login ID]='" + userid + "' ";
-        cmd = new SqlCommand(Query, Conn);
+        cmd = new SqlCommand("usp_GetPortalUserGroup", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@LoginID", SqlDbType.NVarChar, 50).Value = userid;
+        //string Query = "select [User Group] from [Portal Users]  where [Login ID]='" + userid + "' ";
+        //cmd = new SqlCommand(Query, Conn);
         if (cmd.ExecuteScalar() != null)
         {
             UserGroup = cmd.ExecuteScalar().ToString();
@@ -912,8 +923,11 @@ public class Connection
     public String FacultyCollege(string userid)
     {
         Connect(); String FacultyCollege = "";
-        string Query = "select top 1 [Global Dimension 1 Code] from [Portal Users]  where [Login ID]='" + userid + "' order by [Global Dimension 1 Code] asc";
-        cmd = new SqlCommand(Query, Conn);
+        //string Query = "select top 1 [Global Dimension 1 Code] from [Portal Users]  where [Login ID]='" + userid + "' order by [Global Dimension 1 Code] asc";
+        //cmd = new SqlCommand(Query, Conn);
+        cmd = new SqlCommand("usp_GetFacultyCollege", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@userid", SqlDbType.NVarChar, 50).Value = userid;
         if (cmd.ExecuteScalar() != null)
         {
             FacultyCollege = cmd.ExecuteScalar().ToString();
@@ -1971,8 +1985,11 @@ public class Connection
     public String IndentApprovalID(string userid)
     {
         Connect(); String IndentApprovalID = "";
-        string Query = "select top 1 [Indent Approval] from [TMU$Employee] with (NOLOCK) where [Indent Approval]='" + userid + "' ";
-        cmd = new SqlCommand(Query, Conn);
+        //string Query = "select top 1 [Indent Approval] from [TMU$Employee] with (NOLOCK) where [Indent Approval]='" + userid + "' ";
+        //cmd = new SqlCommand(Query, Conn);
+        cmd = new SqlCommand("usp_GetIndentApprovalID", Conn);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@userid", SqlDbType.NVarChar, 50).Value = userid;
         if (cmd.ExecuteScalar() != null)
         {
             IndentApprovalID = cmd.ExecuteScalar().ToString();

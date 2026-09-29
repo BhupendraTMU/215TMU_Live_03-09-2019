@@ -820,6 +820,8 @@
                               <asp:RadioButton ID="rdExternal" Text="External" Width="90px" Font-Bold="true" runat="server" GroupName="examtype"></asp:RadioButton>
                               <asp:CheckBox ID="rdOpen" Text="Open Elective" Width="120px" OnCheckedChanged="rdOpen_CheckedChanged" AutoPostBack="true" Font-Bold="true" runat="server" ></asp:CheckBox>
 
+                        <asp:CheckBox ID="chkSpecial" Text="Special" Width="120px" OnCheckedChanged="chkSpecial_CheckedChanged" AutoPostBack="true" Font-Bold="true" runat="server" ></asp:CheckBox>
+
 
                     </td>
                 </tr>

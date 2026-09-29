@@ -2,28 +2,7 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-    <style>
-        .txtTotal {
-            background-color: #ed7600;
-            text-align: right;
-            border-width: 0px;
-            border-color: #ed7600;
-        }
-    </style>
-
-    <%--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>--%>
-    <%-- <script type="text/javascript">
-        $(function () {
-            $("[id*=grdFeeDetails] input[type=checkbox]").click(function () {
-              
-                if ($(this).is(":checked")) {
-                    $("[id*=grdFeeDetails] input[type=checkbox]").removeAttr("checked");
-                    $(this).attr("checked", "checked");
-                }
-            });
-        });
-</script>--%>
-
+   <style> /* Main Card */ .fee-card { width: 100%; background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #eeeeee; overflow: hidden; margin: 15px auto; } /* Header */ .fee-card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(135deg, #f8f9ff, #ffffff); border-bottom: 1px solid #eeeeee; } .fee-title { font-size: 22px; font-weight: 700; color: #222222; } .fee-title i { margin-right: 8px; } .fee-subtitle { margin-top: 5px; font-size: 13px; color: #777777; } /* Pending Badge */ .pending-badge { background: #fff3cd; color: #856404; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; } /* Section */ .section-title { display: flex; align-items: center; gap: 10px; padding: 18px 25px 12px; font-size: 18px; font-weight: 700; color: #333333; } .section-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f1f5ff; } /* Grid Wrapper */ .fee-grid-wrapper { width: 100%; overflow-x: auto; padding: 0 20px 10px; } /* Grid */ .modern-fee-grid { width: 100% !important; border-collapse: separate !important; border-spacing: 0 7px !important; font-size: 14px; } /* Header */ .modern-grid-header th { background: #f6f7fb !important; color: #555555 !important; font-weight: 600 !important; padding: 13px 15px !important; border: none !important; text-align: left; white-space: nowrap; } .modern-grid-header th:first-child { border-radius: 8px 0 0 8px; } .modern-grid-header th:last-child { border-radius: 0 8px 8px 0; text-align: center; } /* Rows */ .modern-grid-row td, .modern-grid-alt-row td { background: #ffffff !important; padding: 15px !important; border-top: 1px solid #eeeeee !important; border-bottom: 1px solid #eeeeee !important; color: #333333; vertical-align: middle; } .modern-grid-row td:first-child, .modern-grid-alt-row td:first-child { border-left: 1px solid #eeeeee !important; border-radius: 8px 0 0 8px; font-weight: 500; } .modern-grid-row td:last-child, .modern-grid-alt-row td:last-child { border-right: 1px solid #eeeeee !important; border-radius: 0 8px 8px 0; text-align: center; } /* Hover */ .modern-grid-row:hover td, .modern-grid-alt-row:hover td { background: #f9faff !important; } /* Semester */ .semester-badge { display: inline-block; padding: 5px 10px; background: #f1f5ff; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; } /* Checkbox */ .modern-checkbox { display: flex; justify-content: center; align-items: center; } .modern-checkbox input[type="checkbox"] { width: 19px; height: 19px; cursor: pointer; accent-color: #0d6efd; } /* Select Header */ .select-header { text-align: center; } /* Hide Entry No */ .hidden-column { display: none !important; } /* Footer */ .modern-grid-footer td { padding: 8px; background: transparent !important; border: none !important; } /* Payment Footer */ .payment-footer { display: flex; align-items: center; justify-content: space-between; padding: 18px 25px; margin-top: 5px; background: #fafafa; border-top: 1px solid #eeeeee; } .selected-info { display: flex; align-items: center; gap: 8px; color: #777777; font-size: 14px; } .selected-icon { font-size: 18px; } /* Pay Button */ .modern-pay-btn { border: none !important; border-radius: 8px !important; background: linear-gradient(135deg, #0d6efd, #0056d6) !important; color: white !important; font-size: 14px !important; font-weight: 600 !important; cursor: pointer; box-shadow: 0 4px 10px rgba(13,110,253,0.25); transition: all 0.2s ease; } .modern-pay-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(13,110,253,0.35); } /* Message */ .message-area { padding: 0 25px 20px; text-align: center; } /* Mobile */ @media (max-width: 768px) { .fee-card { margin: 8px 0; border-radius: 10px; } .fee-card-header { padding: 15px; } .fee-title { font-size: 18px; } .fee-subtitle { font-size: 12px; } .pending-badge { display: none; } .section-title { padding: 15px; font-size: 16px; } .fee-grid-wrapper { padding: 0 10px 10px; } .modern-fee-grid { min-width: 650px; } .payment-footer { padding: 15px; } .selected-info { font-size: 12px; } } </style>
 
 
     <script type="text/jscript">
@@ -236,111 +215,30 @@
        <fieldset style="border-top: 1px solid #dde0e8; border-bottom: 1px solid #dde0e8; padding: 10px 20px; height: 100%">
     <asp:HiddenField runat="server" ID="Amt" />
     <center>
-        <table align="center" width="100%">
+        <div class="fee-card"> 
+            <div class="fee-card-header"> <div> <div class="fee-title"> 
+                <i class="fa fa-credit-card"></i> Fee Details </div> 
+                <div class="fee-subtitle"> Please select the pending dues you want to pay </div> </div> 
+                <div class="pending-badge"> Pending Dues </div> </div> 
+            <asp:Label runat="server" ID="lblPaidFee" Font-Size="15px" Text="Paid Fee" Visible="false"> 
 
-            <tr>
+            </asp:Label>  <div class="section-title"> 
+                <span class="section-icon"> <i class="fa fa-clock-o"></i>
 
-                <td style="height: 30px" align="center" valign="middle">
-                    <asp:Label runat="server" ID="lblPaidFee" Font-Size="15px" Text="Paid Fee" Visible="false"></asp:Label>
-                </td>
+                </span> <span> Pending Dues </span> </div> 
+            <div class="fee-grid-wrapper"> 
+                <asp:GridView ID="grdFeeDetails" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="Transparent" BorderStyle="None" BorderWidth="0px" CellPadding="0" Width="100%" ShowFooter="true" GridLines="None" EmptyDataText="There are no pending dues to display." CssClass="modern-fee-grid"> <Columns> 
+                    <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="ApplicantName"> </asp:BoundField>
+                    <asp:BoundField DataField="Amount" HeaderText="Fee Amount" Visible="false" SortExpression="TotalAmount" DataFormatString="{0:N2}"> 
 
-                <td style="height: 30px" align="left" valign="middle">
-                    <asp:Label runat="server" ID="lblUnpaidFee" Font-Bold="true" Font-Size="20px" Text="Pending Dues:-"></asp:Label>
-                </td>
-
-            </tr>
-            <tr >
-
-                <td colspan="2">
-                    <asp:GridView ID="grdFeeDetails" runat="server"  AutoGenerateColumns="False" BackColor="White" BorderColor="LightGray" HeaderStyle-Font-Size="Large"
-                        EmptyDataText="There are no data records to display." BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="1100px" ShowFooter="true"
-                        GridLines="Horizontal">
-                        <Columns>
-                            <%--HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" ItemStyle-HorizontalAlign="Right"--%>
-                            <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="ApplicantName" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
-                            <asp:BoundField DataField="Amount" HeaderText="Fee Amount" Visible="false" SortExpression="TotalAmount" DataFormatString="{0:N2}" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" />
-                            <asp:BoundField DataField="RemainingAmount" HeaderText="Remaining Amount" SortExpression="ApplicantName"
-                                DataFormatString="{0:N2}" ItemStyle-HorizontalAlign="Left" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg"></asp:BoundField>
-                            <asp:TemplateField HeaderText="Sem/Year" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg">
-                                <ItemTemplate>
-                                    <asp:Label ID="lblSem" Text='<%# Bind("Semester") %>' runat="server" />
-                                    <asp:HiddenField ID="hdfEntryNo" Value='<%# Bind("[Entry No_]") %>' runat="server" />
-                                    <asp:HiddenField ID="hdfDesc" Value='<%# Bind("[Description]") %>' runat="server" />
-                                    <asp:HiddenField ID="hdfOrder" Value='<%# Bind("[semvalue]") %>' runat="server" />
-                                </ItemTemplate>
-
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Select" HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg">
-                                <ItemTemplate>
-                                    <asp:CheckBox ID="chkboxSelectAmount" HeaderText="Select" onclick="OnChangeCheckbox (this)" runat="server" />
-                                </ItemTemplate>
-                                <HeaderTemplate>Select</HeaderTemplate>
-                            </asp:TemplateField>
-
-                            <asp:BoundField DataField="Entry No_" HeaderText="Entry No" SortExpression="ApplicantName" ItemStyle-Font-Size="0" HeaderStyle-Font-Size="0" />
-                        </Columns>
-                        <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
-                        <HeaderStyle BackColor="LightGray" Font-Bold="True" ForeColor="Black" HorizontalAlign="Left" CssClass="cssGridheaderfont" />
-                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
-                        <RowStyle CssClass="cssGridheaderfont" Font-Size="Larger" />
-                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
-                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
-                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
-                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
-                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
-                    </asp:GridView>
-
-
-
-                </td>
-
-            </tr>
-            <tr runat="server" visible="false">
-                <td colspan="2">
-                    <asp:GridView ID="grdPaidFeesDetails" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="None"
-                        BorderWidth="1px" CellPadding="3" Width="1150px" GridLines="Horizontal" ShowFooter="true"
-                        OnPageIndexChanging="grdPaidFeesDetails_PageIndexChanging" EmptyDataText="There are no data records to display." AllowPaging="True" HorizontalAlign="Center">
-                        <Columns>
-                            <%--HeaderStyle-CssClass="visible-lg" ItemStyle-CssClass="visible-lg" ItemStyle-HorizontalAlign="Right"--%>
-                            <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="ApplicantName" />
-                            <asp:BoundField DataField="Amount" HeaderText="Amount" SortExpression="ApplicantName" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right"
-                                DataFormatString="{0:N1}">
-                                <FooterStyle HorizontalAlign="Right"></FooterStyle>
-
-                                <ItemStyle HorizontalAlign="Right"></ItemStyle>
-                            </asp:BoundField>
-                        </Columns>
-                        <AlternatingRowStyle BackColor="#F7F7F7" />
-                        <%--<FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />--%>
-                        <FooterStyle BackColor="#ed7600" ForeColor="#F7F7F7" CssClass="cssGridheaderfont" />
-                        <HeaderStyle BackColor="#ed7600" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Center" VerticalAlign="Middle" />
-                        <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
-                        <RowStyle ForeColor="#4A3C8C" BackColor="#E7E7FF" CssClass="cssGridheaderfont" />
-                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
-                        <SortedAscendingCellStyle BackColor="#F4F4FD" />
-                        <SortedAscendingHeaderStyle BackColor="#5A4C9D" />
-                        <SortedDescendingCellStyle BackColor="#D8D8F0" />
-                        <SortedDescendingHeaderStyle BackColor="#3E3277" />
-                    </asp:GridView>
-                </td>
-
-            </tr>
-            <tr>
-
-                <td colspan="2" style="width: 96%" align="right">
-                    <div class="btn pull-right">
-                        <asp:Button ID="btnPay" runat="server" CssClass="btn-sm btn-primary btn-block" Height="35px" Width="90px" Text="Pay" OnClick="btnPay_Click" />
-                         
-                    </div>
-                </td>
-
-            </tr>
-            <tr>
-                <td colspan="2" style="width: 96%">
-                    <asp:Label runat="server" ID="lblMsg"></asp:Label>
-                </td>
-            </tr>
-        </table>
+                    </asp:BoundField>
+                    <asp:BoundField DataField="RemainingAmount" HeaderText="Remaining Amount" SortExpression="ApplicantName" DataFormatString="{0:N2}"> </asp:BoundField> 
+                    <asp:TemplateField HeaderText="Semester / Year"> <ItemTemplate> <span class="semester-badge"> <%# Eval("Semester") %> </span> <asp:HiddenField ID="hdfEntryNo" Value='<%# Bind("[Entry No_]") %>' runat="server" /> <asp:HiddenField ID="hdfDesc" Value='<%# Bind("[Description]") %>' runat="server" /> <asp:HiddenField ID="hdfOrder" Value='<%# Bind("[semvalue]") %>' runat="server" /> </ItemTemplate> </asp:TemplateField> 
+                    <asp:TemplateField HeaderText="Select"> <HeaderTemplate> <div class="select-header"> Select </div> </HeaderTemplate> <ItemTemplate> <div class="modern-checkbox"> <asp:CheckBox ID="chkboxSelectAmount" runat="server" onclick="OnChangeCheckbox(this)" /> </div> </ItemTemplate> </asp:TemplateField> 
+                    <asp:BoundField DataField="Entry No_" HeaderText="Entry No" ItemStyle-CssClass="hidden-column" HeaderStyle-CssClass="hidden-column"> </asp:BoundField> </Columns> <HeaderStyle CssClass="modern-grid-header" /> <RowStyle CssClass="modern-grid-row" /> <AlternatingRowStyle CssClass="modern-grid-alt-row" /> <FooterStyle CssClass="modern-grid-footer" /> </asp:GridView> </div> 
+            <div style="display:none;"> <asp:GridView ID="grdPaidFeesDetails" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#E7E7FF" BorderStyle="None" BorderWidth="1px" CellPadding="3" Width="100%" GridLines="Horizontal" ShowFooter="true" OnPageIndexChanging="grdPaidFeesDetails_PageIndexChanging" EmptyDataText="There are no data records to display." AllowPaging="True" HorizontalAlign="Center"> <Columns> <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="ApplicantName" /> <asp:BoundField DataField="Amount" HeaderText="Amount" SortExpression="ApplicantName" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:N1}" /> </Columns> </asp:GridView> </div> 
+            <div class="payment-footer"> <div class="selected-info"> <span class="selected-icon"> <i class="fa fa-check-circle"></i> </span> <span id="selectedFeeText"> Select fee(s) to continue </span> </div> <asp:Button ID="btnPay" runat="server" CssClass="modern-pay-btn" Height="42px" Width="110px" Text="Pay Now" OnClick="btnPay_Click" /> </div> 
+            <div class="message-area"> <asp:Label runat="server" ID="lblMsg"> </asp:Label> </div> </div>
         <asp:HiddenField ID="hash" runat="server" />
         <asp:HiddenField ID="txnid" runat="server" />
         <asp:HiddenField ID="key" runat="server" />

@@ -3495,7 +3495,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             {
                 smtp.Host = smtpSection.Network.Host;
                 smtp.EnableSsl = smtpSection.Network.EnableSsl;
-                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "nwar yzam bcez rqop");
+                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "ghkl eukc gadv filn");
                 smtp.UseDefaultCredentials = smtpSection.Network.DefaultCredentials;
                 smtp.Credentials = networkCred;
                 smtp.Port = smtpSection.Network.Port;

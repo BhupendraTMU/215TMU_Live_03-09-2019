@@ -188,7 +188,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         int index = row.RowIndex;
         Label UserId = (Label)grdnodueslist.Rows[index].FindControl("lblemployeecode");
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ToString());
-        string strSQL = "select *,( select [Job Title_Grade Desc] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_CI_AI=Employee_Code) 'Designation',( select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_CI_AI=Employee_Code) 'EmployeePostingGroup',convert(varchar,convert(date,Date_Of_Joining),106) DOJ from Tbl_NoDuesDataTable WHERE [Employee_Code]='" + UserId.Text + "'";
+        string strSQL = "select [ID]      ,[Issued_On]      ,[Proposed_Date_of_Relieving]      ,[Deputy_Registrar1]      ,[Name_Of_Employee]      ,[Father_Name]      ,[College_Department_Section]      ,[Branch]      ,[Date_Of_Joining]      ,[Date_Of_Leaving]      ,[Permanent_Address]      ,[Mailing_Address]      ,[Mobile_No]      ,[E_mail_Id]      ,[Dir_Pri_Head_Name]      ,[Dir_Pri_Head_Designation]      ,[Dir_Pri_Head_College_Department_Section]      ,[Dir_Pri_Head_Date]      ,[Description_Hr]      ,[Amount1_Hr]      ,[Amount2_Hr]      ,[Date1_Hr]      ,[Date2_Hr]      ,[Approved_By]      ,[Signature1_Hr]      ,[Name1_Hr]      ,[Designation1_Hr]      ,[Signature2_Hr]      ,[Name2_Hr]      ,[Designation2_Hr]      ,[Deputy_Registrar_Hr]      ,[Approving_Authority_Registrar]      ,[Amount1_Finance]      ,[Cheque_No_Finance]      ,[Date1_Finance]      ,[Amount2_Finance]      ,[Signature_Finance]      ,[Name_Finance]      ,[Designation_Finance]      ,[Date2_Finance]      ,[Receive_Amount_Employee]      ,[Cheque_No_Employee]      ,[Date1_Employee]      ,[Drawn_On_Employee]      ,[Amount2_Employee]      ,[Date2_Employee]      ,[Signature_Employee]      ,[Designation_Employee]      ,[Employee_Code]      ,[Status]      ,[DrawnonFinance]      ,[Amount3_Finance]      ,[Amount4_Finance]      ,[Drawnonemployee]      ,[Amount3_Hr]      ,[HR Status]      ,[CreateDate]      ,[HospitalHRStatus]      ,[HRResigndate], CASE         WHEN [ActdateofLeaving] = '1753-01-01' THEN ''        ELSE CONVERT(VARCHAR(10), [ActdateofLeaving], 105)    END AS [ActdateofLeaving],( select [Job Title_Grade Desc] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_CI_AI=Employee_Code) 'Designation',( select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where No_ collate Latin1_General_CI_AI=Employee_Code) 'EmployeePostingGroup',convert(varchar,convert(date,Date_Of_Joining),106) DOJ from Tbl_NoDuesDataTable WHERE [Employee_Code]='" + UserId.Text + "'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);
@@ -234,8 +234,18 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
 
         if (dt.Rows[0]["ActdateofLeaving"].ToString() != "")
         {
+            if(dt.Rows[0]["ActdateofLeaving"].ToString()=="01-01-1753 00:00:00")
+            {
+                txtActdateofLeaving.Text = "";
+                btnupdate.Visible = true;
+            }
+            else
+            {
+                txtActdateofLeaving.Text = dt.Rows[0]["ActdateofLeaving"].ToString();
+                btnupdate.Visible = false;
+            }
 
-            txtActdateofLeaving.Text = Convert.ToDateTime(dt.Rows[0]["ActdateofLeaving"]).ToString("dd MMM yyyy");
+                
         }
         else
 
@@ -1806,10 +1816,16 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         DataTable dt1 = new DataTable();
         da1.Fill(dt1);
         con.Close();
+        try
+        {
+            // txtIssuedon.Text = dt1.Rows[0]["Issued_On"].ToString();
+            txtdateofrelieving.Text = Convert.ToDateTime(dt1.Rows[0]["Proposed_Date_of_Relieving"])
+                                  .ToString("dd MMM yyyy");
+        }
+        catch(Exception ex)
+        {
 
-        // txtIssuedon.Text = dt1.Rows[0]["Issued_On"].ToString();
-        txtdateofrelieving.Text = Convert.ToDateTime(dt1.Rows[0]["Proposed_Date_of_Relieving"])
-                              .ToString("dd MMM yyyy");
+        }
         //txtdeputyRegistrar.Text = dt1.Rows[0]["Deputy_Registrar1"].ToString();
 
     }
@@ -3656,7 +3672,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             {
                 smtp.Host = smtpSection.Network.Host;
                 smtp.EnableSsl = smtpSection.Network.EnableSsl;
-                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "nwar yzam bcez rqop");
+                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "ghkl eukc gadv filn");
                 smtp.UseDefaultCredentials = smtpSection.Network.DefaultCredentials;
                 smtp.Credentials = networkCred;
                 smtp.Port = smtpSection.Network.Port;
@@ -3753,6 +3769,7 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@Employee_Code", txtemployeecode.Text);
         cmd.Parameters.AddWithValue("@ActdateofLeaving", txtActdateofLeaving.Text);
+        cmd.Parameters.AddWithValue("@HRResigndate", txtHRResigndate.Text);
         cmd.Parameters.AddWithValue("@UserID", Session["uid"].ToString());
         if (con1.State == ConnectionState.Open)
         { con1.Close(); }

@@ -25,21 +25,21 @@ public partial class Faculty_StudentAttendance : System.Web.UI.Page
             try
             {
 
-                SqlCommand cmdT = new SqlCommand("select [Faculty Code] from[TMU$Course Subject Line - COLLEGE] where[Faculty Code] = '" + Session["uid"].ToString() + "' and[Course Code] in ('NUR-008', 'NUR-009')", con);
-                DataTable dtOrderT = new DataTable();
-                SqlDataAdapter daT = new SqlDataAdapter(cmdT);
-                daT.Fill(dtOrderT);
-                if (Session["GlobalDimension1Code"].ToString() == "TMNS" || Session["GlobalDimension1Code"].ToString() == "TMSN" || Session["uid"].ToString()=="TMU00937" || Session["uid"].ToString()=="TMU03630" || Session["uid"].ToString()=="TMU07571" || Session["uid"].ToString()=="TMU07932" || Session["uid"].ToString()=="TMU05956" || Session["uid"].ToString()=="TMU06222" || Session["uid"].ToString()=="TMU09690")
-                {
+                //SqlCommand cmdT = new SqlCommand("select [Faculty Code] from[TMU$Course Subject Line - COLLEGE] where[Faculty Code] = '" + Session["uid"].ToString() + "' and[Course Code] in ('NUR-008', 'NUR-009')", con);
+                //DataTable dtOrderT = new DataTable();
+                //SqlDataAdapter daT = new SqlDataAdapter(cmdT);
+                //daT.Fill(dtOrderT);
+                //if (Session["GlobalDimension1Code"].ToString() == "TMNS" || Session["GlobalDimension1Code"].ToString() == "TMSN" || Session["uid"].ToString()=="TMU00937" || Session["uid"].ToString()=="TMU03630" || Session["uid"].ToString()=="TMU07571" || Session["uid"].ToString()=="TMU07932" || Session["uid"].ToString()=="TMU05956" || Session["uid"].ToString()=="TMU06222" || Session["uid"].ToString()=="TMU09690")
+                //{
                     pnlApproval.Visible = true;
                     pnlmsg.Visible = false;
 
-                }
-                else
-                {
-                    pnlmsg.Visible = true;
-                    pnlApproval.Visible = false;
-                }
+                //}
+                //else
+                //{
+                    //pnlmsg.Visible = true;
+                    //pnlApproval.Visible = false;
+                //}
 
                 //pnlApproval.Visible = true;
 

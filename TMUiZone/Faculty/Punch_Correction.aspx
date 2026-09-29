@@ -7,7 +7,8 @@
         .modalBackground {
             background-color: Black;
             filter: alpha(opacity=90);
-            opacity: 0.8;pnlApproval
+            opacity: 0.8;
+            pnlApproval
         }
 
         .modalPopup {
@@ -40,14 +41,44 @@
             background-color: #A1DCF2;
             border: 1px solid #3AC0F2;
         }
+
         .auto-style3 {
             width: 185px;
         }
+
         .auto-style4 {
             width: 194px;
         }
+
         .auto-style5 {
             width: 46px;
+        }
+
+        .preview-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+
+        .preview-box {
+            width: 700px;
+            max-width: 90%;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-image {
+            display: block;
+            margin: auto;
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
         }
     </style>
 
@@ -103,7 +134,7 @@
                         <td style="height: 10px"></td>
                     </tr>
 
-                   
+
                     <tr>
                         <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkEmployeeReport" runat="server" OnClick="lnkEmployeeReport_Click">Employee Report</asp:LinkButton></td>
                     </tr>
@@ -142,8 +173,8 @@
                             <asp:Label ID="lblHeader" runat="server"
                                 Text="Application" Font-Size="15pt" ForeColor="#093A62"
                                 Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"></asp:Label>
- &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
- <asp:Label id="lblNotify" runat="server" style="height: 10px;color:red;font-size:larger;text-align:left" Text="Note:-For Missed Punch (submit camera/punch proof to HR)"></asp:Label>
+                            &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+ <asp:Label ID="lblNotify" runat="server" Style="height: 10px; color: red; font-size: larger; text-align: left" Text="Note:-For Missed Punch (attach camera/punch proof)"></asp:Label>
 
 
                         </td>
@@ -203,12 +234,11 @@
                                     </tr>
 
                                     <tr>
-                                        <td style="width: 400px">
-                                             Punch Type
+                                        <td style="width: 400px">Punch Type
                                         </td>
                                         <td style="width: 10px"></td>
-                                        <td colspan="14" >
-                                           
+                                        <td colspan="14">
+
                                             <asp:DropDownList ID="drpPunchType" runat="server" Width="170px" Height="24px" AutoPostBack="true" OnSelectedIndexChanged="drpPunchType_SelectedIndexChanged">
                                                 <asp:ListItem Text="Punch Correction" Value="0">
 
@@ -217,7 +247,7 @@
 
                                             </asp:DropDownList>
                                         </td>
-                                      
+
                                     </tr>
                                     <tr>
                                         <td colspan="16" style="height: 10px"></td>
@@ -303,6 +333,23 @@
                                         <td></td>
                                     </tr>
                                     <tr>
+                                        <td style="width: 400px">Supporting Document <span style="color: red">*</span>
+                                        </td>
+                                        <td style="width: 10px"></td>
+                                        <td colspan="13">
+
+
+                                            <!-- Your FileUpload -->
+                                            <asp:FileUpload ID="fuDocument" runat="server" accept=".jpg,.jpeg,.png"/>
+
+
+
+                                        </td>
+                                        <td></td>
+                                    </tr>
+
+
+                                    <tr>
                                         <td colspan="16" style="height: 10px"></td>
                                     </tr>
                                     <tr>
@@ -326,7 +373,7 @@
                                     </tr>
                                     <asp:HiddenField ID="hfShiftFrom" runat="server" />
                                     <asp:HiddenField ID="hfShiftTo" runat="server" />
-                                     <asp:HiddenField ID="hfShiftTo1" runat="server" />
+                                    <asp:HiddenField ID="hfShiftTo1" runat="server" />
                                     <asp:HiddenField ID="hfTotBUtilize" runat="server" />
                                     <asp:HiddenField ID="hfnight" runat="server" />
                                 </table>
@@ -386,7 +433,7 @@
                                     <tr>
                                         <td colspan="17">
 
-                                            <asp:GridView ID="grdView_Status" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" Width="1000px" AllowPaging="True" OnPageIndexChanging="grdView_Status_PageIndexChanging">
+                                            <asp:GridView ID="grdView_Status" DataKeyNames="ID" OnRowCommand="grdView_Status_RowCommand" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" Width="1000px" AllowPaging="True" OnPageIndexChanging="grdView_Status_PageIndexChanging">
                                                 <Columns>
                                                     <asp:BoundField DataField="Atte_Date" HeaderText="Date" DataFormatString="{0:D}" />
                                                     <asp:BoundField DataField="fromTime" HeaderText="From Time" />
@@ -394,7 +441,7 @@
                                                     <asp:BoundField DataField="ToTime" HeaderText="Till Time" />
                                                     <asp:BoundField DataField="CfromTime" HeaderText="Correct From Time" />
                                                     <asp:BoundField DataField="CToTime" HeaderText="Correct To Time" />
-                                                    
+
                                                     <asp:BoundField DataField="Purpose" HeaderText="Purpose">
                                                         <ItemStyle Width="100px" />
                                                     </asp:BoundField>
@@ -402,16 +449,24 @@
                                                         <ItemStyle Width="100px" />
                                                     </asp:BoundField>
                                                     <asp:BoundField DataField="ApprovalStatus" HeaderText="Status" />
-                                                     <asp:TemplateField HeaderText="HR Status">
+                                                    <asp:TemplateField HeaderText="HR Status">
                                                         <ItemTemplate>
-                                                            <asp:Label ID="lblStatus" runat="server"  Text='<%# (Eval("Approved by").ToString() == "" ? "Pending" : Eval("ApprovalStatus").ToString()) %>'  ></asp:Label>
+                                                            <asp:Label ID="lblStatus" runat="server" Text='<%# (Eval("Approved by").ToString() == "" ? "Pending" : Eval("ApprovalStatus").ToString()) %>'></asp:Label>
                                                         </ItemTemplate>
                                                     </asp:TemplateField>
 
-                                                    
+
                                                     <asp:BoundField DataField="RejectedByHODRemarks" HeaderText="Rejected Remarks">
                                                         <ItemStyle Width="100px" />
                                                     </asp:BoundField>
+                                                    <asp:TemplateField HeaderText="Preview">
+                                                        <ItemTemplate>
+                                                            <asp:LinkButton ID="lnkPreview" runat="server"
+                                                                Text="Preview"
+                                                                CommandName="Preview"
+                                                                CommandArgument='<%# Eval("ID") %>' />
+                                                        </ItemTemplate>
+                                                    </asp:TemplateField>
                                                 </Columns>
                                                 <EmptyDataTemplate>
                                                     There is no record found
@@ -441,31 +496,53 @@
 
 
                             </asp:Panel>
+                            <div class="modal fade" id="previewModal" tabindex="-1">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
 
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Attachment Preview</h5>
 
-                              <asp:Panel ID="pnlEmployeeReport" runat="server" Visible="false">
+                                            <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal">
+                                            </button>
+                                        </div>
+
+                                        <div class="modal-body p-0">
+
+                                            <iframe id="frmPreview"
+                                                style="width: 100%; height: 700px; border: none;"></iframe>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <asp:Panel ID="pnlEmployeeReport" runat="server" Visible="false">
                                 <table cellpadding="0px" cellspacing="0px" style="width: 120%">
 
 
                                     <tr>
-                                        <td style="width:100px">From Date</td>
-                                     
+                                        <td style="width: 100px">From Date</td>
+
                                         <td class="auto-style4">
                                             <asp:TextBox ID="TextBox1" runat="server" onkeydown="return false;"
                                                 oncopy="return false" onpaste="return false" oncut="return false" oncontextmenu="return false"></asp:TextBox>
                                             <asp:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="TextBox1" Format="dd MMM yyyy"></asp:CalendarExtender>
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="TextBox1" ErrorMessage="Required" SetFocusOnError="True" ValidationGroup="ODfilterOwn"></asp:RequiredFieldValidator>
                                         </td>
-                                       
-                                        <td style="width:100px">To Date </td>
-                                        
+
+                                        <td style="width: 100px">To Date </td>
+
                                         <td class="auto-style3">
                                             <asp:TextBox ID="TextBox2" runat="server" onkeydown="return false;"
                                                 oncopy="return false" onpaste="return false" oncut="return false" oncontextmenu="return false"></asp:TextBox>
                                             <asp:CalendarExtender ID="CalendarExtender2" runat="server" TargetControlID="TextBox2" Format="dd MMM yyyy"></asp:CalendarExtender>
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="TextBox2" ErrorMessage="Required" SetFocusOnError="True" ValidationGroup="ODfilterOwn"></asp:RequiredFieldValidator>
                                         </td>
-                                       
+
                                         <td>Status </td>
                                         <td style="width: 10px"></td>
                                         <td class="auto-style5">
@@ -493,44 +570,44 @@
 
                                     <tr>
                                         <td colspan="14">
-                                            <div style="overflow:scroll;height:900px;width:990px">
-                                            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" Width="1000px" >
-                                                <Columns>
-                                                     <asp:BoundField DataField="Userid" HeaderText="Employee ID" DataFormatString="{0:D}" />
-                                                    <asp:BoundField DataField="UName" HeaderText="Employee Name" />
-                                                    <asp:BoundField DataField="Atte_Date" HeaderText="Date" DataFormatString="{0:D}" />
-                                                    <asp:BoundField DataField="fromTime" HeaderText="From Time" />
+                                            <div style="overflow: scroll; height: 900px; width: 990px">
+                                                <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" Width="1000px">
+                                                    <Columns>
+                                                        <asp:BoundField DataField="Userid" HeaderText="Employee ID" DataFormatString="{0:D}" />
+                                                        <asp:BoundField DataField="UName" HeaderText="Employee Name" />
+                                                        <asp:BoundField DataField="Atte_Date" HeaderText="Date" DataFormatString="{0:D}" />
+                                                        <asp:BoundField DataField="fromTime" HeaderText="From Time" />
 
-                                                    <asp:BoundField DataField="ToTime" HeaderText="Till Time" />
-                                                    <asp:BoundField DataField="CfromTime" HeaderText="Correct From Time" />
-                                                    <asp:BoundField DataField="CToTime" HeaderText="Correct To Time" />
-                                                    
-                                                    <asp:BoundField DataField="Purpose" HeaderText="Purpose">
-                                                        <ItemStyle Width="100px" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="Remarks" HeaderText="Remarks">
-                                                        <ItemStyle Width="100px" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="ApprovalStatus" HeaderText="Status" />
-                                                    <asp:BoundField DataField="Approved by" HeaderText="Approval By" />
-                                                    <asp:BoundField DataField="RejectedByHODRemarks" HeaderText="Rejected Remarks">
-                                                        <ItemStyle Width="100px" />
-                                                    </asp:BoundField>
-                                                </Columns>
-                                                <EmptyDataTemplate>
-                                                    There is no record found
-                                                </EmptyDataTemplate>
-                                                <FooterStyle BackColor="#ff9900" ForeColor="#003399" />
-                                                <HeaderStyle BackColor="#ff9900" Font-Bold="True" ForeColor="White" Font-Size="10px" />
-                                                <PagerStyle CssClass="GridPager" HorizontalAlign="Left" />
-                                                <RowStyle BackColor="White" ForeColor="#003399" Font-Size="9px" />
-                                                <SelectedRowStyle BackColor="#009999" Font-Bold="True" ForeColor="#CCFF99" />
-                                                <SortedAscendingCellStyle BackColor="#EDF6F6" />
-                                                <SortedAscendingHeaderStyle BackColor="#0D4AC4" />
-                                                <SortedDescendingCellStyle BackColor="#D6DFDF" />
-                                                <SortedDescendingHeaderStyle BackColor="#002876" />
-                                            </asp:GridView>
-                                           </div>
+                                                        <asp:BoundField DataField="ToTime" HeaderText="Till Time" />
+                                                        <asp:BoundField DataField="CfromTime" HeaderText="Correct From Time" />
+                                                        <asp:BoundField DataField="CToTime" HeaderText="Correct To Time" />
+
+                                                        <asp:BoundField DataField="Purpose" HeaderText="Purpose">
+                                                            <ItemStyle Width="100px" />
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="Remarks" HeaderText="Remarks">
+                                                            <ItemStyle Width="100px" />
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="ApprovalStatus" HeaderText="Status" />
+                                                        <asp:BoundField DataField="Approved by" HeaderText="Approval By" />
+                                                        <asp:BoundField DataField="RejectedByHODRemarks" HeaderText="Rejected Remarks">
+                                                            <ItemStyle Width="100px" />
+                                                        </asp:BoundField>
+                                                    </Columns>
+                                                    <EmptyDataTemplate>
+                                                        There is no record found
+                                                    </EmptyDataTemplate>
+                                                    <FooterStyle BackColor="#ff9900" ForeColor="#003399" />
+                                                    <HeaderStyle BackColor="#ff9900" Font-Bold="True" ForeColor="White" Font-Size="10px" />
+                                                    <PagerStyle CssClass="GridPager" HorizontalAlign="Left" />
+                                                    <RowStyle BackColor="White" ForeColor="#003399" Font-Size="9px" />
+                                                    <SelectedRowStyle BackColor="#009999" Font-Bold="True" ForeColor="#CCFF99" />
+                                                    <SortedAscendingCellStyle BackColor="#EDF6F6" />
+                                                    <SortedAscendingHeaderStyle BackColor="#0D4AC4" />
+                                                    <SortedDescendingCellStyle BackColor="#D6DFDF" />
+                                                    <SortedDescendingHeaderStyle BackColor="#002876" />
+                                                </asp:GridView>
+                                            </div>
                                         </td>
                                     </tr>
 
@@ -547,39 +624,39 @@
                             </asp:Panel>
 
 
-                            <asp:Panel ID="pnlApproval" runat="server" Visible="false" style="width:1000px">
+                            <asp:Panel ID="pnlApproval" runat="server" Visible="false" Style="width: 1000px">
                                 <table cellpadding="0px" cellspacing="0px">
 
 
                                     <tr>
-                                       
-                                                    <td>Month</td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>
-                                                        <asp:DropDownList ID="ddlMonth" runat="server" Height="29px">
-                                                            <asp:ListItem Value="01">January</asp:ListItem>
-                                                            <asp:ListItem Value="02">February</asp:ListItem>
-                                                            <asp:ListItem Value="03">March</asp:ListItem>
-                                                            <asp:ListItem Value="04">April</asp:ListItem>
-                                                            <asp:ListItem Value="05">May</asp:ListItem>
-                                                            <asp:ListItem Value="06">June</asp:ListItem>
-                                                            <asp:ListItem Value="07">July</asp:ListItem>
-                                                            <asp:ListItem Value="08">August</asp:ListItem>
-                                                            <asp:ListItem Value="09">September</asp:ListItem>
-                                                            <asp:ListItem Value="10">October</asp:ListItem>
-                                                            <asp:ListItem Value="11">November</asp:ListItem>
-                                                            <asp:ListItem Value="12">December</asp:ListItem>
-                                                        </asp:DropDownList></td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>Year </td>
-                                                    <td style="width: 10px"></td>
-                                                    <td>
-                                                        <asp:DropDownList ID="ddlYear1" runat="server" Height="29px"></asp:DropDownList>
-                                                    </td>
 
-                                                    <td style="width: 10px"></td>
-                                               
-                                      
+                                        <td>Month</td>
+                                        <td style="width: 10px"></td>
+                                        <td>
+                                            <asp:DropDownList ID="ddlMonth" runat="server" Height="29px">
+                                                <asp:ListItem Value="01">January</asp:ListItem>
+                                                <asp:ListItem Value="02">February</asp:ListItem>
+                                                <asp:ListItem Value="03">March</asp:ListItem>
+                                                <asp:ListItem Value="04">April</asp:ListItem>
+                                                <asp:ListItem Value="05">May</asp:ListItem>
+                                                <asp:ListItem Value="06">June</asp:ListItem>
+                                                <asp:ListItem Value="07">July</asp:ListItem>
+                                                <asp:ListItem Value="08">August</asp:ListItem>
+                                                <asp:ListItem Value="09">September</asp:ListItem>
+                                                <asp:ListItem Value="10">October</asp:ListItem>
+                                                <asp:ListItem Value="11">November</asp:ListItem>
+                                                <asp:ListItem Value="12">December</asp:ListItem>
+                                            </asp:DropDownList></td>
+                                        <td style="width: 10px"></td>
+                                        <td>Year </td>
+                                        <td style="width: 10px"></td>
+                                        <td>
+                                            <asp:DropDownList ID="ddlYear1" runat="server" Height="29px"></asp:DropDownList>
+                                        </td>
+
+                                        <td style="width: 10px"></td>
+
+
 
                                         <%-- <td style="width: 10px"></td>
                                         <td>
@@ -675,114 +752,124 @@
                                         <td colspan="17" style="height: 10px"></td>
                                     </tr>
                                 </table>
-                                <table id="grdis">
-                                    <tr>
-                                        <td style="width:100px">
+                                <div style="overflow:scroll">
+                                    <table id="grdis">
+                                        <tr>
+                                            <td style="width: 100px">
 
-                                            <asp:GridView ID="grdApproval" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" OnPageIndexChanging="grdApproval_PageIndexChanging" PageSize="1" OnRowDataBound="grdApproval_RowDataBound">
-                                                <Columns>
-                                                    <asp:TemplateField>
-                                                        <ItemTemplate>
-                                                            <asp:CheckBox ID="chkMark" runat="server" />
-
-
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-
-                                                    <asp:TemplateField HeaderText="Status">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblApprovalStatus_Status" runat="server" Text='<%#Bind("ApprovalStatus") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
+                                                <asp:GridView ID="grdApproval" runat="server" OnRowCommand="grdApproval_RowCommand" AutoGenerateColumns="False" CssClass="table table-striped table-bordered table-hover" BackColor="White" BorderColor="#3366CC" BorderStyle="None" BorderWidth="1px" CellPadding="4" OnPageIndexChanging="grdApproval_PageIndexChanging" PageSize="1" OnRowDataBound="grdApproval_RowDataBound">
+                                                    <Columns>
+                                                        <asp:TemplateField>
+                                                            <ItemTemplate>
+                                                                <asp:CheckBox ID="chkMark" runat="server" />
 
 
-                                                    <asp:TemplateField HeaderText="Employee ID">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblEmployeeid_gridco" runat="server" Text='<%#Bind("Userid") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
 
-                                                    <asp:BoundField DataField="Uname" HeaderText="Name" />
-
-                                                    <asp:TemplateField HeaderText="Date">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblAtte_Date_GridCo" runat="server" Text='<%#Bind("Atte_Date","{0:dd MMM yyyy}") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-                                                    <asp:BoundField DataField="fromTime" HeaderText="From Time" />
-
-                                                    <asp:BoundField DataField="ToTime" HeaderText="To Time" />
-                                                    <asp:BoundField DataField="CFromTime" HeaderText="Modify Time(From)">
-                                                        <ItemStyle Width="120px" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="CToTime" HeaderText="To Time">
-                                                        <ItemStyle Width="80px" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="MinuteDiff" HeaderText="Corrected Time(Minutes)">
-                                                        <ItemStyle Width="80px" />
-                                                    </asp:BoundField>
-                                                    <asp:BoundField DataField="Remarks" HeaderText="Remarks">
-                                                        <ItemStyle Width="100px" />
-                                                    </asp:BoundField>
-                                                    <asp:TemplateField HeaderText="HOD Remark">
-                                                        <ItemTemplate>
-                                                            <asp:TextBox ID="txtHODRemark" runat="server" Text='<%#Bind("HODRemark") %>'></asp:TextBox>
-                                                            <%--Enabled='<%# Eval("HODRemark").ToString()=="" ? true : false %>'--%>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-                                                    <asp:TemplateField HeaderText="Remark">
-                                                        <ItemTemplate>
-                                                            <asp:TextBox ID="txtHRRemark" runat="server"></asp:TextBox>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-                                                    <asp:BoundField DataField="RejectedByHODRemarks" HeaderText="Rejected Remarks">
-
-                                                        <ItemStyle Width="100px" />
-                                                    </asp:BoundField>
-
-                                                    <asp:TemplateField HeaderText="id" Visible="False">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblid" runat="server" Text='<%#Bind("ID") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Status">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblApprovalStatus_Status" runat="server" Text='<%#Bind("ApprovalStatus") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
 
 
-                                                    <asp:BoundField DataField="Approved by" HeaderText="Approval By" />
-                                                    <asp:TemplateField HeaderText="HOD Name" Visible="False">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblHOD" runat="server" Text='<%#Bind("HODName") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-                                                  <asp:TemplateField HeaderText="Create Date">
-                                                        <ItemTemplate>
-                                                            <asp:Label ID="lblAtteCreateDate" runat="server" Text='<%#Bind("CreatedDate","{0:dd MMM yyyy}") %>'></asp:Label>
-                                                        </ItemTemplate>
-                                                    </asp:TemplateField>
-                                                </Columns>
-                                                <FooterStyle BackColor="#ff9900" ForeColor="#003399" />
-                                                <HeaderStyle BackColor="#ff9900" Font-Bold="True" ForeColor="White" Font-Size="10px" />
-                                                <PagerStyle CssClass="GridPager" HorizontalAlign="Left" />
-                                                <RowStyle BackColor="White" ForeColor="#003399" Font-Size="9px" />
-                                                <SelectedRowStyle BackColor="#009999" Font-Bold="True" ForeColor="#CCFF99" />
-                                                <SortedAscendingCellStyle BackColor="#EDF6F6" />
-                                                <SortedAscendingHeaderStyle BackColor="#0D4AC4" />
-                                                <SortedDescendingCellStyle BackColor="#D6DFDF" />
-                                                <SortedDescendingHeaderStyle BackColor="#002876" />
-                                            </asp:GridView>
+                                                        <asp:TemplateField HeaderText="Employee ID">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblEmployeeid_gridco" runat="server" Text='<%#Bind("Userid") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+
+                                                        <asp:BoundField DataField="Uname" HeaderText="Name" />
+
+                                                        <asp:TemplateField HeaderText="Date">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblAtte_Date_GridCo" runat="server" Text='<%#Bind("Atte_Date","{0:dd MMM yyyy}") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="fromTime" HeaderText="From Time" />
+
+                                                        <asp:BoundField DataField="ToTime" HeaderText="To Time" />
+                                                        <asp:BoundField DataField="CFromTime" HeaderText="Modify Time(From)">
+                                                            <ItemStyle Width="120px" />
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="CToTime" HeaderText="To Time">
+                                                            <ItemStyle Width="80px" />
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="MinuteDiff" HeaderText="Corrected Time(Minutes)">
+                                                            <ItemStyle Width="80px" />
+                                                        </asp:BoundField>
+                                                        <asp:BoundField DataField="Remarks" HeaderText="Remarks">
+                                                            <ItemStyle Width="100px" />
+                                                        </asp:BoundField>
+                                                        <asp:TemplateField HeaderText="HOD Remark">
+                                                            <ItemTemplate>
+                                                                <asp:TextBox ID="txtHODRemark" runat="server" Text='<%#Bind("HODRemark") %>'></asp:TextBox>
+                                                                <%--Enabled='<%# Eval("HODRemark").ToString()=="" ? true : false %>'--%>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Remark">
+                                                            <ItemTemplate>
+                                                                <asp:TextBox ID="txtHRRemark" runat="server"></asp:TextBox>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:BoundField DataField="RejectedByHODRemarks" HeaderText="Rejected Remarks">
+
+                                                            <ItemStyle Width="100px" />
+                                                        </asp:BoundField>
+
+                                                        <asp:TemplateField HeaderText="id" Visible="False">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblid" runat="server" Text='<%#Bind("ID") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
 
 
-                                        </td>
-                                    </tr>
+                                                        <asp:BoundField DataField="Approved by" HeaderText="Approval By" />
+                                                        <asp:TemplateField HeaderText="HOD Name" Visible="False">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblHOD" runat="server" Text='<%#Bind("HODName") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Create Date">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lblAtteCreateDate" runat="server" Text='<%#Bind("CreatedDate","{0:dd MMM yyyy}") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Preview">
+                                                            <ItemTemplate>
+                                                                <asp:LinkButton ID="lnkPreview" runat="server"
+                                                                    Text="Preview"
+                                                                    CommandName="Preview"
+                                                                    CommandArgument='<%# Eval("ID") %>' />
+                                                            </ItemTemplate>
+                                                        </asp:TemplateField>
+                                                    </Columns>
+                                                    <FooterStyle BackColor="#ff9900" ForeColor="#003399" />
+                                                    <HeaderStyle BackColor="#ff9900" Font-Bold="True" ForeColor="White" Font-Size="10px" />
+                                                    <PagerStyle CssClass="GridPager" HorizontalAlign="Left" />
+                                                    <RowStyle BackColor="White" ForeColor="#003399" Font-Size="9px" />
+                                                    <SelectedRowStyle BackColor="#009999" Font-Bold="True" ForeColor="#CCFF99" />
+                                                    <SortedAscendingCellStyle BackColor="#EDF6F6" />
+                                                    <SortedAscendingHeaderStyle BackColor="#0D4AC4" />
+                                                    <SortedDescendingCellStyle BackColor="#D6DFDF" />
+                                                    <SortedDescendingHeaderStyle BackColor="#002876" />
+                                                </asp:GridView>
 
 
-                                    <tr>
-                                        <td colspan="16" style="height: 10px"></td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td colspan="16" style="height: 10px"></td>
+                                        </tr>
 
 
 
-                                </table>
-    </asp:Panel>
+                                    </table>
+                                </div>
+                            </asp:Panel>
 
 
                         </td>
@@ -974,6 +1061,38 @@
 
 
 
+
+    </asp:Panel>
+
+    <asp:Panel ID="pnlPreview" runat="server" Visible="false">
+
+        <div class="preview-overlay">
+
+            <div class="preview-box">
+
+                <asp:Image ID="img"
+                    runat="server"
+                    CssClass="preview-image" />
+
+                <div class="mt-3 text-center">
+                    <asp:LinkButton ID="btnDownload"
+                        runat="server"
+                        CssClass="btn btn-success"
+                        OnClick="btnDownload_Click">
+                    <i class="fa fa-download"></i> Download
+                    </asp:LinkButton>
+
+                    <asp:Button ID="btnClosePreview"
+                        runat="server"
+                        Text="Close"
+                        CssClass="btn btn-danger"
+                        OnClick="btnClosePreview_Click" />
+                    <asp:HiddenField ID="hdfid" runat="server" />
+                </div>
+
+            </div>
+
+        </div>
 
     </asp:Panel>
 

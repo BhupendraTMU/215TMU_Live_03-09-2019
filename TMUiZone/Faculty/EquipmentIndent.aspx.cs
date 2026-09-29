@@ -19,7 +19,7 @@ public partial class Faculty_EquipmentIndent : System.Web.UI.Page
         try
         {
 
-            if (Session["uid"].ToString() != "TMU03798")
+            if (Session["uid"].ToString() != "TMU00415")
             {
                 Response.Redirect("Error.aspx", false);
                 HttpContext.Current.ApplicationInstance.CompleteRequest();

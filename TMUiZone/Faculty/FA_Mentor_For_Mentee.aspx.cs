@@ -233,7 +233,7 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
     {
 
 
-        SqlCommand cmd = new SqlCommand("[EDUCOLLEGELIVE-R2].dbo.StudentAttendanceNew '" + StudentNo + "','" + val + "','" + val1 + "','--Select--'", con);
+        SqlCommand cmd = new SqlCommand("[EDUCOLLEGELIVE(TestDatabase)].dbo.StudentAttendanceNew '" + StudentNo + "','" + val + "','" + val1 + "','--Select--'", con);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
         da.Fill(dt);
@@ -258,7 +258,7 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
 
         try
         {
-            SqlCommand cmd = new SqlCommand("HRMSPortal.dbo.SP_Get_UndertakingforFaculty", con);
+            SqlCommand cmd = new SqlCommand("HRMSPortal(TestDatabase).dbo.SP_Get_UndertakingforFaculty", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Enrollment", StudentNo);
             cmd.Parameters.AddWithValue("@Sem", val1);

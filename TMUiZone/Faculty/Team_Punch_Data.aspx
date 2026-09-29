@@ -78,6 +78,7 @@
                              <asp:BoundField DataField="Employee ID" HeaderText="Employee ID" DataFormatString="{0:D}" />
                             <asp:BoundField DataField="Employee Name" HeaderText="Employee Name" DataFormatString="{0:D}" />
                             <asp:BoundField DataField="Attendance Date" HeaderText="Date" DataFormatString="{0:D}" />
+                            <asp:BoundField DataField="ShiftTime" HeaderText="Shift Time" />
                             <asp:BoundField DataField="In Time" HeaderText="In Time" />
                             <asp:BoundField DataField="Out Time" HeaderText="Out Time" />
                             <asp:BoundField DataField="P1" HeaderText="P1" />

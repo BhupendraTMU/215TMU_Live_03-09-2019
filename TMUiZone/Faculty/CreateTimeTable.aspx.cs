@@ -594,6 +594,10 @@ public partial class Faculty_CreateTimeTable : System.Web.UI.Page
         drpSection1.DataValueField = "Section";
         drpSection1.DataTextField = "Section";
         drpSection1.DataBind();
+        ddlGroup1.DataSource = ds.Tables[2];
+        ddlGroup1.DataValueField = "Group";
+        ddlGroup1.DataTextField = "Group";
+        ddlGroup1.DataBind();
         bindRoomNoOpenElec();
     }
     public void bindRoomNoOpenElec()
@@ -725,7 +729,7 @@ public partial class Faculty_CreateTimeTable : System.Web.UI.Page
                     cmd.Parameters.Add("@SubjectClassification", txtSubjectClassification1.Value.ToString());
                     cmd.Parameters.Add("@FromDate", txtFromDate1.Text);
                     cmd.Parameters.Add("@ToDate", txtToDate1.Text);
-                    cmd.Parameters.Add("@Group", "");
+                    cmd.Parameters.Add("@Group", ddlGroup1.SelectedValue);
                     cmd.Parameters.Add("@Batch", "");
                     cmd.Parameters.Add("@HouNoTo", drpHourNoTo1.SelectedValue);//added on 01-12-2016 ashu
                     cmd.Parameters.Add("@Remedial", "");

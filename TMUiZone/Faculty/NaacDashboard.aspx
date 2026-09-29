@@ -2,6 +2,39 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style>
+        .naac-grid-wrapper {
+            width: 100%;
+            max-height: 600px;
+            /* Vertical + Horizontal scroll as existing */
+            overflow: auto;
+            border: 1px solid #ccc;
+            background: #fff;
+            position: relative;
+        }
+
+        .JainStudentList {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100% !important;
+            min-width: 1000px;
+            max-width: 1000px;
+            background-color: White;
+        }
+
+            .JainStudentList th {
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                padding: 10px 8px;
+                text-align: left;
+                background-color: #04AA6D !important;
+                color: white;
+                border: 1px solid #ddd;
+              /*  white-space: nowrap;*/
+                font-weight: bold;
+            }
+
         .red-border {
             border: 1px solid red;
         }
@@ -95,14 +128,19 @@
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Metric" ItemStyle-Width="12%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Metric Description" ItemStyle-Width="12%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
-                        <asp:Label ID="lblMetric" runat="server" Width="400px" Text='<%# Bind("[Metric]") %>'></asp:Label>
+                        <asp:Label ID="lblMetric" runat="server" Width="360px" Text='<%# Bind("[Metric]") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Target Value" ItemStyle-Width="1%" ItemStyle-BackColor="#99ccff" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Five Year Data Target" ItemStyle-Width="1%" ItemStyle-BackColor="#99ccff" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
-                        <asp:Label ID="lblTarget" runat="server" Text='<%# Bind("[Target Value]") %>'></asp:Label>
+                        <asp:Label ID="lblCompositeTarget" runat="server" Text='<%# Bind("[Composite Target Value]") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Annual Data Target" ItemStyle-Width="1%" ItemStyle-BackColor="#99ccff" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                    <ItemTemplate>
+                        <asp:Label ID="lblTarget" runat="server" Text='<%# Bind("[Annual Target Value]") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
 
@@ -118,7 +156,7 @@
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Sept" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Sep" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
                         <asp:Label ID="lblSeptember" runat="server" Text='<%# Bind("[September]") %>'></asp:Label>
                     </ItemTemplate>
@@ -153,13 +191,13 @@
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="March" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Mar" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
                         <asp:Label ID="lblMarch" runat="server" Text='<%# Bind("[March]") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="April" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Apr" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
                         <asp:Label ID="lblApril" runat="server" Text='<%# Bind("[April]") %>'></asp:Label>
                     </ItemTemplate>
@@ -171,7 +209,7 @@
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="June" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
+                <asp:TemplateField HeaderText="Jun" ItemStyle-Width="1%" HeaderStyle-CssClass="text-left" ItemStyle-CssClass="text-left">
                     <ItemTemplate>
                         <asp:Label ID="lblJune" runat="server" Text='<%# Bind("[June]") %>'></asp:Label>
                     </ItemTemplate>

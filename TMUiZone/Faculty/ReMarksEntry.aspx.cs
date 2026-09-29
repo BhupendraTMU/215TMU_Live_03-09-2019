@@ -1302,7 +1302,8 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                 }
                 cmd.Parameters.AddWithValue("@Section", drpSection.SelectedValue);
                 cmd.Parameters.AddWithValue("@AwardListStatus", Reportstatus);
-
+                cmd.Parameters.AddWithValue("@ExamCategory", 1);
+                cmd.Parameters.AddWithValue("@Reappear", 1);
                 if (con.State == ConnectionState.Open)
                 { con.Close(); }
                 con.Open();
@@ -1382,6 +1383,8 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                                 cmd1.Parameters.AddWithValue("@ExamType", hfExamType1.Value);
                                 cmd1.Parameters.AddWithValue("@Section", drpSection.SelectedValue);
                                 cmd1.Parameters.AddWithValue("@AwardListStatus", Reportstatus);
+                                cmd1.Parameters.AddWithValue("@ExamCategory", 1);
+                                cmd1.Parameters.AddWithValue("@Reappear", 1);
                                 con.Open();
                                 cmd1.ExecuteNonQuery();
 
@@ -1462,6 +1465,8 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                                 cmd1.Parameters.AddWithValue("@ExamType", hf_ExamType.Value);
                                 cmd1.Parameters.AddWithValue("@Section", drpSection.SelectedValue);
                                 cmd1.Parameters.AddWithValue("@AwardListStatus", Reportstatus);
+                                cmd1.Parameters.AddWithValue("@ExamCategory", 1);
+                                cmd1.Parameters.AddWithValue("@Reappear", 1);
                                 con.Open();
                                 cmd1.ExecuteNonQuery();
 
@@ -1765,6 +1770,12 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
             if (lblError.Text == "")
             {
                 GridView gr = new GridView();
+
+                if (rdOpen.Checked == true)
+                {
+                    hf_AcademicYear.Value = drpAcademicYear1.SelectedValue;
+                }
+               
                 SaveOrSubmitData(hf_AcademicYear.Value, hf_Course.Value, hf_SemYear.Value, hf_SubjCode.Value, hf_SubjectType.Value, hf_ExamCriteria.Value, hf_ExamMethod.Value, hf_ExamGroup.Value, Convert.ToDecimal(hf_MaxMarks.Value), 0, gr);
                 ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Success', 'Data saved Successfully');", true);
                 bindgrid();
@@ -1824,7 +1835,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
             Faculty_MarksEntry obj = new Faculty_MarksEntry();
             DataTable dtgrid = (DataTable)obj.Session["dtPivot"];
             dtpivot = obj.JsonStringToDataTable(string_rowdata);
-            obj.SavePivotDatarowwise(2, dtpivot);
+            obj.SavePivotDatarowwise(6, dtpivot);
             obj.Session["Rowcount"] = Convert.ToInt32(obj.Session["Rowcount"]) + 1;
             if (Convert.ToInt32(obj.Session["Rowcount"]) == dtgrid.Rows.Count)
             {

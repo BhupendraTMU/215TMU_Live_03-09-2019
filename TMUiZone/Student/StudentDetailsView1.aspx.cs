@@ -467,7 +467,7 @@ public partial class Student_StudentDetailsView1 : System.Web.UI.Page
         if (con.State == ConnectionState.Closed)
             con.Open();
         SqlCommand cmd = new SqlCommand("update [TMU$Student - COLLEGE] set [E-Mail Address]='" + txtEmailID.Text + "',[Mobile Number]='" + txtMobileNo.Text + "',City='" + txtCity.Text + "',Address1='" + txtAddress.Text + "',[Visa No_]='" + txtNADID.Text + "' where No_='" + Session["uid"].ToString() + "'", con);
-        cmd.ExecuteNonQuery();
+        //cmd.ExecuteNonQuery();
         con.Close();
 
 

@@ -499,7 +499,7 @@ public partial class PMS : System.Web.UI.Page
     private void BindFinancialYears_For_Filter()
     {
         // Get the current year
-        int currentYear = DateTime.Now.Year - 1;
+        int currentYear = DateTime.Now.Year;
 
         // Create a list to hold financial years
         List<string> financialYears = new List<string>();
@@ -568,7 +568,7 @@ public partial class PMS : System.Web.UI.Page
                 fu_a1.Enabled = true;
             }
             // Always assign the final obtained value to the reporting authority textbox
-            txt_a1_reporting_authority_assessment.Text = lbl_a1_final_obtained_value.Text;
+           // txt_a1_reporting_authority_assessment.Text = lbl_a1_final_obtained_value.Text;
 
             // Convert the value in the reporting authority textbox to integer
             int txt_a1_reporting_authority_assessment_int = Convert.ToInt32(txt_a1_reporting_authority_assessment.Text.Trim());
@@ -613,7 +613,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b1_ReportingAuthorityAssessment.Text = lbl_b1_FinalObtainedValue.Text;
+           // txt_b1_ReportingAuthorityAssessment.Text = lbl_b1_FinalObtainedValue.Text;
 
             int txt_b1_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b1_ReportingAuthorityAssessment.Text.Trim());
 
@@ -662,7 +662,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b2_ReportingAuthorityAssessment.Text = lbl_b2_FinalObtainedValue.Text;
+            //txt_b2_ReportingAuthorityAssessment.Text = lbl_b2_FinalObtainedValue.Text;
 
             int txt_b2_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b2_ReportingAuthorityAssessment.Text.Trim());
 
@@ -710,7 +710,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b3_ReportingAuthorityAssessment.Text = lbl_b3_FinalObtainedValue.Text;
+            //txt_b3_ReportingAuthorityAssessment.Text = lbl_b3_FinalObtainedValue.Text;
 
             int txt_b3_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b3_ReportingAuthorityAssessment.Text.Trim());
 
@@ -759,7 +759,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b4_ReportingAuthorityAssessment.Text = lbl_b4_FinalObtainedValue.Text;
+           // txt_b4_ReportingAuthorityAssessment.Text = lbl_b4_FinalObtainedValue.Text;
 
             int txt_b4_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b4_ReportingAuthorityAssessment.Text.Trim());
 
@@ -807,7 +807,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b5_ReportingAuthorityAssessment.Text = lbl_b5_FinalObtainedValue.Text;
+            //txt_b5_ReportingAuthorityAssessment.Text = lbl_b5_FinalObtainedValue.Text;
 
             int txt_b5_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b5_ReportingAuthorityAssessment.Text.Trim());
 
@@ -856,7 +856,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the reporting authority textbox
-            txt_b6_ReportingAuthorityAssessment.Text = lbl_b6_FinalObtainedValue.Text;
+            //txt_b6_ReportingAuthorityAssessment.Text = lbl_b6_FinalObtainedValue.Text;
 
             int txt_b6_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_b6_ReportingAuthorityAssessment.Text.Trim());
 
@@ -905,7 +905,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the authority assessment textbox
-            txt_c1_AssessmentByAuthority.Text = lbl_c1_FinalScore.Text;
+           // txt_c1_AssessmentByAuthority.Text = lbl_c1_FinalScore.Text;
 
             int txt_c1_AssessmentByAuthority_int = Convert.ToInt32(txt_c1_AssessmentByAuthority.Text.Trim());
 
@@ -954,7 +954,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Always assign the final obtained value to the authority assessment textbox
-            txt_c2_AssessmentByAuthority.Text = lbl_c2_FinalScore.Text;
+           // txt_c2_AssessmentByAuthority.Text = lbl_c2_FinalScore.Text;
 
             int txt_c2_AssessmentByAuthority_int = Convert.ToInt32(txt_c2_AssessmentByAuthority.Text.Trim());
 
@@ -1005,7 +1005,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d1_ReportingAuthorityAssessment.Text = lbl_d1_FinalObtainedValue.Text;
+           // txt_d1_ReportingAuthorityAssessment.Text = lbl_d1_FinalObtainedValue.Text;
 
             int txt_d1_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d1_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1056,7 +1056,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d2_ReportingAuthorityAssessment.Text = lbl_d2_FinalObtainedValue.Text;
+            //txt_d2_ReportingAuthorityAssessment.Text = lbl_d2_FinalObtainedValue.Text;
 
             int txt_d2_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d2_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1107,7 +1107,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d3_ReportingAuthorityAssessment.Text = lbl_d3_FinalObtainedValue.Text;
+            //txt_d3_ReportingAuthorityAssessment.Text = lbl_d3_FinalObtainedValue.Text;
 
             int txt_d3_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d3_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1157,7 +1157,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d4_ReportingAuthorityAssessment.Text = lbl_d4_FinalObtainedValue.Text;
+           // txt_d4_ReportingAuthorityAssessment.Text = lbl_d4_FinalObtainedValue.Text;
 
             int txt_d4_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d4_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1207,7 +1207,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d5_ReportingAuthorityAssessment.Text = lbl_d5_FinalObtainedValue.Text;
+            //txt_d5_ReportingAuthorityAssessment.Text = lbl_d5_FinalObtainedValue.Text;
 
             int txt_d5_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d5_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1257,7 +1257,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_d6_ReportingAuthorityAssessment.Text = lbl_d6_FinalObtainedValue.Text;
+          //  txt_d6_ReportingAuthorityAssessment.Text = lbl_d6_FinalObtainedValue.Text;
 
             int txt_d6_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_d6_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1307,7 +1307,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Always assign the final obtained value to the reporting authority assessment textbox
-            txt_e1_ReportingAuthorityAssessment.Text = lbl_e1_FinalObtainedValue.Text;
+            //txt_e1_ReportingAuthorityAssessment.Text = lbl_e1_FinalObtainedValue.Text;
 
             int txt_e1_ReportingAuthorityAssessment_int = Convert.ToInt32(txt_e1_ReportingAuthorityAssessment.Text.Trim());
 
@@ -1367,7 +1367,7 @@ public partial class PMS : System.Web.UI.Page
                 lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalAPIScorethroughSelfAssessment_f1.Text;
             }
             //Reporting Authority
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f1.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f1.Text;
             if (txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f1_int > lbl_CriteriaB_ResearchAndDevelopment_MaxAPIScore_f1_int)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('The entered value cannot be greater than the maximum API score. Please enter a valid value.');", true);
@@ -1415,7 +1415,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f2.Text.Trim());
 
@@ -1474,7 +1474,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Reporting Authority
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f3.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f3.Text;
             if (txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f3_int > lbl_CriteriaB_ResearchAndDevelopment_MaxAPIScore_f3_int)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('The entered value cannot be greater than the maximum API score. Please enter a valid value.');", true);
@@ -1520,7 +1520,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f4.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f4.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f4_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f4.Text.Trim());
 
@@ -1568,7 +1568,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f5.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f5.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f5_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f5.Text.Trim());
 
@@ -1616,7 +1616,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f6.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f6.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f6_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f6.Text.Trim());
 
@@ -1665,7 +1665,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f7.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_f7.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f7_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f7.Text.Trim());
 
@@ -1714,7 +1714,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g1.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g1.Text.Trim());
 
@@ -1764,7 +1764,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g2.Text.Trim());
 
@@ -1813,7 +1813,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g3.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_g3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_g3.Text.Trim());
 
@@ -1862,7 +1862,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h1.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h1.Text.Trim());
 
@@ -1911,7 +1911,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h2.Text.Trim());
 
@@ -1959,7 +1959,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h3.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h3.Text.Trim());
 
@@ -2007,7 +2007,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h4.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h4.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h4_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h4.Text.Trim());
 
@@ -2055,7 +2055,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h5.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h5.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h5_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h5.Text.Trim());
 
@@ -2103,7 +2103,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h6.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h6.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h6_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h6.Text.Trim());
 
@@ -2152,7 +2152,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h7.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h7.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h7_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h7.Text.Trim());
 
@@ -2200,7 +2200,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h8.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h8.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h8.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h8.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h8_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h8.Text.Trim());
 
@@ -2248,7 +2248,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h9.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h9.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h9.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_h9.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h9_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_h9.Text.Trim());
 
@@ -2296,7 +2296,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i1.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i1.Text.Trim());
 
@@ -2345,7 +2345,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i2.Text.Trim());
 
@@ -2393,7 +2393,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i3.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i3.Text.Trim());
 
@@ -2441,7 +2441,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i4.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i4.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i4_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i4.Text.Trim());
 
@@ -2489,7 +2489,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i5.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_i5.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i5_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_i5.Text.Trim());
 
@@ -2537,7 +2537,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_j1.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_j1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j1.Text.Trim());
 
@@ -2585,7 +2585,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_j2.Text;
+          //  txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_j2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_j2.Text.Trim());
 
@@ -2634,7 +2634,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k1.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k1.Text.Trim());
 
@@ -2683,7 +2683,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k2.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k2.Text.Trim());
 
@@ -2732,7 +2732,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k3.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k3.Text.Trim());
 
@@ -2780,7 +2780,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k4.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k4.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k4_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k4.Text.Trim());
 
@@ -2831,7 +2831,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k5.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k5.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k5.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k5_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k5.Text.Trim());
 
@@ -2879,7 +2879,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k6.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k6.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k6.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k6_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k6.Text.Trim());
 
@@ -2929,7 +2929,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k7.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k7.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k7.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k7_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k7.Text.Trim());
 
@@ -2978,7 +2978,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k8.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k8.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k8.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k8.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k8_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k8.Text.Trim());
 
@@ -3026,7 +3026,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k9.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k9.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k9.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k9.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k9_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k9.Text.Trim());
 
@@ -3074,7 +3074,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k10.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k10.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k10.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k10.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k10_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k10.Text.Trim());
 
@@ -3122,7 +3122,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k11.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k11.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k11.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_k11.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k11_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_k11.Text.Trim());
 
@@ -3170,7 +3170,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l1.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l1.Text.Trim());
 
@@ -3218,7 +3218,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l2.Text.Trim());
 
@@ -3266,7 +3266,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l3.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_l3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_l3.Text.Trim());
 
@@ -3315,7 +3315,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m1.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m1.Text.Trim());
 
@@ -3363,7 +3363,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m2.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m2.Text.Trim());
 
@@ -3411,7 +3411,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m3.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m3.Text.Trim());
 
@@ -3459,7 +3459,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m4.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m4.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_m4.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m4_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_m4.Text.Trim());
 
@@ -3508,7 +3508,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
 
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n1.Text;
+            //txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n1.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n1.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n1_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n1.Text.Trim());
 
@@ -3556,7 +3556,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n2.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n2.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n2.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n2_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n2.Text.Trim());
 
@@ -3604,7 +3604,7 @@ public partial class PMS : System.Web.UI.Page
             }
 
             // Validate Reporting Authority Assessment input
-            txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n3.Text;
+           // txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n3.Text = lbl_CriteriaB_ResearchAndDevelopment_TotalorFaculty_n3.Text;
 
             int txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n3_int = Convert.ToInt32(txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_n3.Text.Trim());
 
@@ -3653,7 +3653,7 @@ public partial class PMS : System.Web.UI.Page
 
             // Validate Reporting Authority Assessment input
             // Set initial value from the label
-            txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o1.Text = lbl_CriteriaD_Administration_TotalorFaculty_o1.Text;
+            //txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o1.Text = lbl_CriteriaD_Administration_TotalorFaculty_o1.Text;
 
             int txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o1_int = Convert.ToInt32(txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o1.Text.Trim());
 
@@ -3700,7 +3700,7 @@ public partial class PMS : System.Web.UI.Page
                 lbl_CriteriaD_Administration_TotalorFaculty_o2.Text = lbl_CriteriaD_Administration_TotalAPIScorethroughSelfAssessment_o2.Text;
             }
 
-            txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o2.Text = lbl_CriteriaD_Administration_TotalorFaculty_o2.Text;
+            //txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o2.Text = lbl_CriteriaD_Administration_TotalorFaculty_o2.Text;
             int txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o2_int = Convert.ToInt32(txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o2.Text.Trim());
 
             if (txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o2_int > lbl_CriteriaD_Administration_MaxAPIScore_o2_int)
@@ -3743,7 +3743,7 @@ public partial class PMS : System.Web.UI.Page
                 lbl_CriteriaD_Administration_TotalorFaculty_o3.Text = lbl_CriteriaD_Administration_TotalAPIScorethroughSelfAssessment_o3.Text;
             }
 
-            txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o3.Text = lbl_CriteriaD_Administration_TotalorFaculty_o3.Text;
+            //txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o3.Text = lbl_CriteriaD_Administration_TotalorFaculty_o3.Text;
             int txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o3_int = Convert.ToInt32(txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o3.Text.Trim());
 
             if (txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o3_int > lbl_CriteriaD_Administration_MaxAPIScore_o3_int)
@@ -3786,7 +3786,7 @@ public partial class PMS : System.Web.UI.Page
                 lbl_CriteriaD_Administration_TotalorFaculty_o4.Text = lbl_CriteriaD_Administration_TotalAPIScorethroughSelfAssessment_o4.Text;
             }
 
-            txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o4.Text = lbl_CriteriaD_Administration_TotalorFaculty_o4.Text;
+            //txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o4.Text = lbl_CriteriaD_Administration_TotalorFaculty_o4.Text;
             int txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o4_int = Convert.ToInt32(txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o4.Text.Trim());
 
             if (txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o4_int > lbl_CriteriaD_Administration_MaxAPIScore_o4_int)
@@ -3829,7 +3829,7 @@ public partial class PMS : System.Web.UI.Page
                 lbl_CriteriaD_Administration_TotalorFaculty_o5.Text = lbl_CriteriaD_Administration_TotalAPIScorethroughSelfAssessment_o5.Text;
             }
 
-            txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o5.Text = lbl_CriteriaD_Administration_TotalorFaculty_o5.Text;
+           // txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o5.Text = lbl_CriteriaD_Administration_TotalorFaculty_o5.Text;
             int txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o5_int = Convert.ToInt32(txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o5.Text.Trim());
 
             if (txt_CriteriaD_Administration_AssessmentbyReportingAuthority_o5_int > lbl_CriteriaD_Administration_MaxAPIScore_o5_int)
@@ -4972,7 +4972,7 @@ public partial class PMS : System.Web.UI.Page
 
         // Display the total API score in a label
         lbl_totalAPIScore.Text = lbl_totalAPIScore_int.ToString();
-        if (lbl_designation.Text.ToUpper() == "LECTURER".ToUpper() || lbl_designation.Text.ToUpper() == "Tutor UG".ToUpper()
+        if (lbl_designation.Text.ToUpper() == "LECTURER".ToUpper() || lbl_designation.Text.ToUpper() == "Tutor UG".ToUpper() || lbl_designation.Text.ToUpper() == "Tutor (PG)".ToUpper()
             || lbl_designation.Text.ToUpper() == "Demonstrator".ToUpper() || lbl_designation.Text.ToUpper() == "Tutor PG".ToUpper()
             || lbl_designation.Text.ToUpper() == "Senior Resident".ToUpper() || lbl_designation.Text.ToUpper() == "Clinical Instructor".ToUpper()
             || lbl_designation.Text.ToUpper() == "Trainer".ToUpper())
@@ -9358,7 +9358,7 @@ lbl_ff_even_sem.Text.Trim()
             lbl_ff_even_sem.Text = dr["Feed_Even_Sem"].ToString().Trim();
             lbl_ff_odd_sem.Text = dr["Feed_Odd_Sem"].ToString().Trim();
 
-
+           
             GetNoActivity();
 
 
@@ -9417,7 +9417,7 @@ lbl_ff_even_sem.Text.Trim()
                 Btn_Save.Visible = true;
                 //visible false for temp by Bhupii
 
-                Btn_Approval.Visible = false;
+                Btn_Approval.Visible = true;
 
                 ViewState["Applicable_For_Department"] = "RM";
             }
@@ -9472,9 +9472,9 @@ lbl_ff_even_sem.Text.Trim()
             {
                 //visible false for temp by Bhupii
 
-                Btn_Approval.Visible = false;
+                Btn_Approval.Visible = true;
 
-                Btn_Save.Visible = false;
+                Btn_Save.Visible = true;
                 ViewState["Applicable_For_Department"] = "VC";
             }
             else
@@ -9499,6 +9499,9 @@ lbl_ff_even_sem.Text.Trim()
         }
         GetUploadFileData();
         Upload_Button_Enable_For_Faculty();
+         Get_FacultyIn_percentage(lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+        GetFeedback_Data();
+        calculatedata();
     }
     public void Upload_Button_Enable_For_Faculty()
     {
@@ -10393,6 +10396,15 @@ lbl_ff_even_sem.Text.Trim()
     {
 
         int currentYear = DateTime.Now.Year - 1;
+        if (drpMonth.SelectedValue == "0")
+        {
+            currentYear = DateTime.Now.Year - 1;
+        }
+        else
+        {
+            currentYear = DateTime.Now.Year;
+        }
+
 
         ddl_academic_session.Text = currentYear.ToString().Substring(2) + "-" + (currentYear + 1).ToString().Substring(2);
         lblMonth.Text = drpMonth.SelectedItem.Text;
@@ -10400,7 +10412,7 @@ lbl_ff_even_sem.Text.Trim()
         Faculty_Enabledata();
         assesmentDisable();
         clear_data();
-        Get_FacultyIn_percentage(lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
+
         pnlcreate.Visible = true;
         pnl_Dashboard.Visible = false;
 
@@ -10413,6 +10425,7 @@ lbl_ff_even_sem.Text.Trim()
         lbl_college_department.Text = Session["EmployeePostingGroupl"].ToString().Trim();
         lbl_New_College.Text = Session["GlobalDimension1Coded"].ToString().Trim();
         lbl_New_Department.Text = Session["PMS_DepartmentName"].ToString().Trim();
+        Get_FacultyIn_percentage(lbl_emp_code.Text.Trim(), ddl_academic_session.Text.Trim());
         HR_Disable();
         btn_Fu_A1.Visible = true;
         btnAttachmentSave_Fu_A1.Visible = true;

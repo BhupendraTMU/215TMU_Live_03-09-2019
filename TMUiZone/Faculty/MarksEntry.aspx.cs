@@ -26,13 +26,13 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
-               // ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('The page is currently under maintenance and will be operational on Friday, 29 May 2026.'); document.location.href='FacultyDetails.aspx';", true);
+                // ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('The page is currently under maintenance and will be operational on Friday, 29 May 2026.'); document.location.href='FacultyDetails.aspx';", true);
                 Session["ATT"] = "";
                 //bindDrpCourseList();  //added on 24 feb 2017
                 bindAcademicYear(); bindDrpCourseList();
                 onetime.Visible = false;
                 btnview.Visible = false;
-                
+
             }
         }
         catch (Exception ex)
@@ -83,65 +83,131 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
     }
     public void bindDrpSemesterList()
     {
-        SqlCommand cmd = new SqlCommand("proc_GetSemesterFromCourseWiseFaculty_RoleTemp", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.CommandTimeout = 1000000;
-        cmd.Parameters.Add("@ID1", Session["uid"].ToString());
-        cmd.Parameters.Add("@ID", drpCourse.SelectedValue);
-        cmd.Parameters.Add("@AcYear", drpAcademicYear.SelectedValue);
-        DataTable dt = new DataTable();
-        SqlDataAdapter da = new SqlDataAdapter(cmd);
-        con.Open();
-        da.Fill(dt);
-        con.Close();
-        drpSemester.DataSource = dt;
-        drpSemester.DataTextField = "Details";
-        drpSemester.DataValueField = "No_";
-        drpSemester.DataBind();
+
+        if (chkSpecial.Checked == true)
+        {
+            string conStr = ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+
+
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT semester
+              FROM tbl_special_markentry
+              WHERE ISNULL(semester,'') <> ''    and course='" + drpCourse.SelectedValue + "' ORDER BY semester", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        drpSemester.DataSource = dr;
+                        drpSemester.DataTextField = "semester";
+                        drpSemester.DataValueField = "semester";
+                        drpSemester.DataBind();
+                    }
+                    drpSemester.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+                // Subject
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT subject_code
+              FROM tbl_special_markentry
+              WHERE ISNULL(subject_code,'') <> '' and course='" + drpCourse.SelectedValue + "' and semester='" + drpSemester.SelectedValue + "'  ORDER BY subject_code", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        ddlSubject.DataSource = dr;
+                        ddlSubject.DataTextField = "subject_code";
+                        ddlSubject.DataValueField = "subject_code";
+                        ddlSubject.DataBind();
+                    }
+                    ddlSubject.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+
+            }
+        }
+        else
+        {
+            SqlCommand cmd = new SqlCommand("proc_GetSemesterFromCourseWiseFaculty_RoleTemp", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 1000000;
+            cmd.Parameters.Add("@ID1", Session["uid"].ToString());
+            cmd.Parameters.Add("@ID", drpCourse.SelectedValue);
+            cmd.Parameters.Add("@AcYear", drpAcademicYear.SelectedValue);
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            con.Open();
+            da.Fill(dt);
+            con.Close();
+            drpSemester.DataSource = dt;
+            drpSemester.DataTextField = "Details";
+            drpSemester.DataValueField = "No_";
+            drpSemester.DataBind();
+        }
     }
     public void bindgrid()
     {
         try
         {
-            SqlDataAdapter daS = new SqlDataAdapter("select distinct [Marks Entry Faculty] from [TMU$Course Subject Line - COLLEGE] where [Academic Year]='" + drpAcademicYear.SelectedValue + "' and [Course Code]='" + drpCourse.SelectedValue + "' and (Semester='" + drpSemester.SelectedValue + "' or Year='" + drpSemester.SelectedValue + "') AND [Subject Code]='" + ddlSubject.SelectedValue + "'", con);
-            DataTable dtS = new DataTable();
-            daS.Fill(dtS);
-            int k1 = 0;
-            if (dtS.Rows[0]["Marks Entry Faculty"].ToString() != "")
+            if (chkSpecial.Checked != true)
             {
-                for (int i = 0; i < dtS.Rows.Count; i++)
+                SqlDataAdapter daS = new SqlDataAdapter("select distinct [Marks Entry Faculty] from [TMU$Course Subject Line - COLLEGE] where [Academic Year]='" + drpAcademicYear.SelectedValue + "' and [Course Code]='" + drpCourse.SelectedValue + "' and (Semester='" + drpSemester.SelectedValue + "' or Year='" + drpSemester.SelectedValue + "') AND [Subject Code]='" + ddlSubject.SelectedValue + "'", con);
+                DataTable dtS = new DataTable();
+                daS.Fill(dtS);
+                int k1 = 0;
+                if (dtS.Rows[0]["Marks Entry Faculty"].ToString() != "")
                 {
-
-                    if (dtS.Rows[i]["Marks Entry Faculty"].ToString() == Session["uid"].ToString())
+                    for (int i = 0; i < dtS.Rows.Count; i++)
                     {
-                        k1 = 1;
-                    }
 
+                        if (dtS.Rows[i]["Marks Entry Faculty"].ToString() == Session["uid"].ToString())
+                        {
+                            k1 = 1;
+                        }
+
+                    }
+                }
+                else
+                {
+                    k1 = 1;
+                }
+
+
+                if (k1 == 0)
+                {
+                    ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'You are not authorised to enter marks contact Admin');", true);
+                    return;
+                    //VisibleFalseTrue(false, false, true, false); LblInstruction.Visible = false;
                 }
             }
             else
             {
-                k1 = 1;
-            }
 
-
-            if (k1 == 0)
-            {
-                ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'You are not authorised to enter marks contact Admin');", true);
-                return;
-                //VisibleFalseTrue(false, false, true, false); LblInstruction.Visible = false;
             }
 
 
 
             string SP = "";
-            if (chkPiv.Checked == true && onetime.Visible == true)
+            if (chkPiv.Checked == true && onetime.Visible == true && chkSpecial.Checked==false)
             {
                 SP = "sp_GetMarkEntryForFaculty_Pivot";
             }
             else
             {
-                SP = "sp_GetMarkEntryForFaculty_Calendar_PNC2_TheoryNew";
+                if (chkSpecial.Checked == true)
+                {
+                    SP = "sp_GetMarkEntryForFaculty_Calendar_PNC2_TheorySpecial";
+                }
+                else
+                {
+                    SP = "sp_GetMarkEntryForFaculty_Calendar_PNC2_TheoryNew";
+                }
+
+
             }
             SqlCommand cmd = new SqlCommand(SP, con);
 
@@ -187,7 +253,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
 
 
 
-            if (chkPiv.Checked == true)
+            if (chkPiv.Checked == true && chkSpecial.Checked!=true)
             {
                 if (ds.Tables[3].Rows.Count == 1)
                 {
@@ -195,7 +261,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                 }
             }
             Session["dtPivot"] = ds.Tables[0];
-            if (chkPiv.Checked == true)
+            if (chkPiv.Checked == true && chkSpecial.Checked != true)
             {
                 try
                 {
@@ -267,7 +333,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
 
                 }
 
-                if (chkPiv.Checked == true && onetime.Visible == true)
+                if (chkPiv.Checked == true && onetime.Visible == true && chkSpecial.Checked != true)
                 {
 
                     PivotEntry.Visible = true;
@@ -588,13 +654,13 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
     protected void btntblmarksshow_Click(object sender, EventArgs e)
     {
 
-        if (drpSection.Items.Count > 1 && drpSection.SelectedIndex == 0)
+        if (drpSection.Items.Count > 1 && drpSection.SelectedIndex == 0 && chkSpecial.Checked==false)
         {
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Please select section.');", true);
 
             return;
         }
-        if (ddlGroup.Items.Count > 1 && ddlGroup.SelectedIndex == 0)
+        if (ddlGroup.Items.Count > 1 && ddlGroup.SelectedIndex == 0 && chkSpecial.Checked == false)
         {
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Please select group.');", true);
 
@@ -690,12 +756,31 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                 }
             }
             con.Close();
+            SqlCommand cmd = new SqlCommand();
+            if (chkSpecial.Checked == true && rdOpen.Checked==false)
+            {
+                cmd = new SqlCommand("sp_GetStudentForInternalMarksEntry_PNC_Test_Internal2NewSpecial", con);
+            }
+            else
+            {
+                cmd = new SqlCommand("sp_GetStudentForInternalMarksEntry_PNC_Test_Internal2New", con);
+            }
 
-            SqlCommand cmd = new SqlCommand("sp_GetStudentForInternalMarksEntry_PNC_Test_Internal2New", con);//sp_GetStudentForInternalMarksEntry usp_GetMarkEntryStudent//sp_GetStudentForInternalMarksEntry
-            //sp_GetStudentForInternalMarksEntry_PNC
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@CollegeCode", Session["GlobalDimension1Code"].ToString());
-            cmd.Parameters.AddWithValue("@AcadmicYear", drpAcademicYear.SelectedValue);
+
+            if (chkSpecial.Checked == true && rdOpen.Checked == true)
+            {
+                cmd.Parameters.AddWithValue("@AcadmicYear", drpAcademicYear1.SelectedValue);
+            }
+            else
+
+            {
+                cmd.Parameters.AddWithValue("@AcadmicYear", drpAcademicYear.SelectedValue);
+            }
+
+
+
             cmd.Parameters.AddWithValue("@CourseCode", drpCourse.SelectedValue);
             cmd.Parameters.AddWithValue("@Semester", drpSemester.SelectedValue);
             cmd.Parameters.AddWithValue("@SubjectCode", hfSubject.Value);
@@ -742,10 +827,19 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
             {
                 foreach (GridViewRow row in grdViewmarksEntry.Rows)
                 {
+
+
                     TextBox txtMarks = (TextBox)row.FindControl("grdtxtMarks");
                     if (txtMarks != null)
                     {
-                        txtMarks.Enabled = false;
+                        if (Session["GlobalDimension1Code"].ToString() == "TPHD")
+                        {
+                            txtMarks.Enabled = true;
+                        }
+                        else
+                        {
+                            txtMarks.Enabled = false;
+                        }
                     }
                 }
             }
@@ -893,13 +987,13 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
     {
         //  Btnprint.Visible = false;
         //btnShow.Enabled = true;
-        if (drpSection.Items.Count > 1 && drpSection.SelectedIndex == 0)
+        if (drpSection.Items.Count > 1 && drpSection.SelectedIndex == 0 && chkSpecial.Checked==false)
         {
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Please select section.');", true);
 
             return;
         }
-        if (ddlGroup.Items.Count > 1 && ddlGroup.SelectedIndex == 0)
+        if (ddlGroup.Items.Count > 1 && ddlGroup.SelectedIndex == 0 && chkSpecial.Checked == false)
         {
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'Please select group.');", true);
 
@@ -2011,6 +2105,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                                 _DataLine["ExamCriteria"] = ExamCriteria;
                                 _DataLine["Method"] = Method;
                                 _DataLine["Group"] = Group;
+
                                 if (grdSelect.Rows.Count > 0)
                                 {
                                     _DataLine["ExamType"] = hfExamType1.Value;
@@ -2019,7 +2114,6 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                                 {
                                     _DataLine["ExamType"] = hf_ExamType.Value;
                                 }
-
                                 if (drpSection.SelectedIndex > 0)
                                 {
                                     _DataLine["Section"] = drpSection.SelectedValue;
@@ -2373,6 +2467,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                                 {
                                     _DataLine["ExamType"] = hf_ExamType.Value;
                                 }
+
                                 if (drpSection.SelectedIndex > 0)
                                 {
                                     _DataLine["Section"] = drpSection.SelectedValue;
@@ -2400,9 +2495,16 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                         }
                     }
                 }
-
-
-                SqlCommand cmd = new SqlCommand("sp_InsertInternalMarksEntryHeaderLine", con);//Insert_proc_MarksEntryHeader1
+                SqlCommand cmd = new SqlCommand();
+                if (chkSpecial.Checked==true)
+                {
+                     cmd = new SqlCommand("sp_InsertInternalMarksEntryHeaderLineSpecial", con);
+                }
+                else
+                {
+                    cmd = new SqlCommand("sp_InsertInternalMarksEntryHeaderLine", con);
+                }
+                    
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@CollegeCode", Session["GlobalDimension1Code"].ToString());//Session["GlobalDimension1Code"]
                 cmd.Parameters.AddWithValue("@AcadmicYear", AcademicYear);
@@ -2455,8 +2557,6 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                 con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
-
-
                 scope.Complete();
 
             }
@@ -2470,30 +2570,65 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("sp_getSubjrctCodeFacultyWise", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
-            cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedItem.Value.ToString());
-            cmd.Parameters.Add("@CourseCode", drpCourse.SelectedItem.Value.ToString());
-            cmd.Parameters.Add("@Semester", drpSemester.SelectedItem.Value.ToString());
-            if (rdInternal.Checked == true)
+            if (chkSpecial.Checked == true)
             {
-                cmd.Parameters.Add("@ExamType", "Internal");
+                string conStr = ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+
+
+
+                    using (SqlCommand cmd = new SqlCommand(
+                        @"SELECT DISTINCT subject_code
+              FROM tbl_special_markentry
+              WHERE ISNULL(subject_code,'') <> '' and course='" + drpCourse.SelectedValue + "' and semester='" + drpSemester.SelectedValue + "'  ORDER BY subject_code", con))
+                    {
+                        con.Open();
+
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            ddlSubject.DataSource = dr;
+                            ddlSubject.DataTextField = "subject_code";
+                            ddlSubject.DataValueField = "subject_code";
+                            ddlSubject.DataBind();
+                        }
+
+                        ddlSubject.Items.Insert(0, new ListItem("-Select-", ""));
+                        con.Close();
+                    }
+                }
             }
+
+
             else
             {
-                cmd.Parameters.Add("@ExamType", "External");
+
+                SqlCommand cmd = new SqlCommand("sp_getSubjrctCodeFacultyWise", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
+                cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedItem.Value.ToString());
+                cmd.Parameters.Add("@CourseCode", drpCourse.SelectedItem.Value.ToString());
+                cmd.Parameters.Add("@Semester", drpSemester.SelectedItem.Value.ToString());
+                if (rdInternal.Checked == true)
+                {
+                    cmd.Parameters.Add("@ExamType", "Internal");
+                }
+                else
+                {
+                    cmd.Parameters.Add("@ExamType", "External");
+                }
+
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                ddlSubject.DataSource = dt;
+                ddlSubject.DataTextField = "Description";
+                ddlSubject.DataValueField = "Subject Code";
+                ddlSubject.DataBind();
+                ddlSubject.Items.Insert(0, "--Course--");
             }
-
-
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            ddlSubject.DataSource = dt;
-            ddlSubject.DataTextField = "Description";
-            ddlSubject.DataValueField = "Subject Code";
-            ddlSubject.DataBind();
-            ddlSubject.Items.Insert(0, "--Course--");
         }
         catch (Exception ex) { }
     }
@@ -2597,7 +2732,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                 //hfExamType1.Value = ExamGroup;
                 //string customerId = grdmarktable.DataKeys[e.Row.RowIndex].Value.ToString();
                 SqlCommand cmd = new SqlCommand("sp_GetStudentForInternalMarksEntry_PNC_Test_Internal2New", con);//sp_GetStudentForInternalMarksEntry usp_GetMarkEntryStudent//sp_GetStudentForInternalMarksEntry
-                //sp_GetStudentForInternalMarksEntry_PNC
+                                                                                                                 //sp_GetStudentForInternalMarksEntry_PNC
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@CollegeCode", Session["GlobalDimension1Code"].ToString());
                 cmd.Parameters.AddWithValue("@AcadmicYear", drpAcademicYear.SelectedValue);
@@ -3526,7 +3661,7 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
                     lnkview.Visible = true;
                     drpCourseOpen.Visible = true;
 
-                   
+
 
                 }
                 else
@@ -3687,5 +3822,155 @@ public partial class Faculty_MarksEntry : System.Web.UI.Page
     {
         grdpivot.DataSource = "";
         grdpivot.DataBind();
+    }
+
+    protected void chkSpecial_CheckedChanged(object sender, EventArgs e)
+    {
+        if (chkSpecial.Checked)
+        {
+            BindSpecialDropdowns();
+        }
+        else
+        {
+            drpCourse.Items.Clear();
+            drpSemester.Items.Clear();
+            ddlSubject.Items.Clear();
+            drpAcademicYear.Items.Clear();
+        }
+
+
+
+    }
+    private void BindSpecialDropdowns()
+    {
+        string conStr = ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+        if (rdOpen.Checked == true)
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                
+                
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT subject_code
+              FROM tbl_special_markentry
+              WHERE course in (Select [Course Code] from [TMU$User Role Matrix] where HOD='"+ Session["uid"].ToString() + "') and Open_Elec=1", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        ddlSubject1.DataSource = dr;
+                        ddlSubject1.DataTextField = "subject_code";
+                        ddlSubject1.DataValueField = "subject_code";
+                        ddlSubject1.DataBind();
+                    }
+                    ddlSubject1.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+
+                // Academic Year
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT academic_year
+              FROM tbl_special_markentry
+              WHERE ISNULL(academic_year,'') <> ''
+              ORDER BY academic_year DESC", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        drpAcademicYear1.DataSource = dr;
+                        drpAcademicYear1.DataTextField = "academic_year";
+                        drpAcademicYear1.DataValueField = "academic_year";
+                        drpAcademicYear1.DataBind();
+                    }
+
+                    con.Close();
+                }
+            }
+        }
+        else
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                // Course
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT course
+              FROM tbl_special_markentry
+              WHERE ISNULL(course,'') <> ''
+  and course in (select [Course Code] from [TMU$User Role Matrix] where HOD='" + Session["uid"].ToString() + "') ORDER BY course", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        drpCourse.DataSource = dr;
+                        drpCourse.DataTextField = "course";
+                        drpCourse.DataValueField = "course";
+                        drpCourse.DataBind();
+                    }
+                    drpCourse.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+
+                // Semester
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT semester
+              FROM tbl_special_markentry
+              WHERE ISNULL(semester,'') <> ''  and course='" + drpCourse.SelectedValue + "'  ORDER BY semester", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        drpSemester.DataSource = dr;
+                        drpSemester.DataTextField = "semester";
+                        drpSemester.DataValueField = "semester";
+                        drpSemester.DataBind();
+                    }
+                    drpSemester.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+
+                // Subject
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT subject_code
+              FROM tbl_special_markentry
+              WHERE ISNULL(subject_code,'') <> '' and course='" + drpCourse.SelectedValue + "' and semester='" + drpSemester.SelectedValue + "'  ORDER BY subject_code", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        ddlSubject.DataSource = dr;
+                        ddlSubject.DataTextField = "subject_code";
+                        ddlSubject.DataValueField = "subject_code";
+                        ddlSubject.DataBind();
+                    }
+                    ddlSubject.Items.Insert(0, new ListItem("-Select-", ""));
+                    con.Close();
+                }
+
+                // Academic Year
+                using (SqlCommand cmd = new SqlCommand(
+                    @"SELECT DISTINCT academic_year
+              FROM tbl_special_markentry
+              WHERE ISNULL(academic_year,'') <> ''
+              ORDER BY academic_year DESC", con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        drpAcademicYear.DataSource = dr;
+                        drpAcademicYear.DataTextField = "academic_year";
+                        drpAcademicYear.DataValueField = "academic_year";
+                        drpAcademicYear.DataBind();
+                    }
+
+                    con.Close();
+                }
+            }
+        }
     }
 }

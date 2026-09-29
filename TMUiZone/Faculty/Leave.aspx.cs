@@ -844,7 +844,7 @@ public partial class LeaveApproval : System.Web.UI.Page
             {
                 txtTodate.Text = txtfromDate.Text;
             }
-            if ((Convert.ToDecimal(txtNoOfLeavePriod.Text) >= 3 && (ddLeaveTypen.Text == "ML")) || (Convert.ToDecimal(txtNoOfLeavePriod.Text) >= 1 && (ddLeaveTypen.Text == "AL")))
+            if ((Convert.ToDecimal(txtNoOfLeavePriod.Text) >= 3 && (ddLeaveTypen.Text == "ML")))
             {
                 flUpload.Visible = true;
                 rfvflUpload.Enabled = true;
@@ -1365,68 +1365,209 @@ public partial class LeaveApproval : System.Web.UI.Page
     string TeachingStaffLeave = ""; string NonTeachingStaffLeave = ""; string FourthClassLeave = ""; string NursingClass; string WardBoy = "";
     decimal TeachingStaffLeave1; decimal NonTeachingStaffLeave1; decimal FourthClassLeave1; decimal NursingClass1; decimal WardBoy1;
 
-    public void OnConfirm(object sender, EventArgs e)
+    protected void OnConfirm(object sender, EventArgs e)
     {
-        //ashu on 19/09/2017--start
+        // ashu on 19/09/2017--start
 
-
-       // SqlDataAdapter da = new SqlDataAdapter("SELECT [Attendance Date] FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] WHERE ((MONTH([Attendance Date]) = MONTH('"+txtfromDate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtfromDate.Text+ "'))  and   (MONTH([Attendance Date]) = MONTH('"+txtTodate.Text+ "') AND YEAR([Attendance Date]) = YEAR('"+txtTodate.Text+"'))) select DATENAME(MONTH, [Attendance Date]) + ' ' +   CAST(YEAR([Attendance Date]) AS VARCHAR(4)) AS MonthYear FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Pay Company Policy] ", con.Con);
-       // DataSet ds = new DataSet();
-       // da.Fill(ds);
-        //if (ds.Tables[0].Rows.Count == 0)
-       // {
-       //     ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You can Apply leave for month and year " + ds.Tables[1].Rows[0]["MonthYear"] + " !!');", true);
-       //     return;
-       // }
-
-        if (ddLeavePeriod.SelectedValue == "(Full-Day)" && ddShiftType.SelectedValue != "0".ToString()) //ashu on 19/09/2017
+        if (ddLeavePeriod.SelectedValue == "(Full-Day)" &&
+            ddShiftType.SelectedValue != "0".ToString())
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('In Case of Full-Day, Day Mode should not be 1st Half/2nd Half !!');", true);
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "Key",
+                "alert('In Case of Full-Day, Day Mode should not be 1st Half/2nd Half !!');",
+                true
+            );
+
             return;
         }
-        //ashu on 19/09/2017--END
 
-        txtReason.Text = txtReason.Text.Replace("'", "").ToString().Trim();
+        // ashu on 19/09/2017--END
+
+
+        txtReason.Text = txtReason.Text
+            .Replace("'", "")
+            .ToString()
+            .Trim();
+
+
         string confirmValue = Request.Form["confirm_value"];
+
+
         if (confirmValue == "Yes")
         {
-            if (Session["HODLoginPage"].ToString() == "" || Session["HODLoginPage"].ToString() == null)
+            if (Session["HODLoginPage"] == null ||
+                Session["HODLoginPage"].ToString() == "")
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Hod not Tagged , Contact System Admin !');", true);
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    this.GetType(),
+                    "Key",
+                    "alert('Hod not Tagged , Contact System Admin !');",
+                    true
+                );
             }
-
             else
             {
+                // ============================
+                // CL LEAVE
+                // ============================
+
                 if (ddLeaveTypen.SelectedItem.Text.Trim() == "CL")
                 {
-                    decimal txtNoOfLeavePriodCL = Convert.ToDecimal(txtNoOfLeavePriod.Text.Trim());
-                    decimal lblNonof_Cl_leaveCL = Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
+                    decimal txtNoOfLeavePriodCL =
+                        Convert.ToDecimal(txtNoOfLeavePriod.Text.Trim());
+
+                    decimal lblNonof_Cl_leaveCL =
+                        Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
+
 
                     if (txtNoOfLeavePriodCL <= lblNonof_Cl_leaveCL)
                     {
                         LeaveApplicationDetails();
+
                         showLeaveBlanceOption();
                     }
                     else
                     {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Can not applied more than CL leave ');", true);
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "Key",
+                            "alert('Can not applied more than CL leave ');",
+                            true
+                        );
                     }
-
                 }
+
+                // ============================
+                // OTHER LEAVE TYPES
+                // ============================
                 else
                 {
+                    // AL document validation
+                    if (!ValidateALDocuments())
+                    {
+                        return;
+                    }
 
 
                     LeaveApplicationDetails();
+
                     showLeaveBlanceOption();
                 }
-
             }
+        }
+    }
+    private bool ValidateALDocuments()
+    {
+        // ============================================
+        // Sirf AL Leave ke liye documents mandatory
+        // ============================================
+
+        if (ddLeaveTypen.SelectedItem.Text.Trim() != "AL")
+        {
+            return true;
         }
 
 
-    }
+        // ============================================
+        // 1. In-Principle Approved Document
+        // ============================================
 
+        if (!fuInPrinciple.HasFile)
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "ALDocument",
+                "alert('Please upload In-Principle Approved Document.');",
+                true
+            );
+
+            return false;
+        }
+
+
+        // ============================================
+        // 2. Event Brochure
+        // ============================================
+
+        if (!fuEventBrochure.HasFile)
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "ALDocument",
+                "alert('Please upload Event Brochure.');",
+                true
+            );
+
+            return false;
+        }
+
+
+        // ============================================
+        // 3. Certificate
+        // ============================================
+
+        if (!fuCertificate.HasFile)
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "ALDocument",
+                "alert('Please upload Certificate.');",
+                true
+            );
+
+            return false;
+        }
+
+
+        // ============================================
+        // 4. Event Report / Summary
+        // ============================================
+
+        if (!fuEventReport.HasFile)
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "ALDocument",
+                "alert('Please upload Event Report / Summary.');",
+                true
+            );
+
+            return false;
+        }
+
+
+        // ============================================
+        // 5. Geotagged Photographs
+        // ============================================
+
+        if (!fuGeotaggedPhotos.HasFiles)
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "ALDocument",
+                "alert('Please upload Geotagged Photographs.');",
+                true
+            );
+
+            return false;
+        }
+
+
+        // ============================================
+        // All documents uploaded
+        // ============================================
+
+        return true;
+    }
 
     public void Valadation_CL()
     {
@@ -1540,6 +1681,45 @@ public partial class LeaveApproval : System.Web.UI.Page
 
     }
 
+    protected void ValidateALDocument(
+        object source,
+        ServerValidateEventArgs args)
+    {
+        if (ddLeaveTypen.SelectedItem.Text.Trim() != "AL")
+        {
+            args.IsValid = true;
+            return;
+        }
+
+        CustomValidator validator = source as CustomValidator;
+
+        if (validator == null)
+        {
+            args.IsValid = true;
+            return;
+        }
+
+        if (validator.ID == "cvInPrinciple")
+        {
+            args.IsValid = fuInPrinciple.HasFile;
+        }
+        else if (validator.ID == "cvEventBrochure")
+        {
+            args.IsValid = fuEventBrochure.HasFile;
+        }
+        else if (validator.ID == "cvCertificate")
+        {
+            args.IsValid = fuCertificate.HasFile;
+        }
+        else if (validator.ID == "cvEventReport")
+        {
+            args.IsValid = fuEventReport.HasFile;
+        }
+        else if (validator.ID == "cvGeotaggedPhotos")
+        {
+            args.IsValid = fuGeotaggedPhotos.HasFiles;
+        }
+    }
 
     public void LeaveApplicationDetails()
     {
@@ -1862,18 +2042,17 @@ public partial class LeaveApproval : System.Web.UI.Page
             ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You can not apply ML less than 2 days.');", true);
             return;
         }
-        if (Session["hr_email2"] == null) { Session["hr_email2"] = "ashutosh.kumar@corporateserve.comj"; return; }
-        if (Session["hod_email2"] == null) { Session["hod_email2"] = "ashutosh.kumar@corporateserve.comj"; return; }
+        if (Session["hr_email2"] == null) { Session["hr_email2"] = "bhupendras.erp@tmu.ac.in"; return; }
+        if (Session["hod_email2"] == null) { Session["hod_email2"] = "bhupendras.erp@tmu.ac.in"; return; }
         if (Session["hod_Name2"] == null) { ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('You can't apply the Leave because Hod is not Tagged , Contact System Admin !');", true); return; }
 
-        // if (!string.IsNullOrEmpty(Session["HRName"] as string))
-        //if (Session["HRName"].ToString() == null)
+
         if (Session["HRID_leave"].ToString() == null)
         {
             lblHRAuthority.Visible = true;
-            // ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('You can't apply the Leave because HR is not Tagged , Contact System Admin !');", true);
+
             return;
-        }   //comment by ashu on 29-07-2016
+        }
 
 
 
@@ -1886,95 +2065,32 @@ public partial class LeaveApproval : System.Web.UI.Page
         {
             Arrangement = "NO";
         }
-        //if (Blankapr == "1")
-        //{
 
-        //    if (lblerrorMessage.Text != "")
-        //    {
-        //        //ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Your selected leave type balance is low so you can apply another leave on same time');", true);
-
-        //        ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Insufficient leave balance');", true);
-        //    }
-        //    else
-        //    {
-
-        //        string hodaprid = ""; string hruid = "";
-        //        //-------------------------------------------Upload Attachment-----Ashutosh----16-05-2016---START---
-        //        byte[] LeaveAttachment = null;
-        //        if (flUpload.HasFile && flUpload.PostedFile != null)
-        //        {
-        //            System.IO.Stream fs = flUpload.PostedFile.InputStream;
-        //            System.IO.BinaryReader br = new System.IO.BinaryReader(fs);
-        //            LeaveAttachment = br.ReadBytes((Int32)fs.Length); //svae 
-        //            string filename = Path.GetFileName(flUpload.PostedFile.FileName);
-        //            string extension = Path.GetExtension(filename);
-        //            con.Insert_tble_Leave_Approval(txtfromDate.Text, txtTodate.Text, leavetypedrop, txtReason.Text, txtPhoneNo.Text, txtNoOfLeavePriod.Text, lblTotalBalance.Text, hodaprid, Session["Company"].ToString(), slno, System.DateTime.Now.ToString("dd/MM/yyyy"), hruid, Status, Session["Fulname"].ToString(), Session["uid"].ToString(), ddLeaveTypen.Text, Session["CompanyEmail"].ToString(), Session["hr_email2"].ToString(), Session["hod_email2"].ToString(), Session["HRName"].ToString(), Session["hod_Name2"].ToString(), LeaveAttachment, filename, extension, Arrangement, ddShiftType.SelectedValue.Trim(), ddShiftType.SelectedItem.Text.Trim());
-        //        }
-        //        //-------------------------------------------Upload Attachment-----Ashutosh----16-05-2016----END
-        //        else
-        //        {
-
-        //            con.Insert_tble_Leave_Approval(txtfromDate.Text, txtTodate.Text, leavetypedrop, txtReason.Text, txtPhoneNo.Text, txtNoOfLeavePriod.Text, lblTotalBalance.Text, hodaprid, Session["Company"].ToString(), slno, System.DateTime.Now.ToString("dd/MM/yyyy"), hruid, Status, Session["Fulname"].ToString(), Session["uid"].ToString(), ddLeaveTypen.Text, Session["CompanyEmail"].ToString(), Session["hr_email2"].ToString(), Session["hod_email2"].ToString(), Session["HRName"].ToString(), Session["hod_Name2"].ToString(), Arrangement,ddShiftType.SelectedValue.Trim(),ddShiftType.SelectedItem.Text.Trim());
-        //        }
-        //        con.DisConnect();
-        //        leaveblance();
-
-        //        Portalcon.Update_Pay_Employee_Leave_EntitledLeave_BalanceApply(Convert.ToDouble(UnaprovedLeave), EmployeLeaveEntitled, Session["uid"].ToString(), ddLeaveTypen.Text);
-        //        Portalcon.DisConnect();
-
-        //        //if (EmailHR == "True")
-        //        //{
-
-        //        //    subject1 = "Application For Leave";
-
-        //        //    Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}{23}{24}", Environment.NewLine, "HR Manager", Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "This is to request you to kindly grant me a " + ddLeaveTypen.Text + " , " + ddLeavePeriod.Text + "  for " + txtNoOfLeavePriod.Text + " day/s i.e. " + txtfromDate.Text + " to " + txtTodate.Text + " . I need this leave for an urgent work which is unavailable, I will join my duties after leave.", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
-
-        //        //    ShowMailData(Session["hr_email2"].ToString());
-        //        //}
-        //        //if (EmailHOD == "True")
-        //        //{
-        //        //    subject1 = "Application For Leave";
-
-        //        //    Body1 = string.Format("To{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}{15}{16}{17}{18}{19}{20}{21}{22}{23}{24}", Environment.NewLine, "" + Session["hod_Name2"].ToString() + "", Environment.NewLine, Environment.NewLine, Environment.NewLine, "Dear Sir/Madam,", Environment.NewLine, Environment.NewLine, "This is to request you to kindly grant me a " + ddLeaveTypen.Text + " , " + ddLeavePeriod.Text + "  for " + txtNoOfLeavePriod.Text + " day/s i.e. " + txtfromDate.Text + " to " + txtTodate.Text + " . I need this leave for an urgent work which is unavailable, I will join my duties after leave.", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, "Thanking you,", Environment.NewLine, Environment.NewLine, "Your's truly", Environment.NewLine, "" + Session["Fulname"].ToString() + "" + "(" + Session["uid"].ToString() + ")", Environment.NewLine, "Designation : " + Session["DesignationCode"].ToString() + "", Environment.NewLine, "Department :  " + Session["Departmentcode"].ToString() + "", Environment.NewLine, "Date : " + System.DateTime.Now.ToString());
-
-        //        //    ShowMailData(Session["hod_email2"].ToString());
-        //        //}
-        //    }
-        //}
-
-
-        //if (PriorityHODapr == "1")
-        //{
         if (lblerrorMessage.Text != "")
         {
-            //ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Your selected leave type balance is low so you can apply another leave on same time');", true);
+
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Insufficient leave balance');", true);
         }
         else
         {
             string hruid = "";
-            //if (Session["HRName"].ToString() == null || Session["hod_Name2"].ToString() == null)
-            //{
-            //    ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Contact Admin To Map HOD/HR !');", true);
-            //    return;
-            //}
-            //-------------------------------------------Upload Attachment-----Ashutosh----16-05-2016---START---
-            // byte[] LeaveAttachment = null;
-            // Session["HRName"] = "";//ashu comment it
-            if (flUpload.HasFile)
+
+            if (flUpload.HasFile || ddLeaveTypen.Text == "AL")
             {
-
-                decimal size = Math.Round(((decimal)flUpload.PostedFile.ContentLength / (decimal)1024), 2);
-
-                int fs = 0;
-                fs = Convert.ToInt32(size);
-                if (fs > 700)
+                if (flUpload.HasFile)
                 {
-                    ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'File Size Could Not be Greater than 700 KB !');", true);
+                    decimal size = Math.Round(((decimal)flUpload.PostedFile.ContentLength / (decimal)1024), 2);
 
-                    return;
+
+                    int fs = 0;
+                    fs = Convert.ToInt32(size);
+                    if (fs > 700)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', 'File Size Could Not be Greater than 700 KB !');", true);
+
+                        return;
+                    }
                 }
-
 
                 DataTable dt = new DataTable();
                 SqlCommand sqlCmd = new SqlCommand("select [Sanctioning Incharge],HOD from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where  No_='" + Session["uid"].ToString() + "'", con.Con);
@@ -2015,7 +2131,14 @@ public partial class LeaveApproval : System.Web.UI.Page
                     con.Insert_tble_Leave_Approval(fDate, tDate, leavetypedrop, txtReason.Text, txtPhoneNo.Text, txtNoOfLeavePriod.Text, lblTotalBalance.Text, Session["HODLoginPage"].ToString(), Session["HODLoginPage1"].ToString(), Session["Company"].ToString(), slno, System.DateTime.Now.ToString("dd/MM/yyyy"), hruid, Status, Session["Fulname"].ToString(), Session["uid"].ToString(), ddLeaveTypen.Text, Session["CompanyEmail"].ToString(), Session["hr_email2"].ToString(), Session["hod_email2"].ToString(), Session["HRName"].ToString(), Session["hod_Name2"].ToString(), bytesblank, filenameblank, contentTypeblank, Arrangement, ddShiftType.SelectedValue.Trim(), ddShiftType.SelectedItem.Text.Trim(), prelunchdata, postlunchdata);
 
                 }
-                UploadFileAttachmentss();
+                if (ddLeaveTypen.Text == "AL")
+                {
+                    UploadFileAttachmentAL();
+                }
+                else
+                {
+                    UploadFileAttachmentss();
+                }
             }
             //-------------------------------------------Upload Attachment-----Ashutosh----16-05-2016----END
             else
@@ -2692,7 +2815,7 @@ public partial class LeaveApproval : System.Web.UI.Page
         }
 
         // if (Convert.ToDecimal(txtNoOfLeavePriod.Text) >= 3 && ((ddLeaveTypen.Text == "ML")|| (ddLeaveTypen.Text == "AL")) )
-        if (((Convert.ToDecimal(txtNoOfLeavePriod.Text) > 4 && (ddLeaveTypen.Text == "ML")) || (Convert.ToDecimal(txtNoOfLeavePriod.Text) >= 1 && (ddLeaveTypen.Text == "AL"))))
+        if (Convert.ToDecimal(txtNoOfLeavePriod.Text) > 4 && (ddLeaveTypen.Text == "ML"))
         {
             flUpload.Visible = true;
             rfvflUpload.Enabled = true;
@@ -3275,14 +3398,64 @@ public partial class LeaveApproval : System.Web.UI.Page
     }
     protected void ddLeaveTypen_SelectedIndexChanged(object sender, EventArgs e)
     {
+        txtfromDate.Text = ""; txtTodate.Text = "";
         if (ddLeaveTypen.SelectedValue.Trim() == "CO")
         {
             grdCOLeave.Visible = true;
             ShowCoDetails();
         }
+
         else
         {
             grdCOLeave.Visible = false;
+        }
+
+        if (ddLeaveTypen.SelectedValue.Trim() == "AL")
+        {
+            flUpload.Visible = false;
+            rfvflUpload.Enabled = false;
+
+            // AL uploader show
+            pnlALDocuments.Visible = true;
+            CalendarExtender1.StartDate = DateTime.Today.AddDays(1);
+            CalendarExtender2.StartDate = DateTime.Today.AddDays(1);
+        }
+        else
+        {
+            flUpload.Visible = true;
+            rfvflUpload.Enabled = true;
+
+            // AL uploader hide
+            pnlALDocuments.Visible = false;
+            String sDate = DateTime.Now.ToString();
+            DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
+
+            int day = datevalue.Day;
+            int mn = datevalue.Month;
+            int yy = datevalue.Year;
+            if (day > 3)
+            {
+                CalendarExtender1.StartDate = new DateTime(yy, mn, 1);
+                CalendarExtender2.StartDate = new DateTime(yy, mn, 1);
+
+            }
+            else
+            {
+                if (mn == 1)
+                {
+                    CalendarExtender1.StartDate = new DateTime(2025, 12, 1);
+                    CalendarExtender1.EndDate = new DateTime(2026, mn, 31);
+                    CalendarExtender2.StartDate = new DateTime(2025, 12, 1);
+                    CalendarExtender2.EndDate = new DateTime(2026, mn, 31);
+                }
+                else
+                {
+                    CalendarExtender1.StartDate = new DateTime(yy, mn - 1, 1);
+                    CalendarExtender1.EndDate = new DateTime(yy, mn, 3);
+                    CalendarExtender2.StartDate = new DateTime(yy, mn - 1, 1);
+                    CalendarExtender2.EndDate = new DateTime(yy, mn, 3);
+                }
+            }
         }
         txtNoOfLeavePriod.Text = "0";
         lblerror.Text = "";
@@ -3409,7 +3582,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                 lnkDownloadgrid.Visible = false;
             }
 
-            if (lblleaveAttachmentFilename.Text.Trim() != "")
+            if (lblleaveAttachmentFilename.Text.Trim() != "" )
             {
                 lnkDownloadgrid.Visible = true;
             }
@@ -3744,7 +3917,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                 lnkDownloadgrid.Visible = false;
             }
 
-            if (lblleaveAttachmentFilename.Text.Trim() != "")
+            if (lblleaveAttachmentFilename.Text.Trim() != "" || lblLeavetypeApplied.Text == "AL")
             {
                 lnkDownloadgrid.Visible = true;
             }
@@ -3989,12 +4162,175 @@ public partial class LeaveApproval : System.Web.UI.Page
     {
 
     }
+    public void UploadFileAttachmentAL()
+    {
+        string AutoNo = "";
+        string UserID = Session["uid"].ToString();
+
+        SqlDataReader dr = con.Show_MAlLeaveMaxid(UserID);
+
+        if (dr.Read())
+        {
+            AutoNo = dr["AutoNo"].ToString();
+        }
+        else
+        {
+            AutoNo = "0";
+        }
+
+        dr.Close();
 
 
+        if (AutoNo == "0")
+        {
+            return;
+        }
+
+
+        using (SqlConnection Conn = new SqlConnection(
+            ConfigurationManager.AppSettings["strPortal"]))
+        {
+            Conn.Open();
+
+
+            // In-Principle
+            if (fuInPrinciple.HasFile)
+            {
+                SaveALDocument(
+                    Conn,
+                    AutoNo,
+                    UserID,
+                    "In-Principle Approved Document",
+                    fuInPrinciple.PostedFile
+                );
+            }
+
+
+            // Event Brochure
+            if (fuEventBrochure.HasFile)
+            {
+                SaveALDocument(
+                    Conn,
+                    AutoNo,
+                    UserID,
+                    "Event Brochure",
+                    fuEventBrochure.PostedFile
+                );
+            }
+
+
+            // Certificate
+            if (fuCertificate.HasFile)
+            {
+                SaveALDocument(
+                    Conn,
+                    AutoNo,
+                    UserID,
+                    "Certificate",
+                    fuCertificate.PostedFile
+                );
+            }
+
+
+            // Event Report
+            if (fuEventReport.HasFile)
+            {
+                SaveALDocument(
+                    Conn,
+                    AutoNo,
+                    UserID,
+                    "Event Report / Summary",
+                    fuEventReport.PostedFile
+                );
+            }
+
+
+            // Geotagged Photographs
+            if (fuGeotaggedPhotos.HasFiles)
+            {
+                foreach (HttpPostedFile file in fuGeotaggedPhotos.PostedFiles)
+                {
+                    SaveALDocument(
+                        Conn,
+                        AutoNo,
+                        UserID,
+                        "Geotagged Photograph",
+                        file
+                    );
+                }
+            }
+        }
+
+    }
+    private void SaveALDocument(
+    SqlConnection Conn,
+    string AutoNo,
+    string UserID,
+    string DocumentType,
+    HttpPostedFile file)
+    {
+        if (file == null || file.ContentLength == 0)
+            return;
+
+
+        string FileName = Path.GetFileName(file.FileName);
+        string FileType = file.ContentType;
+
+        byte[] FileData;
+
+        using (Stream fs = file.InputStream)
+        {
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                FileData = br.ReadBytes(file.ContentLength);
+            }
+        }
+
+
+        string query = @"
+        INSERT INTO tbl_Leave_AL_Documents
+        (
+            AutoNo,
+            UserID,
+            DocumentType,
+            FileName,
+            FileType,
+            FileData,
+            CreatedDate
+        )
+        VALUES
+        (
+            @AutoNo,
+            @UserID,
+            @DocumentType,
+            @FileName,
+            @FileType,
+            @FileData,
+            GETDATE()
+        )";
+
+
+        using (SqlCommand cmd = new SqlCommand(query, Conn))
+        {
+            cmd.Parameters.AddWithValue("@AutoNo", AutoNo);
+            cmd.Parameters.AddWithValue("@UserID", UserID);
+            cmd.Parameters.AddWithValue("@DocumentType", DocumentType);
+            cmd.Parameters.AddWithValue("@FileName", FileName);
+            cmd.Parameters.AddWithValue("@FileType", FileType);
+
+            cmd.Parameters.Add(
+                "@FileData",
+                SqlDbType.VarBinary,
+                -1
+            ).Value = FileData;
+
+            cmd.ExecuteNonQuery();
+        }
+    }
     public void UploadFileAttachmentss()
     {
         string AutoNo = "";
-        SqlDataReader dr = con.Show_MAlLeaveMaxid();
+        SqlDataReader dr = con.Show_MAlLeaveMaxid(Session["uid"].ToString());
         dr.Read();
         if (dr.HasRows)
         {
@@ -4016,7 +4352,7 @@ public partial class LeaveApproval : System.Web.UI.Page
 
                 SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
                 Conn.Open();
-                //  string constr = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+                //  string strPortal = ConfigurationManager.ConnectionStrings["strPortal"].ConnectionString;
                 string query = "update tble_Leave_Approval set AttachmentFilename=@AttachmentFilename ,AttachmentFileType=@AttachmentFileType,Attachmentdata=@Attachmentdata where AutoNo='" + AutoNo + "'";
                 using (SqlCommand cmd = new SqlCommand(query))
                 {
@@ -4033,11 +4369,15 @@ public partial class LeaveApproval : System.Web.UI.Page
 
     }
 
-    protected void Button2_Click(object sender, EventArgs e)
-    {
-        UploadFileAttachmentss();
-    }
     protected void DownloadFile(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+
+        string AttachmentID = btn.CommandArgument;
+
+        // Database se file nikalkar download karni hai
+    }
+    protected void lnkDownload_Click(object sender, EventArgs e)
     {
         try
         {
@@ -4048,15 +4388,15 @@ public partial class LeaveApproval : System.Web.UI.Page
             Conn.Open();
             using (SqlCommand cmd = new SqlCommand())
             {
-                cmd.CommandText = "select AttachmentFilename, Attachmentdata, AttachmentFileType from tble_Leave_Approval where AutoNo=@AutoNo";
+                cmd.CommandText = "IF EXISTS(   SELECT 1    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '')BEGIN    SELECT       FileName,        FileData,        FileType    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '';END ELSE BEGIN    SELECT        AttachmentFilename AS FileName,        Attachmentdata AS FileData,        AttachmentFileType AS FileType    FROM tble_Leave_Approval    WHERE AutoNo = @AutoNo      AND ISNULL(AttachmentFilename, '') <> '';END";
                 cmd.Parameters.AddWithValue("@AutoNo", id);
                 cmd.Connection = Conn;
                 using (SqlDataReader sdr = cmd.ExecuteReader())
                 {
                     sdr.Read();
-                    bytes = (byte[])sdr["Attachmentdata"];
-                    contentType = sdr["AttachmentFileType"].ToString();
-                    fileName = sdr["AttachmentFilename"].ToString();
+                    bytes = (byte[])sdr["FileData"];
+                    contentType = sdr["FileType"].ToString();
+                    fileName = sdr["FileName"].ToString();
                 }
                 con.DisConnect();
 
@@ -4077,7 +4417,58 @@ public partial class LeaveApproval : System.Web.UI.Page
 
         }
     }
+    protected void lnkAttachment_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
 
+        string autoNo = btn.CommandArgument;
+
+        DataTable dt = new DataTable();
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            string query = @"
+            Select * from (
+
+SELECT 
+                ID,
+                DocumentType AttachmentFilename
+            FROM tbl_Leave_AL_Documents
+            WHERE AutoNo = @AutoNo
+          
+		  union
+		  SELECT 
+               AutoNo ID,
+                AttachmentFilename AttachmentFilename
+          FROM tble_Leave_Approval
+            WHERE AutoNo = @AutoNo) T where isnull(T.AttachmentFilename,'')!=''
+		  
+		  
+		  ORDER BY ID DESC";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+
+        gvAttachments.DataSource = dt;
+        gvAttachments.DataBind();
+
+        ScriptManager.RegisterStartupScript(
+            this,
+            this.GetType(),
+            "OpenAttachmentModal",
+            "$('#attachmentModal').modal('show');",
+            true
+        );
+    }
     protected void chkPostlunch_CheckedChanged(object sender, EventArgs e)
     {
         txtNoOfLeavePriod.Text = "0";

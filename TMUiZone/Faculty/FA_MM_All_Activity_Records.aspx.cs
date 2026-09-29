@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.Script.Services;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
-public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
+
+public partial class FA_MM_All_Activity_Records : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -22,8 +27,8 @@ public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
             SP_FA_MM_Get_Semester();
             //SP_GetAllData_CurricularActivities();
         }
-    }
 
+    }
     public void SP_FA_MM_Get_Semester()
     {
         pms_connection con = new pms_connection();
@@ -64,7 +69,7 @@ public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
 
         if (dr.HasRows)
         {
-            lb_Student_list.Items.Clear(); // Clear any existing items
+            lb_Student_list.Items.Clear(); 
 
             while (dr.Read())
             {
@@ -74,7 +79,6 @@ public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
                     Value = dr["No"].ToString()
                 };
 
-                // Add AutoNo as an attribute
                 item.Attributes["AutoNo"] = dr["AutoNo"].ToString();
 
                 lb_Student_list.Items.Add(item);
@@ -224,6 +228,14 @@ public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
 
         // SP_GetAllData_CurricularActivities();
         SP_GetData_MenterFor_Mentee();
+
+       //ScriptManager.RegisterStartupScript(
+       //this,
+       //this.GetType(),
+       //"InitializeStudentMultiselect",
+       //"InitializeStudentMultiselect();",
+       //true
+       //);
     }
 
     protected void ddl_mentorFormentee_academicYear_SelectedIndexChanged(object sender, EventArgs e)
@@ -260,3 +272,5 @@ public partial class Faculty_FA_MM_All_Activity_Records : System.Web.UI.Page
     }
 
 }
+
+

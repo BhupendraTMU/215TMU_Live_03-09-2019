@@ -44,56 +44,68 @@ public partial class ExaminationForm : System.Web.UI.Page
                         }
 
 
-
-
-
-
-
-                        DataTable dt = new DataTable();
-                        dt = CheckFormOpenClose();
-                        if (dt.Rows.Count > 0)
+                        SqlDataAdapter da2 = new SqlDataAdapter("SELECT [ID],[EnrollmentNo],[Student Name],[Program Code],trim([Semester]) 'Semester' FROM [dbo].[tbl_Specialexamallow] where EnrollmentNo='" + Session["enroll"].ToString() + "'", con);
+                        DataTable dt2 = new DataTable();
+                        da2.Fill(dt2);
+                        if (dt2.Rows.Count > 0)
                         {
-                            if (dt.Rows[0]["OpenClose"].ToString() == "OPEN")
-                            {
-                                divSem.Visible = false;
-                                SemesterDropdown();
-
-                                //EnrollmentNo = Session["enroll"].ToString();
-                                //StudentNo = Session["uid"].ToString();
-                                //getExaminationDetail();
-                                //getStudentInformation();
-
-                                // getPreviousExaminationDetails();
-                                //getExaminationFeeDetails();
-                                //getStudentImage();
-                                // getDeclaration();
-                                //SubmitCheck();
-                            }
-
-                            else
-                            {
-                                if (dt.Rows[0]["OpenClose"].ToString() == "Not Approved")
-                                {
-                                    PnlMain.Visible = false;
-                                    Panel1.Visible = true;
-                                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Your Document not Verified, Please Contact to Admission Cell.')", true);
-                                    btnSubmit.Visible = false;
-                                }
-                                else
-                                {
-                                    PnlMain.Visible = false;
-                                    PnlMsg.Visible = true;
-                                    ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Examination Form is yet to be Open')", true);
-                                    btnSubmit.Visible = false;
-                                }
-                            }
+                            divSem.Visible = true;
+                            drpSemester.DataSource = dt2;
+                            drpSemester.DataTextField = "Semester";
+                            drpSemester.DataValueField = "Semester";
+                            drpSemester.DataBind();
+                            drpSemester.Items.Insert(0, new ListItem("-- Select --", "0"));
+                            drpSemester.SelectedIndex = 0;
                         }
+
                         else
                         {
-                            ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Examination Form is yet to be Open')", true);
-                            btnSubmit.Visible = false;
-                            PnlMain.Visible = false;
-                            PnlMsg.Visible = true;
+                            DataTable dt = new DataTable();
+                            dt = CheckFormOpenClose();
+                            if (dt.Rows.Count > 0)
+                            {
+                                if (dt.Rows[0]["OpenClose"].ToString() == "OPEN")
+                                {
+                                    divSem.Visible = false;
+                                    SemesterDropdown();
+
+                                    //EnrollmentNo = Session["enroll"].ToString();
+                                    //StudentNo = Session["uid"].ToString();
+                                    //getExaminationDetail();
+                                    //getStudentInformation();
+
+                                    // getPreviousExaminationDetails();
+                                    //getExaminationFeeDetails();
+                                    //getStudentImage();
+                                    // getDeclaration();
+                                    //SubmitCheck();
+                                }
+
+                                else
+                                {
+                                    if (dt.Rows[0]["OpenClose"].ToString() == "Not Approved")
+                                    {
+                                        PnlMain.Visible = false;
+                                        Panel1.Visible = true;
+                                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Your Document not Verified, Please Contact to Admission Cell.')", true);
+                                        btnSubmit.Visible = false;
+                                    }
+                                    else
+                                    {
+                                        PnlMain.Visible = false;
+                                        PnlMsg.Visible = true;
+                                        ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Examination Form is yet to be Open')", true);
+                                        btnSubmit.Visible = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('The Examination Form is yet to be Open')", true);
+                                btnSubmit.Visible = false;
+                                PnlMain.Visible = false;
+                                PnlMsg.Visible = true;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -294,7 +306,7 @@ public partial class ExaminationForm : System.Web.UI.Page
             }
             else
             {
-                if(Session["College"].ToString()=="TPHD")
+                if (Session["College"].ToString() == "TPHD")
                 {
                     btnSubmit.Visible = true;
                 }
@@ -302,7 +314,7 @@ public partial class ExaminationForm : System.Web.UI.Page
                 {
                     btnSubmit.Visible = false;
                 }
-                
+
             }
         }
         catch (Exception ex) { }

@@ -25,6 +25,9 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
+                CheckScannerAccess();
+
+
                 BindDate(Session["uid"].ToString());
 
                 bindDesignation();
@@ -54,7 +57,40 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
         }
     }
     //sandeep
+    private void CheckScannerAccess()
+    {
+        lnkScanner.Visible = false;
 
+        string empCode = Session["uid"] != null
+            ? Session["uid"].ToString().Trim()
+            : "";
+
+        if (string.IsNullOrEmpty(empCode))
+            return;
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        {
+            string query = @"
+            SELECT COUNT(1)
+            FROM dbo.tbl_Student_Scan_Employee
+            WHERE Emp_Code = @Emp_Code";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@Emp_Code", empCode);
+
+                con.Open();
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (count > 0)
+                {
+                    lnkScanner.Visible = true;
+                }
+            }
+        }
+    }
     public void Leave_Pending_ApprovalHOD_Count()
     {
         using (SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]))

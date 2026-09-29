@@ -691,7 +691,7 @@ public partial class StudentNoDuesPHD : System.Web.UI.Page
         try
         {
             var fromEmail = "naverp@tmu.ac.in";
-            var fromPassword = "nwar yzam bcez rqop";
+            var fromPassword = "ghkl eukc gadv filn";
 
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {

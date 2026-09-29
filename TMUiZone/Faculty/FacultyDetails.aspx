@@ -4,6 +4,51 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 
     <style type="text/css">
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .profile-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            flex-wrap: nowrap;
+        }
+
+        .profile-btn {
+            color: white !important;
+            min-height: 45px;
+            padding: 10px 22px;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+
+        /* Mobile */
+        @media (max-width: 767px) {
+
+            .profile-header {
+                display: block;
+            }
+
+            .profile-buttons {
+                margin-top: 15px;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .profile-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
         #confirmModal.modal-dialog.modalPopup {
             width: 100%;
         }
@@ -147,62 +192,54 @@
             var txtName11 = document.getElementById('ContentPlaceHolder1_txtName11').value;
             var ddlGender11 = document.getElementById('ContentPlaceHolder1_ddlGender11').value;
             var txtBirthName11 = document.getElementById('ContentPlaceHolder1_txtBirthName11').value;
-          
+
             var ddlDesignationName11 = document.getElementById('ContentPlaceHolder1_ddlDesignationName11').value;
             var txtFatherName11 = document.getElementById('ContentPlaceHolder1_txtFatherName11').value;
             var txtAdharCard11 = document.getElementById('ContentPlaceHolder1_txtAdharCard11').value;
             var txtPANCardNo11 = document.getElementById('ContentPlaceHolder1_txtPANCardNo11').value;
             var txtMobileNo11 = document.getElementById('ContentPlaceHolder1_txtMobileNo11').value;
             var txtEmail11 = document.getElementById('ContentPlaceHolder1_txtEmail11').value;
-          
 
-           
-            if (txtName11 == "")
-            {
+
+
+            if (txtName11 == "") {
                 alert("Please FillName !");
                 return false;
             }
-            if (ddlGender11 == "")
-           {
-                
-                    alert("Please Fill Name !");
-                    return false;
-               
+            if (ddlGender11 == "") {
+
+                alert("Please Fill Name !");
+                return false;
+
             }
-       
-        
-            if (txtBirthName11 == "")
-            {
+
+
+            if (txtBirthName11 == "") {
                 alert("Please Fill Bate of Birth !");
                 return false;
             }
-          
-            if (txtFatherName11 == "")
-            {
+
+            if (txtFatherName11 == "") {
                 alert("Please Fill Father Name !");
                 return false;
             }
-            if (txtAdharCard11=="")
-            {
+            if (txtAdharCard11 == "") {
                 alert("Please Fill Adhar Card Number !");
                 return false;
             }
-            if (txtPANCardNo11=="")
-            {
+            if (txtPANCardNo11 == "") {
                 alert("Please Fill Pan Card Number !");
                 return false;
             }
-            if (txtMobileNo11 == "")
-            {
+            if (txtMobileNo11 == "") {
                 alert("Please Fill Mobile Number !");
                 return false;
             }
-            if (txtEmail11 == "")
-            {
+            if (txtEmail11 == "") {
                 alert("Please Fill E-Mail !");
                 return false;
             }
-           
+
 
             var date1 = new Date(firstDOB);
             var date2 = new Date(secondDOB);
@@ -592,7 +629,7 @@
 
         <div class="body">
             <div class="section">
-                
+
                 <div class="field">
                     <label>Name</label>
                     <asp:TextBox ID="txtName11" runat="server"></asp:TextBox>
@@ -606,7 +643,7 @@
                         <asp:ListItem Value="3" Text="Other" />
                     </asp:DropDownList>
                 </div>
-               
+
             </div>
 
             <div class="section">
@@ -615,7 +652,7 @@
                     <asp:TextBox ID="txtBirthName11" runat="server" type="date"></asp:TextBox>
                 </div>
 
-               
+
                 <div class="field">
                     <label>Designation Name</label>
                     <asp:DropDownList ID="ddlDesignationName11" runat="server" Width="120px" />
@@ -634,8 +671,8 @@
                     <label>PAN Card No</label>
                     <asp:TextBox ID="txtPANCardNo11" runat="server"></asp:TextBox>
                 </div>
-               
-             
+
+
             </div>
 
             <div class="section">
@@ -650,7 +687,7 @@
             </div>
 
             <div class="section">
-               
+
                 <div class="field">
                     <label>File Upload</label>
                     <asp:FileUpload ID="FileUpload1" runat="server" Width="220px" accept=".pdf" />
@@ -664,13 +701,46 @@
     <asp:ScriptManager ID="ScriptManager1" runat="server">
     </asp:ScriptManager>
     <fieldset class="boxBody">
-        <div class="col-md-6">
-            <asp:Label ID="Label1" runat="server"
-                Text="Profile" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"></asp:Label>
 
-            <button type="button" onclick="showPopup2(); return false;"  class="btn btn-info" style="float:right;margin-left:20px">Profile Change Request</button> 
-           <a href="TDSdetail.aspx" class="btn btn-info" style="float:right;color:white">TDS Change Request</a>
+        <div class="profile-header">
+
+            <asp:Label ID="Label1"
+                runat="server"
+                Text="Profile"
+                Font-Size="15pt"
+                ForeColor="#093A62"
+                Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;">
+            </asp:Label>
+
+
+            <div class="profile-buttons">
+
+                <button type="button"
+                    onclick="showPopup2(); return false;"
+                    class="btn btn-info profile-btn">
+                    Profile Change Request
+                </button>
+
+
+                <a href="TDSdetail.aspx"
+                    class="btn btn-info profile-btn">TDS Change Request
+                </a>
+
+
+                <asp:HyperLink ID="lnkScanner" Visible="false"
+                    runat="server"
+                    NavigateUrl="~/Faculty/Scanner.aspx"
+                    CssClass="btn btn-info profile-btn">
+
+                <i class="fa fa-qrcode"></i>
+                Student Scanner
+
+                </asp:HyperLink>
+
+            </div>
+
         </div>
+
     </fieldset>
 
     <fieldset class="boxBodyHeader">

@@ -52,6 +52,7 @@ public partial class Faculty_MarksLock : System.Web.UI.Page
         cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
         cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
         cmd.Parameters.Add("@Subject", ddlSubject.SelectedValue);
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
         drpSection.DataSource = dt;
@@ -891,7 +892,7 @@ public partial class Faculty_MarksLock : System.Web.UI.Page
             Session["drpSemester"] = drpSemester.SelectedValue;
             Session["UserRole"] = Session["UserRole"].ToString();
             Session["FacultyCode"] = Session["uid"].ToString();
-
+            Session["Section"] = drpSection.SelectedValue;
             DataTable dtNAV = new DataTable();
             SqlCommand cmdNAV = new SqlCommand("Proc_GetNAVCreditionalLive", con);
             cmdNAV.CommandType = CommandType.StoredProcedure;

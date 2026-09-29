@@ -8,6 +8,7 @@ using WebReference;
 using System.Net;
 using System.IO;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 public partial class Student_OnlineResultshow : System.Web.UI.Page
 {
@@ -63,7 +64,7 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
                 else
                 {
                     bindAcademic();
-                    bindReport();
+                    //bindReport();
                 }
             }
         }
@@ -111,6 +112,27 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
             ddlSem.DataTextField = "sem";
             ddlSem.DataValueField = "semcode";
             ddlSem.DataBind();
+        }
+    }
+    protected void ddlResultType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        divsem.Visible = false;
+        divYear.Visible = false;
+
+        if (ddlResultType.SelectedValue == "SEM")
+        {
+            divsem.Visible = true;
+            if (drpExam.Items.FindByValue("1") == null)
+            {
+                drpExam.Items.Add(new ListItem("Re-Appear", "1"));
+            }
+
+        }
+        else if (ddlResultType.SelectedValue == "YEAR")
+        {
+            Academic.Visible = false;
+            divYear.Visible = true;
+            drpExam.Items.Remove(drpExam.Items.FindByValue("1"));
         }
     }
     public void bindReport()
@@ -208,49 +230,123 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
                     }
                     else
                     {
-                        if (dt.Rows[0]["CPI_result"].ToString() == "0" && dt.Rows[0]["CGPA_SGPA_Result"].ToString() == "0")
+                        if (ddlResultType.SelectedValue == "YEAR")
                         {
-                            if ((dtc.Rows[0]["Admitted Year"].ToString() == "21-22" && (Session["CourseCode"].ToString() == "NUR-008" || Session["CourseCode"].ToString() == "NUR-009")))
-                            {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
-                            }
-                            else if (Session["CourseCode"].ToString() == "PT-001")
-                            {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
-                            }
-                            else if ((dtc.Rows[0]["Admitted Year"].ToString() == "22-23" || dtc.Rows[0]["Admitted Year"].ToString() == "23-24"))
-                            {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
-                            }
-                            else
-                            {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
-                            }
+                            DataTable dtNAV = new DataTable();
+                            SqlCommand cmdNAV = new SqlCommand("Proc_GetNAVCreditionalLive", con);
+                            cmdNAV.CommandType = CommandType.StoredProcedure;
 
-                            ReportDataSource datasource = new ReportDataSource("DataSet_Result", dt);
-                            ReportViewer1.LocalReport.DataSources.Clear();
-                            ReportViewer1.LocalReport.DataSources.Add(datasource);
+                            SqlDataAdapter daNAV = new SqlDataAdapter(cmdNAV);
+                            daNAV.Fill(dtNAV);
+                            VoucherPosting nvp = new VoucherPosting();
+                            nvp.UseDefaultCredentials = true;
+
+                            nvp.Url = dtNAV.Rows[0]["URL"].ToString();
+
+                            nvp.Credentials = new NetworkCredential(dtNAV.Rows[0]["UserID"].ToString(), dtNAV.Rows[0]["Password"].ToString());
+                            nvp.Timeout = 3600000;
+                            Link = nvp.RepearMasrksheetPdf(Session["enroll"].ToString(), drpAcademic.SelectedValue, "", drpYear.SelectedValue);
+                            Link = "C://tab//ReportMDSMarksheet.jpg";
+
+
+                            if (Link != "")
+                            {
+                                try
+                                {
+                                    byte[] bytes;
+                                    using (SqlConnection con2 = new SqlConnection(ConfigurationManager.AppSettings["str"]))
+                                    {
+                                        using (SqlCommand cmd2 = new SqlCommand())
+                                        {
+
+                                            cmd2.CommandText = "select [Marksheet Report Pdf] from[TMU$Re-Appear Marksheet] with(nolock) where[Enrollment No_] = '" + Session["enroll"].ToString() + "' and (Semester = '" + drpYear.SelectedValue + "' or Year = '" + drpYear.SelectedValue + "') and [Academic Year]='" + drpAcademic.SelectedValue + "'";
+
+                                            cmd2.Connection = con2;
+                                            con2.Open();
+                                            using (SqlDataReader sdr = cmd2.ExecuteReader())
+                                            {
+
+                                                sdr.Read();
+                                                bytes = (byte[])sdr["Marksheet Report Pdf"];
+
+                                            }
+                                            con.Close();
+                                        }
+                                    }
+                               
+
+                                string fileName = Session["uid"].ToString()
+                                    .Replace("/", "")
+                                    .Replace("\\", "") + ".pdf";
+
+                                string filePath = Server.MapPath("~/Student/Result/" + fileName);
+
+                                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                                {
+                                    fs.Write(bytes, 0, bytes.Length);
+                                }
+
+
+
+                                pdfViewer.Visible = true;
+                                ReportViewer1.Visible = false;
+
+                                pdfViewer.Attributes["src"] =
+                                    ResolveUrl("~/Student/Result/" + fileName);
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+
+                            }
                         }
                         else
                         {
-                            if (dt.Rows[0]["CPI_result"].ToString() == "1")
+                            if (dt.Rows[0]["CPI_result"].ToString() == "0" && dt.Rows[0]["CGPA_SGPA_Result"].ToString() == "0")
                             {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
+                                if ((dtc.Rows[0]["Admitted Year"].ToString() == "21-22" && (Session["CourseCode"].ToString() == "NUR-008" || Session["CourseCode"].ToString() == "NUR-009")))
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
+                                }
+                                else if (Session["CourseCode"].ToString() == "PT-001")
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
+                                }
+                                else if ((dtc.Rows[0]["Admitted Year"].ToString() == "22-23" || dtc.Rows[0]["Admitted Year"].ToString() == "23-24"))
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
+                                }
+                                else
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
+                                }
 
+                                ReportDataSource datasource = new ReportDataSource("DataSet_Result", dt);
+                                ReportViewer1.LocalReport.DataSources.Clear();
+                                ReportViewer1.LocalReport.DataSources.Add(datasource);
                             }
                             else
                             {
-                                lblmsg.Visible = true;
-                                ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
+                                if (dt.Rows[0]["CPI_result"].ToString() == "1")
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat1.rdlc");
+
+                                }
+                                else
+                                {
+                                    lblmsg.Visible = true;
+                                    ReportViewer1.LocalReport.ReportPath = Server.MapPath("~/Report/OnlineResultshowFormat.rdlc");
+                                }
+                                ReportDataSource datasource = new ReportDataSource("DataSet_Result", dt);
+                                ReportViewer1.LocalReport.DataSources.Clear();
+                                ReportViewer1.LocalReport.DataSources.Add(datasource);
                             }
-                            ReportDataSource datasource = new ReportDataSource("DataSet_Result", dt);
-                            ReportViewer1.LocalReport.DataSources.Clear();
-                            ReportViewer1.LocalReport.DataSources.Add(datasource);
                         }
                     }
                 }
@@ -353,12 +449,15 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
     {
         if (drpExam.SelectedValue == "0")
         {
-            drpAcademic.Visible = false;
+            Academic.Visible = false;
             lblAcademic.Visible = false;
+            
+
+
         }
         else
         {
-            drpAcademic.Visible = true;
+            Academic.Visible = true;
             lblAcademic.Visible = true;
         }
 
@@ -385,9 +484,10 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
     protected void btnView_Click(object sender, EventArgs e)
     {
         bindReport();
-        if (lblmsg.Visible != true)
-        {
-            ScriptManager.RegisterStartupScript(Page, typeof(Page), "OpenWindow", "window.open('Result.aspx', '_blank');", true);
-        }
+        //if (lblmsg.Visible != true)
+        //{
+        //    ReportViewer1.Visible = false;
+        //    ScriptManager.RegisterStartupScript(Page, typeof(Page), "OpenWindow", "window.open('Result.aspx', '_blank');", true);
+        //}
     }
 }
