@@ -3625,7 +3625,7 @@ public partial class Faculty_Leave1 : System.Web.UI.Page
     public void UploadFileAttachmentss()
     {
         string AutoNo = "";
-        SqlDataReader dr = con.Show_MAlLeaveMaxid();
+        SqlDataReader dr = con.Show_MAlLeaveMaxid(Session["uid"].ToString());
         dr.Read();
         if (dr.HasRows)
         {

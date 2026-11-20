@@ -80,13 +80,13 @@
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkODApplication" runat="server" OnClick="lnkODApplication_Click">Application</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkODApplication" runat="server" OnClick="lnkODApplication_Click" Visible="false">Application</asp:LinkButton></td>
                     </tr>
                     <tr>
                         <td style="height: 10px"></td>
                     </tr>
                     <tr>
-                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkODView" runat="server" OnClick="lnkODView_Click">Report</asp:LinkButton></td>
+                        <td class="leftmMenu">&nbsp;<asp:LinkButton ID="lnkODView" runat="server" OnClick="lnkODView_Click" Visible="false">Report</asp:LinkButton></td>
                     </tr>
 
                     <tr>
@@ -110,9 +110,9 @@
             <td style="width: 30px"></td>
             <td style="width: 1px; background-color: #f1f1f1"></td>
             <td style="width: 30px"></td>
-            <td valign="top">
+            <td valign="top" >
 
-                <table cellpadding="0px" cellspacing="0px">
+                <table cellpadding="0px" cellspacing="0px" >
                     <tr>
                         <td style="height: 10px"></td>
                     </tr>

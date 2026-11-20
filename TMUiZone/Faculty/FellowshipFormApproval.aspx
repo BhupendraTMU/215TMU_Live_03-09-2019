@@ -53,7 +53,7 @@
     <br />
 
     <asp:GridView ID="grdfellowshipdata" runat="server" DataKeyNames="Employee_Code,ApprovalStatus"  OnPageIndexChanging="grdfellowshipdata_PageIndexChanging"    PageSize="50"
-            AllowPaging="true" OnRowDataBound="grdfellowshipdata_RowDataBound" AutoGenerateColumns="false" CssClass="table table-striped table-bordered table-hover" Visible="true" >
+            AllowPaging="true"  AutoGenerateColumns="false" CssClass="table table-striped table-bordered table-hover" Visible="true" >
             <PagerSettings Mode="NumericFirstLast" />
             <PagerStyle CssClass="csspager" />
             <AlternatingRowStyle BackColor="White" ForeColor="#284775" />

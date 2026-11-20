@@ -875,6 +875,14 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
         {
             cmd1.Parameters.Add("@Section", drpSection1.SelectedValue);
         }
+        if(drpGroup1.SelectedIndex == 0)
+        {
+            cmd1.Parameters.Add("@Group", ""); 
+        }
+        else
+        {
+            cmd1.Parameters.Add("@Group", drpGroup1.SelectedValue);
+        }
         SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
         DataSet ds = new DataSet();
         da1.Fill(ds);
@@ -922,6 +930,7 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
 
                 cmd.Parameters.Add("@Remedial", remedial.Trim());
                 cmd.Parameters.Add("@Section", drpSection1.SelectedValue);
+                cmd.Parameters.Add("@Group", drpGroup1.SelectedValue);
                 cmd.CommandTimeout = 500000;
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -1574,7 +1583,7 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
 
                     if (selectedListItem != null)
                     {
-                        InsertStudentAttendanceHeaderAndLineOpen(txtNo1.Text, drpAcademic1.SelectedValue, "", "", "", "", "", drpSubject1.SelectedValue, txtSubjectType1.Text, i, txtDate1.Text, txtStaff1.Text, AttendanceType, drpUnit1.SelectedValue, txttopic1.Text, Session["GlobalDimension1Code"].ToString(), dt12);
+                        InsertStudentAttendanceHeaderAndLineOpen(txtNo1.Text, drpAcademic1.SelectedValue, "", "", drpSection1.SelectedValue, drpGroup1.SelectedValue, "", drpSubject1.SelectedValue, txtSubjectType1.Text, i, txtDate1.Text, txtStaff1.Text, AttendanceType, drpUnit1.SelectedValue, txttopic1.Text, Session["GlobalDimension1Code"].ToString(), dt12);
                     }
                     Step = "Step5";
                 }
@@ -1982,6 +1991,7 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
 
         cmd.Parameters.Add("@AcademicYear", drpAcademic1.SelectedValue);
         cmd.Parameters.Add("@SubjectCode", drpSubject1.SelectedValue);
+      
         if (drpSection1.SelectedIndex == 0)
         {
             cmd.Parameters.Add("@Section", "");
@@ -1989,6 +1999,14 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
         else
         {
             cmd.Parameters.Add("@Section", drpSection1.SelectedValue);
+        }
+        if (drpGroup1.SelectedIndex == 0)
+        {
+            cmd.Parameters.Add("@Group", "");
+        }
+        else
+        {
+            cmd.Parameters.Add("@Group", drpGroup1.SelectedValue);
         }
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
@@ -2095,11 +2113,12 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
         bindLectureOpen();
         bindUnitOpen();
         bindSectionListOpen();
+       
 
     }
     public void bindSectionListOpen()
     {
-        DataTable dt = new DataTable();
+        DataSet ds = new DataSet();
         //SqlCommand cmd = new SqlCommand("proc_GetSectionFromCourseWiseFaculty_Role1", con);
         SqlCommand cmd = new SqlCommand("proc_GetSectionFromTimeTable_RoleOpen", con);
         cmd.CommandType = CommandType.StoredProcedure;
@@ -2108,11 +2127,15 @@ public partial class Faculty_StudentAttendanceMark1 : System.Web.UI.Page
         cmd.Parameters.Add("@SubjectCode", drpSubject1.SelectedValue);
         cmd.Parameters.Add("@Date", Convert.ToDateTime(txtDate1.Text));
         SqlDataAdapter da = new SqlDataAdapter(cmd);
-        da.Fill(dt);
-        drpSection1.DataSource = dt;
+        da.Fill(ds);
+        drpSection1.DataSource = ds.Tables[0];
         drpSection1.DataTextField = "Details";
         drpSection1.DataValueField = "No_";
         drpSection1.DataBind();
+        drpGroup1.DataSource = ds.Tables[1];
+        drpGroup1.DataTextField = "Details";
+        drpGroup1.DataValueField = "No_";
+        drpGroup1.DataBind();
 
     }
     protected void drpLecture1_SelectedIndexChanged(object sender, EventArgs e)

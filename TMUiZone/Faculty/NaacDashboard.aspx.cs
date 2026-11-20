@@ -74,7 +74,7 @@ public partial class Faculty_NaacDashboard : System.Web.UI.Page
     }
     public void bindetails(string academicYear, string metric)
     {
-        SqlCommand cmd = new SqlCommand("[GetDataForDashboard]", con1);
+        SqlCommand cmd = new SqlCommand("[GetDataForDashboard_new]", con1);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.Add("@AcademicYear", academicYear);
         cmd.Parameters.Add("@metric", metric);
@@ -127,174 +127,142 @@ public partial class Faculty_NaacDashboard : System.Web.UI.Page
     protected void JainStudentList_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         string metric = "";
+
         try
         {
-
-
-
-
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
+                GridViewRow row = e.Row;
 
-                Label lblMetricNo = (Label)e.Row.FindControl("lblMetricNo");
-                if (lblMetricNo.Text == "4.3.2")
+                // =========================================================
+                // METRIC NO
+                // =========================================================
+
+                Label lblMetricNo = (Label)row.FindControl("lblMetricNo");
+
+                if (lblMetricNo != null)
                 {
+                    metric = lblMetricNo.Text.Trim();
+                }
 
-                    GridViewRow row = e.Row;
 
-                    Label lblTarget = (Label)e.Row.FindControl("lblTarget");
-                    Label lblCumulative = (Label)e.Row.FindControl("lblCumulative");
+                // =========================================================
+                // TARGET
+                // =========================================================
 
-                    int targetValue = 0;
-                    int.TryParse(lblTarget.Text, out targetValue);
+                Label lblTarget = (Label)row.FindControl("lblTarget");
 
-                    List<Label> months = new List<Label>()
+                int targetValue = 0;
+
+                if (lblTarget != null)
                 {
-                    (Label)e.Row.FindControl("lblJuly"),
-                    (Label)e.Row.FindControl("lblAugust"),
-                    (Label)e.Row.FindControl("lblSeptember"),
-                    (Label)e.Row.FindControl("lblOctober"),
-                    (Label)e.Row.FindControl("lblNovember"),
-                    (Label)e.Row.FindControl("lblDecember"),
-                    (Label)e.Row.FindControl("lblJanuary"),
-                    (Label)e.Row.FindControl("lblFebruary"),
-                    (Label)e.Row.FindControl("lblMarch"),
-                    (Label)e.Row.FindControl("lblApril"),
-                    (Label)e.Row.FindControl("lblMay"),
-                    (Label)e.Row.FindControl("lblJune")
-                };
+                    int.TryParse(
+                        lblTarget.Text.Trim(),
+                        out targetValue
+                    );
+                }
 
-                    // January Index
+
+                // =========================================================
+                // CUMULATIVE
+                // =========================================================
+
+                Label lblCumulative = (Label)row.FindControl("lblCumulative");
+
+                int cumulativeValue = 0;
+
+                if (lblCumulative != null)
+                {
+                    int.TryParse(
+                        lblCumulative.Text.Trim(),
+                        out cumulativeValue
+                    );
+                }
+
+
+                // =========================================================
+                // MONTHS
+                // July -> June
+                // =========================================================
+
+                List<Label> months = new List<Label>()
+            {
+                (Label)row.FindControl("lblJuly"),
+                (Label)row.FindControl("lblAugust"),
+                (Label)row.FindControl("lblSeptember"),
+                (Label)row.FindControl("lblOctober"),
+                (Label)row.FindControl("lblNovember"),
+                (Label)row.FindControl("lblDecember"),
+                (Label)row.FindControl("lblJanuary"),
+                (Label)row.FindControl("lblFebruary"),
+                (Label)row.FindControl("lblMarch"),
+                (Label)row.FindControl("lblApril"),
+                (Label)row.FindControl("lblMay"),
+                (Label)row.FindControl("lblJune")
+            };
+
+
+                // =========================================================
+                // METRIC 4.3.2
+                // JANUARY -> JUNE CARRY FORWARD
+                // =========================================================
+
+                if (metric == "4.3.2" || metric == "2.2.2")
+                {
+                    // January index = 6
                     int janIndex = 6;
 
-                    // Carry Forward (Jan -> Jun)
                     for (int i = janIndex + 1; i < months.Count; i++)
                     {
-                        int currentValue = 0;
-                        int.TryParse(months[i].Text, out currentValue);
-
-                        if (currentValue == 0)
+                        if (months[i] != null && months[i - 1] != null)
                         {
-                            months[i].Text = months[i - 1].Text;
-                        }
-                    }
+                            int currentValue = 0;
 
+                            int.TryParse(
+                                months[i].Text.Trim(),
+                                out currentValue
+                            );
 
-
-                    int monthStartCellIndex = 4;
-
-                    // July -> June Coloring
-                    for (int i = 0; i < months.Count; i++)
-                    {
-                        int monthValue = 0;
-                        int.TryParse(months[i].Text, out monthValue);
-
-                        if (monthValue <= targetValue && monthValue != 0)
-                        {
-                            row.Cells[monthStartCellIndex + i].BackColor =
-                                System.Drawing.Color.LightGreen;
-                        }
-                        else
-                        {
-                            row.Cells[monthStartCellIndex + i].BackColor =
-                                System.Drawing.Color.LightPink;
-                        }
-                    }
-
-                    // Cumulative Coloring
-                    if (lblCumulative != null)
-                    {
-                        int cumulativeValue = 0;
-                        int.TryParse(lblCumulative.Text, out cumulativeValue);
-
-                        int cumulativeCellIndex = 16;
-
-                        if (cumulativeValue <= targetValue && cumulativeValue!=0)
-                        {
-                            row.Cells[cumulativeCellIndex].BackColor =
-                                System.Drawing.Color.LightGreen;
-                        }
-                        else
-                        {
-                            row.Cells[cumulativeCellIndex].BackColor =
-                                System.Drawing.Color.LightPink;
+                            if (currentValue == 0)
+                            {
+                                months[i].Text = months[i - 1].Text;
+                            }
                         }
                     }
                 }
-                else
+
+
+                // =========================================================
+                // CUMULATIVE CELL COLOR
+                // =========================================================
+
+                // GridView Column Index
+                // 16 = June
+                // 17 = Cumulative
+
+                int cumulativeCellIndex = 17;
+
+                if (lblCumulative != null &&
+                    row.Cells.Count > cumulativeCellIndex)
                 {
+                    cumulativeValue = 0;
+
+                    int.TryParse(
+                        lblCumulative.Text.Trim(),
+                        out cumulativeValue
+                    );
 
 
-                    GridViewRow row = e.Row;
+                    // =====================================================
+                    // METRIC 4.3.2
+                    // Cumulative <= Target = GREEN
+                    // Cumulative > Target = RED
+                    // =====================================================
 
-                    Label lblTarget = (Label)e.Row.FindControl("lblTarget");
-                    Label lblCumulative = (Label)e.Row.FindControl("lblCumulative");
-
-                    int targetValue = 0;
-                    int.TryParse(lblTarget.Text, out targetValue);
-
-                    List<Label> months = new List<Label>()
-                {
-                    (Label)e.Row.FindControl("lblJuly"),
-                    (Label)e.Row.FindControl("lblAugust"),
-                    (Label)e.Row.FindControl("lblSeptember"),
-                    (Label)e.Row.FindControl("lblOctober"),
-                    (Label)e.Row.FindControl("lblNovember"),
-                    (Label)e.Row.FindControl("lblDecember"),
-                    (Label)e.Row.FindControl("lblJanuary"),
-                    (Label)e.Row.FindControl("lblFebruary"),
-                    (Label)e.Row.FindControl("lblMarch"),
-                    (Label)e.Row.FindControl("lblApril"),
-                    (Label)e.Row.FindControl("lblMay"),
-                    (Label)e.Row.FindControl("lblJune")
-                };
-
-                    // January Index
-                    int janIndex = 6;
-
-                    // Carry Forward (Jan -> Jun)
-                    for (int i = janIndex + 1; i < months.Count; i++)
+                    if (metric == "4.3.2" || metric=="2.2.2")
                     {
-                        int currentValue = 0;
-                        int.TryParse(months[i].Text, out currentValue);
-
-                        if (currentValue == 0)
-                        {
-                            months[i].Text = months[i - 1].Text;
-                        }
-                    }
-
-
-
-                    int monthStartCellIndex = 4;
-
-                    // July -> June Coloring
-                    for (int i = 0; i < months.Count; i++)
-                    {
-                        int monthValue = 0;
-                        int.TryParse(months[i].Text, out monthValue);
-
-                        if (monthValue >= targetValue)
-                        {
-                            row.Cells[monthStartCellIndex + i].BackColor =
-                                System.Drawing.Color.LightGreen;
-                        }
-                        else
-                        {
-                            row.Cells[monthStartCellIndex + i].BackColor =
-                                System.Drawing.Color.LightPink;
-                        }
-                    }
-
-                    // Cumulative Coloring
-                    if (lblCumulative != null)
-                    {
-                        int cumulativeValue = 0;
-                        int.TryParse(lblCumulative.Text, out cumulativeValue);
-
-                        int cumulativeCellIndex = 16;
-
-                        if (cumulativeValue >= targetValue)
+                        if (cumulativeValue != 0 &&
+                            cumulativeValue <= targetValue)
                         {
                             row.Cells[cumulativeCellIndex].BackColor =
                                 System.Drawing.Color.LightGreen;
@@ -302,23 +270,52 @@ public partial class Faculty_NaacDashboard : System.Web.UI.Page
                         else
                         {
                             row.Cells[cumulativeCellIndex].BackColor =
-                                System.Drawing.Color.LightPink;
+                                System.Drawing.Color.LightCoral;
+                        }
+                    }
+
+
+                    // =====================================================
+                    // OTHER METRICS
+                    // Cumulative >= Target = GREEN
+                    // Cumulative < Target = RED
+                    // =====================================================
+
+                    else
+                    {
+                        if (cumulativeValue != 0 &&
+                            cumulativeValue >= targetValue)
+                        {
+                            row.Cells[cumulativeCellIndex].BackColor =
+                                System.Drawing.Color.LightGreen;
+                        }
+                        else
+                        {
+                            row.Cells[cumulativeCellIndex].BackColor =
+                                System.Drawing.Color.LightCoral;
                         }
                     }
                 }
-            }          
+            }
         }
         catch (Exception ex)
         {
-            ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "alert", "callFeedbackMessage('Error', " + metric + ");", true);
-            return;
+            ScriptManager.RegisterClientScriptBlock(
+                this.Page,
+                this.GetType(),
+                "alert",
+                "callFeedbackMessage('Error', '" +
+                ex.Message.Replace("'", "") +
+                "');",
+                true
+            );
 
+            return;
         }
     }
-
     public override void VerifyRenderingInServerForm(Control control)
     {
-       
+
     }
     protected void btnReport_Click(object sender, EventArgs e)
     {
@@ -365,5 +362,5 @@ public partial class Faculty_NaacDashboard : System.Web.UI.Page
         }
 
     }
-  
+
 }

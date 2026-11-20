@@ -56,7 +56,7 @@ public partial class Faculty_ViewAttendance : System.Web.UI.Page
                 // show_Attendence();
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Response.Redirect("../Default.aspx");
         }
@@ -71,13 +71,35 @@ public partial class Faculty_ViewAttendance : System.Web.UI.Page
     }
     public void ViewAttendance()
     {
-
         string ccnameUN = Session["Company"].ToString();
         string rccname = ccnameUN.Replace(".", "_");
-        string tbl_EmployeeActualpunchData = "[" + rccname + "$Employee Actual Punch Data" + "]";
+        string tbl_EmployeeActualpunchData =
+            "[" + rccname + "$Employee Actual Punch Data" + "]";
+
+        string actualEmployeeCode = Session["uid"].ToString();
 
         con1.Open();
-        SqlDataAdapter daP = new SqlDataAdapter("select CONVERT(varchar(11) ,[Attendance Date],106) as [Attendance Date] ,[Week Day], (FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm')  + '   -   ' + FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') ) as ShiftTime, FORMAT(CAST([Time From] AS DATETIME),'HH:mm') AS [Time From],FORMAT(CAST([Time To] AS DATETIME),'HH:mm') AS [Time To],[dbo].DecimalToTime([Total Hours]) as WorkingHour,cast([Total Hours] as decimal(10,2)) as WorkingHour1, cast([Morning Late] as decimal(10,2)) as LateBy, cast([Early Departure in Evening] as decimal(10,2)) as EarlyBy,Status,FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm') as shiftTimeIn, FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') as ShiftTimeOut,[Total Buffer Utilize] as 'TBU',(select [Allowed Month Buffer(in Min_)] from [TMU$Employee] where No_=t.[Employee No])-(select SUM([Total Buffer Utilize]) from  [TMU$Employee Actual Punch Data] where [Employee No]=t.[Employee No] and DATEPART(mm,[Attendance Date])='" + ddlMonth.SelectedValue.Trim() + "' and  DATEPART(yyyy,[Attendance Date])='" + ddlYear.SelectedValue.Trim() + "' and [Attendance Date]<=t.[Attendance Date] ) as RB from " + tbl_EmployeeActualpunchData + " t where [Employee No]='" + Session["uid"].ToString() + "' and DATEPART(mm,[Attendance Date])='" + ddlMonth.SelectedValue + "' and DATEPART(yyyy,[Attendance Date])='" + ddlYear.SelectedValue + "'", con1);
+
+        // TEMP Employee Code -> Actual Employee Code
+        using (SqlCommand cmdMap = new SqlCommand(@"
+        SELECT ISNULL(
+            (
+                SELECT TOP 1 ActualEmployeeCode
+                FROM EmployeeTempMapping WITH (NOLOCK)
+                WHERE TempEmployeeCode = @UserId
+                  AND IsActive = 1
+            ),
+            @UserId
+        )", con1))
+        {
+            cmdMap.Parameters.AddWithValue(
+                "@UserId",
+                Session["uid"].ToString()
+            );
+
+            actualEmployeeCode = Convert.ToString(cmdMap.ExecuteScalar());
+        }
+        SqlDataAdapter daP = new SqlDataAdapter("select CONVERT(varchar(11) ,[Attendance Date],106) as [Attendance Date] ,[Week Day], (FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm')  + '   -   ' + FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') ) as ShiftTime, FORMAT(CAST([Time From] AS DATETIME),'HH:mm') AS [Time From],FORMAT(CAST([Time To] AS DATETIME),'HH:mm') AS [Time To],[dbo].DecimalToTime([Total Hours]) as WorkingHour,cast([Total Hours] as decimal(10,2)) as WorkingHour1, cast([Morning Late] as decimal(10,2)) as LateBy, cast([Early Departure in Evening] as decimal(10,2)) as EarlyBy,Status,FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm') as shiftTimeIn, FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') as ShiftTimeOut,[Total Buffer Utilize] as 'TBU',(select [Allowed Month Buffer(in Min_)] from [TMU$Employee] where No_=t.[Employee No])-(select SUM([Total Buffer Utilize]) from  [TMU$Employee Actual Punch Data] where [Employee No]=t.[Employee No] and DATEPART(mm,[Attendance Date])='" + ddlMonth.SelectedValue.Trim() + "' and  DATEPART(yyyy,[Attendance Date])='" + ddlYear.SelectedValue.Trim() + "' and [Attendance Date]<=t.[Attendance Date] ) as RB from " + tbl_EmployeeActualpunchData + " t where [Employee No]='" + actualEmployeeCode + "' and DATEPART(mm,[Attendance Date])='" + ddlMonth.SelectedValue + "' and DATEPART(yyyy,[Attendance Date])='" + ddlYear.SelectedValue + "'", con1);
         DataTable dtMinuteP = new DataTable();
 
         daP.Fill(dtMinuteP);
@@ -89,7 +111,7 @@ public partial class Faculty_ViewAttendance : System.Web.UI.Page
         //dr.Close();
         //con.DisConnect();
 
-        SqlDataAdapter da = new SqlDataAdapter("select (select [Allowed Month Buffer(in Min_)] from [TMU$Employee] where No_=t.[Employee No])-  isnull(sum([Total Buffer Utilize]),0) Total from [TMU$Employee Actual Punch Data] t where [Employee No]='" + Session["uid"].ToString() + "' and month([Attendance Date])='" + ddlMonth.SelectedValue + "' and YEAR([Attendance Date])='" + ddlYear.SelectedValue + "'  group by [Employee No] ", con1);
+        SqlDataAdapter da = new SqlDataAdapter("select (select [Allowed Month Buffer(in Min_)] from [TMU$Employee] where No_=t.[Employee No])-  isnull(sum([Total Buffer Utilize]),0) Total from [TMU$Employee Actual Punch Data] t where [Employee No]='" + actualEmployeeCode + "' and month([Attendance Date])='" + ddlMonth.SelectedValue + "' and YEAR([Attendance Date])='" + ddlYear.SelectedValue + "'  group by [Employee No] ", con1);
         DataTable dtMinute = new DataTable();
 
         da.Fill(dtMinute);

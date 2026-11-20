@@ -304,25 +304,38 @@ public partial class StudentNoDuesPHD : System.Web.UI.Page
         {
             if (gvPhdFees == null || gvPhdFees.Rows.Count == 0)
             {
-                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "noFees", "alert('No fee details found.');", true);
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "noFees", "alert('No fee details found. The fee setup is pending. Please contact the Accounts Department.');", true);
                 return false;
             }
 
             bool hasPendingFees = false;
+            bool hasFeesSetup = false;
             foreach (GridViewRow row in gvPhdFees.Rows)
             {
                 // Status is at index 4 in the mapped grid (FeeDescription=0, FeeAmount=1, PaidAmount=2, PendingAmount=3, Status=4)
                 if (row.Cells.Count > 4)
                 {
                     string status = row.Cells[4].Text.Trim();
+                    if (status.Equals("Pending Setup", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasFeesSetup = true;
+                        break;
+                    }
                     if (status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
                     {
                         hasPendingFees = true;
                         break;
                     }
+                    
                 }
             }
 
+            if (hasFeesSetup)
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "pendingFees",
+                    "alert('Fee setup is pending. Please contact the Accounts Department..');", true);
+                return false;
+            }
             if (hasPendingFees)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "pendingFees", 
@@ -447,7 +460,11 @@ public partial class StudentNoDuesPHD : System.Web.UI.Page
                         // If No Dues Id already exists in DB, disable/hide save and OTP send so student cannot re-save
                         if (noDuesExists)
                         {
-                            var btnPhdSaveCtl = GetControl<Button>("btnPhdSave"); if (btnPhdSaveCtl != null) btnPhdSaveCtl.Visible = false;
+                            var btnPhdSaveCtl = GetControl<Button>("btnPhdSave");
+                            if (btnPhdSaveCtl != null)
+                            {
+                                btnPhdSaveCtl.Visible = false;
+                            }
                             var pnlMobileSendBtn = GetControl<Panel>("pnlPhdMobileSendBtn"); if (pnlMobileSendBtn != null) pnlMobileSendBtn.Visible = false;
                             var pnlEmailSendBtn = GetControl<Panel>("pnlPhdEmailSendBtn"); if (pnlEmailSendBtn != null) pnlEmailSendBtn.Visible = false;
                         }
@@ -691,7 +708,7 @@ public partial class StudentNoDuesPHD : System.Web.UI.Page
         try
         {
             var fromEmail = "naverp@tmu.ac.in";
-            var fromPassword = "nwar yzam bcez rqop";
+            var fromPassword = "iojk iegg zyfa nwhc";
 
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {

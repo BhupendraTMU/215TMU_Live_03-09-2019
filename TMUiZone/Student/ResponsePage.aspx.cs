@@ -1,240 +1,863 @@
-﻿using DotNetIntegrationKit;
+﻿
+using DL;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
-using DL;
+using System.Security.Cryptography;
+using System.Text;
+
 public partial class Student_ResponsePage : System.Web.UI.Page
 {
     StudentDetailsViewDL SDL = new StudentDetailsViewDL();
-    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-    string strHEX, strPGActualReponseWithChecksum, strPGActualReponseEncrypted, strPGActualReponseDecrypted, strPGresponseChecksum, strPGTxnStatusCode;
-    //string strPGActualReponse="status=0300|amount=125.00|hash=3243453454353453";
-    //string strPGActualReponse=PGResponse,strPGTxnStatusCode;
-    string[] strPGChecksum, strPGTxnString;
-    bool isDecryptable = false;
 
-    string strPG_TxnStatus = string.Empty,
-    strPG_ClintTxnRefNo = string.Empty,
-    strPG_TPSLTxnBankCode = string.Empty,
-    strPG_TPSLTxnID = string.Empty,
-    strPG_TxnAmount = string.Empty,
-    strPG_TxnDateTime = string.Empty,
-    strPG_TxnDate = string.Empty,
-    strPG_TxnTime = string.Empty,
-    Customername = string.Empty;
-    string strPGResponse;
-    string[] strSplitDecryptedResponse;
-    string[] strArrPG_TxnDateTime;
+    private readonly string ConnectionString =
+        ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString;
+
+    private const string MerchantKey = "bGxnW3";
+    private const string Salt = "zssT9zGfAsLwvoFzYLbC0ndS0nVbaIGn";
+
+
+    // ============================================================
+    // PAGE LOAD
+    // ============================================================
+
     protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            ProcessPayUResponse();
+        }
+    }
+
+
+    // ============================================================
+    // PAYU RESPONSE
+    // ============================================================
+
+    private void ProcessPayUResponse()
     {
         try
         {
-            if (!IsPostBack)
-            {
+            string status =
+                Convert.ToString(Request.Form["status"]);
 
-                show();
+            string txnid =
+                Convert.ToString(Request.Form["txnid"]);
+
+            string amount =
+                Convert.ToString(Request.Form["amount"]);
+
+            string productinfo =
+                Convert.ToString(Request.Form["productinfo"]);
+
+            string firstname =
+                Convert.ToString(Request.Form["firstname"]);
+
+            string email =
+                Convert.ToString(Request.Form["email"]);
+
+            string receivedHash =
+                Convert.ToString(Request.Form["hash"]);
+
+            string mihpayid =
+                Convert.ToString(Request.Form["mihpayid"]);
+
+            string bankCode =
+                Convert.ToString(Request.Form["bankcode"]);
+
+            string mode =
+                Convert.ToString(Request.Form["mode"]);
+
+            string bankRefNum =
+                Convert.ToString(Request.Form["bank_ref_num"]);
+
+            string error =
+                Convert.ToString(Request.Form["error"]);
+
+            string errorMessage =
+                Convert.ToString(Request.Form["error_Message"]);
+
+
+            // ----------------------------------------------------
+            // Transaction ID check
+            // ----------------------------------------------------
+
+            if (string.IsNullOrWhiteSpace(txnid))
+            {
+                ShowFailure("Transaction ID is missing.");
+                return;
             }
+
+
+            // ----------------------------------------------------
+            // Get Order
+            // ----------------------------------------------------
+
+            DataTable dtOrder =
+                GetOrder(txnid);
+
+            if (dtOrder == null ||
+                dtOrder.Rows.Count == 0)
+            {
+                ShowFailure(
+                    "Payment response received, but order record was not found."
+                );
+
+                return;
+            }
+
+
+            // IMPORTANT:
+            // Row AFTER Fill()
+            DataRow row =
+                dtOrder.Rows[0];
+
+
+            string dbAmount =
+                Convert.ToString(row["Amount"]);
+
+
+            // ----------------------------------------------------
+            // HASH VERIFICATION
+            // ----------------------------------------------------
+
+            string reverseHashString =
+                Salt + "|" +
+                status + "|||||||||||" +
+                email + "|" +
+                firstname + "|" +
+                productinfo + "|" +
+                amount + "|" +
+                txnid + "|" +
+                MerchantKey;
+
+
+            string calculatedHash =
+                GenerateSHA512(reverseHashString);
+
+
+            if (string.IsNullOrWhiteSpace(receivedHash) ||
+                !string.Equals(
+                    calculatedHash,
+                    receivedHash,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                LogError(
+                    "PayU Hash mismatch. TxnID = " + txnid
+                );
+
+                ShowFailure(
+                    "Payment response verification failed."
+                );
+
+                return;
+            }
+
+
+            // ----------------------------------------------------
+            // AMOUNT VERIFICATION
+            // ----------------------------------------------------
+
+            decimal payuAmount = 0;
+            decimal databaseAmount = 0;
+
+            decimal.TryParse(
+                amount,
+                out payuAmount
+            );
+
+            decimal.TryParse(
+                dbAmount,
+                out databaseAmount
+            );
+
+
+            if (payuAmount != databaseAmount)
+            {
+                LogError(
+                    "Amount mismatch. TxnID=" + txnid +
+                    " PayU=" + amount +
+                    " DB=" + dbAmount
+                );
+
+                ShowFailure(
+                    "Payment amount verification failed."
+                );
+
+                return;
+            }
+
+
+            // ====================================================
+            // SUCCESS
+            // ====================================================
+
+            if (string.Equals(
+                status,
+                "success",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                ProcessSuccessfulPayment(
+                    row,
+                    txnid,
+                    amount,
+                    mihpayid,
+                    bankCode,
+                    mode,
+                    bankRefNum
+                );
+
+                return;
+            }
+
+
+            // ====================================================
+            // FAILURE
+            // ====================================================
+
+            ProcessFailedPayment(
+                txnid,
+                error,
+                errorMessage
+            );
         }
         catch (Exception ex)
         {
-            Response.Redirect("../Default.aspx");
+            LogError(
+                "ProcessPayUResponse : " +
+                ex.ToString()
+            );
+
+            ShowFailure(
+                "Payment response processing failed. Please contact support."
+            );
         }
     }
-    public void show()
+
+
+    // ============================================================
+    // GET ORDER
+    // ============================================================
+
+    private DataTable GetOrder(string orderId)
     {
+        DataTable dt =
+            new DataTable();
 
-        try
-        {
-            strPGResponse = Request["msg"].ToString();  //Reading response of PG
-            Label LBL_DisplayResult = new Label();
-            Label lblResponseDecrypted = new Label();
-            Label lblValidate = new Label();
-
-            if (strPGResponse != "" || strPGResponse != null)
-            {
-                LBL_DisplayResult.Text = "Response :: " + strPGResponse;
-
-                RequestURL objRequestURL = new RequestURL();    //Creating Object of Class DotNetIntegration_1_1.RequestURL
-                string strDecryptedVal = null;                  //Decrypting the PG response
-
-                if (!String.IsNullOrEmpty(Convert.ToString(Session["PropertyFile"])))
-                {
-                    string strFilePath = ConfigurationSettings.AppSettings["FilePath"];
-                    string[] FilePath = strFilePath.Split('\\');
-                    string MerchantCode = Convert.ToString(Session["Merchant_Code"]);
-
-
-                    strDecryptedVal = objRequestURL.VerifyPGResponse(strPGResponse, strFilePath);
-                }
-                else
-                {
-                    string strIsKey = Convert.ToString("1025180466GPADTD");
-                    string strIsIv = Convert.ToString("3232693456UWOWHC");
-
-                    strDecryptedVal = objRequestURL.VerifyPGResponse(strPGResponse, strIsKey, strIsIv);
-                }
-                lblResponseDecrypted.Text = strDecryptedVal;
-
-                if (strDecryptedVal.StartsWith("ERROR"))
-                {
-                    lblValidate.Text = strDecryptedVal;
-                }
-                else
-                {
-                    strSplitDecryptedResponse = strDecryptedVal.Split('|');
-                    GetPGRespnseData(strSplitDecryptedResponse);
-
-                    if (strPG_TxnStatus == "0300")
-                    {
-                        //strPG_ClintTxnRefNo
-                        con.Open();
-
-
-                        SqlCommand cmdc = new SqlCommand("Select * from [OnlinePaymentLog] where OrderID='" + strPG_ClintTxnRefNo + "'", con);
-                        DataTable dtOrderc = new DataTable();
-                        SqlDataAdapter dac = new SqlDataAdapter(cmdc);
-                        dac.Fill(dtOrderc);
-                        if (dtOrderc.Rows.Count > 0 )
-                        {
-                            SqlCommand command = new SqlCommand("update [OnlinePaymentLog] set GatewayStatus=1 where OrderID='" + strPG_ClintTxnRefNo + "'", con);
-
-                            command.ExecuteNonQuery();
-                            pnlSuccess.Visible = true;
-                        }
-                        else
-                        {
-                            pnlFalure.Visible = true;
-                        }
-                        SqlCommand cmd = new SqlCommand("Select *,(Select Sum(GatewayStatus) from [OnlinePaymentLog] where ID<=[OnlinePaymentLog].ID) as 'SRno',(Select isnull([Enrollment No_],'') from [TMU$Student - COLLEGE] where [No_]=[OnlinePaymentLog].UserID) as 'Enroll',(select Name from [TMU$Dimension Value] where Code= ((Select isnull([Global Dimension 1 Code],'') from [TMU$Student - COLLEGE] where [No_]=[OnlinePaymentLog].UserID))) as 'CollegeName' from [OnlinePaymentLog] where OrderID='" + strPG_ClintTxnRefNo + "'", con);
-                        DataTable dtOrder = new DataTable();
-                        SqlDataAdapter da = new SqlDataAdapter(cmd);
-                        da.Fill(dtOrder);
-                        con.Close();
-                        lblStatus.Text = strPG_TxnStatus;
-                        //lblStatusCode.Text = Request.Form["RESPCODE"].ToString();
-                        //lblOrderid.Text = Request.Form["ORDERID"].ToString();
-                        //lblAmount.Text = Request.Form["TXNAMOUNT"].ToString();
-                        //lblPaymentDate.Text = Request.Form["TXNDATE"].ToString();
-                        //if (Request.Form["BANKNAME"] == null)
-                        //{
-                        //    lblBankName.Text = "UPI";
-                        //}
-                        //else
-                        //{
-                        //    lblBankName.Text = Request.Form["BANKNAME"].ToString();
-                        //}
-                        //lblPaymentMode.Text = Request.Form["PAYMENTMODE"].ToString();
-
-                        //Session["TXNID"] = Request.Form["TXNID"].ToString();
-                        lblAgentId.Text = dtOrder.Rows[0]["Enroll"].ToString();
-                        Session["UserNO"] = dtOrder.Rows[0]["userid"].ToString();
-                        Session["EntryFlag"] = dtOrder.Rows[0]["Temp 1"].ToString();
-                        DataTable dt = SDL.GetStudentDetailsForSurl(dtOrder.Rows[0]["UserID"].ToString());
-                        lblStudentNo.Text = dt.Rows[0]["No_"].ToString();
-                        lblStudentName.Text = dt.Rows[0]["Student Name"].ToString();
-                        lblDob.Text = dt.Rows[0]["DOB"].ToString();
-                        lblFatherName.Text = dt.Rows[0]["Fathers Name"].ToString();
-                        lblCollegeCode.Text = dtOrder.Rows[0]["CollegeName"].ToString();
-                        srno.Text = "SR NO:-" + dtOrder.Rows[0]["SRno"].ToString();
-                        Session["Name"]= dtOrder.Rows[0]["Temp 3"].ToString();
-                        lblValidate.Text = "Transaction Success " + strPGTxnStatusCode;
-
-                        con.Open();
-                        SqlCommand cmd1 = new SqlCommand("select [Enrollment No_],[Password],No_ from [TMU$Student - COLLEGE] where [No_]='" + Session["UserNO"].ToString() + "'", con);
-                        DataTable dtOrder1 = new DataTable();
-                        SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
-                        da1.Fill(dtOrder1);
-                        con.Close();
-                        Session["Enroll"] = dtOrder1.Rows[0]["Enrollment No_"].ToString();
-
-                        Session["Passw"] = dtOrder1.Rows[0]["Password"].ToString();
-                        Session["uid"]= dtOrder1.Rows[0]["No_"].ToString();
-                        //Response.Redirect("~/Default.aspx");
-                    }
-                    else if (strPG_TxnStatus == "0200")
-                    {
-                        lblValidate.Text = "Transaction Success " + strPGTxnStatusCode;
-                    }
-                    else
-                    {
-                        strPGTxnString = strSplitDecryptedResponse[2].Split('=');
-                        lblValidate.Text = "Transaction Fail " + "ERROR:" + strPGTxnString[1];
-                    }
-                }
-            }
-        }
-        catch (Exception)
-        {
-            Response.Redirect("~/Default.aspx");
-        }
-
-
-    }
-    public void GetPGRespnseData(string[] parameters)
-    {
-
-        string[] strGetMerchantParamForCompare;
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            strGetMerchantParamForCompare = parameters[i].ToString().Split('=');
-            if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "TXN_STATUS")
-            {
-                strPG_TxnStatus = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "CLNT_TXN_REF")
-            {
-                strPG_ClintTxnRefNo = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "TPSL_BANK_CD")
-            {
-                strPG_TPSLTxnBankCode = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "TPSL_TXN_ID")
-            {
-                strPG_TPSLTxnID = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "TXN_AMT")
-            {
-                strPG_TxnAmount = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "TPSL_TXN_TIME")
-            {
-                strPG_TxnDateTime = Convert.ToString(strGetMerchantParamForCompare[1]);
-                strArrPG_TxnDateTime = strPG_TxnDateTime.Split(' ');
-                strPG_TxnDate = Convert.ToString(strArrPG_TxnDateTime[0]);
-                strPG_TxnTime = Convert.ToString(strArrPG_TxnDateTime[1]);
-            }
-            else if (Convert.ToString(strGetMerchantParamForCompare[0]).ToUpper().Trim() == "clnt_rqst_meta")
-            {
-                Customername = Convert.ToString(strGetMerchantParamForCompare[1]);
-            }
-        }
-    }
-    protected void btnOk_Click(object sender, EventArgs e)
-    {
-        if (Session["EntryFlag"].ToString() == "")
+        using (SqlConnection con =
+            new SqlConnection(ConnectionString))
         {
             con.Open();
-            SqlCommand cmd = new SqlCommand("select [Enrollment No_],[Password] from [TMU$Student - COLLEGE] where [No_]='" + Session["UserNO"].ToString() + "'", con);
-            DataTable dtOrder = new DataTable();
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(dtOrder);
-            con.Close();
-            Session["Enroll"] = dtOrder.Rows[0]["Enrollment No_"].ToString();
-            Session["Pass"] = dtOrder.Rows[0]["Password"].ToString();
 
-            Response.Redirect("../Default.aspx");
+            string query = @"
+                SELECT
+                    OP.*,
+
+                    (
+                        SELECT SUM(ISNULL(GatewayStatus, 0))
+                        FROM [OnlinePaymentLog]
+                        WHERE ID <= OP.ID
+                    ) AS SRno,
+
+                    (
+                        SELECT ISNULL([Enrollment No_], '')
+                        FROM [TMU$Student - COLLEGE]
+                        WHERE [No_] = OP.UserID
+                    ) AS Enroll,
+
+                    (
+                        SELECT Name
+                        FROM [TMU$Dimension Value]
+                        WHERE Code =
+                        (
+                            SELECT ISNULL([Global Dimension 1 Code], '')
+                            FROM [TMU$Student - COLLEGE]
+                            WHERE [No_] = OP.UserID
+                        )
+                    ) AS CollegeName
+
+                FROM [OnlinePaymentLog] OP
+
+                WHERE OP.OrderID = @OrderID";
+
+
+            using (SqlCommand cmd =
+                new SqlCommand(query, con))
+            {
+                cmd.Parameters.Add(
+                    "@OrderID",
+                    SqlDbType.NVarChar,
+                    100
+                ).Value = orderId;
+
+
+                using (SqlDataAdapter da =
+                    new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
         }
-        else
+
+        return dt;
+    }
+
+
+    // ============================================================
+    // SUCCESS
+    // ============================================================
+
+    private void ProcessSuccessfulPayment(
+        DataRow row,
+        string txnid,
+        string amount,
+        string mihpayid,
+        string bankCode,
+        string mode,
+        string bankRefNum)
+    {
+        try
         {
-            Response.Redirect("../OnlineFeePayment.aspx");
+            string userNo =
+                Convert.ToString(row["UserID"]);
+
+
+            if (string.IsNullOrWhiteSpace(userNo))
+            {
+                ShowFailure(
+                    "Payment successful but student number is missing."
+                );
+
+                return;
+            }
+
+
+            // ----------------------------------------------------
+            // UPDATE PAYMENT LOG
+            // ----------------------------------------------------
+
+            using (SqlConnection con =
+                new SqlConnection(ConnectionString))
+            {
+                con.Open();
+
+                string updateQuery = @"
+                    UPDATE [OnlinePaymentLog]
+                    SET
+                        GatewayStatus = 1,
+                        Status = 1
+                    WHERE OrderID = @OrderID";
+
+
+                using (SqlCommand cmd =
+                    new SqlCommand(updateQuery, con))
+                {
+                    cmd.Parameters.Add(
+                        "@OrderID",
+                        SqlDbType.NVarChar,
+                        100
+                    ).Value = txnid;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+
+            // ----------------------------------------------------
+            // GET STUDENT
+            // ----------------------------------------------------
+
+            DataTable dtStudent =
+                SDL.GetStudentDetailsForSurl(userNo);
+
+
+            if (dtStudent == null ||
+                dtStudent.Rows.Count == 0)
+            {
+                ShowFailure(
+                    "Payment successful but student details were not found."
+                );
+
+                return;
+            }
+
+
+            DataRow studentRow =
+                dtStudent.Rows[0];
+
+
+            // ====================================================
+            // SHOW RECEIPT
+            // ====================================================
+
+            pnlSuccess.Visible = true;
+            pnlFalure.Visible = false;
+
+
+            // ----------------------------------------------------
+            // STATUS
+            // ----------------------------------------------------
+
+            lblStatustext.Text =
+                "✓ Payment Successful";
+
+            lblStatus.Text =
+                "SUCCESS";
+
+
+            // ----------------------------------------------------
+            // RECEIPT / SR NO
+            // ----------------------------------------------------
+
+            //srno.Text =
+            //    "Receipt No. : " +
+            //    Convert.ToString(row["SRno"]);
+
+
+            // ----------------------------------------------------
+            // STUDENT DETAILS
+            // ----------------------------------------------------
+
+            lblStudentNo.Text =
+                Convert.ToString(
+                    studentRow["No_"]
+                );
+
+
+            lblStudentName.Text =
+                Convert.ToString(
+                    studentRow["Student Name"]
+                );
+
+
+            lblDob.Text =
+                Convert.ToString(
+                    studentRow["DOB"]
+                );
+
+
+            lblFatherName.Text =
+                Convert.ToString(
+                    studentRow["Fathers Name"]
+                );
+
+
+            lblAgentId.Text =
+                Convert.ToString(
+                    row["Enroll"]
+                );
+
+
+            lblCollegeCode.Text =
+                Convert.ToString(
+                    row["CollegeName"]
+                );
+
+
+            // ----------------------------------------------------
+            // PAYMENT DETAILS
+            // ----------------------------------------------------
+
+            lblAmount.Text =
+                Convert.ToDecimal(amount)
+                    .ToString("0.00");
+
+
+            lblOrderid.Text =
+                txnid;
+
+
+            if (!string.IsNullOrWhiteSpace(mode))
+            {
+                lblPaymentMode.Text =
+                    mode.ToUpper();
+            }
+            else
+            {
+                lblPaymentMode.Text =
+                    "ONLINE";
+            }
+
+
+            lblUTRNo.Text =
+                bankRefNum;
+
+
+            lblPaymentDate.Text =
+                DateTime.Now.ToString(
+                    "dd-MM-yyyy hh:mm:ss tt"
+                );
+
+
+            // ----------------------------------------------------
+            // MESSAGE
+            // ----------------------------------------------------
+
+            lblValidate.Text =
+                "Your payment has been successfully received.";
+
+
+            // ----------------------------------------------------
+            // SESSION
+            // ----------------------------------------------------
+
+            Session["UserNO"] =
+                userNo;
+
+
+            Session["EntryFlag"] =
+                Convert.ToString(
+                    row["Temp 1"]
+                );
+
+
+            Session["Name"] =
+                Convert.ToString(
+                    row["Temp 3"]
+                );
+
+
+            // ----------------------------------------------------
+            // STUDENT LOGIN SESSION
+            // ----------------------------------------------------
+
+            SetStudentLoginSession(userNo);
+        }
+        catch (Exception ex)
+        {
+            LogError(
+                "ProcessSuccessfulPayment : " +
+                ex.ToString()
+            );
+
+            ShowFailure(
+                "Payment was successful but receipt generation failed."
+            );
         }
     }
+
+
+    // ============================================================
+    // FAILED PAYMENT
+    // ============================================================
+
+    private void ProcessFailedPayment(
+        string txnid,
+        string error,
+        string errorMessage)
+    {
+        try
+        {
+            string message =
+                errorMessage;
+
+
+            if (string.IsNullOrWhiteSpace(message))
+                message = error;
+
+
+            if (string.IsNullOrWhiteSpace(message))
+                message =
+                    "Payment transaction failed.";
+
+
+            // ----------------------------------------------------
+            // UPDATE FAILED TRANSACTION
+            // ----------------------------------------------------
+
+            using (SqlConnection con =
+                new SqlConnection(ConnectionString))
+            {
+                con.Open();
+
+                string query = @"
+                    UPDATE [OnlinePaymentLog]
+                    SET
+                        GatewayStatus = 0,
+                        Status = 0
+                    WHERE OrderID = @OrderID";
+
+
+                using (SqlCommand cmd =
+                    new SqlCommand(query, con))
+                {
+                    cmd.Parameters.Add(
+                        "@OrderID",
+                        SqlDbType.NVarChar,
+                        100
+                    ).Value = txnid;
+
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+
+            pnlSuccess.Visible = false;
+            pnlFalure.Visible = true;
+
+
+            lblstatusfauluere.Text =
+                "✗ Payment Failed";
+
+
+            lblStatus.Text =
+                "FAILED";
+
+
+            lblOrderid.Text =
+                txnid;
+
+
+            lblValidate.Text =
+                "Transaction Failed : " +
+                message;
+        }
+        catch (Exception ex)
+        {
+            LogError(
+                "ProcessFailedPayment : " +
+                ex.ToString()
+            );
+
+            ShowFailure(
+                "Transaction failed."
+            );
+        }
+    }
+
+
+    // ============================================================
+    // SHOW FAILURE
+    // ============================================================
+
+    private void ShowFailure(string message)
+    {
+        pnlSuccess.Visible = false;
+        pnlFalure.Visible = true;
+
+
+        lblstatusfauluere.Text =
+            "✗ Payment Failed";
+
+
+        lblStatus.Text =
+            "FAILED";
+
+
+        lblValidate.Text =
+            message;
+    }
+
+
+    // ============================================================
+    // STUDENT LOGIN SESSION
+    // ============================================================
+
+    private void SetStudentLoginSession(string userNo)
+    {
+        DataTable dt =
+            new DataTable();
+
+
+        using (SqlConnection con =
+            new SqlConnection(ConnectionString))
+        {
+            con.Open();
+
+
+            string query = @"
+                SELECT
+                    [Enrollment No_],
+                    [Password],
+                    [No_],[Course Code],Semester,[Global Dimension 1 Code],
+[Phone Number],[Admitted Year]
+                FROM [TMU$Student - COLLEGE]
+                WHERE [No_] = @UserNo";
+
+
+            using (SqlCommand cmd =
+                new SqlCommand(query, con))
+            {
+                cmd.Parameters.Add(
+                    "@UserNo",
+                    SqlDbType.NVarChar,
+                    50
+                ).Value = userNo;
+
+
+                using (SqlDataAdapter da =
+                    new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+
+
+        if (dt.Rows.Count > 0)
+        {
+            DataRow row =
+              dt.Rows[0];
+            lblAdmitted.Text= Convert.ToString(
+                    row["Admitted Year"]
+                );
+            lblContact.Text = Convert.ToString(
+                      row["Phone Number"]
+                  );
+
+            Session["College"] =
+                Convert.ToString(
+                    row["Global Dimension 1 Code"]
+                );
+            Session["Semester"] =
+                Convert.ToString(
+                    row["Semester"]
+                );
+            Session["CourseCode"] =
+                Convert.ToString(
+                    row["Course Code"]
+                );
+
+            Session["Enroll"] =
+                Convert.ToString(
+                    row["Enrollment No_"]
+                );
+
+
+            Session["Passw"] =
+                Convert.ToString(
+                    row["Password"]
+                );
+
+
+            Session["Pass"] =
+                Convert.ToString(
+                    row["Password"]
+                );
+
+
+            Session["uid"] =
+                Convert.ToString(
+                    row["No_"]
+                );
+        }
+    }
+
+
+    // ============================================================
+    // SHA512
+    // ============================================================
+
+    private string GenerateSHA512(string input)
+    {
+        using (SHA512 sha512 =
+            SHA512.Create())
+        {
+            byte[] bytes =
+                Encoding.UTF8.GetBytes(input);
+
+
+            byte[] hash =
+                sha512.ComputeHash(bytes);
+
+
+            StringBuilder sb =
+                new StringBuilder();
+
+
+            for (int i = 0;
+                 i < hash.Length;
+                 i++)
+            {
+                sb.Append(
+                    hash[i].ToString("x2")
+                );
+            }
+
+
+            return sb.ToString();
+        }
+    }
+
+
+    // ============================================================
+    // OK BUTTON
+    // ============================================================
+
+    protected void btnOk_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string entryFlag =
+                Convert.ToString(
+                    Session["EntryFlag"]
+                );
+
+
+            string userNo =
+                Convert.ToString(
+                    Session["UserNO"]
+                );
+
+
+            if (string.IsNullOrWhiteSpace(userNo))
+            {
+                Response.Redirect(
+                    "../Default.aspx",
+                    false
+                );
+
+                Context.ApplicationInstance
+                    .CompleteRequest();
+
+                return;
+            }
+
+
+            if (string.IsNullOrWhiteSpace(entryFlag))
+            {
+                Response.Redirect(
+                    "../Default.aspx",
+                    false
+                );
+            }
+            else
+            {
+                Response.Redirect(
+                    "../OnlineFeePayment.aspx",
+                    false
+                );
+            }
+
+
+            Context.ApplicationInstance
+                .CompleteRequest();
+        }
+        catch (Exception ex)
+        {
+            LogError(
+                "btnOk_Click : " +
+                ex.ToString()
+            );
+
+            lblValidate.Text =
+                "Unable to continue. Please try again.";
+        }
+    }
+
+
+    // ============================================================
+    // ERROR LOG
+    // ============================================================
+
+    private void LogError(string message)
+    {
+        System.Diagnostics.Trace.WriteLine(
+            "Student_ResponsePage : " +
+            message
+        );
+    }
 }
+

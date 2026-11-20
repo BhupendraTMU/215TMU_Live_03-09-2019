@@ -1090,10 +1090,10 @@
             </asp:TableCell>
         </asp:TableRow>
 
-                 <asp:TableRow>
+                 <asp:TableRow BackColor="#ff3300">
          <asp:TableCell style="border: 1px solid">22.</asp:TableCell>
             <asp:TableCell style="border:1px solid">
-                <asp:Label ID="Label29" runat="server" Enabled="false" Text="Payroll Section"></asp:Label>
+                <asp:Label ID="Label29" runat="server" Enabled="false" Text="Payroll Section"></asp:Label> (⚠ Not for Employee Submission)
 </asp:TableCell>
             <asp:TableCell style="border:1px solid">
                  <asp:TableCell style="border:1px solid">

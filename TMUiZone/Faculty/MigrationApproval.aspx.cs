@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Web.Services;
 using System.Web.Script.Services;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using System.Activities.Expressions;
 
 public partial class Faculty_MigrationApproval : System.Web.UI.Page
 {
@@ -22,7 +23,7 @@ public partial class Faculty_MigrationApproval : System.Web.UI.Page
         {
             try
             {
-                bindMigrationDetail(Session["uid"].ToString());
+                bindMigrationDetail(Session["uid"].ToString(), txtSearch.Text.Trim());
             }
             catch (Exception ex)
             {
@@ -42,13 +43,13 @@ public partial class Faculty_MigrationApproval : System.Web.UI.Page
         HtmlTextWriter hw = new HtmlTextWriter(sw);
 
         // Hide unwanted columns (View buttons etc.)
-        GrdMigrationStudent.Columns[11].Visible = false; // View Details
-        GrdMigrationStudent.Columns[12].Visible = false; // Application Form
-        GrdMigrationStudent.Columns[13].Visible = false; // Certificate
+        GrdMigrationStudent.Columns[1].Visible = false; // View Details
+        GrdMigrationStudent.Columns[2].Visible = false; // Application Form
+        GrdMigrationStudent.Columns[3].Visible = false; // Certificate
 
         GrdMigrationStudent.AllowPaging = false;
 
-        bindMigrationDetail(Session["uid"].ToString());
+        bindMigrationDetail(Session["uid"].ToString(),txtSearch.Text.Trim());
 
         GrdMigrationStudent.RenderControl(hw);
 
@@ -61,12 +62,13 @@ public partial class Faculty_MigrationApproval : System.Web.UI.Page
         // Required for Export
     }
 
-    public void bindMigrationDetail(string Enroll)
+    public void bindMigrationDetail(string Enroll ,string Serching)
     {
         try
         {
             SqlCommand cmd = new SqlCommand("proc_GetCertificateDetail", con);
             cmd.Parameters.Add("@EnrollmentNo_", Enroll);
+            cmd.Parameters.Add("@SerchingValue", Serching);
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
@@ -330,6 +332,49 @@ public partial class Faculty_MigrationApproval : System.Web.UI.Page
     protected void btnclose_Click(object sender, EventArgs e)
     {
         //GridViewDetails.Hide();
+
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        if (txtSearch.Text.Trim() != "" || ddStatus.SelectedValue == "0")
+        {
+            bindMigrationDetail(Session["uid"].ToString(), txtSearch.Text.Trim());
+        }
+        else
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('Please enter value...');", true);
+        }
+        
+    }
+
+    protected void ddStatus_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if(ddStatus.SelectedValue =="4" )
+        {
+            txtSearch.Visible= false;
+            lblSearchVal.Visible = false;
+            txtSearch.Text = "1";
+        }
+        else if(ddStatus.SelectedValue == "5")
+        {
+            txtSearch.Visible= false;
+            lblSearchVal.Visible = false;
+            txtSearch.Text = "2";
+        }
+        else if (ddStatus.SelectedValue == "0")
+        {
+            txtSearch.Visible = false;
+            lblSearchVal.Visible = false;
+            txtSearch.Text = "";
+        }
+        else
+        {
+            txtSearch.Visible = true;
+            lblSearchVal.Visible = true;
+            txtSearch.Text= "";
+        }
+
 
     }
 }

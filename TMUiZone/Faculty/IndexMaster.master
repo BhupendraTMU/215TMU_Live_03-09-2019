@@ -8,14 +8,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>TMU</title>
+
     <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/ajaxtabs.css" rel="stylesheet" type="text/css" />    
     <script src="../Scripts/ajaxtabs.js"></script>
-    <script src="../Scripts/jquery-1.4.1-vsdoc.js"></script>
-    <script src="../Scripts/jquery-1.4.1.js"></script>
-    <script src="../Scripts/jquery-1.4.1.min.js"></script>
     <link href="../CSS/Ajaxcal.css" rel="stylesheet" />
     <script type="text/javascript" src="../bootstrap/js/jquery-1.11.2.min.js"></script>
     <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -28,7 +26,6 @@
    <link rel="shortcut icon" type="image/x-icon" href="../logo/Bg.jpg" /> 
     <link href="../CSS/style.css" rel="stylesheet" />   
     <script src="../Scripts/alertify.js"></script>
-    <script src="../Scripts/alertify.min.js"></script>
     <link href="../Content/alertify/alertify.bootstrap.css" rel="stylesheet" />
     <link href="../Content/alertify/alertify.core.css" rel="stylesheet" />
     <link href="../Content/alertify/alertify.default.css" rel="stylesheet" />
@@ -43,23 +40,658 @@
         }
 
 
-        @keyframes blink {
-            0% {
-                opacity: 1;
-            }
+:root {
+    --tmu-orange: #ed7600;
+    --tmu-orange-light: #f7a23b;
+    --tmu-orange-dark: #c95f00;
+    --tmu-red: #C5122F;
+}
 
-            50% {
-                opacity: 0;
-            }
+/* ---------- Top strips ---------- */
+.top-user-label {
+    text-align: right;
+    padding: 3px 18px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--tmu-red);
+    background: #fff;
+}
+.top-red-line  { height: 3px; background: linear-gradient(90deg, #C5122F, #ed7600); }
+.top-white-gap { height: 0; }
 
-            100% {
-                opacity: 1;
-            }
+/* ---------- Header ---------- */
+.header-wrap-bg {
+    background: linear-gradient(180deg, #ffffff 0%, #fff6ea 100%);
+    border-bottom: 1px solid #f3d3a8;
+}
+#wrapHeader {
+    width: 1300px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 6px 20px;
+    box-sizing: border-box;
+}
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.header-logo img {
+    height: 62px;            /* chota logo */
+    width: auto;
+    display: block;
+}
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.mark-att-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff !important;
+    background: var(--tmu-red);
+    padding: 7px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(197,18,47,.35);
+}
+.mark-att-link:hover { background: #a30f27; }
+
+/* ---------- Profile (chota, side-by-side) ---------- */
+.profile-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+.profile-box ul { list-style: none; margin: 0; padding: 0; }
+.profile-box .dropdown { position: relative; list-style: none; }
+
+.imgcircle {
+    width: 54px;
+    height: 54px;            /* chota profile pic */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--tmu-orange), 0 3px 8px rgba(0,0,0,.25);
+    cursor: pointer;
+    display: block;
+    transition: transform .2s ease;
+}
+.imgcircle:hover { transform: scale(1.06); }
+
+.profile-info { display: flex; flex-direction: column; }
+.profile-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: #2b2b2b;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+.profile-status {
+    display: inline-block;
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #9a4a00;
+    background: #ffe9cc;
+    border: 1px solid #f7c98f;
+    border-radius: 12px;
+    padding: 1px 10px;
+    width: auto !important;
+}
+
+/* ---------- Notice ticker ---------- */
+.notice-bar {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border-bottom: 1px solid #f3d3a8;
+    height: 32px;
+    overflow: hidden;
+}
+.notice-badge {
+    flex: 0 0 auto;
+    background: var(--tmu-red);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .5px;
+    padding: 0 16px 0 18px;
+    line-height: 32px;
+    position: relative;
+    z-index: 2;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+.notice-badge i { margin-right: 6px; }
+.notice-marquee {
+    flex: 1 1 auto;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 32px;
+    background: linear-gradient(90deg, #fff4e5, #ffffff);
+}
+.notice-track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: notice-scroll 30s linear infinite;
+}
+.notice-marquee:hover .notice-track { animation-play-state: paused; }
+
+.blinking-label {
+    color: var(--tmu-red);
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes notice-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: .3; }
+}
+
+/* ---------- Orange menu bar ---------- */
+.menu-row {
+    background: linear-gradient(180deg, var(--tmu-orange-light) 0%, var(--tmu-orange) 55%, var(--tmu-orange-dark) 100%);
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+#wrapMenu {
+    width: 1300px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+#menu > li > a { transition: background .2s ease; }
+#menu > li > a:hover { background: rgba(0,0,0,.15); }
+
+/* ---------- Info strip (Form-16) ---------- */
+.info-strip {
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    color: var(--tmu-red);
+    font-size: 13px;
+    font-weight: bold;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+/* ---------- Footer ---------- */
+.ffooterInner {
+    background: linear-gradient(180deg, var(--tmu-orange) 0%, var(--tmu-orange-dark) 100%);
+    opacity: 1 !important;
+}
+#wrapFooter {
+    width: 1300px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 8px 20px;
+    box-sizing: border-box;
+    color: #fff;
+    opacity: 1 !important;
+}
+#wrapFooter, #wrapFooter * { opacity: 1 !important; }
+#wrapFooter label,
+#wrapFooter span,
+#wrapFooter a {
+    color: #fff !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,.35);
+}
+#wrapFooter a:hover { text-decoration: underline !important; }
+.footer-note {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+    .header-flex { flex-direction: column; text-align: center; }
+    .header-logo img { height: 50px; }
+    .profile-box { justify-content: center; }
+    .notice-track { animation-duration: 20s; }
+}
+html, body { min-height: 100%; }
+body { background-color: #eaf3b0; }
+
+/* Content ka safed dabba footer tak */
+#wrap {
+    width: 1300px;
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #fff;
+    box-sizing: border-box;
+    /* header+menu (~202px) + neeche footer ke liye gap (52px) chhod kar baaki poori height */
+    min-height: calc(100vh - 258px) !important;
+}
+
+         /* ===== MenuFancy.css (v2 - self-contained menu system) =====
+   Link: <link href="../CSS/MenuFancy.css" rel="stylesheet" type="text/css" />
+   IndexMasterFix.css ke BAAD, sabse last mein.
+   Ye file dropdown ka show/hide khud handle karti hai (hover se).
+*/
+
+/* ================= TOP BAR ================= */
+#menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#menu > li {
+    float: none !important;
+    position: relative;
+    margin: 0 !important;
+    padding: 0;
+    list-style: none;
+}
+#menu a:focus { outline: none !important; }
+
+#menu > li > a {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    line-height: 20px;
+    padding: 8px 14px !important;
+    margin: 4px 2px;
+    border: none !important;
+    border-radius: 6px;
+    text-decoration: none !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,.35);
+    background: transparent;
+    transition: background .2s ease, box-shadow .2s ease;
+}
+#menu > li > a > i.fa {
+    font-size: 15px;
+    transition: transform .2s ease;
+}
+#menu > li > a b { font-weight: 700; }
+#menu > li:hover > a {
+    background: rgba(255,255,255,.22) !important;
+    box-shadow: inset 0 -3px 0 #fff;
+}
+#menu > li:hover > a > i.fa { transform: translateY(-2px) scale(1.15); }
+#menu .sf-sub-indicator { font-size: 12px; margin-left: 2px; }
+
+/* ================= DROPDOWN PANEL ================= */
+#menu ul.dropdown-menu {
+    display: none !important;              /* default band */
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    float: none !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: max-content;
+    min-width: 260px;
+    max-width: 360px;
+    margin: 0 !important;
+    padding: 6px 0 !important;
+    list-style: none;
+    text-align: left;
+    background: #fff !important;
+    border: 1px solid #f0d2ab !important;
+    border-top: 3px solid #C5122F !important;
+    border-radius: 0 0 10px 10px !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,.30) !important;
+    z-index: 9999;
+}
+#menu li:hover > ul.dropdown-menu {
+    display: block !important;             /* hover par open */
+    animation: menuIn .18s ease-out;
+}
+@keyframes menuIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* andar ke (nested) flyout menu -> right side */
+#menu ul.dropdown-menu ul.dropdown-menu {
+    top: -9px !important;
+    left: 100% !important;
+    border-top: 3px solid #ed7600 !important;
+    border-radius: 10px !important;
+}
+
+/* lambe menu ko multi-column (sab kuch screen par dikhe) */
+#menu li:has(> a[id$="liOthers"]) > ul.dropdown-menu {
+    column-count: 3;
+    column-gap: 0;
+    width: 800px;
+    min-width: 0;
+    max-width: none;
+    left: -380px !important;
+}
+#menu li:has(> a[id$="liHR"]) > ul.dropdown-menu {
+    column-count: 2;
+    column-gap: 0;
+    width: 560px;
+    min-width: 0;
+    max-width: none;
+    left: -120px !important;
+}
+/* multi-column ke andar ke flyout ki width normal rahe */
+#menu ul.dropdown-menu ul.dropdown-menu {
+    column-count: 1 !important;
+    width: max-content !important;
+    min-width: 240px !important;
+    max-width: 340px !important;
+    left: 100% !important;
+}
+#menu ul.dropdown-menu > li { break-inside: avoid; }
+
+/* clearfix: floated links ki wajah se box collapse na ho */
+#menu ul.dropdown-menu::after,
+#menu ul.dropdown-menu li::after { content: ""; display: table; clear: both; }
+
+/* ================= DROPDOWN ITEMS ================= */
+#menu ul.dropdown-menu li {
+    position: relative;
+    float: none !important;
+    display: block !important;
+    height: auto !important;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0;
+    list-style: none;
+}
+#menu ul.dropdown-menu li a {
+    display: block !important;
+    float: none !important;
+    width: auto !important;
+    height: auto !important;
+    white-space: normal;
+    box-sizing: border-box;
+    position: relative;
+    color: #333 !important;
+    background: transparent !important;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+    text-transform: none;
+    text-decoration: none !important;
+    text-shadow: none;
+    padding: 9px 16px 9px 42px !important;
+    border-bottom: 1px solid #f6efe6;
+    border-left: 3px solid transparent;
+    transition: all .18s ease;
+}
+#menu ul.dropdown-menu li a b { font-weight: 600; }
+#menu ul.dropdown-menu li:hover > a {
+    background: linear-gradient(90deg, #fff0dc, #ffffff) !important;
+    color: #C5122F !important;
+    border-left-color: #ed7600;
+    padding-left: 47px !important;
+}
+#menu ul.dropdown-menu .sf-sub-indicator {
+    float: right;
+    color: #ed7600;
+    font-size: 14px;
+}
+
+/* ================= SUBMENU ICONS ================= */
+#menu ul.dropdown-menu li a::before {
+    font-family: FontAwesome;
+    font-weight: normal;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    text-align: center;
+    color: #ed7600;
+    font-size: 14px;
+    transition: transform .18s ease;
+    content: "\f105";
+}
+#menu ul.dropdown-menu li:hover > a::before { color: #C5122F; transform: translateY(-50%) scale(1.25); }
+
+#menu ul.dropdown-menu a[href*="Attendance"]::before,
+#menu ul.dropdown-menu a[href*="Attendence"]::before   { content: "\f274"; }
+#menu ul.dropdown-menu a[href*="TimeTable"]::before,
+#menu ul.dropdown-menu a[href*="TimeSheet"]::before,
+#menu ul.dropdown-menu a[href*="Timesheet"]::before    { content: "\f073"; }
+#menu ul.dropdown-menu a[href*="Assignment"]::before   { content: "\f0f6"; }
+#menu ul.dropdown-menu a[href*="Plan"]::before         { content: "\f02d"; }
+#menu ul.dropdown-menu a[href*="Dashboard"]::before    { content: "\f0e4"; }
+#menu ul.dropdown-menu a[href*="Dismiss"]::before      { content: "\f05e"; }
+#menu ul.dropdown-menu a[href*="Remedial"]::before     { content: "\f0fe"; }
+#menu ul.dropdown-menu a[href*="Arrangement"]::before,
+#menu ul.dropdown-menu a[href*="FreeSlot"]::before     { content: "\f0ec"; }
+#menu ul.dropdown-menu a[href*="Fine"]::before         { content: "\f156"; }
+#menu ul.dropdown-menu a[href*="Marks"]::before        { content: "\f044"; }
+#menu ul.dropdown-menu a[href*="AdmitCard"]::before    { content: "\f2c2"; }
+#menu ul.dropdown-menu a[href*="Result"]::before       { content: "\f091"; }
+#menu ul.dropdown-menu a[href*="Report"]::before,
+#menu ul.dropdown-menu a[href*="AwardList"]::before    { content: "\f080"; }
+#menu ul.dropdown-menu a[href*="List"]::before         { content: "\f0ca"; }
+#menu ul.dropdown-menu a[href*="Approval"]::before,
+#menu ul.dropdown-menu a[href*="Aprove"]::before,
+#menu ul.dropdown-menu a[href*="Approve"]::before      { content: "\f00c"; }
+#menu ul.dropdown-menu a[href*="Release"]::before      { content: "\f1d8"; }
+#menu ul.dropdown-menu a[href*="Upload"]::before       { content: "\f093"; }
+#menu ul.dropdown-menu a[href*="Download"]::before     { content: "\f019"; }
+#menu ul.dropdown-menu a[href*="HandOut"]::before      { content: "\f1c1"; }
+#menu ul.dropdown-menu a[href*="Digilocker"]::before   { content: "\f0ee"; }
+#menu ul.dropdown-menu a[href*="Duty"]::before         { content: "\f0f2"; }
+#menu ul.dropdown-menu a[href*="Co_PO"]::before,
+#menu ul.dropdown-menu a[href*="OBE"]::before          { content: "\f140"; }
+#menu ul.dropdown-menu a[href*="Punch"]::before        { content: "\f017"; }
+#menu ul.dropdown-menu a[href*="Leave"]::before        { content: "\f236"; }
+#menu ul.dropdown-menu a[href*="CoStatus"]::before,
+#menu ul.dropdown-menu a[href*="Co_"]::before,
+#menu ul.dropdown-menu a[href*="COReport"]::before,
+#menu ul.dropdown-menu a[href*="EWL"]::before          { content: "\f0ad"; }
+#menu ul.dropdown-menu a[href*="OD_"]::before,
+#menu ul.dropdown-menu a[href*="ODApplication"]::before,
+#menu ul.dropdown-menu a[href*="StaffOdd"]::before     { content: "\f041"; }
+#menu ul.dropdown-menu a[href*="WorkFHome"]::before    { content: "\f015"; }
+#menu ul.dropdown-menu a[href*="Pay"]::before,
+#menu ul.dropdown-menu a[href*="Form16"]::before,
+#menu ul.dropdown-menu a[href*="TDS"]::before,
+#menu ul.dropdown-menu a[href*="arrears"]::before,
+#menu ul.dropdown-menu a[href*="Arrears"]::before,
+#menu ul.dropdown-menu a[href*="Seedmoney"]::before,
+#menu ul.dropdown-menu a[href*="Financial"]::before,
+#menu ul.dropdown-menu a[href*="Honorarium"]::before,
+#menu ul.dropdown-menu a[href*="Incentive"]::before    { content: "\f156"; }
+#menu ul.dropdown-menu a[href*="Verification"]::before,
+#menu ul.dropdown-menu a[href*="Verify"]::before       { content: "\f058"; }
+#menu ul.dropdown-menu a[href*="Roaster"]::before      { content: "\f0c0"; }
+#menu ul.dropdown-menu a[href*="PMS"]::before,
+#menu ul.dropdown-menu a[href*="Appraisal"]::before    { content: "\f005"; }
+#menu ul.dropdown-menu a[href*="TMVF"]::before,
+#menu ul.dropdown-menu a[href*="Fellowship"]::before   { content: "\f19d"; }
+#menu ul.dropdown-menu a[href*="Grievances"]::before,
+#menu ul.dropdown-menu a[href*="Complaint"]::before    { content: "\f0e5"; }
+#menu ul.dropdown-menu a[href*="exitinterview"]::before,
+#menu ul.dropdown-menu a[href*="Resignation"]::before  { content: "\f08b"; }
+#menu ul.dropdown-menu a[href*="Library"]::before,
+#menu ul.dropdown-menu a[href*="library"]::before,
+#menu ul.dropdown-menu a[href*="Membership"]::before   { content: "\f02d"; }
+#menu ul.dropdown-menu a[href*="ndent"]::before        { content: "\f07a"; }
+#menu ul.dropdown-menu a[href*="Equipment"]::before    { content: "\f085"; }
+#menu ul.dropdown-menu a[href*="ITAsset"]::before,
+#menu ul.dropdown-menu a[href*="ITAssest"]::before,
+#menu ul.dropdown-menu a[href*="ITIssue"]::before,
+#menu ul.dropdown-menu a[href*="IndentForIt"]::before  { content: "\f109"; }
+#menu ul.dropdown-menu a[href*="Body"]::before,
+#menu ul.dropdown-menu a[href*="Cadaver"]::before      { content: "\f21e"; }
+#menu ul.dropdown-menu a[href*="IssueTracker"]::before { content: "\f188"; }
+#menu ul.dropdown-menu a[href*="Naac"]::before,
+#menu ul.dropdown-menu a[href*="NAAC"]::before         { content: "\f091"; }
+#menu ul.dropdown-menu a[href*="Subject"]::before      { content: "\f02d"; }
+#menu ul.dropdown-menu a[href*="Hindi"]::before        { content: "\f1ab"; }
+#menu ul.dropdown-menu a[href*="Dairy"]::before        { content: "\f0f6"; }
+#menu ul.dropdown-menu a[href*="Migration"]::before    { content: "\f0ec"; }
+#menu ul.dropdown-menu a[href*="Event"]::before        { content: "\f133"; }
+#menu ul.dropdown-menu a[href*="Courier"]::before      { content: "\f0d1"; }
+#menu ul.dropdown-menu a[href*="Warden"]::before,
+#menu ul.dropdown-menu a[href*="InOut"]::before,
+#menu ul.dropdown-menu a[href*="Hostel"]::before       { content: "\f015"; }
+#menu ul.dropdown-menu a[href*="Joining"]::before      { content: "\f234"; }
+#menu ul.dropdown-menu a[href*="Enrollment"]::before,
+#menu ul.dropdown-menu a[href*="Scholarship"]::before  { content: "\f19d"; }
+#menu ul.dropdown-menu a[href*="Profile"]::before,
+#menu ul.dropdown-menu a[href*="Detail"]::before       { content: "\f007"; }
+#menu ul.dropdown-menu a[href*="NoDues"]::before       { content: "\f046"; }
+#menu ul.dropdown-menu a[href*="CRAC"]::before         { content: "\f0c0"; }
+#menu ul.dropdown-menu a[href*="Transport"]::before,
+#menu ul.dropdown-menu a[href*="Vehicle"]::before,
+#menu ul.dropdown-menu a[href*="vehicle"]::before      { content: "\f207"; }
+#menu ul.dropdown-menu a[href*="Feedback"]::before,
+#menu ul.dropdown-menu a[href*="FeedBack"]::before     { content: "\f0e6"; }
+#menu ul.dropdown-menu a[href*="Load"]::before         { content: "\f0e4"; }
+#menu ul.dropdown-menu a[href*="sms"]::before,
+#menu ul.dropdown-menu a[href*="Sms"]::before          { content: "\f0e0"; }
+#menu ul.dropdown-menu a[href*="FA_M"]::before,
+#menu ul.dropdown-menu a[href*="Mentee"]::before,
+#menu ul.dropdown-menu a[href*="Mentor"]::before       { content: "\f0c0"; }
+#menu ul.dropdown-menu a[href*="Reappear"]::before,
+#menu ul.dropdown-menu a[href*="ReExam"]::before       { content: "\f021"; }
+#menu ul.dropdown-menu a[href*="ExaminationApproval"]::before,
+#menu ul.dropdown-menu a[href*="ExaminationForm"]::before { content: "\f15c"; }
+
+/* sub-heading (href="#") -> folder icon */
+#menu ul.dropdown-menu a[href="#"]::before             { content: "\f07b"; }
+
+/* Top menu icons fix */
+.fa-calendar-check-o:before { content: "\f274"; }
+.fa-user-circle:before      { content: "\f2bd"; }
+.fa-handshake-o:before      { content: "\f2b5"; }
+.fa-graduation-cap:before   { content: "\f19d"; }
+.fa-th-large:before         { content: "\f009"; }
+.fa-pencil-square-o:before  { content: "\f044"; }
+.fa-ellipsis-h:before       { content: "\f141"; }
+
+
+        /* ===== NOTICE: scroll + blink (text turant right edge se aata hai) ===== */
+        .notice-bar { display: flex; align-items: stretch; height: 34px; overflow: hidden; }
+        .notice-marquee {
+            flex: 1 1 auto;
+            position: relative !important;
+            display: block !important;
+            overflow: hidden;
+            padding: 0 !important;
+            white-space: nowrap;
         }
-
+        .notice-track {
+            position: absolute !important;
+            top: 0;
+            left: 100%;
+            display: block !important;
+            padding: 0 !important;
+            white-space: nowrap;
+            line-height: 34px;
+            animation: notice-run 35s linear infinite !important;
+        }
+        .notice-marquee:hover .notice-track { animation-play-state: paused; }
         .blinking-label {
-            animation: blink 1s infinite;
+            color: #C5122F;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            animation: blink 1.2s ease-in-out infinite;
         }
+        @keyframes notice-run {
+            0%   { left: 100%; transform: translateX(0); }
+            100% { left: 0;    transform: translateX(-100%); }
+        }
+
+        /* ===== PROFILE DROPDOWN (photo ke neeche, center) ===== */
+        .profile-box ul.dropdown-menu {
+            display: none;
+            position: absolute !important;
+            top: 100% !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%);
+            float: none !important;
+            margin: 10px 0 0 !important;
+            padding: 6px 0 !important;
+            min-width: 190px;
+            list-style: none;
+            text-align: left;
+            background: #fff !important;
+            border: 1px solid #f0d2ab !important;
+            border-top: 3px solid #C5122F !important;
+            border-radius: 10px !important;
+            box-shadow: 0 10px 24px rgba(0,0,0,.28) !important;
+            z-index: 10000;
+        }
+        .profile-box ul.dropdown-menu::before {      /* hover gap bridge */
+            content: ""; position: absolute; top: -16px; left: 0; right: 0; height: 16px;
+        }
+        .profile-box ul.dropdown-menu::after {       /* upar ka tikona */
+            content: ""; position: absolute; top: -10px; left: 50%; margin-left: -7px;
+            border: 7px solid transparent; border-top: 0; border-bottom: 7px solid #C5122F;
+        }
+        .profile-box li.dropdown:hover > ul.dropdown-menu,
+        .profile-box li.dropdown.open > ul.dropdown-menu { display: block !important; animation: profileIn .18s ease-out; }
+        .profile-box ul.dropdown-menu li { list-style: none; margin: 0; padding: 0; float: none; width: 100%; }
+        .profile-box ul.dropdown-menu li.divider { height: 1px; margin: 4px 12px; background: #f1e3d0; overflow: hidden; width: auto; }
+        .profile-box ul.dropdown-menu li a {
+            display: block; position: relative;
+            padding: 10px 18px 10px 44px;
+            font: 600 13px/18px "Segoe UI", Arial, sans-serif;
+            color: #333 !important;
+            text-decoration: none !important;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+            background: transparent !important;
+            transition: all .18s ease;
+        }
+        .profile-box ul.dropdown-menu li a::before {
+            font-family: FontAwesome; font-weight: normal; font-size: 15px;
+            position: absolute; left: 17px; top: 50%; transform: translateY(-50%);
+            width: 18px; text-align: center; color: #ed7600;
+        }
+        .profile-box ul.dropdown-menu li a[id$="lnkChangePassword1"]::before { content: "\f084"; }  /* key */
+        .profile-box ul.dropdown-menu li a[id$="lnkLogOut"]::before           { content: "\f08b"; }  /* sign-out */
+        .profile-box ul.dropdown-menu li a:hover {
+            background: linear-gradient(90deg, #fff0dc, #ffffff) !important;
+            color: #C5122F !important;
+            border-left-color: #ed7600;
+        }
+        .profile-box ul.dropdown-menu li a:hover::before { color: #C5122F; }
+
+        @keyframes profileIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ===== DROPDOWN LINES: sab ek jaisi patli ===== */
+        /* li ka apna koi border/background/padding nahi (purani CSS ki moti lines hatane ke liye) */
+        #menu ul.dropdown-menu li {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            background-image: none !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+            line-height: normal !important;
+        }
+        /* jis li mein koi link hi nahi (server se hide hua link ya khaali li) use hata do */
+        #menu ul.dropdown-menu li:not(:has(a)) { display: none !important; }
+        /* line sirf link ke neeche, ek jaisi 1px halki */
+        #menu ul.dropdown-menu li > a {
+            border-bottom: 1px solid #f1e3d0 !important;
+            border-top: 0 !important;
+            border-right: 0 !important;
+            box-shadow: none !important;
+        }
+        #menu ul.dropdown-menu li:last-child > a { border-bottom: 0 !important; }
     </style>
 
      <script type="text/javascript">
@@ -159,101 +791,84 @@
 
 </head>
 <body >
-    <form id="form1" runat="server"  >
-    <div >
-    <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
+    <form id="form1" runat="server">
+    <div>
+    <table cellpadding="0" cellspacing="0" style="width:100%">
+    <tr><td>
+    <table cellpadding="0" cellspacing="0" style="width:100%">
 
+        <%-- ===== TOP USER LABEL + RED LINE ===== --%>
+        <tr><td class="top-user-label">
+            <asp:Label ID="ind" runat="server" Text="Label"></asp:Label>
+        </td></tr>
+        <tr><td class="top-red-line"></td></tr>
+        <tr><td class="top-white-gap"></td></tr>
 
+        <%-- ===== HEADER : LOGO (left) + PROFILE (right) ===== --%>
+        <tr><td class="header-wrap-bg">
+            <div id="wrapHeader">
+                <div class="header-flex">
 
-    <tr> <td> 
+                    <div class="header-logo">
+                        <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" />
+                    </div>
 
-    <table cellpadding="0px" cellspacing="0px" style="width:100%">
-         <tr style="width:100%" align="right">
-                                        <asp:label ID="ind" runat="server" text="Label" Font-Bold="True" Font-Italic="False" ForeColor="RED" Width="400px"></asp:label>
-                                    </tr>
-        <tr> <td style="height:2px;background-color:#C5122F"> </td></tr>
+                    <div class="header-actions">
+                        <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
 
-      <tr> <td style="height:8px;background-color:White"> </td></tr>
-     
-        <tr>
-            <td style="background-color: White">
-                <div id="wrapHeader">
-                   <table cellpadding="0px" cellspacing="0px">
-                        <tr>
-                            <td>
-                               <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" Width="400px" />
-                                <br />
-                                 <br />
-                                 <br />
-                                 <asp:Label ID="lblBlink" runat="server" ForeColor="Red" Font-Bold="true" Font-Size="Large" 
+                        <asp:LinkButton ID="lblMarkAtt" runat="server" OnClick="lblMarkAtt_Click"
+                            CssClass="mark-att-link" Visible="false" Text="Mark Attendance"></asp:LinkButton>
 
-                                     Text="The faculty or staff must submit the punch correction and leave request by the 3rd of each Month, and the Head of Department (HOD) should approve it by the 4th." CssClass="blinking-label"></asp:Label>
-                                
-                            </td>
-                            <td style="width: 700px;vertical-align:bottom" align="center">
-                                <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
+                        <div class="profile-box">
+                            <ul>
+                                <li class="dropdown">
+                                    <asp:Image ID="imgProfile" runat="server" CssClass="imgcircle" />
+                                    <ul class="dropdown-menu">
+                                        <li><asp:LinkButton ID="lnkChangePassword1" runat="server" data-toggle="modal" data-target="#myModal" Text="Change Password"></asp:LinkButton></li>
+                                        <li class="divider"></li>
+                                        <li><asp:LinkButton ID="lnkLogOut" runat="server" Text="Logout" OnClick="lnkLogOut_Click"></asp:LinkButton></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <div class="profile-info">
+                                <asp:Label ID="lblName" runat="server" CssClass="profile-name"></asp:Label>
+                                <asp:Label ID="lblVerifyStatus" runat="server" Text="" CssClass="profile-status"></asp:Label>
+                            </div>
+                        </div>
+                    </div>
 
-                              <%--  <asp:LinkButton ID="lblPayTM" runat="server" OnClick="lblPayTM_Click"  Font-Size="X-Large" Font-Bold="true" Text="Sports Screening(Register Now)"></asp:LinkButton>--%>
-                            </td>
-                          <td style="width: 700px;vertical-align:bottom" align="center" >
-                                <asp:LinkButton ID="lblMarkAtt" runat="server" OnClick="lblMarkAtt_Click" Font-Size="XX-Large" Font-Bold="true" Visible="false" Text="Mark Attendance"></asp:LinkButton>
-                                <br />
-                            </td>
-                            <td >
-                                  <table> 
-                                                                            
-                                    <tr>
-                                          <td align="center">
-                                            <ul style="list-style-type: none;">
-                                                 <li class="dropdown">
-                                                <asp:Image ID="imgProfile" runat="server" Width="100px" Height="80px" CssClass="imgcircle" />
-                                                <ul class="dropdown-menu" style="padding-left:0px; margin-top:-5px;left:50px">
-                                                   <%-- <li><asp:LinkButton ID="lnkImageUpload" runat="server" data-toggle="modal" data-target="#myModal1" Text="Change Photo"></asp:LinkButton></li>--%>
-                                                    <li><asp:LinkButton ID="lnkChangePassword1" runat="server" data-toggle="modal" data-target="#myModal" Text="ChangePassword"></asp:LinkButton></li>
-                                                    <li class="divider"></li>
-                                                    <li><asp:LinkButton ID="lnkLogOut" runat="server" Text="Logout" OnClick="lnkLogOut_Click">
-                                                        <span class="glyphicon glyphicon-off">Logout</span>
-                                                        </asp:LinkButton></li>
-                                                </ul>
-                                            </li>
-                                                </ul>
-                                        </td> 
-                                        <td style="width:15px"><label style="width:15px"></label></td>
-                                    </tr>    
-                                      <tr>
-                                        <td colspan="2" style="text-align:center;width:250px">
-                                           <asp:Label ID="lblName" runat="server"  Font-Bold="true"></asp:Label>
-                                            <br />
-                                             <asp:Label ID="lblVerifyStatus" Width="250px" runat="server" Text="" Font-Bold="true"></asp:Label>
-                                           
-                                                                          
-                                       </td>                                                                                  
-                                    </tr>                         
-                                </table>
-                            </td>  
-                            <td style="width:50px"></td>                         
-                        </tr>
-                    </table>
                 </div>
-            </td>
-        </tr>       
-    <tr> <td style="height:10px;background-color:White">          
+            </div>
+        </td></tr>
 
-         </td></tr>
-    <tr> <td style="background-color:#ed7600">
+        <%-- ===== NOTICE BAR (scroll + blink) ===== --%>
+        <tr><td>
+            <div class="notice-bar">
+                <span class="notice-badge"><i class="fa fa-bullhorn"></i>NOTICE</span>
+                <div class="notice-marquee">
+                    <div class="notice-track">
+                        <asp:Label ID="lblBlink" runat="server" CssClass="blinking-label"
+                            Text="Submit all Punch Correction and Leave Requests by 31 October 2026. Heads of Department must complete all approvals by the same date. Thank you for your cooperation."></asp:Label>
+                    </div>
+                </div>
+            </div>
+        </td></tr>
+
+        <%-- ===== ORANGE MENU ===== --%>
+        <tr><td class="menu-row">
 <%--<td class="ffooterInner"> #C5122F"> --%>
     <div id="wrapMenu">
          <ul id="menu"  style="text-transform: uppercase" >
-    <li style="margin-left:0px" id="FacultyDetails" runat="server"><a href="../Faculty/FacultyDetails.aspx"><b>Profile</b></a> </li>
+    <li style="margin-left:0px" id="FacultyDetails" runat="server"><a href="../Faculty/FacultyDetails.aspx"><i class="fa fa-user"></i><b>Profile</b></a> </li>
            <%--  <li style="margin-left:0px" id="Li1" runat="server"><a href="../Faculty/ReviewAttendance_NewMD.aspx"><b>Review</b></a> </li>--%>
     
                <%--- ------------------------------Enquiry------------------------ --%>
 <li style="margin-left:0px" id="Enquiry_Phone" runat="server" visible="false"><a href="../Enquiry/Enquiry_Phone.aspx"><b>Phone Enquiry</b></a> </li>
-<li style="margin-left:0px" id="Enquiry" runat="server" visible="false"><a href="../Enquiry/Enquiry.aspx"><b>ENquiry</b></a> </li>
+<li style="margin-left:0px" id="Enquiry" runat="server" visible="false"><a href="../Enquiry/Enquiry.aspx"><b>Enquiry</b></a> </li>
 <li style="margin-left:0px" id="EnquiryList" runat="server" visible="false"><a href="../Enquiry/EnquiryList.aspx"><b>View Enquiry List</b></a> </li>
              <%--- ------------------------------Enquiry------------------------ --%>
 <li class="dropdown" style="">
-  <a href="#" class="sf-with-ul" runat="server" id="liSAttendance" visible="false" >Attendance<span class="sf-sub-indicator" runat="server" id="span1">»</span></a>
+  <a href="#" class="sf-with-ul" runat="server" id="liSAttendance" visible="false" ><i class="fa fa-calendar-check-o"></i>Attendance<span class="sf-sub-indicator" runat="server" id="span1">»</span></a>
    <ul class="dropdown-menu">
     <li style="margin-left:0px" id="StudentAttendanceMark" runat="server" visible="false" ><a href="../Faculty/StudentAttendance.aspx"><b>Mark Attendance</b></a> </li>
     <li style="margin-left:0px" id="ECAAttendanceMark" runat="server" ><a href="../Faculty/ECAAttendance.aspx"><b>ECA Attendance</b></a> </li>
@@ -266,6 +881,7 @@
     <li style="margin-left:0px" id="StudentExtraAttendanceMark" runat="server" visible="false"><a href="../Faculty/StudentExtraAttendanceMark.aspx"><b>GD / PD Lecture</b></a> </li>
     <li style="margin-left:0px" id="StudentCombinedAttendanceMark" runat="server" visible="false"><a href="../Faculty/StudentCombinedAttendanceMark.aspx"><b>Combined Attendance</b></a> </li>
     <li style="margin-left:0px" id="ReviewAttendance" runat="server" visible="false"><a href="../Faculty/ReviewAttendance.aspx"><b>Review Attendance</b></a> </li>  
+<li style="margin-left:0px" id="DetalAttendance" runat="server" visible="false"><a href="../Faculty/DentalFacultyPunch.aspx"><b>Faculty Punch</b></a> </li> 
        <li style="margin-left:0px" id="ReviewAttendance_New" runat="server" visible="false"><a href="../Faculty/ReviewAttendance_New.aspx"><b>Review Attendance</b></a> </li> 
  <li style="margin-left:0px" id="NoDetain" runat="server" visible="false"><a href="../Faculty/NoDetain.aspx"><b>Detainee List Approval </b></a> </li> 
  <li style="margin-left: 0px" id="AttendanceApproval" runat="server" visible="false"><a href="../Faculty/AttendanceApproval.aspx"><b>Attendance Approval</b></a> </li>
@@ -280,10 +896,13 @@
   <%-- <li style="margin-left:0px" id="liFacultyLoad" runat="server" visible="false"><a href="../Faculty/FacultyLoad.aspx"><b>Faculty Load</b></a> </li> --%>
    <li style="margin-left:0px" id="StudentDetaineeReport" runat="server" visible="false"><a href="../Faculty/StudentDetaineeReport.aspx"><b>Detainee List</b></a> </li> 
    <li style="margin-left:0px" id="StudentContinueAbsentReport" runat="server" visible="false"><a href="../Faculty/StudentContinueAbsentReport.aspx"><b>Continue Absent List</b></a> </li> 
+   <li style="margin-left:0px" id="liPostAttendance" runat="server" visible="false"><a href="../Faculty/attendancepost.aspx"><b>Biometric Attendance</b></a> </li> 
+
+
     </ul>
 </li>
 <li class="dropdown" style="">
-  <a href="#" class="sf-with-ul" runat="server" id="liProgram" visible="false" >Program<span class="sf-sub-indicator"  runat="server" id="span2">»</span></a>
+  <a href="#" class="sf-with-ul" runat="server" id="liProgram" visible="false" ><i class="fa fa-th-large"></i>Program<span class="sf-sub-indicator"  runat="server" id="span2">»</span></a>
      <ul class="dropdown-menu">
      <li style="margin-left:0px" id="AssignmentUploadDownload" runat="server" visible="false"><a href="../Faculty/AssignmentUploadDownload.aspx"><b>Assignment</b></a> </li>
      <li style="margin-left:0px" id="AssignmentUploadView" runat="server" visible="false"><a href="../Faculty/AssignmentUploadView.aspx" ><b>Assignment List</b></a> </li> 
@@ -317,7 +936,7 @@
 <%--<li style="margin-left:0px" id="liMentorshipDetails" runat="server" visible="false"><a href="../Faculty/MentorshipDetails.aspx"><b>Mentorship Details</b></a> </li> --%>
               <%--- ------------------------------Examination/Admit Card------------------------ --%>
              <li class="dropdown" style="">
-                 <a href="#" class="sf-with-ul" runat="server" id="Examination" >Examination<span class="sf-sub-indicator" runat="server" id="span9">»</span></a>
+                 <a href="#" class="sf-with-ul" runat="server" id="Examination" ><i class="fa fa-pencil-square-o"></i>Examination<span class="sf-sub-indicator" runat="server" id="span9">»</span></a>
                  <ul class="dropdown-menu">
                       <li class="dropdown" style="">
                           <a href="#" class="sf-with-ul" runat="server" id="ExamForm" visible="false">Examination Form<span class="sf-sub-indicator"  runat="server" id="span15">»</span></a>
@@ -424,7 +1043,7 @@
 
              <%--- ------------------------------Examination/Admit Card------------------------ --%>
 <li class="dropdown" style="">
-      <a href="#" class="sf-with-ul" runat="server" id="liHR"  >HR<span class="sf-sub-indicator"  runat="server" id="span3">»</span></a>
+      <a href="#" class="sf-with-ul" runat="server" id="liHR"  ><i class="fa fa-users"></i>HR<span class="sf-sub-indicator"  runat="server" id="span3">»</span></a>
         <ul class="dropdown-menu">
         <%--<li><a href="../Faculty/AttendenceNew.aspx" id="liAttendance" runat="server"><b>Attendance</b></a></li>--%>
              <li><a href="~/Faculty/PunchData.aspx" id="PunchReport" runat="server" visible="false"><b>Punch Data Report</b></a></li>
@@ -440,6 +1059,7 @@
           <li><a href="~/Faculty/EmployeeLeaveDetail.aspx" id="EmployeeLeaveDetail" runat="server" visible="false" ><b>Employee Leave Detail</b></a> </li>  
                 <li><a href="~/Faculty/LeaveReport.aspx" id="lnkLeaveReport" runat="server" visible="false"><b>Leave Report</b></a></li>
              <li><a href="~/Faculty/CoStatus.aspx" id="CoStatus" runat="server" visible="false"><b>CO Status</b></a></li>
+             <li><a href="~/Faculty/UploadCo.aspx" id="UploadCo" runat="server" visible="false"><b>Upload CO</b></a></li>
             <li><a href="~/Faculty/COReport.aspx" id="lnkCoClaimReport" runat="server" visible="false"><b>CO Claim Report</b></a></li>
             <li><a href="~/Faculty/Employee_Punch_Data.aspx" id="Employee_Punch_Data" runat="server" visible="false"><b>Punch Data</b></a></li>
              <li><a href="~/Faculty/Punch_Correction.aspx" id="PunchCorrection" runat="server" ><b>Punch Correction</b></a></li>
@@ -509,7 +1129,7 @@
 
 
  <li class="dropdown" >
-      <a href="#" class="sf-with-ul" runat="server" id="A2" >LIBRARY<span class="sf-sub-indicator"  runat="server" id="span19">»</span></a>
+      <a href="#" class="sf-with-ul" runat="server" id="A2" ><i class="fa fa-book"></i>LIBRARY<span class="sf-sub-indicator"  runat="server" id="span19">»</span></a>
         <ul class="dropdown-menu"> 
              <li><a href="~/Faculty/Librarymembershipform.aspx" id="Librarymembershipform" runat="server" visible="true" ><b> MEMBERSHIP FORM</b></a></li>
             <li><a href="~/Faculty/MembershipAprrovalForm.aspx" id="MembershipAprrovalForm" runat="server" visible="false" ><b>MEMBERSHIP APPROVAL</b></a></li> 
@@ -521,7 +1141,7 @@
            </li>
          <li><a href="~/Faculty/Announcement.aspx" id="A4" runat="server" visible="false" ><b>Announcement </b></a></li>   
              <li class="dropdown" >
-      <a href="#" class="sf-with-ul" runat="server" id="liOthers" visible="false">OTHERS<span class="sf-sub-indicator"  runat="server" id="span4">»</span></a>
+      <a href="#" class="sf-with-ul" runat="server" id="liOthers" visible="false"><i class="fa fa-ellipsis-h"></i>OTHERS<span class="sf-sub-indicator"  runat="server" id="span4">»</span></a>
         <ul class="dropdown-menu"> 
             
             <li><a href="~/Faculty/indentview.aspx" id="IndentRequest" runat="server" visible="false" ><b>Indent </b></a></li>
@@ -594,7 +1214,8 @@
  <li><a href="~/Faculty/StudentNoDuesApprovalList.aspx" id="StudentNoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li> 
  <li><a href="~/Faculty/NoDuesApprovalList.aspx" id="NoDuesApprovalList" runat="server" visible="false" ><b>Student Dues Approval List</b></a></li>
 <li><a href="~/Faculty/PHDStudentNoDuesApproval.aspx" id="IdPHDStudentNoDuesApproval" runat="server" visible="false" ><b>PHD No Dues Approval</b></a></li> 
- <li><a href="~/Faculty/ViewStudentCRACFormDetails.aspx" id="IdViewPHDStudentCRACForm" runat="server" visible="true" ><b>View CRAC Meeting</b></a></li>            
+
+ <li><a href="~/Faculty/ViewStudentCRACFormDetails.aspx" id="IdViewPHDStudentCRACForm" runat="server" visible="true" ><b>View CRAC Meeting</b></a></li>   
  <li><a href="~/Faculty/JainStudentAttendance.aspx" id="JainStudentAttendance" runat="server" visible="false" ><b>Jain Student Attendance List</b></a></li>
              <li><a href="~/Faculty/Research_Incentive.aspx" id="ResearchIncentive" runat="server" visible="false" ><b>Research Incentive</b></a></li>
 <li runat="server" id="LiSeedmoney"  ><a href="../Faculty/Seedmoney.aspx"  ><b>Seed Money</b></a></li>
@@ -693,7 +1314,7 @@
        <li style="margin-left:0px" id="Li3" runat="server" visible="false"><a href="../Faculty/ComplaintList.aspx"><b>Complaint List</b></a> </li>
                   </li>
 <li class="dropdown" >
-      <a href="#" class="sf-with-ul" runat="server" id="lnk_Mentor_formenteeA2" >Mentor-Mentee<span class="sf-sub-indicator"  runat="server" id="lnk_Mentor_formentee19">»</span></a>
+      <a href="#" class="sf-with-ul" runat="server" id="lnk_Mentor_formenteeA2" ><i class="fa fa-graduation-cap"></i>Mentor-Mentee<span class="sf-sub-indicator"  runat="server" id="lnk_Mentor_formentee19">»</span></a>
         <ul class="dropdown-menu"> 
 <li><a href="FA_MM_Introduction_Report_Code.aspx" id="lnk_mentor_introduction" runat="server" target="_blank"><b>Introduction</b></a></li> 
              <li><a href="FA_Mentor_For_Mentee.aspx" id="lnk_Mentor_formentee" runat="server" visible="true" ><b> Mentor For Mentee</b></a></li>
@@ -740,7 +1361,7 @@
      
     </div>
      </td></tr>
-     <tr> <td style="height:10px;padding-left:460px;Color:red; Font-Size:large"   class="leftBackground">Form-16 for 24-25 is now available </td></tr>
+     <tr><td class="info-strip">Form-16 for 24-25 is now available</td></tr>
     <tr > <td class="leftBackground" style="min-height:500px; background-color:#eaf3b0"> 
     <div id="wrap" style="min-height:400px"> 
      <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
@@ -749,7 +1370,7 @@
         </div>
     </td></tr>
 
-    <tr> <td style="height:40px">  </td></tr>
+    <tr> <td style="height:52px; background-color:#eaf3b0"></td></tr>   <%-- footer (fixed) ke peeche content na chhupe --%>
 
     <tr> 
         <%--<td class="ffooterInner"> --%>
@@ -757,7 +1378,7 @@
     <div id="wrapFooter">
     
      <table cellpadding="0px" cellspacing="0px" style="width:100%">
-      <tr> <td style="height:19px"> <asp:Label ID="lblDescl" runat="server" ForeColor="Green" Font-Bold="true" Font-Size="Medium" Text="Attendance, Leave and Payroll module is under up-gradation as per new policy. Kindly contact payroll@tmu.ac.in for any issues or concerns." ></asp:Label> </td></tr>
+      <tr> <td style="height:19px"> <asp:Label ID="lblDescl" runat="server" CssClass="footer-note" Text="Attendance, Leave and Payroll module is under up-gradation as per new policy. Kindly contact payroll@tmu.ac.in for any issues or concerns." ></asp:Label> </td></tr>
       
        <tr> <td > <div id="Div1">    
   
@@ -784,7 +1405,7 @@
                 <div class="modal-header" style="background-color:#88CCFF;">
                     <div>
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
-                          <h4 class="modal-title"><b style="font-family:'SketchFlow Print'; font-size:15px; font-weight:bold"">Change Password</b></h4>
+                          <h4 class="modal-title"><b style="font-family:'SketchFlow Print'; font-size:15px; font-weight:bold">Change Password</b></h4>
                      </div>
                 </div>
                 <div class="modal-body">

@@ -12,21 +12,12 @@
     <script type="text/javascript">
 
         function ConvertToImage(btnExport) {
-
-
-           
-
-         
-          
-
             html2canvas($("#Div1")[0], {
                 width: 1024,
                 height: 1024,
                 scale: 1
             }
                 )
-
-
                 .then(function (canvas) {
                 var base64 = canvas.toDataURL();
                 $("[id*=hfImageData]").val(base64);

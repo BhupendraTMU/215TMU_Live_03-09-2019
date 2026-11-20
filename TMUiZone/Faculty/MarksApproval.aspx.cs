@@ -42,6 +42,7 @@ public partial class Faculty_MarksApproval : System.Web.UI.Page
         }
     }
     public void bindSectionList()
+    
     {
         DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand("proc_GetSectionFromCourseWiseFaculty_RoleNew", con);
@@ -50,6 +51,7 @@ public partial class Faculty_MarksApproval : System.Web.UI.Page
         cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
         cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
         cmd.Parameters.Add("@Subject", ddlSubject.SelectedValue);
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
         drpSection.DataSource = dt;

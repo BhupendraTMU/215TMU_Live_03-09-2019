@@ -193,13 +193,13 @@ ValidationGroup="save" />
 
                                 <div class="col-md-4">
                                     <label>DOB</label>
-                                    <asp:TextBox ID="txtDDOB" runat="server" TextMode="Date" CssClass="form-control" />
+                                    <asp:TextBox ID="txtDDOB" runat="server" TextMode="Date" CssClass="form-control" onchange="calculateAge()" />
                                    
                                 </div>
 
                                 <div class="col-md-4">
                                     <label>Age</label>
-                                    <asp:TextBox ID="txtDAge" runat="server" CssClass="form-control" />
+                                    <asp:TextBox ID="txtDAge" runat="server" CssClass="form-control" ReadOnly="true" />
                                                                         
                                 </div>
                             </div>
@@ -420,7 +420,7 @@ ValidationGroup="save" />
 
 
                                   <div class="col-md-6">
-                                      <label>Certificate For Volontary Body Donation</label>
+                                      <label>Certificate For Voluntary Body Donation</label>
                                       <asp:FileUpload ID="fuVolontaryBodyDonation" runat="server" CssClass="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.bmp,.webp"/>
                                   </div>
 
@@ -680,4 +680,30 @@ ValidationGroup="saveReceived" />
         </div>
     </div>
 </div>
+    <script>
+        function calculateAge() {
+            var dobValue = document.getElementById('<%= txtDDOB.ClientID %>').value;
+        var ageBox = document.getElementById('<%= txtDAge.ClientID %>');
+
+            if (!dobValue) {
+                ageBox.value = '';
+                return;
+            }
+
+            var dob = new Date(dobValue);
+            var today = new Date();
+
+            var age = today.getFullYear() - dob.getFullYear();
+
+            // Check whether birthday has occurred this year
+            var monthDiff = today.getMonth() - dob.getMonth();
+
+            if (monthDiff < 0 ||
+                (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            ageBox.value = age;
+        }
+</script>
 </asp:Content>

@@ -375,10 +375,28 @@ public partial class Faculty_Honorarium_E_Visit : System.Web.UI.Page
 
     protected void btnSubmitApplication_Click(object sender, EventArgs e)
     {
+
+
+        SqlDataAdapter da = new SqlDataAdapter("SELECT COUNT(*) C FROM [dbo].[tbl_honorarium_auth_process] where [initiallebel]='"+ Session["uid"].ToString() + "' and task='"+ drpAppType.SelectedValue + "'", con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        if (dt.Rows[0]["C"].ToString()=="0")
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You are not authorized for this task.');", true);
+            return;
+        }
+
+
         string Code = "";
         string Supportfilename = "";
         string SupportcontentType = "";
         byte[] bytesSupport = new byte[0];
+
+
+
+
+
+
 
         if (drpAppType.SelectedValue == "Others-Specify" && txteventType.Text == "")
         {

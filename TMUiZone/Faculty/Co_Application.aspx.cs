@@ -18,8 +18,7 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
     {
         try
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('access denied ?'); document.location.href='FacultyDetails.aspx';", true);
-
+           
 
 
             Portalcon = new Connection();
@@ -74,7 +73,19 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
             }
 
             VisiblilitybyHOD();
+            if (Session["uid"].ToString() == "TMU07987")
+            {
+                Server.TransferRequest("UploadCo.aspx");
+            }
+            else if (Session["uid"].ToString() == "TMU00049")
+            {
+                //lnkApproval_Click(lnkApproval, EventArgs.Empty);
 
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "key", " alert('access denied ?'); document.location.href='FacultyDetails.aspx';", true);
+            }
 
 
         }
@@ -141,46 +152,46 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
         }
     }
 
-    public void sendAproved(string FromDate, string Eid, string Status)
-    {
-        string tablenameemployeedata = "";
-        string ccname = Session["Company"].ToString();
-        string rccname = ccname.Replace(".", "_");
+    //public void sendAproved(string FromDate, string Eid, string Status)
+    //{
+    //    string tablenameemployeedata = "";
+    //    string ccname = Session["Company"].ToString();
+    //    string rccname = ccname.Replace(".", "_");
 
-        tablenameemployeedata = "[" + rccname + "$Employee" + "]";
-        string mobilnoemp = "";
+    //    tablenameemployeedata = "[" + rccname + "$Employee" + "]";
+    //    string mobilnoemp = "";
 
-        string smsdata = "Dear Applicant your CO leave from " + FromDate + " to " + FromDate + " has been " + Status + ".";
+    //    string smsdata = "Dear Applicant your CO leave from " + FromDate + " to " + FromDate + " has been " + Status + ".";
 
-        // As per Subham Gupta 29-12-2018
+    //    // As per Subham Gupta 29-12-2018
 
-        SqlDataReader dr = Portalcon.SHow_EmployeeMobileNo(Eid, tablenameemployeedata);
-        dr.Read();
-        if (dr.HasRows)
-        {
-            mobilnoemp = dr["MobilePhoneNo"].ToString();
-            dr.Close();
-            Portalcon.DisConnect();
-            if (mobilnoemp.Trim() == "")
-            { }
-            else
-            {
-                try
-                {
-                    SMS(mobilnoemp, smsdata);
-                }
-                catch (Exception)
-                {
+    //    SqlDataReader dr = Portalcon.SHow_EmployeeMobileNo(Eid, tablenameemployeedata);
+    //    dr.Read();
+    //    if (dr.HasRows)
+    //    {
+    //        mobilnoemp = dr["MobilePhoneNo"].ToString();
+    //        dr.Close();
+    //        Portalcon.DisConnect();
+    //        if (mobilnoemp.Trim() == "")
+    //        { }
+    //        else
+    //        {
+    //            try
+    //            {
+    //                SMS(mobilnoemp, smsdata);
+    //            }
+    //            catch (Exception)
+    //            {
 
-                }
-            }
-        }
-        else
-        {
-            dr.Close();
-            Portalcon.DisConnect();
-        }
-    }
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        dr.Close();
+    //        Portalcon.DisConnect();
+    //    }
+    //}
 
 
     string holidaydatef = ""; DateTime holidaydatef1; DateTime weekofMonthlydataCount1; DateTime holidayMonthlydataCount1;
@@ -806,7 +817,7 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
                     if (LeaveType.Text == "CO")
                     {
                         ShowApprovalData(lblid.Text.Trim());
-                        sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Approved");
+                        //sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Approved");
                     }
                     else
                     {
@@ -818,7 +829,7 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
                         if (dtD.Rows[0]["FinalApprovalID"].ToString() == Session["uid"].ToString())
                         {
                             ShowApprovalData(lblid.Text.Trim());
-                            sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Approved");
+                            //sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Approved");
                             if (con1.State == ConnectionState.Closed)
                                 con1.Open();
                             string sqlq = "update HRMSPortal.dbo.tbl_Co_Leave_Application set FinalApprovalStatus=1 where ID='" + lblid.Text.Trim() + "'";
@@ -1064,7 +1075,7 @@ public partial class Faculty_Co_Application : System.Web.UI.Page
                 {
 
                     ShowApprovalDataRejected(lblid.Text.Trim());
-                    sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Rejected");
+                    //sendAproved(lblFDate.Text.Trim(), EmpId.Text, "Rejected");
                 }
             }
         }

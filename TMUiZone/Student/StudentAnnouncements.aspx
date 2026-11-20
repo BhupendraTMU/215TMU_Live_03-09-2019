@@ -3,7 +3,7 @@
     AutoEventWireup="true"
     CodeFile="StudentAnnouncements.aspx.cs"
     Inherits="Student_StudentAnnouncement" %>
-
+                   
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
     <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css" />

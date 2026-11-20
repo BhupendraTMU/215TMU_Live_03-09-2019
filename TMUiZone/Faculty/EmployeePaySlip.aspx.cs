@@ -20,26 +20,769 @@ public partial class Faculty_EmployeePaySlip : System.Web.UI.Page
 {
 
     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-    
+
     protected void Page_Load(object sender, EventArgs e)
     {
-       try
+        try
         {
             if (!IsPostBack)
             {
                 fromMonth.Attributes["type"] = "month";
                 bindPaySlipRequestList();
-                
+
                 BindDate(Session["uid"].ToString());
-                txtEmployeeNo.Text=Session["uid"].ToString();
+                txtEmployeeNo.Text = Session["uid"].ToString();
                 txtEmployeeName.Text = Session["uname"].ToString();
-            }       
+            }
         }
         catch
         {
             Response.Redirect("~/Default.aspx");
         }
     }
+
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public static object GetSalarySlip(string employeeNo, string month)
+    {
+        List<Dictionary<string, object>> employeeDetails =
+            new List<Dictionary<string, object>>();
+
+        string connStr =
+            ConfigurationManager.ConnectionStrings["TMUCON"].ToString();
+
+        DateTime salaryMonth;
+
+        if (!DateTime.TryParse(month, out salaryMonth))
+        {
+            salaryMonth = DateTime.Now;
+        }
+
+        int monthNo = salaryMonth.Month;
+        int yearNo = salaryMonth.Year;
+
+        using (SqlConnection con = new SqlConnection(connStr))
+        {
+            con.Open();
+
+            // =========================================================
+            // 1. EMPLOYEE + PAY DETAILS + HOLIDAY/SUNDAY
+            // =========================================================
+
+            string query = @"
+
+        /* =====================================================
+           EMPLOYEE INFORMATION
+           ===================================================== */
+
+        SELECT
+             [No_] EmployeeNo,
+             [First Name],
+             [Middle Name],
+             [Last Name],
+             [Full Name],
+             [Father Name],
+             [Employment Date],
+             [Actual Date of Joining],
+             [PAN No],
+             [ESI No],
+             [PF No],
+             [UAN No],
+             [Department Code],
+             [Department Name] DepartmentName,
+             [Department],
+             [Job Title],
+             [Job Title_Grade],
+             [Job Title_Grade Desc],
+             (
+                 SELECT [Designation Description]
+                 FROM [TMU$Designation Master]
+                 WHERE [Designation Code] = EMP.[Designation Code]
+             ) AS DesignationName,
+             [Branch Code],
+             [Branch Name],
+             [Location Code],
+             [Company E-Mail],
+             [E-Mail],
+             [Branch Code] AS Unit,
+             [Mobile Phone No_],
+             [Office Mobile],
+             [Bank Name],
+             [Employee Bank Name],
+             [Account No],
+             [Bank IFSC Code],
+             [Payment Method],
+             [Gender],
+             [Marital Status],
+             [Spouse Name],
+             [State],
+             [City],
+             [Address]
+        FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee] EMP
+        WHERE [No_] = @EmployeeNo;
+
+
+        /* =====================================================
+           PAY DETAILS
+           ===================================================== */
+
+        SELECT
+             [Year],
+             [Month],
+             [Employee No],
+             [Pay Element Code],
+             [ForMonthDate],
+             [Paid Category],
+             [Type],
+             [Included In Pay Slip],
+             [Sorting Order],
+             [Paid Days] - ([Holidays] + [Off Days]) AS [Present Days],
+             [LWP Days Full],
+             [LWP Days Half],
+             [Leave Days Full],
+             [Leave Days Half],
+             [Overtime Hours],
+             [Paid Days],
+             [Holidays],
+             [Off Days],
+             [Actual Amount],
+             [Payable Amount],
+             [Arrear Amount],
+             [Employer Contribition],
+             [Employer Contribition2],
+             [Salary],
+             [EPS Salary],
+             [Department Code],
+             [Branch Code],
+             [Job Title_Grade],
+             [Location Code],
+             [Job Title Code],
+             [PayRollMonthDate],
+             [Document No_],
+             [DateFilter],
+             [Bank Code],
+             [Bonus _],
+             [VPF _],
+             [VPF Amount],
+             [Extra PF _],
+             [Employer_s PF Contribution],
+             [Deduction For LWP],
+             [Irregular],
+             [Payment Indicator],
+             [Posting Group],
+             [Pay Bus_ Posting Group],
+             [Pay Prod_ Posting Group],
+             [Currency Code],
+             [Actual Amount (LCY)],
+             [Payable Amount (LCY)],
+             [Employee Name]
+        FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$Pay Employee Pay Details]
+        WHERE [Employee No] = @EmployeeNo
+          AND [Month] = @Month
+          AND [Year] = @Year
+          AND ISNULL([Included In Pay Slip], 1) = 1
+        ORDER BY [Sorting Order];
+
+
+        /* =====================================================
+           HOLIDAY COUNT
+           Holiday + Sunday
+           Same Sunday/Holiday date only counted once
+           ===================================================== */
+
+        SELECT COUNT(*) AS HolidayCount
+        FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$Pay Holidays]
+        WHERE [Branch Code] = (
+                SELECT TOP 1 [Branch Code]
+                FROM [EDUCOLLEGELIVE-R2].[dbo].[TMU$Employee]
+                WHERE [No_] = @EmployeeNo
+              )
+          AND MONTH([Date]) = @Month
+          AND YEAR([Date]) = @Year;
+
+
+        /* =====================================================
+           SUNDAY COUNT
+           ===================================================== */
+
+        SELECT COUNT(*) AS SundayCount
+        FROM
+        (
+            SELECT DATEADD(
+                       DAY,
+                       number,
+                       DATEFROMPARTS(@Year, @Month, 1)
+                   ) AS [Date]
+            FROM master..spt_values
+            WHERE type = 'P'
+              AND number < DAY(
+                    EOMONTH(
+                        DATEFROMPARTS(@Year, @Month, 1)
+                    )
+              )
+        ) A
+        WHERE DATENAME(WEEKDAY, [Date]) = 'Sunday';
+        ";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.Add("@EmployeeNo", SqlDbType.NVarChar, 50)
+                              .Value = employeeNo;
+
+                cmd.Parameters.Add("@Month", SqlDbType.Int)
+                              .Value = monthNo;
+
+                cmd.Parameters.Add("@Year", SqlDbType.Int)
+                              .Value = yearNo;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    // =================================================
+                    // EMPLOYEE INFORMATION
+                    // =================================================
+
+                    if (!reader.Read())
+                    {
+                        return null;
+                    }
+
+                    Dictionary<string, object> row =
+                        new Dictionary<string, object>();
+
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        row[reader.GetName(i)] =
+                            reader.IsDBNull(i)
+                            ? null
+                            : reader.GetValue(i);
+                    }
+
+                    // =================================================
+                    // EMPLOYEE BASIC INFORMATION
+                    // =================================================
+
+                    row["FatherName"] =
+                        GetValue(row, "Father Name");
+
+                    row["DOJ"] =
+                        GetDateString(row, "Employment Date");
+
+                    if (string.IsNullOrEmpty(Convert.ToString(row["DOJ"])))
+                    {
+                        row["DOJ"] =
+                            GetDateString(row, "Employment Date");
+                    }
+
+                    row["PAN"] =
+                        GetValue(row, "PAN No");
+
+                    row["ESINo"] =
+                        GetValue(row, "ESI No");
+
+                    row["UAN"] =
+                        GetValue(row, "UAN No");
+
+                    row["EmployeeName"] =
+                        GetValue(row, "Full Name");
+
+                    if (string.IsNullOrEmpty(
+                        Convert.ToString(row["EmployeeName"])))
+                    {
+                        row["EmployeeName"] =
+                            (
+                                Convert.ToString(
+                                    GetValue(row, "First Name"))
+                                + " "
+                                + Convert.ToString(
+                                    GetValue(row, "Middle Name"))
+                                + " "
+                                + Convert.ToString(
+                                    GetValue(row, "Last Name"))
+                            ).Trim();
+                    }
+
+                    row["SalaryMonth"] =
+                        salaryMonth.ToString("MMMM yyyy");
+
+                    // =================================================
+                    // MOVE TO PAY DETAILS RESULT
+                    // =================================================
+
+                    reader.NextResult();
+
+                    List<Dictionary<string, object>> earnings =
+                        new List<Dictionary<string, object>>();
+
+                    List<Dictionary<string, object>> deductions =
+                        new List<Dictionary<string, object>>();
+
+                    decimal grossEarning = 0;
+                    decimal grossDeduction = 0;
+
+                    decimal totalPaidDays = 0;
+                    decimal totalPresentDays = 0;
+                    decimal totalLeaveDays = 0;
+                    decimal totalLWPDays = 0;
+                    decimal totalOffDays = 0;
+                    decimal totalOvertime = 0;
+
+                    bool firstPayRow = true;
+
+                    // =================================================
+                    // PAY DETAILS
+                    // =================================================
+
+                    while (reader.Read())
+                    {
+                        Dictionary<string, object> pay =
+                            new Dictionary<string, object>();
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            pay[reader.GetName(i)] =
+                                reader.IsDBNull(i)
+                                ? null
+                                : reader.GetValue(i);
+                        }
+
+                        decimal actualAmount =
+                            ToDecimal(
+                                GetValue(pay, "Actual Amount"));
+
+                        decimal payableAmount =
+                            ToDecimal(
+                                GetValue(pay, "Payable Amount"));
+
+                        decimal arrearAmount =
+                            ToDecimal(
+                                GetValue(pay, "Arrear Amount"));
+
+                        decimal amount = payableAmount;
+
+                        // =============================================
+                        // ATTENDANCE
+                        // =============================================
+
+                        if (firstPayRow)
+                        {
+                            totalPaidDays =
+                                ToDecimal(
+                                    GetValue(pay, "Paid Days"));
+
+                            totalPresentDays =
+                                ToDecimal(
+                                    GetValue(pay, "Present Days"));
+
+                            totalLeaveDays =
+                                ToDecimal(
+                                    GetValue(pay, "Leave Days Full"))
+                                +
+                                ToDecimal(
+                                    GetValue(pay, "Leave Days Half"));
+
+                            totalLWPDays =
+                                ToDecimal(
+                                    GetValue(pay, "LWP Days Full"))
+                                +
+                                ToDecimal(
+                                    GetValue(pay, "LWP Days Half"));
+
+                            totalOffDays =
+                                ToDecimal(
+                                    GetValue(pay, "Off Days"));
+
+                            totalOvertime =
+                                ToDecimal(
+                                    GetValue(pay, "Overtime Hours"));
+
+                            firstPayRow = false;
+                        }
+
+                        // =============================================
+                        // PAY ELEMENT
+                        // =============================================
+
+                        string payElement =
+                            Convert.ToString(
+                                GetValue(pay, "Pay Element Code"));
+
+                        string type =
+                            Convert.ToString(
+                                GetValue(pay, "Type"));
+
+                        // =============================================
+                        // EARNING / DEDUCTION
+                        // =============================================
+
+                        Dictionary<string, object> salaryItem =
+                            new Dictionary<string, object>();
+
+                        salaryItem["Particular"] =
+                            payElement;
+
+                        salaryItem["PayElementCode"] =
+                            payElement;
+
+                        salaryItem["Type"] =
+                            type;
+
+                        salaryItem["PayRate"] =
+                            actualAmount;
+
+                        salaryItem["PaidDays"] =
+                            GetValue(pay, "Paid Days");
+
+                        salaryItem["PayEarned"] =
+                            amount;
+
+                        salaryItem["ActualAmount"] =
+                            actualAmount;
+
+                        salaryItem["PayableAmount"] =
+                            payableAmount;
+
+                        salaryItem["ArrearAmount"] =
+                            arrearAmount;
+
+
+                        // =================================================
+                        // DEDUCTION
+                        // =================================================
+                        if (actualAmount < 0)
+                        {
+                            //if (type.Equals(
+                            //        "Deduction",
+                            //        StringComparison.OrdinalIgnoreCase)
+                            //    ||
+                            //    type.Equals(
+                            //        "D",
+                            //        StringComparison.OrdinalIgnoreCase))
+                            //{
+                                // ---------------------------------------------
+                                // Always keep deduction positive internally
+                                // ---------------------------------------------
+
+                                decimal deductionAmount =
+                                    Math.Abs(amount);
+
+                                decimal deductionActualAmount =
+                                    Math.Abs(actualAmount);
+
+                                decimal deductionPayableAmount =
+                                    Math.Abs(payableAmount);
+
+
+                                // ---------------------------------------------
+                                // Display amount as NEGATIVE
+                                // ---------------------------------------------
+
+                                deductions.Add(
+                                    new Dictionary<string, object>
+                                    {
+                                {
+                                    "Particular",
+                                    payElement
+                                },
+                                {
+                                    "PayElementCode",
+                                    payElement
+                                },
+                                {
+                                    "Amount",
+                                    deductionAmount
+                                },
+                                {
+                                    "ActualAmount",
+                                    deductionActualAmount
+                                },
+                                {
+                                    "PayableAmount",
+                                    deductionPayableAmount
+                                }
+                                    });
+
+
+                                // ---------------------------------------------
+                                // Gross deduction remains POSITIVE
+                                // ---------------------------------------------
+
+                                grossDeduction += deductionAmount;
+                            //}
+                        }
+                        else
+                        {
+                            // =================================================
+                            // EARNING
+                            // =================================================
+
+                            earnings.Add(salaryItem);
+
+                            grossEarning += amount;
+                        }
+                    }
+
+                    // =================================================
+                    // HOLIDAY COUNT
+                    // =================================================
+
+                    reader.NextResult();
+
+                    int holidayCount = 0;
+
+                    if (reader.Read())
+                    {
+                        holidayCount =
+                            Convert.ToInt32(
+                                reader["HolidayCount"]);
+                    }
+
+                    // =================================================
+                    // SUNDAY COUNT
+                    // =================================================
+
+                    reader.NextResult();
+
+                    int sundayCount = 0;
+
+                    if (reader.Read())
+                    {
+                        sundayCount =
+                            Convert.ToInt32(
+                                reader["SundayCount"]);
+                    }
+
+                    // =================================================
+                    // TOTAL HOLIDAYS
+                    // =================================================
+
+                    int totalHolidayOff =
+                        holidayCount + sundayCount;
+
+                    // =================================================
+                    // FINAL ATTENDANCE
+                    // =================================================
+
+                    int totalDays =
+                        DateTime.DaysInMonth(
+                            yearNo,
+                            monthNo);
+
+                    row["TotalDays"] =
+                        totalDays;
+
+                    row["PaidDays"] =
+                        totalPaidDays;
+
+                    row["PresentDays"] =
+                        totalPresentDays;
+
+                    row["LeaveDays"] =
+                        totalLeaveDays;
+
+                    row["LWPDays"] =
+                        totalLWPDays;
+
+                    row["OffDays"] =
+                        totalOffDays;
+
+                    row["HolidayCount"] =
+                        holidayCount;
+
+                    row["SundayCount"] =
+                        sundayCount;
+
+                    row["TotalHolidayOff"] =
+                        totalHolidayOff;
+
+                    row["OvertimeHours"] =
+                        totalOvertime;
+
+
+                    // =================================================
+                    // SALARY
+                    // =================================================
+
+                    row["GrossEarning"] =
+                        grossEarning;
+
+                    row["GrossDeduction"] =
+                        grossDeduction;
+
+                    // Net Salary = Gross Earning - Gross Deduction
+                    row["NetSalary"] =
+                        grossEarning - grossDeduction;
+
+
+                    // =================================================
+                    // LISTS
+                    // =================================================
+
+                    row["Earnings"] =
+                        earnings;
+
+                    row["Deductions"] =
+                        deductions;
+
+
+                    // =================================================
+                    // SALARY IN WORDS
+                    // =================================================
+
+                    row["SalaryInWords"] =
+                        NumberToWords(
+                            grossEarning - grossDeduction)
+                        + " Rupees Only";
+
+
+                    // =================================================
+                    // ATTENDANCE DETAILS
+                    // =================================================
+
+                    decimal finalPresentDays =
+                        totalPresentDays
+                        -
+                        (
+                            totalLeaveDays
+                            +
+                            totalHolidayOff
+                        );
+
+                    row["AttendanceDetails"] =
+                        finalPresentDays.ToString("0.##")
+                        + " (Present) + "
+                        + totalLeaveDays.ToString("0.##")
+                        + " (Leave) + "
+                        + totalHolidayOff.ToString("0.##")
+                        + " (Holiday/Off)";
+
+
+                    // =================================================
+                    // ADD EMPLOYEE DATA
+                    // =================================================
+
+                    employeeDetails.Add(row);
+                }
+            }
+        }
+
+        return employeeDetails;
+    }
+
+
+    private static object GetValue(
+    Dictionary<string, object> row,
+    string key)
+    {
+        if (row.ContainsKey(key))
+            return row[key];
+
+        return null;
+    }
+
+
+    private static decimal ToDecimal(object value)
+    {
+        if (value == null || value == DBNull.Value)
+            return 0;
+
+        decimal result;
+
+        decimal.TryParse(
+            Convert.ToString(value),
+            out result);
+
+        return result;
+    }
+
+
+    private static string GetDateString(
+        Dictionary<string, object> row,
+        string key)
+    {
+        object value = GetValue(row, key);
+
+        if (value == null ||
+            value == DBNull.Value ||
+            string.IsNullOrEmpty(Convert.ToString(value)))
+        {
+            return "";
+        }
+
+        DateTime date;
+
+        if (DateTime.TryParse(
+            Convert.ToString(value),
+            out date))
+        {
+            return date.ToString("dd/MM/yyyy");
+        }
+
+        return Convert.ToString(value);
+    }
+    private static string NumberToWords(decimal amount)
+    {
+        long number = Convert.ToInt64(
+            Math.Floor(amount));
+
+        if (number == 0)
+            return "Zero";
+
+        return NumberToWordsIndian(number);
+    }
+
+
+    private static string NumberToWordsIndian(long number)
+    {
+        if (number == 0)
+            return "";
+
+        string[] ones =
+        {
+        "", "One", "Two", "Three", "Four",
+        "Five", "Six", "Seven", "Eight", "Nine",
+        "Ten", "Eleven", "Twelve", "Thirteen",
+        "Fourteen", "Fifteen", "Sixteen",
+        "Seventeen", "Eighteen", "Nineteen"
+    };
+
+        string[] tens =
+        {
+        "", "", "Twenty", "Thirty", "Forty",
+        "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+    };
+
+        if (number < 20)
+            return ones[number];
+
+        if (number < 100)
+            return tens[number / 10] +
+                   (number % 10 != 0
+                       ? " " + ones[number % 10]
+                       : "");
+
+        if (number < 1000)
+            return ones[number / 100] +
+                   " Hundred " +
+                   (number % 100 != 0
+                       ? NumberToWordsIndian(number % 100)
+                       : "");
+
+        if (number < 100000)
+            return NumberToWordsIndian(number / 1000)
+                   + " Thousand "
+                   + NumberToWordsIndian(number % 1000);
+
+        if (number < 10000000)
+            return NumberToWordsIndian(number / 100000)
+                   + " Lakh "
+                   + NumberToWordsIndian(number % 100000);
+
+        return NumberToWordsIndian(number / 10000000)
+               + " Crore "
+               + NumberToWordsIndian(number % 10000000);
+    }
+
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public static object GetEmployeeDetailList(string employeeNo)
@@ -319,12 +1062,58 @@ public partial class Faculty_EmployeePaySlip : System.Web.UI.Page
             }
             else
             {
-               // Blank();
-            }         
+                // Blank();
+            }
         }
         catch
         {
             Response.Redirect("../Default.aspx");
+        }
+    }
+    protected void getPaySlipRequestList_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            DropDownList ddlMonth = (DropDownList)e.Row.FindControl("ddlMonth");
+
+            if (ddlMonth != null)
+            {
+                DateTime fromMonth;
+                DateTime toMonth;
+
+                object fromValue = DataBinder.Eval(e.Row.DataItem, "FromMonth");
+                object toValue = DataBinder.Eval(e.Row.DataItem, "ToMonth");
+
+                if (fromValue != null &&
+                    toValue != null &&
+                    DateTime.TryParse(fromValue.ToString(), out fromMonth) &&
+                    DateTime.TryParse(toValue.ToString(), out toMonth))
+                {
+                    ddlMonth.Items.Clear();
+
+                    DateTime currentMonth = new DateTime(
+                        fromMonth.Year,
+                        fromMonth.Month,
+                        1);
+
+                    DateTime endMonth = new DateTime(
+                        toMonth.Year,
+                        toMonth.Month,
+                        1);
+
+                    while (currentMonth <= endMonth)
+                    {
+                        ddlMonth.Items.Add(
+                            new ListItem(
+                                currentMonth.ToString("MMMM yyyy"),
+                                currentMonth.ToString("yyyy-MM")
+                            )
+                        );
+
+                        currentMonth = currentMonth.AddMonths(1);
+                    }
+                }
+            }
         }
     }
 

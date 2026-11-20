@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.IO;
-using System.Web.UI.HtmlControls;
-using paytm;
+using System.Web.UI;
 
 
 public partial class IndexMaster : System.Web.UI.MasterPage
@@ -22,18 +16,22 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         try
         {
 
-
-            if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D003" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376")
+            Page.MaintainScrollPositionOnPostBack = false;
+            if (Session["DesignationCode"] != null)
             {
-                lnk_mentor_allocation.Visible = true;
+                if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376" || Session["DesignationCode"].ToString() == "D261")
+                {
+                    lnk_mentor_allocation.Visible = true;
+                }
+
             }
-
+            if (Session["uid"] == null || string.IsNullOrEmpty(Session["uid"].ToString()))
+            {
+                // Session expire ya user login nahi hai
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
             
-            //else
-            //{
-            //    IdPHDStudentNoDuesApproval.Visible = false;
-            //}
-
             con1.Open();
 
             SqlCommand cmdT = new SqlCommand("select count(*) as c from [HRMSPortal].dbo.[tble_Exit_Interview_Form] where [Employee Code]='" + Session["uid"].ToString() + "' AND Status='Submit' and (Hod_Status!='Rejected By HOD' and Hr_Status!='Rejected By HR')", con1);
@@ -51,7 +49,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 liHR.Visible = true;
             }
 
-            if (Session["uid"].ToString() == "TMU03798")
+            if (Session["uid"].ToString() == "TMU00415")
             {
                 EquipmentIndent.Visible = true;
             }
@@ -205,7 +203,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             else
             {
                 NoDuesApprovalList.Visible = true;
-            }                      
+            }
 
             GetLinkData();//===================>Add New Function For Show Hide Link Using DataBase Role
             showlib();
@@ -220,7 +218,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     StudentDetaineeReport.Visible = false;
                     DailyAttendanceDetails.Visible = false;
                     StudentContinueAbsentReport.Visible = false;
-                    
+
                 }
             }
             if (Session["GlobalDimension1Code"].ToString() == "TMCT" || Session["GlobalDimension1Code"].ToString() == "TMEG")
@@ -245,7 +243,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             {
                 DigilockerData.Visible = true;
             }
-                if (Session["Departmentcode"].ToString().Trim() == "D213" && Session["uid"].ToString() != "TMU00241")
+            if (Session["Departmentcode"].ToString().Trim() == "D213" && Session["uid"].ToString() != "TMU00241")
             {
                 lnkCoClaimReport.Visible = true;
                 lnkLeaveReport.Visible = true;
@@ -613,8 +611,15 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     }
     public void GoogleLink1()
     {
-        string Link = con.FacultyGoogleLink(Session["uid"].ToString());
-        GoogleLink.NavigateUrl = Link;
+        try
+        {
+            string Link = con.FacultyGoogleLink(Session["uid"].ToString());
+            GoogleLink.NavigateUrl = Link;
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
     public void Reimbursment_Pending_ApprovalHR_Count()
     {
@@ -785,12 +790,30 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     }
     public void BINDimage()
     {
-        string id = Session["uid"].ToString();
-        byte[] bytes = GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"].ToString() == "" ? null : (byte[])GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"];
-        if (bytes != null)
+        try
         {
-            string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
-            imgProfile.ImageUrl = "data:image/png;base64," + base64String;
+            if (Convert.ToInt32(Session["Gender1"].ToString()) == 2)
+            {
+                imgProfile.ImageUrl = "~/images/Men.png";
+            }
+            else
+            {
+                imgProfile.ImageUrl = "~/images/Women.jpg";
+            }
+
+            string id = Session["uid"].ToString();
+            byte[] bytes = GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"].ToString() == "" ? null : (byte[])GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"];
+            if (bytes != null)
+            {
+                string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
+                imgProfile.ImageUrl = "data:image/png;base64," + base64String;
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+
         }
     }
     private DataTable GetData(string query)
@@ -860,11 +883,11 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         }
     }
 
-  
+
     public void GetLinkData()
     {
 
-        DataTable dt = new DataTable();        
+        DataTable dt = new DataTable();
         dt = con.GetLink(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
         for (int i = 0; i < dt.Rows.Count; i++)
         {
@@ -1009,10 +1032,25 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             if (dt.Rows[i]["PageId"].ToString() == "FacultyTimeSheet") { if (Session["GlobalDimension1Code"].ToString() == "TMDC" || Session["GlobalDimension1Code"].ToString() == "TMMC") { FacultyTimeSheetMD.Visible = true; } else { FacultyTimeSheet.Visible = true; } }
             if (dt.Rows[i]["PageId"].ToString() == "FacultyFeedback") { FacultyFeedback.Visible = true; }
             if (dt.Rows[i]["PageId"].ToString() == "IndentApproval") { IndentApproval.Visible = true; }
-
-            SqlDataAdapter da = new SqlDataAdapter("select case when [Hospital HR Leave]=1 then 1 else 0 end as 'access' ,[Global Dimension 1 Code] from  [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] where   [No_]='" + Session["uid"].ToString() + "' ", con.Con);
             DataTable dt1 = new DataTable();
-            da.Fill(dt1);
+            try
+            {
+                string query = @"SELECT  CASE   WHEN [Hospital HR Leave] = 1 THEN 1    ELSE 0  END AS [access],  [Global Dimension 1 Code] FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] WITH (NOLOCK) WHERE [No_] = (    SELECT ISNULL(        (            SELECT TOP 1 ActualEmployeeCode            FROM [EDUCOLLEGELIVE-R2].dbo.EmployeeTempMapping WITH (NOLOCK)            WHERE TempEmployeeCode = @UserId              AND IsActive = 1        ),        @UserId    ))";
+
+                SqlDataAdapter da = new SqlDataAdapter(query, con.Con);
+
+                da.SelectCommand.Parameters.AddWithValue(
+                    "@UserId",
+                    Session["uid"].ToString()
+                );
+
+
+                da.Fill(dt1);
+            }
+            catch (Exception ex)
+            {
+
+            }
             if (dt1.Rows[0]["access"].ToString() == "1")
             {
                 if (dt.Rows[i]["PageId"].ToString() == "Leave1") { Leave1.Visible = true; }
@@ -1228,7 +1266,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
 
             }
-            if (Session["uid"].ToString() == "TMU04426" || Session["uid"].ToString() == "TMU00478")
+            if (Session["uid"].ToString() == "TMU10115")
             {
                 MembershipAprrovalForm.Visible = true;
 
@@ -1353,6 +1391,11 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
 
         }
+        if (Session["uid"].ToString() == "TMU06860")
+        {
+            DetalAttendance.Visible = true;
+        }
+
         if (Session["uid"].ToString() == "TMU03871")
         {
             CRCReport.Visible = true;
@@ -1377,7 +1420,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         {
             migration.Visible = true;
         }
-        if (Session["uid"].ToString() == "TMU08719")
+        if (Session["uid"].ToString() == "TMU08719" || Session["uid"].ToString() == "TMU07987")
         {
             TDSApproval.Visible = true;
         }
@@ -1412,7 +1455,14 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         {
             Li6.Visible = true;
         }
-        SqlDataAdapter dahand = new SqlDataAdapter("select [Employee Posting Group] from [EDUCOLLEGELIVE-R2].dbo.TMU$Employee   where   [No_]='" + Session["uid"].ToString() + "' ", con.Con);
+        string query1 = @"SELECT [Employee Posting Group] FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] WITH (NOLOCK) WHERE [No_] =(    SELECT ISNULL(        (            SELECT TOP 1 ActualEmployeeCode            FROM [EDUCOLLEGELIVE-R2].dbo.EmployeeTempMapping WITH (NOLOCK)            WHERE TempEmployeeCode = @UserId              AND IsActive = 1        ),        @UserId    ))";
+        SqlDataAdapter dahand = new SqlDataAdapter(query1, con.Con);
+
+        dahand.SelectCommand.Parameters.AddWithValue(
+            "@UserId",
+            Session["uid"].ToString()
+        );
+
         DataTable dthand = new DataTable();
         dahand.Fill(dthand);
         if (dthand.Rows[0]["Employee Posting Group"].ToString() == "TEACH")
@@ -1462,6 +1512,12 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
 
         }
+        if (Session["uid"].ToString() == "TMU07987")
+        {
+            UploadCo.Visible = true;
+
+
+        }
         if (Session["uid"].ToString() == "TMU07001" || Session["uid"].ToString() == "TMU06106" || Session["uid"].ToString() == "TMU07417" || Session["uid"].ToString() == "TMU07473")
         {
             ITEmployeePunchRecord.Visible = true;
@@ -1471,22 +1527,22 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             DigilockerErrorUpload.Visible = true;
         }
         if ((Session["Departmentcode"].ToString() == "D228" && Session["uid"].ToString() == "TMU05721") || Session["Departmentcode"].ToString() == "D213" || (Session["Departmentcode"].ToString() == "D039" && Session["uid"].ToString() == "TMU00245"))
-        {            
+        {
             IdPHDStudentNoDuesApproval.Visible = true;
         }
 
-       //SqlDataAdapter adapCRAC = new SqlDataAdapter("select Principal from [EDUCOLLEGELIVE-R2].dbo.[User Role Matrix]  where   Principal='" + Session["uid"].ToString() + "' and [Global Dimenison 1 Code]='" + Session["College"].ToString() + "' and [Course Code]='" + Session["CourseCode"].ToString() + "'  ", con.Con);
-
-        SqlDataAdapter adapCRAC = new SqlDataAdapter("select Principal from [EDUCOLLEGELIVE-R2].dbo.[User Role Matrix]  where   Principal='" + Session["uid"].ToString() + "' ", con.Con);
-        DataTable dtCrac = new DataTable();
-        //adapCRAC.Fill(dtCrac);
-        if (dtCrac.Rows.Count>0 || Session["uid"].ToString() == "TMU00283")
-        {            
-            IdViewPHDStudentCRACForm.Visible = true;
+        if (Session["College"] != null)
+        {
+            if (Session["College"].ToString() == "TPHD")
+            {
+                //SHow only for PHD faculty
+                IdViewPHDStudentCRACForm.Visible = true;
+            }
         }
-    }        
 
-    
+    }
+
+
 
     public string GetLinkYesNo(string PageId)
     {

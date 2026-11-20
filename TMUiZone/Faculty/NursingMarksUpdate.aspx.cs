@@ -17,12 +17,12 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
-
-
-
+               
+               
+               
                 bindAcademicYear();
                 bindDrpCourseList();
-
+               
 
             }
         }
@@ -54,54 +54,48 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
     protected void drpAcademicYear_SelectedIndexChanged(object sender, EventArgs e)
     {
         bindDrpCourseList();
-
+        
         bindSubject();
-
+       
 
     }
     protected void drpCourse_SelectedIndexChanged(object sender, EventArgs e)
     {
-
+       
         bindDrpSemesterList();
         //bindSubject();
-
+       
 
     }
     protected void drpSemester_SelectedIndexChanged(object sender, EventArgs e)
     {
-        bindSectionList();
-
-        bindGroupList();
-
+       
         bindSubject();
-
-
-
 
 
 
     }
     protected void ddlSubject_TextChanged(object sender, EventArgs e)
     {
-        SqlCommand cmd = new SqlCommand("proc_GetExamMethod", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
-        cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
-        cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
-        cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
-        cmd.Parameters.Add("@SubjectCode", ddlSubject.SelectedValue);
-        cmd.Parameters.Add("@Section", drpSection.SelectedValue);
-        cmd.Parameters.Add("@ExamType", ddlexamtype.SelectedValue);
         DataTable dt = new DataTable();
+        SqlCommand cmd = new SqlCommand("proc_GetSubjectClassificationformarkEntry", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@AcadmicYear", drpAcademicYear.SelectedValue);
+        cmd.Parameters.AddWithValue("@CourseCode", drpCourse.SelectedValue);
+        cmd.Parameters.AddWithValue("@SubjectCode", ddlSubject.SelectedValue);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
-        ddlexamMethod.DataSource = dt;
-        ddlexamMethod.DataTextField = "Exam Method";
-        ddlexamMethod.DataValueField = "No_";
-        ddlexamMethod.DataBind();
+        if (dt.Rows.Count > 0)
+        {
+           
+        }
+        bindSectionList();
+
+        bindGroupList();
 
 
+        bindBatchList();
+       
 
     }
     public void bindDrpCourseList()
@@ -143,13 +137,22 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("sp_getSubjectforMarksUpdate", con);
+            SqlCommand cmd = new SqlCommand("sp_getSubjrctCodeFacultyWise", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
             cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedItem.Value.ToString());
             cmd.Parameters.Add("@CourseCode", drpCourse.SelectedItem.Value.ToString());
             cmd.Parameters.Add("@Semester", drpSemester.SelectedItem.Value.ToString());
-            cmd.Parameters.Add("@ExamType", ddlexamtype.SelectedValue);
+            //if (rdInternal.Checked == true)
+            //{
+            //    cmd.Parameters.Add("@ExamType", "Internal");
+            //}
+            //else
+            //{
+            //    cmd.Parameters.Add("@ExamType", "External");
+            //}
+
+
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -164,13 +167,13 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
     public void bindSectionList()
     {
         DataTable dt = new DataTable();
-        SqlCommand cmd = new SqlCommand("proc_GetSectionforMarksUpdate", con);
+        SqlCommand cmd = new SqlCommand("proc_GetSectionFromCourseWiseFaculty_RoleNew", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
-        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedItem.Value.ToString());
-        cmd.Parameters.Add("@CourseCode", drpCourse.SelectedItem.Value.ToString());
-        cmd.Parameters.Add("@Semester", drpSemester.SelectedItem.Value.ToString());
-        cmd.Parameters.Add("@ExamType", ddlexamtype.SelectedValue);
+        cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
+        cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
+        cmd.Parameters.Add("@Subject", ddlSubject.SelectedValue);
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
         drpSection.DataSource = dt;
@@ -180,15 +183,14 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
     }
     public void bindGroupList()
     {
-        SqlCommand cmd = new SqlCommand("sp_GetGroupforMarkUpdate", con);
+        SqlCommand cmd = new SqlCommand("sp_GetGroup_RoleNew", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
-        cmd.Parameters.Add("@Semester", drpSemester.SelectedValue);
+        cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
         cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
         cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
-
+        cmd.Parameters.Add("@SubjectCode", ddlSubject.SelectedValue);
         cmd.Parameters.Add("@SectionCode", drpSection.SelectedValue);
-        cmd.Parameters.Add("@ExamType", ddlexamtype.SelectedValue);
         DataTable dt = new DataTable();
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
@@ -197,7 +199,24 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
         ddlGroup.DataValueField = "No_";
         ddlGroup.DataBind();
     }
-
+    public void bindBatchList()
+    {
+        SqlCommand cmd = new SqlCommand("proc_GetBatchFromCourseSemester_RoleNew", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
+        cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
+        cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
+        cmd.Parameters.Add("@SubjectCode", ddlSubject.SelectedValue);
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        ddlBatch.DataSource = dt;
+        ddlBatch.DataTextField = "Details";
+        ddlBatch.DataValueField = "No_";
+        ddlBatch.DataBind();
+    }
     protected void ddlGroup_SelectedIndexChanged(object sender, EventArgs e)
     {
 
@@ -238,18 +257,6 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
 
                     string oldMarks = lblPreviousMarks.Text.Trim();
                     string newMarks = txtIAMarks.Text.Trim();
-
-                    decimal oldMark;
-                    if (decimal.TryParse(oldMarks, out oldMark))
-                    {
-                        oldMarks = oldMark.ToString("0.00");
-                    }
-
-                    decimal marks;
-                    if (decimal.TryParse(newMarks, out marks))
-                    {
-                        newMarks = marks.ToString("0.00");
-                    }
 
                     // History Insert
                     SqlCommand cmdHistory = new SqlCommand(@"
@@ -296,16 +303,15 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
                     cmdHistory.ExecuteNonQuery();
 
                     // Main Table Update
-                    string query = "UPDATE " + tableName +
-               " SET " + marksColumn + " = CASE    WHEN UPPER(@Marks) = 'AB'        THEN CAST(-1 AS DECIMAL(38,20))    ELSE CAST(@Marks AS DECIMAL(38,20)) END " +
-               " WHERE [Document No_] = @DocumentNo " +
-               " AND [Enrollement No] = @EnrollmentNo " +
-               " AND [Academic Year] = @AcademicYear " +
-               " AND Course = @Course " +
-               " AND [Subject Code] = @SubjectCode " +
-               " AND [Exam Method] = @ExamMethod";
-
-                    SqlCommand cmdUpdate = new SqlCommand(query, con1, trans);
+                    SqlCommand cmdUpdate = new SqlCommand(@"
+                    UPDATE {tableName}
+                    SET {marksColumn} = @Marks
+                    WHERE [Document No_] = @DocumentNo
+                    AND [Enrollement No] = @EnrollmentNo
+                    AND [Academic Year] = @AcademicYear
+                    AND Course = @Course
+                    AND [Subject Code] = @SubjectCode
+                    AND [Exam Method] = @ExamMethod", con1, trans);
 
                     cmdUpdate.Parameters.AddWithValue("@Marks", newMarks);
                     cmdUpdate.Parameters.AddWithValue("@DocumentNo", gvStudentMarks.DataKeys[row.RowIndex]["Document No_"]);
@@ -344,7 +350,7 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
 
 
     }
-
+   
     public void BindGrid()
     {
         SqlCommand cmd = new SqlCommand("proc_GetStudentFormethod", con);
@@ -360,6 +366,28 @@ public partial class Faculty_NursingMarksUpdate : System.Web.UI.Page
         gvStudentMarks.DataBind();
 
     }
+    protected void ddlexamtype_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        SqlCommand cmd = new SqlCommand("proc_GetExamMethod", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
+        cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
+        cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
+        cmd.Parameters.Add("@FacultyCode", Session["uid"].ToString());       
+        cmd.Parameters.Add("@SubjectCode", ddlSubject.SelectedValue);
+        cmd.Parameters.Add("@Section", drpSection.SelectedValue);
+        cmd.Parameters.Add("@ExamType", ddlexamtype.SelectedValue);
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        ddlexamMethod.DataSource = dt;
+        ddlexamMethod.DataTextField = "Exam Method";
+        ddlexamMethod.DataValueField = "No_";
+        ddlexamMethod.DataBind();
 
 
+
+    }
+    
 }

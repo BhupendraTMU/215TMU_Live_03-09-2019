@@ -141,7 +141,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
         {
             sqlStatement = "SELECT *,Case When [Sanctioning Incharge]='' then HOD else [Sanctioning Incharge] end as 'AuthorizedID'  FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]  where [Status]='0'  order by [First Name]";
         }
-        
+
         else
         {
             sqlStatement = "Select * from (SELECT *,Case When [Sanctioning Incharge]='' then HOD else [Sanctioning Incharge] end as 'AuthorizedID'  FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]  where [Status]='0') T where T.AuthorizedID='" + Session["uid"].ToString() + "' order by [First Name]";
@@ -187,7 +187,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
 
 
 
-            SqlCommand sqlCmd = new SqlCommand("select * from tble_Employee_Punch_Data where [Employee ID]  collate Latin1_General_100_CS_AS in (SELECT No_  FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]  where [Status]='0' and [Global Dimension 1 Code]='TMDC' ) and [Attendance Date]=convert(date,'" + txtdate.Text + "',103) order by [Attendance Date]", con.Con);
+            SqlCommand sqlCmd = new SqlCommand("select *,(FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm')  + '   -   ' + FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') ) as ShiftTime from tble_Employee_Punch_Data P LEFT JOIN [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee Actual Punch Data] APD  ON APD.[Employee No] collate Latin1_General_100_CS_AS= P.[Employee ID]  AND APD.[Attendance Date] = P.[Attendance Date] where [Employee ID]  collate Latin1_General_100_CS_AS in (SELECT No_  FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]  where [Status]='0' and [Global Dimension 1 Code]='TMDC' ) and P.[Attendance Date]=convert(date,'" + txtdate.Text + "',103) order by P.[Attendance Date]", con.Con);
             SqlDataAdapter sqlDa = new SqlDataAdapter(sqlCmd);
             DataTable dt1 = new DataTable();
             sqlDa.Fill(dt1);
@@ -208,14 +208,15 @@ public partial class Team_Punch_Data : System.Web.UI.Page
             txtUserid.Visible = true;
             iddate.Visible = false;
             txtdate.Visible = false;
-            SqlDataReader dr = con.Show_9Punchdata(txtUserid.SelectedValue.ToString());
+            SqlCommand sqlCmd = new SqlCommand("select *,(FORMAT(CAST([Shift Time In] AS DATETIME),'HH:mm')  + '   -   ' + FORMAT(CAST([Shift Time Out] AS DATETIME),'HH:mm') ) as ShiftTime from tble_Employee_Punch_Data P LEFT JOIN [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee Actual Punch Data] APD  ON APD.[Employee No] collate Latin1_General_100_CS_AS= P.[Employee ID]  AND APD.[Attendance Date] = P.[Attendance Date] where [Employee ID]  collate Latin1_General_100_CS_AS in (SELECT No_  FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]  where [Status]='0'  and  month(P.[Attendance Date])="+ddlMonth.SelectedValue+" and year(P.[Attendance Date])="+ddlYear.SelectedValue+" and [Employee ID]='" + txtUserid.Text + "') order by P.[Attendance Date]", con.Con);
+            SqlDataAdapter sqlDa = new SqlDataAdapter(sqlCmd);
             DataTable dt = new DataTable();
-            dt.Load(dr);
+            sqlDa.Fill(dt);
             grdPunchdata.Columns[0].Visible = false;
             grdPunchdata.Columns[1].Visible = false;
             grdPunchdata.DataSource = dt;
             grdPunchdata.DataBind();
-            dr.Close();
+           
             con.DisConnect();
         }
 
@@ -510,19 +511,21 @@ public partial class Team_Punch_Data : System.Web.UI.Page
             e.Row.Cells[3].ForeColor = System.Drawing.Color.Black;
             e.Row.Cells[4].BackColor = System.Drawing.Color.Wheat;
             e.Row.Cells[4].ForeColor = System.Drawing.Color.Black;
-            string p1 = e.Row.Cells[5].Text;
+            e.Row.Cells[5].BackColor = System.Drawing.Color.Wheat;
+            e.Row.Cells[5].ForeColor = System.Drawing.Color.Black;
+            string p1 = e.Row.Cells[6].Text;
             if (p1 == "" || p1 == "&nbsp;")
             {
-                e.Row.Cells[5].BackColor = System.Drawing.Color.Pink;
-                e.Row.Cells[5].ForeColor = System.Drawing.Color.White;
+                e.Row.Cells[6].BackColor = System.Drawing.Color.Pink;
+                e.Row.Cells[6].ForeColor = System.Drawing.Color.White;
             }
             else
             {
-                e.Row.Cells[5].BackColor = System.Drawing.Color.Silver;
-                e.Row.Cells[5].ForeColor = System.Drawing.Color.White;
+                e.Row.Cells[6].BackColor = System.Drawing.Color.Silver;
+                e.Row.Cells[6].ForeColor = System.Drawing.Color.White;
             }
 
-            string p2 = e.Row.Cells[6].Text;
+            string p2 = e.Row.Cells[7].Text;
             if (p2 == "" || p2 == "&nbsp;")
             {
                 e.Row.Cells[6].BackColor = System.Drawing.Color.Pink;
@@ -533,7 +536,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[6].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[6].ForeColor = System.Drawing.Color.White;
             }
-            string p3 = e.Row.Cells[7].Text;
+            string p3 = e.Row.Cells[8].Text;
             if (p3 == "" || p3 == "&nbsp;")
             {
                 e.Row.Cells[7].BackColor = System.Drawing.Color.Pink;
@@ -545,7 +548,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[7].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[7].ForeColor = System.Drawing.Color.White;
             }
-            string p4 = e.Row.Cells[8].Text;
+            string p4 = e.Row.Cells[9].Text;
             if (p4 == "" || p4 == "&nbsp;")
             {
                 e.Row.Cells[8].BackColor = System.Drawing.Color.Pink;
@@ -557,7 +560,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[8].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[8].ForeColor = System.Drawing.Color.White;
             }
-            string p5 = e.Row.Cells[9].Text;
+            string p5 = e.Row.Cells[10].Text;
             if (p5 == "" || p5 == "&nbsp;")
             {
                 e.Row.Cells[9].BackColor = System.Drawing.Color.Pink;
@@ -568,7 +571,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[9].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[9].ForeColor = System.Drawing.Color.White;
             }
-            string p6 = e.Row.Cells[10].Text;
+            string p6 = e.Row.Cells[11].Text;
             if (p6 == "" || p6 == "&nbsp;")
             {
                 e.Row.Cells[10].BackColor = System.Drawing.Color.Pink;
@@ -579,7 +582,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[10].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[10].ForeColor = System.Drawing.Color.White;
             }
-            string p7 = e.Row.Cells[11].Text;
+            string p7 = e.Row.Cells[12].Text;
             if (p7 == "" || p7 == "&nbsp;")
             {
                 e.Row.Cells[11].BackColor = System.Drawing.Color.Pink;
@@ -590,7 +593,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[11].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[11].ForeColor = System.Drawing.Color.White;
             }
-            string p8 = e.Row.Cells[12].Text;
+            string p8 = e.Row.Cells[13].Text;
             if (p8 == "" || p8 == "&nbsp;")
             {
                 e.Row.Cells[12].BackColor = System.Drawing.Color.Pink;
@@ -601,7 +604,7 @@ public partial class Team_Punch_Data : System.Web.UI.Page
                 e.Row.Cells[12].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[12].ForeColor = System.Drawing.Color.White;
             }
-            string p9 = e.Row.Cells[13].Text;
+            string p9 = e.Row.Cells[14].Text;
             if (p9 == "" || p9 == "&nbsp;")
             {
                 e.Row.Cells[13].BackColor = System.Drawing.Color.Pink;
@@ -611,6 +614,17 @@ public partial class Team_Punch_Data : System.Web.UI.Page
             {
                 e.Row.Cells[13].BackColor = System.Drawing.Color.Silver;
                 e.Row.Cells[13].ForeColor = System.Drawing.Color.White;
+            }
+            string p10 = e.Row.Cells[14].Text;
+            if (p10 == "" || p10 == "&nbsp;")
+            {
+                e.Row.Cells[14].BackColor = System.Drawing.Color.Pink;
+                e.Row.Cells[14].ForeColor = System.Drawing.Color.White;
+            }
+            else
+            {
+                e.Row.Cells[14].BackColor = System.Drawing.Color.Silver;
+                e.Row.Cells[14].ForeColor = System.Drawing.Color.White;
             }
             //e.Row.BackColor = System.Drawing.Color.Red;
             //e.Row.ForeColor = System.Drawing.Color.White;

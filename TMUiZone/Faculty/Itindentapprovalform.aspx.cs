@@ -1,22 +1,11 @@
 ﻿using System;
-
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using AjaxControlToolkit;
-using iTextSharp.text;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using System.ComponentModel.DataAnnotations;
-
-
-
-
-
-
 public partial class Faculty_Itindentapprovalform : System.Web.UI.Page
 {
     Connection con; String IndentStatus = "";
@@ -103,11 +92,11 @@ public partial class Faculty_Itindentapprovalform : System.Web.UI.Page
         {
             if (ddStatus.SelectedValue.Trim() == "7")
             {
-                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from [NAAC_ADV_TEST].dbo.[TMU Advertisement$Indent Header] where Status in (2,8,9,5) and [Approved Date Time- HOD]>='2025-10-09 17:40:06.047' ORDER BY CASE WHEN [Status] = '5' THEN 0 ELSE 1 END, DocumentNo DESC;";
+                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from [NAAC_ADV_TEST].dbo.[TMU Advertisement$Indent Header] where Status in (2,8,9,5) and [Approved Date Time- HOD]>='2025-10-09 17:40:06.047' ORDER BY CASE WHEN [Status] = '1' THEN 0 WHEN [Status] = '5' THEN 1 ELSE 2 END, DocumentNo DESC;;";
             }
             else
             {
-                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from [NAAC_ADV_TEST].dbo.[TMU Advertisement$Indent Header] where Status='" + ddStatus.SelectedValue.Trim() + "' and [Approved Date Time- HOD]>='2025-10-09 17:40:06.047' ORDER BY CASE WHEN [Status] = '5' THEN 0 ELSE 1 END, DocumentNo DESC;";
+                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from [NAAC_ADV_TEST].dbo.[TMU Advertisement$Indent Header] where Status='" + ddStatus.SelectedValue.Trim() + "' and [Approved Date Time- HOD]>='2025-10-09 17:40:06.047' ORDER BY CASE WHEN [Status] = '1' THEN 0 WHEN [Status] = '5' THEN 1 ELSE 2 END, DocumentNo DESC;;";
             }
         }
         else
@@ -115,11 +104,11 @@ public partial class Faculty_Itindentapprovalform : System.Web.UI.Page
             if (ddStatus.SelectedValue.Trim() == "7")
             {
 
-                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from " + companyName + " where [Approval ID]='" + ApprovalID + "' ORDER BY CASE WHEN [Status] = '5' THEN 0 ELSE 1 END, DocumentNo DESC;";
+                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from " + companyName + " where [Approval ID]='" + ApprovalID + "' ORDER BY CASE WHEN [Status] = '1' THEN 0 WHEN [Status] = '5' THEN 1 ELSE 2 END, DocumentNo DESC;;";
             }
             else
             {
-                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from " + companyName + " where [Approval ID]='" + ApprovalID + "' and Status='" + ddStatus.SelectedValue.Trim() + "' ORDER BY CASE WHEN [Status] = '5' THEN 0 ELSE 1 END, DocumentNo DESC;";
+                sqlq = "select [Remarks- HOD] as 'HodRemark',[Remarks- Management] Management_remark, No_ as DocumentNo ,[Issue Date] , [Issue For] = CASE WHEN [Issue For] =null THEN '' WHEN [Issue For] ='1' THEN 'Department' WHEN [Issue For] ='2' THEN 'Employee' ELSE '' END, [Status] = CASE WHEN [Status] =null THEN '' WHEN [Status] ='0' THEN 'Open' WHEN [Status] ='1' THEN 'Processed for Approval' WHEN [Status] ='2' THEN 'Pending on Management' WHEN [Status] ='3' THEN 'Released' WHEN [Status] ='4' THEN 'Rejected' WHEN [Status] ='5' THEN 'Issued' WHEN [Status] ='8' THEN 'Approved by Management' WHEN [Status] ='10' THEN 'Item Received' WHEN [Status] ='9' THEN 'Rejected by Management'  ELSE '' END  ,[Issue Id],[Issue Name] from " + companyName + " where [Approval ID]='" + ApprovalID + "' and Status='" + ddStatus.SelectedValue.Trim() + "' ORDER BY CASE WHEN [Status] = '1' THEN 0 WHEN [Status] = '5' THEN 1 ELSE 2 END, DocumentNo DESC;;";
             }
 
         }
@@ -384,12 +373,10 @@ public partial class Faculty_Itindentapprovalform : System.Web.UI.Page
             SqlCommand cmd = new SqlCommand(sqlq, con1);
             cmd.ExecuteNonQuery();
         }
-
         else
         {
 
-
-            string sqlq = "update " + tbleName + " set [Status]='" + status + "',[Remarks- HOD]='" + Remark + "',[Approved Date Time- HOD]=GETDATE() where [No_]='" + DocumentNo + "' ";
+            string sqlq = "update " + tbleName + " set [Status] = CASE WHEN ISNULL([Approval ID], '') = 'TMU01023' THEN 10 ELSE 2 END,[Remarks- HOD]='" + Remark + "',[Approved Date Time- HOD]=GETDATE() where [No_]='" + DocumentNo + "' ";
 
             SqlCommand cmd = new SqlCommand(sqlq, con1);
             cmd.ExecuteNonQuery();

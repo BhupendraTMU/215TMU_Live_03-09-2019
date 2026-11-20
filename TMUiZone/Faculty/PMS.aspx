@@ -268,6 +268,38 @@
         }
     }
 </style>
+    <style type="text/css">
+        .remarks-textbox {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.remarks-textbox:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+}
+
+.remarks-textbox::placeholder {
+    color: #999;
+}
+    </style>
+    <script type="text/javascript">
+        function limitText(textbox, maxLength) {
+            if (textbox.value.length > maxLength) {
+                textbox.value = textbox.value.substring(0, maxLength);
+            }
+        }
+</script>
 
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
@@ -312,9 +344,9 @@
     <asp:ListItem Value="4">April</asp:ListItem>
     <asp:ListItem Value="5">May</asp:ListItem>
     <asp:ListItem Value="6">June</asp:ListItem>
-    <asp:ListItem Value="7">July</asp:ListItem>
-    <asp:ListItem Value="8">August</asp:ListItem>
-    <asp:ListItem Value="9">September</asp:ListItem>
+    <asp:ListItem Value="7">July</asp:ListItem>--%>
+     <asp:ListItem Value="8">August</asp:ListItem>
+    <%--<asp:ListItem Value="9">September</asp:ListItem>
     <asp:ListItem Value="10">October</asp:ListItem>
     <asp:ListItem Value="11">November</asp:ListItem>
     <asp:ListItem Value="12">December</asp:ListItem>--%>
@@ -4003,9 +4035,14 @@
 							</tr>
 													<tr align="center">
                 <td class="vertical-padding" colspan="2">
-                    …………………………………………………………………………………………………………………………….  
-                    <br />
-                    …………………………………………………………………………………………………………………………….
+                  <asp:TextBox ID="txtRemarks1" runat="server"
+                      TextMode="MultiLine"
+                      Rows="3"
+                      MaxLength="249"
+                      CssClass="remarks-textbox"
+                      placeholder="Enter remarks..."
+                      oninput="limitText(this, 249);">
+                  </asp:TextBox>
                 </td>
             </tr>
 <tr align="center" style="padding-top: 50px; text-align: center;">

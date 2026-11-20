@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Security.Cryptography;
-//-----------------------HR----------------
+using System.Configuration;
 using System.Text;
 using System.Web.UI;
 
@@ -18,7 +18,6 @@ public partial class Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
         Page.Title = "ERP Login | TMU Moradabad | Best Private University in UP";
         Page.MetaDescription = "Welcome to the Teerthanker Mahaveer University (TMU) ERP portal. Get access to your attendance sheet, holidays, profile, event details, and more. Login Now!";
         Page.MetaKeywords = "Best private university in UP, TMU ERP portal, ERP login, Teerthanker Mahaveer University, Best Private university in Moradabad";
@@ -34,84 +33,125 @@ public partial class Default : System.Web.UI.Page
         {
             //  ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please try again');", true);
         }
-        //------------------HR--------------
         if (!IsPostBack)
         {
-            if ((Session["Enroll"] != null || Session["uid"] != null) && (Session["Pass"] != null || Session["Passw"] != null) && (Session["Enroll"] != null || Session["uid"] != null) && (Session["Pass"] != null || Session["Passw"] != null))
+            bool hasUser =
+                !string.IsNullOrEmpty(Convert.ToString(Session["Enroll"])) ||
+                !string.IsNullOrEmpty(Convert.ToString(Session["uid"]));
+
+            bool hasPassword =
+                !string.IsNullOrEmpty(Convert.ToString(Session["Pass"])) ||
+                !string.IsNullOrEmpty(Convert.ToString(Session["Passw"]));
+
+            if (hasUser && hasPassword)
             {
+                txtUserid.Text = !string.IsNullOrEmpty(
+                    Convert.ToString(Session["Enroll"]))
+                    ? Convert.ToString(Session["Enroll"])
+                    : Convert.ToString(Session["uid"]);
 
+                txtpassword.Text = !string.IsNullOrEmpty(
+                    Convert.ToString(Session["Pass"]))
+                    ? Convert.ToString(Session["Pass"])
+                    : Convert.ToString(Session["Passw"]);
 
-                if (Session["Enroll"] != null && Session["Enroll"] != "")
-                {
-                    txtUserid.Text = Session["Enroll"].ToString();
-                }
-                else
-                {
-                    txtUserid.Text = Session["uid"].ToString();
-                }
-                if (Session["Pass"] != null && Session["Pass"] != "")
-                {
-                    txtpassword.Text = Session["Pass"].ToString();
-                }
-                else
-                {
-
-                    txtpassword.Text = Session["Passw"].ToString();
-                }
-                Session["Enroll"] = "";
-                Session["Pass"] = "";
+                // Existing login flow
                 ImgBttn_Login_Click1(sender, e);
+                return;
+            }
 
-            }
-            else
-            {
-                if (Request.Cookies["userid1"] != null)
-                    txtUserid.Attributes.Add("value", Request.Cookies["userid1"].Value);
-                if (Request.Cookies["pwd"] != null)
-                    txtpassword.Attributes.Add("value", Request.Cookies["pwd"].Value);
-                if (Request.Cookies["userid"] != null && Request.Cookies["pwd"] != null)
-                    chkrem.Checked = true;
-            }
+            if (Request.Cookies["userid1"] != null)
+                txtUserid.Text = Request.Cookies["userid1"].Value;
+
+            // Do not restore a password from a persistent cookie.
+            if (Request.Cookies["pwd"] != null)
+                txtpassword.Attributes["value"] = "";
+
+            chkrem.Checked = Request.Cookies["userid1"] != null;
         }
     }
 
-
-    //protected void ImgBttn_Login_Click(object sender, ImageClickEventArgs e)
-    //{
-
-
-    //}
     protected void ImgBttn_Login_Click1(object sender, EventArgs e)
+    
+    
+    
+    
     {
-        //SqlDataAdapter da = new SqlDataAdapter("select [Enrollment No_],s.[No_] as [Login ID],s.Password,'Student' [User Group],s.[Student Name],s.[Admitted Year],s.[Academic Year], s.[Course Code],s.Semester,s.Year,s.Section,s.[Global Dimension 1 Code],s.[Student Status],(select  Count(*) from HRMSPortal.dbo.Tbl_EnrollmentTable with (NOLOCK) where Student_Number=Upper('" + txtUserid.Text + "') and (Doc_Verify_Status='Approved'  and s.[Enrollment No_]!='')) as Status from [TMU$Student - COLLEGE] s where [No_]=Upper('" + txtUserid.Text + "' ) and (Password='" + txtpassword.Text + "' or 'SRPAdmin@123'= '" + txtpassword.Text + "') and [Global Dimension 1 Code] !='TMMC'", Portalcon.Con);
-        //DataTable dt = new DataTable();
-        //da.Fill(dt);
+        string studentNo = txtUserid.Text.Trim().ToUpper();
+        string password = txtpassword.Text;
 
-
-        SqlCommand cmd = new SqlCommand("proc_GetStudentDetailbyNo_", Portalcon.Con);
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.AddWithValue("@StudentNo_", txtUserid.Text);
-        cmd.Parameters.AddWithValue("@Password_", txtpassword.Text);
-        SqlDataAdapter daStudent = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
-        daStudent.Fill(dt);
-
-
-        SqlCommand cmd1 = new SqlCommand("proc_GetStudentDetailbyNo1_", Portalcon.Con);
-        cmd1.CommandType = CommandType.StoredProcedure;
-        cmd1.Parameters.AddWithValue("@StudentNo_", txtUserid.Text);
-        cmd1.Parameters.AddWithValue("@Password_", txtpassword.Text);
-        SqlDataAdapter daStudent1 = new SqlDataAdapter(cmd1);
         DataTable dt1 = new DataTable();
-        daStudent1.Fill(dt1);
 
-        string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim().ToUpper());
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        {
+            using (SqlCommand cmd = new SqlCommand(
+                "proc_GetStudentDetailbyNo_", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@StudentNo_", SqlDbType.VarChar).Value = studentNo;
+                cmd.Parameters.Add("@Password_", SqlDbType.VarChar).Value = password;
+
+                using (SqlDataAdapter daStudent = new SqlDataAdapter(cmd))
+                {
+                    daStudent.Fill(dt);
+                }
+            }
+        }
+
+
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        {
+            using (SqlCommand cmd1 = new SqlCommand(
+                "proc_GetStudentDetailbyNo1_", con))
+            {
+                cmd1.CommandType = CommandType.StoredProcedure;
+
+                cmd1.Parameters.Add("@StudentNo_", SqlDbType.VarChar).Value = studentNo;
+                cmd1.Parameters.Add("@Password_", SqlDbType.VarChar).Value = password;
+
+                using (SqlDataAdapter daStudent1 = new SqlDataAdapter(cmd1))
+                {
+                    daStudent1.Fill(dt1);
+                }
+            }
+        }
+
+        string UserGroup = "";
+
+        //string Query = @"SELECT [User Group]  FROM [Portal Users]  WHERE [Login ID] = @LoginID";
+
+        using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        using (SqlCommand cmd = new SqlCommand("dbo.usp_GetPortalUserGroup", con))
+        {
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add("@LoginID", SqlDbType.NVarChar, 50).Value =
+                studentNo ?? (object)DBNull.Value;
+
+            con.Open();
+
+            object result = cmd.ExecuteScalar();
+
+            UserGroup = (result == null || result == DBNull.Value)
+                        ? ""
+                        : result.ToString();
+            con.Close();
+            Session["UserGroup"]= UserGroup;
+        }
+
+
 
         if (dt.Rows.Count > 0)
         {
             if (dt.Rows[0]["Status"].ToString() == "0")
             {
-                Session["enroll"] = txtUserid.Text.Trim();
+                Session["enroll"] = studentNo;
                 Session["uid"] = dt.Rows[0]["Login ID"].ToString();
                 Session["Name"] = dt.Rows[0]["Student Name"].ToString();
                 Session["CourseCode"] = dt.Rows[0]["Course Code"].ToString();
@@ -121,44 +161,71 @@ public partial class Default : System.Web.UI.Page
                 Session["College"] = dt.Rows[0]["Global Dimension 1 Code"].ToString();
                 Session["AcademicYear"] = dt.Rows[0]["Academic Year"].ToString();
                 Session["Passw"] = dt.Rows[0]["Password"].ToString();
-                Response.Redirect("Application/StudentDetailsView.aspx");
+
+                Response.Redirect(
+                    "Application/StudentDetailsView.aspx",
+                    false);
+
+                Context.ApplicationInstance.CompleteRequest();
+                return;
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please Login through Enrollment No.');", true);
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    this.GetType(),
+                    "Key",
+                    "alert('Please Login through Enrollment No.');",
+                    true);
+
+                return;
             }
         }
 
+
+        // ==============================
+        // Second Result
+        // ==============================
         if (dt1.Rows.Count > 0)
         {
             if (UserGroup == "STUDENT")
             {
-                if (dt1.Rows[0]["Status"].ToString() != "0" || dt1.Rows[0]["Admitted Year"].ToString() != "25-26" )
+                if (dt1.Rows[0]["Status"].ToString() != "0" ||
+                    dt1.Rows[0]["Admitted Year"].ToString() != "25-26")
                 {
-                    txtUserid.Text = txtUserid.Text.Trim().ToUpper();
+                    txtUserid.Text = studentNo;
+
                     Session["AcademicYear"] = TMUcon.AcademicYear();
+
                     LoginDetail();
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please Upload All Documents through ST No. Login');", true);
+                    ScriptManager.RegisterStartupScript(
+                        this,
+                        this.GetType(),
+                        "Key",
+                        "alert('Please Upload All Documents through ST No. Login');",
+                        true);
                 }
             }
         }
-
-
         else
         {
-            txtUserid.Text = txtUserid.Text.Trim().ToUpper();
+            txtUserid.Text = studentNo;
+
             Session["AcademicYear"] = TMUcon.AcademicYear();
+
             LoginDetail();
         }
-
-
     }
 
 
-    //-------------------------HR----------------------
+
+
+
+
+
     public void companyShow()
     {
         //SqlDataReader dr = Portalcon.CompanyName();
@@ -195,7 +262,7 @@ public partial class Default : System.Web.UI.Page
         dr.Read();
         if (dr.HasRows)
         {
-            lblHRUserId.Text = Session["HRID"].ToString();
+
             Session["hr_email2"] = dr["Company E-Mail"].ToString();
             Session["HRName"] = dr["First Name"].ToString() + "  " + dr["Middle Name"].ToString() + " " + dr["Last Name"].ToString();
 
@@ -212,41 +279,104 @@ public partial class Default : System.Web.UI.Page
         }
 
     }
-
     public void LoginDetail()
     {
         try
         {
-            SqlDataAdapter da = new SqlDataAdapter("select * from Company with (NOLOCK) where [Web Portal Access]='1' order by Name desc", Portalcon.Con);
-            DataSet ds = new DataSet();
-            da.Fill(ds, "Company");
-            for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+            DataTable companies = new DataTable();
+
+            using (SqlDataAdapter da = new SqlDataAdapter(
+                "usp_GetPortalAccessCompanies", Portalcon.Con))
             {
-                string CompanyName = ds.Tables[0].Rows[i]["Name"].ToString();
-                try
-                {
-                    CompanywiseDetails(CompanyName);
-                }
-                catch (Exception ex)
-                {
+                da.SelectCommand.CommandType =
+                    CommandType.StoredProcedure;
 
-                }
-
+                da.Fill(companies);
             }
-            Portalcon.DisConnect();
+
+            for (int i = 0; i < companies.Rows.Count; i++)
+            {
+                string companyName =
+                    Convert.ToString(companies.Rows[i]["Name"]);
+
+                CompanywiseDetails(companyName);
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Connection couldnot established please contact your system administrator');", true);
+            System.Diagnostics.Trace.WriteLine(
+                "LoginDetail error: " + ex.Message);
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "LoginError",
+                "alert('Connection could not be established. Please contact your system administrator.');",
+                true);
         }
     }
+    //public void LoginDetail()
+    //{
+    //    try
+    //    {
+    //        //SqlDataAdapter da = new SqlDataAdapter("select * from Company with (NOLOCK) where [Web Portal Access]='1' order by Name desc", Portalcon.Con);
+    //        SqlDataAdapter da = new SqlDataAdapter("usp_GetPortalAccessCompanies", Portalcon.Con);
+    //        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+    //        DataSet ds = new DataSet();
+    //        da.Fill(ds, "Company");
+
+    //        for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+    //        {
+    //            string CompanyName = ds.Tables[0].Rows[i]["Name"].ToString();
+    //            try
+    //            {
+    //                CompanywiseDetails(CompanyName);
+    //            }
+    //            catch (Exception ex)
+    //            {
+
+    //            }
+
+    //        }
+    //        Portalcon.DisConnect();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Connection couldnot established please contact your system administrator');", true);
+    //    }
+    //}
     public void CompanywiseDetails(string CompanyName)
     {
         string stable = CompanyName;
         string rtable = stable.Replace(".", "_");
-        string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim().ToUpper());
+
+        //string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim().ToUpper());
+
+        string UserGroup = Session["UserGroup"].ToString();
+
+        //string Query = @"SELECT [User Group]  FROM [Portal Users]  WHERE [Login ID] = @LoginID";
+
+        //using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        //using (SqlCommand cmd = new SqlCommand("dbo.usp_GetPortalUserGroup", con))
+        //{
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+        //    cmd.Parameters.Add("@LoginID", SqlDbType.NVarChar, 50).Value =
+        //        txtUserid.Text.Trim().ToUpper() ?? (object)DBNull.Value;
+
+        //    con.Open();
+
+        //    object result = cmd.ExecuteScalar();
+
+        //    UserGroup = (result == null || result == DBNull.Value)
+        //                ? ""
+        //                : result.ToString();
+        //    con.Close();
+        //}
+
         string comanyname;
-        Session["UserGroup"] = UserGroup;
+       // Session["UserGroup"] = UserGroup;
         Session["FacultyCollege"] = Portalcon.FacultyCollege(txtUserid.Text.Trim());
         if (UserGroup == "FACULTY" || UserGroup == "COUNSELLOR" || UserGroup == "COURSE CO" || UserGroup == "STAFF" || UserGroup == "PRINCIPAL" || UserGroup == "HR"
             || UserGroup == "ADMIN" || UserGroup == "LAB INCHARGE" || UserGroup == "REGISTRAR" || UserGroup == "HOD" || UserGroup == "SECURITY" || UserGroup == "FINE" || UserGroup == "VC" || UserGroup == "DEAN")
@@ -277,11 +407,7 @@ public partial class Default : System.Web.UI.Page
                 Session["EmployeePostingGroupl"] = dr["Employee Posting Group"].ToString();
                 Session["HODLoginPage1"] = dr["HOD 1"].ToString();
                 Session["IndentApproval"] = dr["HOD 1"].ToString();  //08 Nov 2016
-
-
-                //Session["[HODNameLeave"] = dr["HOD Name"].ToString();
-
-                //Session["[HODNameLeave1"] = dr["HOD Name 1"].ToString();
+                Session["Gender1"] = dr["Gender"].ToString();
                 Session["HRID"] = dr["HR"].ToString();
                 Session["HRID_leave"] = dr["HR"].ToString();
                 // Session["BandCodereim"] = dr["Occupation Code"].ToString();
@@ -340,17 +466,21 @@ public partial class Default : System.Web.UI.Page
                 Portalcon.DisConnect();
                 hrID();
                 showhodEmailid();
-                Session["HRID"] = lblHRUserId.Text;
+
 
                 //---------------Dhirendra For Indent on 15-12-2016 start
                 string IndentApprovalID = Portalcon.IndentApprovalID(txtUserid.Text.Trim());
                 Session["IndentApprovalID"] = IndentApprovalID;
                 //---------------Dhirendra For Indent on 15-12-2016 End
 
-                SqlDataAdapter da = new SqlDataAdapter("select top 1 [Indent Approval IT] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] WITH(NOLOCK) where [Indent Approval IT]='" + txtUserid.Text.Trim() + "'", Portalcon.Con);
+                //SqlDataAdapter da = new SqlDataAdapter("select top 1 [Indent Approval IT] from [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee] WITH(NOLOCK) where [Indent Approval IT]='" + txtUserid.Text.Trim() + "'", Portalcon.Con);
+                SqlDataAdapter da = new SqlDataAdapter("usp_GetIndentApprovalIT", Portalcon.Con);
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                da.SelectCommand.Parameters.Add("@UserID", SqlDbType.NVarChar, 50).Value = txtUserid.Text.Trim();
                 DataTable dt = new DataTable();
                 da.Fill(dt);
-
+              
+                Portalcon.DisConnect();
                 if (dt.Rows.Count > 0)
                 {
                     Session["IndentApprovalIDIT"] = dt.Rows[0]["Indent Approval IT"].ToString();
@@ -413,12 +543,12 @@ public partial class Default : System.Web.UI.Page
             SqlDataAdapter daStudent = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
             daStudent.Fill(dt);
-
+            
             //string s = "select s.[Enrollment No_],s.[No_] as [Login ID],s.Password,p.[User Group],s.[Student Name],s.[Academic Year],s.[Course Code],s.Semester,s.Year,s.Section,s.[Global Dimension 1 Code],s.[Student Status],case when s.Year='' then s.[Semester Registration] else 1 end as 'Semester Registration' from [Portal Users] p inner join [TMU$Student - COLLEGE] s on p.[Login ID]=s.[Enrollment No_]  where p.[Login ID]='" + txtUserid.Text.Trim() + "' and (s.Password='" + txtpassword.Text.Trim() + "' OR '" + txtpassword.Text.Trim() + "'='SERPAdmin@123') and s.[Student Status]<>'2'";
             //SqlCommand cmd = new SqlCommand(s, Portalcon.Con);
             //SqlDataReader dr = cmd.ExecuteReader();
             //dr.Read();
-            if (dt.Rows.Count>0)
+            if (dt.Rows.Count > 0)
             {
                 Session["enroll"] = dt.Rows[0]["Enrollment No_"].ToString();
                 Session["Pass"] = dt.Rows[0]["Password"].ToString();
@@ -431,6 +561,7 @@ public partial class Default : System.Web.UI.Page
                 Session["College"] = dt.Rows[0]["Global Dimension 1 Code"].ToString();
                 Session["AcademicYear"] = dt.Rows[0]["Academic Year"].ToString();
                 Session["Passw"] = dt.Rows[0]["Password"].ToString();
+                Session["Gender1"] = dt.Rows[0]["Gender"].ToString();
                 if (chkrem.Checked == true)
                 {
                     Response.Cookies["userid1"].Value = txtUserid.Text;
@@ -465,18 +596,21 @@ public partial class Default : System.Web.UI.Page
                     Response.Redirect("Alumni/StudentDetailsView.aspx");
                 }
 
-                
+
             }
             else
             {
-               
-                SqlDataAdapter daP = new SqlDataAdapter("Select [Student Status] from [TMU$Student - COLLEGE]  where  [Enrollment No_] ='" + txtUserid.Text.Trim() + "'", Portalcon.Con);
+
+                SqlDataAdapter daP = new SqlDataAdapter("usp_GetStudentStatusByEnrollment", Portalcon.Con);
+                daP.SelectCommand.CommandType = CommandType.StoredProcedure;
+                daP.SelectCommand.Parameters.Add("@EnrollmentNo", SqlDbType.NVarChar, 50).Value = txtUserid.Text.Trim();
                 DataTable dt1 = new DataTable();
                 daP.Fill(dt1);
+               
                 if (dt1.Rows[0]["Student Status"].ToString() == "3")
                 {
 
-                    Portalcon.DisConnect();
+                    
                     ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact alumni@tmu.ac.in or 9258118526 to obtain your credentials');", true);
                     //ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Please contact alumni@tmu.ac.in to obtain your credentials');", true);
                 }
@@ -487,7 +621,7 @@ public partial class Default : System.Web.UI.Page
 
 
 
-                    Portalcon.DisConnect();
+                  
                     ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Sorry ,Enter Correct Password  !');", true);
                 }
             }
@@ -496,23 +630,67 @@ public partial class Default : System.Web.UI.Page
         {
 
             ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Sorry ,you are not registered contact Admin !');", true);
-        }     
+        }
     }
     public void userrolematrix()
     {
-        SqlDataReader Roledr = Portalcon.CheckRole(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
-        if (Roledr.Read())
+        SqlDataReader reader = null;
+
+        try
         {
-            Session["Princpal"] = Roledr["Principal"].ToString();
-            Session["Hod"] = Roledr["HOD"].ToString();
-            Session["CourseCo-Ordinator"] = Roledr["Course Co-Ordinator"].ToString();
-            Session["ClassCo-Ordinator"] = Roledr["Class Co-Ordinator"].ToString();
-            Session["Proctor"] = Roledr["Proctor"].ToString();
-            Session["LabIncharge"] = Roledr["Lab Incharge"].ToString();
-            Session["EventCo-Ordinator"] = Roledr["Event Co-Ordinator"].ToString();
+            reader = Portalcon.CheckRole(
+                Convert.ToString(Session["uid"]),
+                Convert.ToString(Session["GlobalDimension1Code"]));
+
+            if (reader != null && reader.Read())
+            {
+                Session["Princpal"] =
+                    Convert.ToString(reader["Principal"]);
+
+                Session["Hod"] =
+                    Convert.ToString(reader["HOD"]);
+
+                Session["CourseCo-Ordinator"] =
+                    Convert.ToString(reader["Course Co-Ordinator"]);
+
+                Session["ClassCo-Ordinator"] =
+                    Convert.ToString(reader["Class Co-Ordinator"]);
+
+                Session["Proctor"] =
+                    Convert.ToString(reader["Proctor"]);
+
+                Session["LabIncharge"] =
+                    Convert.ToString(reader["Lab Incharge"]);
+
+                Session["EventCo-Ordinator"] =
+                    Convert.ToString(reader["Event Co-Ordinator"]);
+            }
         }
-        //end code section
+        finally
+        {
+            if (reader != null)
+                reader.Dispose();
+
+            // Close only if CheckRole uses this dedicated connection
+            // and no other operation is using it.
+            // Portalcon.DisConnect();
+        }
     }
+    //public void userrolematrix()
+    //{
+    //    SqlDataReader Roledr = Portalcon.CheckRole(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
+    //    if (Roledr.Read())
+    //    {
+    //        Session["Princpal"] = Roledr["Principal"].ToString();
+    //        Session["Hod"] = Roledr["HOD"].ToString();
+    //        Session["CourseCo-Ordinator"] = Roledr["Course Co-Ordinator"].ToString();
+    //        Session["ClassCo-Ordinator"] = Roledr["Class Co-Ordinator"].ToString();
+    //        Session["Proctor"] = Roledr["Proctor"].ToString();
+    //        Session["LabIncharge"] = Roledr["Lab Incharge"].ToString();
+    //        Session["EventCo-Ordinator"] = Roledr["Event Co-Ordinator"].ToString();
+    //    }
+    //    //end code section
+    //}
     //
     private static string sKey = "UJYHCX783her*&5@$%#(MJCX**38n*#6835ncv56tvbry(&#MX98cn342cn4*&X#&dhirendracorporateserve9877222";
 
@@ -594,50 +772,43 @@ public partial class Default : System.Web.UI.Page
 
     }
 
-    protected void btnSave_Click(object sender, EventArgs e)
-    {
-        GetPassword();
-        mpe.Show();
 
-    }
-    public void GetPassword()
-    {
-        string Result = "";
+    //public void GetPassword()
+    //{
+    //    string Result = "";
 
-        try
-        {
-            lblMsg.Text = "";
-            Result = commonDl.GetPassword(txtLoginUserId.Text, txtMobileNo.Text);
-            if (Result.Substring(0, 25) != "Your Login Password is : ")
-            {
-                //ScriptManager.RegisterClientScriptBlock(this, GetType(), "alertMessage", @"alert('" + Result + " ) ! ')", true);
-                lblMsg.Text = Result;
-                return;
-            }
-            else
-            {
-                // txtMobileNo.Text="7503335183";
-                SendMessage(txtMobileNo.Text, Result);
-            }
-        }
-        catch (Exception ex)
-        {
-            lblMsg.Text = Result;
-            return;
-        }
-    }
-    public bool SendMessage(string MobileNo, string Message)
-    {
-        MobileNo = MobileNo.Substring(MobileNo.Length - 10, 10);
-        SMS(MobileNo, Message);
-        lblMsg.Text = "Password send to Your Mobile No. !";
-        return true;
-    }
+    //    try
+    //    {
+    //        lblMsg.Text = "";
+    //        Result = commonDl.GetPassword(txtLoginUserId.Text, txtMobileNo.Text);
+    //        if (Result.Substring(0, 25) != "Your Login Password is : ")
+    //        {
+    //            //ScriptManager.RegisterClientScriptBlock(this, GetType(), "alertMessage", @"alert('" + Result + " ) ! ')", true);
+    //            lblMsg.Text = Result;
+    //            return;
+    //        }
+    //        else
+    //        {
+    //            // txtMobileNo.Text="7503335183";
+    //            SendMessage(txtMobileNo.Text, Result);
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        lblMsg.Text = Result;
+    //        return;
+    //    }
+    //}
+    //public bool SendMessage(string MobileNo, string Message)
+    //{
+    //    MobileNo = MobileNo.Substring(MobileNo.Length - 10, 10);
+    //    SMS(MobileNo, Message);
+    //    lblMsg.Text = "Password send to Your Mobile No. !";
+    //    return true;
+    //}
     public void SMS(String MobileNo, string Msg)
     {
-        //  Website: http://www.universalsmsadvertising.com/     //  Username: 9837016352   //  Password: 9837016352 
-        // MobileNo = "91" + MobileNo;
-        // MobileNo = "91" + 7503335183;
+
         string url = "http://www.universalsmsadvertising.com/universalsmsapi.php?user_name=9837016352&user_password=9837016352&mobile=" + MobileNo + "&sender_id=TMUniv&type=F&text=" + Msg + "";
         System.Net.HttpWebRequest fr;
         Uri targetURI = new Uri(url);
@@ -658,6 +829,7 @@ public partial class Default : System.Web.UI.Page
         cmd.Parameters.Add("@UserID", Session["uid"].ToString());
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
+       
         ddlCollege.DataSource = dt;
         ddlCollege.DataTextField = "Details";
         ddlCollege.DataValueField = "No_";
@@ -667,12 +839,11 @@ public partial class Default : System.Web.UI.Page
     protected void btnCollege_Click(object sender, EventArgs e)
     {
         Session["GlobalDimension1Code"] = ddlCollege.SelectedValue;
-        string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim(), Session["GlobalDimension1Code"].ToString());
-        Session["UserGroup"] = UserGroup;
+        //string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim(), Session["GlobalDimension1Code"].ToString());
+      
+        string UserGroup = Session["UserGroup"].ToString();
+       
         Response.Redirect("Faculty/FacultyDetails.aspx");
     }
-    protected void lnkPay_Click(object sender, EventArgs e)
-    {
-        Response.Redirect("OnLineFeePayment.aspx");
-    }
+
 }

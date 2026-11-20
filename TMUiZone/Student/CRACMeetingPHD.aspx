@@ -1,4 +1,4 @@
-﻿<%@ Page Title="CRAC Meeting" Language="C#" MasterPageFile="~/Student/IndexMaster.master" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Student_CRACMeeting" %>
+<%@ Page Title="CRAC Meeting" Language="C#" MasterPageFile="~/Student/IndexMaster.master" AutoEventWireup="true" CodeFile="CRACMeetingPHD.aspx.cs" Inherits="Student_CRACMeeting" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
@@ -135,6 +135,7 @@
                         <asp:ListItem Text="IV-CRAC" Value="4" />
                         <asp:ListItem Text="V-CRAC" Value="5" />
                         <asp:ListItem Text="VI-CRAC" Value="6" />
+                        <asp:ListItem Text="THESIS FEE" Value="99" />
 
                     </asp:DropDownList>
 
@@ -251,7 +252,7 @@
             <div class="action-panel">
                 <asp:Button ID="btnPhdSave"
                     runat="server"
-                    Text="Save" Visible="false"
+                    Text="Save" Visible="false" 
                     CssClass="btn btn-success px-4"
                     OnClick="btnPhdSave_Click" />
             </div>

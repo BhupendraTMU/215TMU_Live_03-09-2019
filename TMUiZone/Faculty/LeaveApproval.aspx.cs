@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;//ashuss
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-using System.Net;
-using System.Net.Mail;
-using System.IO;
-using System.Configuration;//ashuss
 public partial class LeaveApproval : System.Web.UI.Page
 {
     Connection Portalcon;
@@ -17,6 +17,7 @@ public partial class LeaveApproval : System.Web.UI.Page
     string HRHODsame = "";
     string forHRisHOD = "";
     SqlConnection con1 = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString);
+    SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
     protected void Page_Load(object sender, EventArgs e)
     {
         try
@@ -708,7 +709,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                         else
                         {
 
-                            SqlDataReader odr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                            SqlDataReader odr = Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
                             DataTable Dt = new DataTable();
                             Dt.Load(odr);
                             grdViewApproval.DataSource = Dt;
@@ -716,10 +717,10 @@ public partial class LeaveApproval : System.Web.UI.Page
                             odr.Close();
                             con.DisConnect();
 
-                            SqlDataReader dr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
-                            dr.Read();
+                            //SqlDataReader dr = Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                            //dr.Read();
 
-                            if (dr.HasRows)
+                            if (Dt.Rows.Count>0)
                             {
                                 btnApprove.Visible = true;
                                 btnreject.Visible = true;
@@ -736,7 +737,7 @@ public partial class LeaveApproval : System.Web.UI.Page
 
                             }
 
-                            dr.Close();
+                            
                             con.DisConnect();
                         }
                     }
@@ -745,6 +746,31 @@ public partial class LeaveApproval : System.Web.UI.Page
             }
 
         }
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withHODALLPending(string HODuserid, string companyName)
+    {
+       
+
+
+        string sql = @"SELECT     CONVERT(varchar(11), CONVERT(date, From_Date), 113) AS F_Date,    CONVERT(varchar(11), CONVERT(date, To_Date), 113) AS T_Date,   *,    CASE         WHEN ISNULL(AttachmentName, '') = '' THEN 'No'        ELSE 'Download'    END AS Upload,    CONCAT(HODName, '(', HODUserid, ')') AS HOD,    (        SELECT [Department Name]        FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]        WHERE No_ COLLATE Latin1_General_100_CS_AS = UserId    ) AS Department FROM tble_Leave_Approval WHERE    Company_Name = '"+companyName+"'    AND [Rejected Approval] = 'No'    AND    (        (    (  HODUserid = '"+ HODuserid + "' OR HODUserid1 = '"+ HODuserid + "'   )  AND Status = 'Pending' )  OR   (  FinalApprovalId = '"+ HODuserid + "'   AND Status = 'Approved' AND Leave_Type = 'CO' and FinalApprovalStatus=0   )  ) ORDER BY AutoNo DESC;";
+
+        using (SqlCommand cmd = new SqlCommand(sql, Conn))
+        {
+            cmd.Parameters.AddWithValue("@Userid", HODuserid);
+            cmd.Parameters.AddWithValue("@CompanyName", companyName);
+
+            if (Conn.State != ConnectionState.Open)
+                Conn.Open();
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            return dr;
+        }
+
+
+
+
     }
     public void showoffLeavesetup(string LeaveType)
     {
@@ -1288,9 +1314,9 @@ public partial class LeaveApproval : System.Web.UI.Page
             DateTime Applieddateto = DateTime.ParseExact(To_Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
             SqlDataReader drSlGNRT = SHow_SalaryProcessingMonth_PayEmployeeNet(tbleEmployeePunchData, ApplieddateFrom.ToString("MM"), ApplieddateFrom.ToString("yyyy"), chkUSerID, Applieddateto.ToString("MM"), Applieddateto.ToString("yyyy"));
-           
-            
-            
+
+
+
             drSlGNRT.Read();
             if (drSlGNRT.HasRows)
             {
@@ -2783,7 +2809,7 @@ public partial class LeaveApproval : System.Web.UI.Page
             String sDate = DateTime.Now.ToString();
             DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
 
-           CheckBox  chkMark = (CheckBox)e.Row.FindControl("chkMark");
+            CheckBox chkMark = (CheckBox)e.Row.FindControl("chkMark");
 
             int day = datevalue.Day;
             int mn = datevalue.Month;
@@ -2809,7 +2835,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                 lnkDownloadgrid.Visible = false;
             }
 
-            if (lblleaveAttachmentFilename.Text.Trim() != "")
+            if (lblleaveAttachmentFilename.Text.Trim() != "" || lblLeaveTypegrid.Text == "AL")
             {
                 lnkDownloadgrid.Visible = true;
             }
@@ -3158,6 +3184,98 @@ public partial class LeaveApproval : System.Web.UI.Page
 
 
         Response.End();
+    }
+    protected void lnkDownload_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            int id = int.Parse((sender as LinkButton).CommandArgument);
+            byte[] bytes;
+            string fileName, contentType;
+            SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
+            Conn.Open();
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.CommandText = "IF EXISTS(   SELECT 1    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '')BEGIN    SELECT       FileName,        FileData,        FileType    FROM tbl_Leave_AL_Documents    WHERE ID = @AutoNo      AND ISNULL(FileName, '') <> '';END ELSE BEGIN    SELECT        AttachmentFilename AS FileName,        Attachmentdata AS FileData,        AttachmentFileType AS FileType    FROM tble_Leave_Approval    WHERE AutoNo = @AutoNo      AND ISNULL(AttachmentFilename, '') <> '';END";
+                cmd.Parameters.AddWithValue("@AutoNo", id);
+                cmd.Connection = Conn;
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    sdr.Read();
+                    bytes = (byte[])sdr["FileData"];
+                    contentType = sdr["FileType"].ToString();
+                    fileName = sdr["FileName"].ToString();
+                }
+                con.DisConnect();
+
+            }
+            Response.Clear();
+            Response.Buffer = true;
+            Response.Charset = "";
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.ContentType = contentType;
+            Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+            Response.BinaryWrite(bytes);
+            Response.Flush();
+            Response.End();
+        }
+        catch (Exception)
+        {
+            ScriptManager.RegisterStartupScript(Page, this.GetType(), "myScript", "alert('Attachment not found ');", true);
+
+        }
+    }
+    protected void lnkAttachment_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+
+        string autoNo = btn.CommandArgument;
+
+        DataTable dt = new DataTable();
+
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            string query = @"
+            Select * from (
+
+SELECT 
+                ID,
+                DocumentType AttachmentFilename
+            FROM tbl_Leave_AL_Documents
+            WHERE AutoNo = @AutoNo
+          
+		  union
+		  SELECT 
+               AutoNo ID,
+                AttachmentFilename AttachmentFilename
+          FROM tble_Leave_Approval
+            WHERE AutoNo = @AutoNo) T where isnull(T.AttachmentFilename,'')!=''
+		  
+		  
+		  ORDER BY ID DESC";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+
+        gvAttachments.DataSource = dt;
+        gvAttachments.DataBind();
+
+        ScriptManager.RegisterStartupScript(
+            this,
+            this.GetType(),
+            "OpenAttachmentModal",
+            "$('#attachmentModal').modal('show');",
+            true
+        );
     }
 
 }

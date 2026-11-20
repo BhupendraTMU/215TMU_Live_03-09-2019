@@ -64,7 +64,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.id == 'ContentPlaceHolder1_chkAbsentAll') {
                     $('[id$=ContentPlaceHolder1_grdStudentAttendanceD_chkboxAttendanceD_' + i + ']').prop("checked", false);
                 }
@@ -79,7 +79,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.checked == true) {
                     $('[id$=chkbox1stAttendance_' + i + ']').attr("disabled", false);
                     $('[id$=chkbox2ndAttendance_' + i + ']').attr("disabled", false);
@@ -105,29 +105,29 @@
 
             $('[id$=ddlUnitD]').removeClass("redBorder");
             document.getElementById('<%=btnSaveD.ClientID %>').style.visibility = "visible";
-                var j = 0;
-                var k = 0;
-                var GridId = "<%=grdStudentAttendanceD.ClientID %>";
-                var grid = document.getElementById(GridId);
-                rowscount = grid.rows.length - 1;
-                for (i = 0; i < parseInt(rowscount) ; i++) {
-                    if ($('[id$=ContentPlaceHolder1_grdStudentAttendanceD_chkboxAttendanceD_' + i + ']').prop("checked") == true) {
-                        j++;
-                    }
-                    k++;
+            var j = 0;
+            var k = 0;
+            var GridId = "<%=grdStudentAttendanceD.ClientID %>";
+            var grid = document.getElementById(GridId);
+            rowscount = grid.rows.length - 1;
+            for (i = 0; i < parseInt(rowscount); i++) {
+                if ($('[id$=ContentPlaceHolder1_grdStudentAttendanceD_chkboxAttendanceD_' + i + ']').prop("checked") == true) {
+                    j++;
                 }
-                $('[id$=lblNoOfStudentD]').text(j);
-                $('[id$=Label3D]').text('out of');
-                $('[id$=lblTotalNoOfStudentD]').text(k);
+                k++;
             }
+            $('[id$=lblNoOfStudentD]').text(j);
+            $('[id$=Label3D]').text('out of');
+            $('[id$=lblTotalNoOfStudentD]').text(k);
+        }
 
 
-            function CheckAllD(me) {
-                var GridId = "<%=grdStudentAttendanceD.ClientID %>";
+        function CheckAllD(me) {
+            var GridId = "<%=grdStudentAttendanceD.ClientID %>";
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.checked == true) {
                     $('[id$=ContentPlaceHolder1_grdStudentAttendanceD_chkboxAttendanceD_' + i + ']').prop("checked", true);
                 }
@@ -156,7 +156,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkbox1stAttendance_' + i + ']').attr("disabled", true);
                 $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkbox2ndAttendance_' + i + ']').attr("disabled", true);
                 $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkbox3rdAttendance_' + i + ']').attr("disabled", true);
@@ -164,15 +164,15 @@
         }
         function DisableOpen() {
             var GridId = "<%=GridView1.ClientID %>";
-             var grid = document.getElementById(GridId);
-             rowscount = grid.rows.length - 1;
+            var grid = document.getElementById(GridId);
+            rowscount = grid.rows.length - 1;
 
-             for (i = 0; i < parseInt(rowscount) ; i++) {
-                 $('[id$=ContentPlaceHolder1_GridView1_chkbox1stAttendance_' + i + ']').attr("disabled", true);
-                 $('[id$=ContentPlaceHolder1_GridView1_chkbox2ndAttendance_' + i + ']').attr("disabled", true);
-                 $('[id$=ContentPlaceHolder1_GridView1_chkbox3rdAttendance_' + i + ']').attr("disabled", true);
-             }
-         }
+            for (i = 0; i < parseInt(rowscount); i++) {
+                $('[id$=ContentPlaceHolder1_GridView1_chkbox1stAttendance_' + i + ']').attr("disabled", true);
+                $('[id$=ContentPlaceHolder1_GridView1_chkbox2ndAttendance_' + i + ']').attr("disabled", true);
+                $('[id$=ContentPlaceHolder1_GridView1_chkbox3rdAttendance_' + i + ']').attr("disabled", true);
+            }
+        }
         function checkDate(sender, args) {
             if (sender._selectedDate > new Date()) {
                 alert("You cannot select greater than current date!");
@@ -204,7 +204,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.id == 'ContentPlaceHolder1_chkAbsentAll') {
                     $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkboxAttendance_' + i + ']').prop("checked", false);
                 }
@@ -221,7 +221,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.id == 'ContentPlaceHolder1_CheckBox3') {
                     $('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked", false);
                 }
@@ -237,7 +237,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.checked == true) {
                     $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkbox1stAttendance_' + i + ']').attr("disabled", false);
                     $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkbox2ndAttendance_' + i + ']').attr("disabled", false);
@@ -258,7 +258,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.checked == true) {
                     $('[id$=ContentPlaceHolder1_GridView1_chkbox1stAttendance_' + i + ']').attr("disabled", false);
                     $('[id$=ContentPlaceHolder1_GridView1_chkbox2ndAttendance_' + i + ']').attr("disabled", false);
@@ -279,13 +279,13 @@
             $('[id$=btnSave2]').click();
         }
         function SaveOpen() {
-         
+
             //var elem = document.getElementById("Loader1");
             //elem.style.display = "block";
             //$(".loader").fadeIn("slow");
             //alert('dfdfd');
             $('[id$=btnSave5]').click();
-           
+
         }
         function Count() {
             var j = 0;
@@ -293,7 +293,7 @@
             var GridId = "<%=grdAttendanceDetails.ClientID %>";
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if ($('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkboxAttendance_' + i + ']').prop("checked") == true) {
                     j++;
                 }
@@ -308,7 +308,7 @@
             var GridId = "<%=GridView1.ClientID %>";
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if ($('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked") == true) {
                     j++;
                 }
@@ -322,7 +322,7 @@
             var grid = document.getElementById(GridId);
             rowscount = grid.rows.length - 1;
 
-            for (i = 0; i < parseInt(rowscount) ; i++) {
+            for (i = 0; i < parseInt(rowscount); i++) {
                 if (me.checked == true) {
                     $('[id$=ContentPlaceHolder1_grdAttendanceDetails_chkboxAttendance_' + i + ']').prop("checked", true);
                 }
@@ -333,18 +333,18 @@
         }
         function CheckAllOpen(me) {
             var GridId = "<%=GridView1.ClientID %>";
-              var grid = document.getElementById(GridId);
-              rowscount = grid.rows.length - 1;
+            var grid = document.getElementById(GridId);
+            rowscount = grid.rows.length - 1;
 
-              for (i = 0; i < parseInt(rowscount) ; i++) {
-                  if (me.checked == true) {
-                      $('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked", true);
-                  }
-                  else {
-                      $('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked", false);
-                  }
-              }
-          }
+            for (i = 0; i < parseInt(rowscount); i++) {
+                if (me.checked == true) {
+                    $('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked", true);
+                }
+                else {
+                    $('[id$=ContentPlaceHolder1_GridView1_chkboxAttendance_' + i + ']').prop("checked", false);
+                }
+            }
+        }
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
@@ -357,7 +357,8 @@
 
     <fieldset class="boxBodyHeader">
         <div class="pull-left">
-            <asp:CheckBox ID="Chkdetained" runat="server" OnCheckedChanged="Chkdetained_CheckedChanged" AutoPostBack="true" Text="Detained/Supplementary" Font-Size="12pt"></asp:CheckBox>&nbsp&nbsp&nbsp&nbsp</div>
+            <asp:CheckBox ID="Chkdetained" runat="server" OnCheckedChanged="Chkdetained_CheckedChanged" AutoPostBack="true" Text="Detained/Supplementary" Font-Size="12pt"></asp:CheckBox>&nbsp&nbsp&nbsp&nbsp
+        </div>
         <div class="pull-left">
             <asp:CheckBox ID="chkOpen" runat="server" Text="Open Elective" AutoPostBack="true" OnCheckedChanged="chkOpen_CheckedChanged" />
         </div>
@@ -887,7 +888,7 @@
                                     </td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                        <asp:CheckBox ID="chkBoxExtraClass" runat="server"  />
+                                        <asp:CheckBox ID="chkBoxExtraClass" runat="server" />
                                     </td>
                                     <td style="width: 10px"></td>
                                 </tr>
@@ -901,32 +902,28 @@
                                         <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ValidationGroup="g1" Display="Dynamic" ControlToValidate="txtTopic" InitialValue="" ErrorMessage="please input the Topic!" ForeColor="Red" ></asp:RequiredFieldValidator>--%>
                                     </td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td colspan="12" style="height: 10px"></td>
                                 </tr>
-                                <tr ID="divAdmissionPeriod" runat="server"  visible="false">
+                                <tr id="divAdmissionPeriod" runat="server" visible="false">
                                     <td>Admission Period</td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                        <asp:DropDownList  ID="drpAdmissionPeriod"   Width="150px" Height="20px" runat="server">
+                                        <asp:DropDownList ID="drpAdmissionPeriod" Width="150px" Height="20px" runat="server">
                                             <asp:ListItem Text="WINTER" Value="1"></asp:ListItem>
                                             <asp:ListItem Text="SUMMER" Value="2"></asp:ListItem>
                                         </asp:DropDownList>
                                     </td>
                                     <td style="width: 10px"></td>
-                                    <td> </td>
+                                    <td></td>
+                                    <td style="width: 10px"></td>
+                                    <td></td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                        
+                                        <label></label>
                                     </td>
                                     <td style="width: 10px"></td>
-                                    <td>
-                                        <label> </label>
-                                    </td>
-                                    <td style="width: 10px"></td>
-                                    <td>
-                                       
-                                    </td>
+                                    <td></td>
                                     <td style="width: 10px"></td>
                                 </tr>
                         </table>
@@ -1119,7 +1116,7 @@
 
                     </center>
                 </asp:Panel>
-                <asp:Panel ID="pnlOpen" runat="server" >
+                <asp:Panel ID="pnlOpen" runat="server">
                     <fieldset class="boxBodyInner">
                         <div class="loader" id="Div1" style="display: none"></div>
                     </fieldset>
@@ -1178,14 +1175,13 @@
                                     </td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                       <asp:DropDownList ID="drpSubject1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSubject1_SelectedIndexChanged"></asp:DropDownList>
+                                        <asp:DropDownList ID="drpSubject1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSubject1_SelectedIndexChanged"></asp:DropDownList>
                                     </td>
                                     <td style="width: 20px"></td>
-                                    <td>
-                                    </td>
+                                    <td>Section </td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                      
+                                        <asp:DropDownList ID="drpSection1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSection1_SelectedIndexChanged"></asp:DropDownList>
                                     </td>
                                     <td style="width: 10px"></td>
 
@@ -1196,15 +1192,15 @@
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator19" runat="server" ValidationGroup="g5" Display="Dynamic" ControlToValidate="drpAcademic1" InitialValue="" ErrorMessage="please select Academic Year!" ForeColor="Red"></asp:RequiredFieldValidator>
                                     </td>
                                     <td colspan="3"></td>
-                                    
+
                                     <td colspan="3"></td>
-                                    
+
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td colspan="12" style="height: 10px"></td>
                                 </tr>
-                                
+
                                 <tr>
                                     <td colspan="2"></td>
                                     <td></td>
@@ -1220,10 +1216,10 @@
                                     <td colspan="12" style="height: 10px"></td>
                                 </tr>
                                 <tr>
-                                    <td>Section </td>
+                                    <td>Group </td>
                                     <td style="width: 10px"></td>
                                     <td>
-                                       <asp:DropDownList ID="drpSection1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSection1_SelectedIndexChanged"></asp:DropDownList>
+                                        <asp:DropDownList ID="drpGroup1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSection1_SelectedIndexChanged"></asp:DropDownList>
                                     </td>
                                     <td style="width: 10px"></td>
                                     <td>Lecture
@@ -1254,7 +1250,7 @@
                                     </td>
                                     <td colspan="2"></td>
                                     <td colspan="2">
-                                      <%--  <asp:RequiredFieldValidator ID="RequiredFieldValidator27" runat="server" ValidationGroup="g5" Display="Dynamic" ControlToValidate="drpUnit1" InitialValue="" ErrorMessage="please select Unit!" ForeColor="Red"></asp:RequiredFieldValidator>
+                                        <%--  <asp:RequiredFieldValidator ID="RequiredFieldValidator27" runat="server" ValidationGroup="g5" Display="Dynamic" ControlToValidate="drpUnit1" InitialValue="" ErrorMessage="please select Unit!" ForeColor="Red"></asp:RequiredFieldValidator>
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator28" runat="server" ControlToValidate="drpUnit1" Display="Dynamic" ErrorMessage="please select Unit!" ForeColor="Red" InitialValue="-- Unit --" ValidationGroup="g5"></asp:RequiredFieldValidator>--%>
                                     </td>
                                 </tr>
@@ -1299,10 +1295,10 @@
                     </fieldset>
 
                     <asp:Button runat="server" ID="btnSave5" BackColor="White" Height="0px" Width="0px" OnClick="btnSave3_Click" BorderColor="White" />
-                   
-                    
-                    
-                     <asp:Panel runat="server" ID="Panel2" Visible="false">
+
+
+
+                    <asp:Panel runat="server" ID="Panel2" Visible="false">
                         <table>
                             <tr style="height: 10px">
                                 <td colspan="5"></td>
@@ -1385,7 +1381,7 @@
                                                     </ItemTemplate>
                                                     <HeaderTemplate>Today</HeaderTemplate>
                                                 </asp:TemplateField>
-                                               
+
                                                 <asp:BoundField DataField="Student Name" HeaderText="Student Name" SortExpression="ApplicantName" HeaderStyle-CssClass="visible-lg" DataFormatString="{0:N2}" ItemStyle-CssClass="visible-lg" />
                                                 <asp:ButtonField DataTextField="Percentage" ButtonType="Link" ControlStyle-ForeColor="Orange" CommandName="Select" HeaderText="Percentage" />
 

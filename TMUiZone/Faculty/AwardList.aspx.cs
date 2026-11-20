@@ -18,7 +18,9 @@ public partial class Faculty_AwardList : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
-                bindAcademicYear(); bindDrpCourseList(); bindDrpSemesterList();
+                bindAcademicYear(); 
+                bindDrpCourseList();
+                bindDrpSemesterList();
                 bindSubject();
 
                 bindSectionList();
@@ -31,7 +33,10 @@ public partial class Faculty_AwardList : System.Web.UI.Page
                 {
                     faculty.Visible = false;
                 }
-                else { faculty.Visible = true; }
+                else 
+                { 
+                    faculty.Visible = true; 
+                }
             }
         }
         catch
@@ -153,6 +158,7 @@ public partial class Faculty_AwardList : System.Web.UI.Page
         bindDrpCourseList();
         bindDrpSemesterList();
         bindSubject();
+        bindSectionList();
 
         //bindReport();
     }
@@ -322,12 +328,20 @@ public partial class Faculty_AwardList : System.Web.UI.Page
         cmd.Parameters.Add("@CourseCode", drpCourse.SelectedValue);
         cmd.Parameters.Add("@SemesterCode", drpSemester.SelectedValue);
         cmd.Parameters.Add("@Subject", ddlSubject.SelectedValue);
+        cmd.Parameters.Add("@AcademicYear", drpAcademicYear.SelectedValue);
+        
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
         drpSection.DataSource = dt;
         drpSection.DataTextField = "Details";
         drpSection.DataValueField = "No_";
         drpSection.DataBind();
+
+        if (Session["Section"].ToString() != null)
+        {
+            drpSection.SelectedValue = Session["Section"].ToString();
+        }
+        else { drpSection.SelectedValue = "--Course--"; }
     }
     public void bindGroupList()
     {

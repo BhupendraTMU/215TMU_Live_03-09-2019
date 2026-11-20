@@ -409,7 +409,7 @@ public class pms_connection
       , string Faculty_Name
       , string Designation
       , string Employee_Code
-      , string Department, string UserType, string ApplicableFor, string ID_For_Updated, string College, string New_Department, string Feed_Odd_Sem, string Feed_Even_Sem)
+      , string Department, string UserType, string ApplicableFor, string ID_For_Updated, string College, string New_Department, string Feed_Odd_Sem, string Feed_Even_Sem,String Remarks1)
     {
         Connect();
         string sqlq = "SP_Tbl_PMS_Insert";
@@ -852,6 +852,7 @@ public class pms_connection
         cmd.Parameters.AddWithValue("@New_Department", New_Department.Trim());
         cmd.Parameters.AddWithValue("@Feed_Odd_Sem", Feed_Odd_Sem.Trim());
         cmd.Parameters.AddWithValue("@Feed_Even_Sem", Feed_Even_Sem.Trim());
+        cmd.Parameters.AddWithValue("@Remarks1", Remarks1.Trim());
 
 
         cmd.ExecuteNonQuery();

@@ -23,8 +23,7 @@ public partial class Student_FA_MM_Attendance_Form : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
-                Date1.Text = DateTime.Now.ToString("yyyy-MM-dd");
-             
+                Date1.Text = DateTime.Now.ToString("yyyy-MM-dd");             
                 BindDate();
                 if(Session["College"].ToString()=="TMNS" || Session["College"].ToString() == "TMSN")
                 {
@@ -44,10 +43,6 @@ public partial class Student_FA_MM_Attendance_Form : System.Web.UI.Page
                     Nornalres.Visible = true;
                     NornalNur.Visible = false;
                 }
-
-
-
-
             }
         }
         catch
@@ -58,7 +53,6 @@ public partial class Student_FA_MM_Attendance_Form : System.Web.UI.Page
     public string GetAcademicYearNo()
     {
         string noValue = null;
-
         try
         {
             using (SqlCommand cmd = new SqlCommand("proc_GetAcademicYear", con))

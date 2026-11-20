@@ -284,7 +284,7 @@
                                         <div class="pull-left">
                                             <asp:CheckBox ID="ChkCombindID" runat="server" Text="Continue" Font-Size="15pt"></asp:CheckBox>
                                         </div>
-                                       <div class="pull-right">
+                                        <div class="pull-right">
                                             <asp:CheckBox ID="ChkRem" runat="server" Text="Remedial" Font-Size="15pt"></asp:CheckBox>&nbsp&nbsp&nbsp&nbsp
                                         </div>
                                     </td>
@@ -365,17 +365,7 @@
                                         <td>
                                             <asp:DropDownList ID="drpAcademicYear1" Width="150px" Height="20px" runat="server" AutoPostBack="true" OnSelectedIndexChanged="drpAcademicYear1_SelectedIndexChanged"></asp:DropDownList>
                                         </td>
-                                        <td style="width: 10px"></td>
-                                        <td>
-                                            <label> </label>
-                                        </td>
-                                        <td style="width: 10px">
-                                            <label style="color: red"></label>
-                                        </td>
-                                        <td>
-                                            <%--<asp:DropDownList ID="drpSubject1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSubject_SelectedIndexChanged"></asp:DropDownList>--%>
 
-                                        </td>
 
                                         <td style="width: 10px"></td>
                                         <td>
@@ -389,21 +379,33 @@
 
                                         </td>
                                         <td style="width: 10px"></td>
+                                        <td>
+                                            <label>Section </label>
+                                        </td>
+                                        <td style="width: 10px"></td>
+                                        <td>
+                                            <asp:DropDownList ID="drpSection1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSection1_SelectedIndexChanged"></asp:DropDownList>
+
+                                        </td>
+                                        <td style="width: 10px"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="11" style="height: 10px"></td>
                                     </tr>
                                     <tr>
+
+
+
                                         <td>
-                                            <label>Section </label>
+                                            <label>Group</label>
                                         </td>
                                         <td style="width: 10px">
-                                            
+                                            <label style="color: red"></label>
                                         </td>
                                         <td>
-                                            <asp:DropDownList ID="drpSection1" Width="150px" Height="20px" AutoPostBack="true" runat="server" OnSelectedIndexChanged="drpSection1_SelectedIndexChanged"></asp:DropDownList>
-
+                                            <asp:DropDownList ID="ddlGroup1" Width="150px" Height="20px" AutoPostBack="true" runat="server"></asp:DropDownList>
                                         </td>
+
                                         <td style="width: 10px"></td>
                                         <td>
                                             <label>Subject Type  </label>
@@ -577,7 +579,7 @@
                             </asp:Panel>
                     </table>
                     <asp:HiddenField runat="server" ID="txtSubjectClassification" />
-                     <asp:HiddenField runat="server" ID="txtSubjectClassification1" />
+                    <asp:HiddenField runat="server" ID="txtSubjectClassification1" />
 
 
                 </fieldset>

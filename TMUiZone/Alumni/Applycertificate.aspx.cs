@@ -71,14 +71,27 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
     {
         try
         {
+            // SqlCommand cmd = new SqlCommand("proc_GetCertificateDetail", con);
             SqlCommand cmd = new SqlCommand("proc_GetCertificateDetail", con);
             cmd.Parameters.Add("@EnrollmentNo_", txtenrollmentno.Text);
+            cmd.Parameters.Add("@SerchingValue", "");
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
             con.Open();
             da.Fill(dt);
             con.Close();
+
+            for (int i = dt.Rows.Count - 1; i >= 0; i--)
+            {
+                DateTime createDate = Convert.ToDateTime(dt.Rows[i]["Create_date"]);
+                string paymentStatus = Convert.ToString(dt.Rows[i]["Payment_Status"]);
+
+                if (createDate < DateTime.Now.AddDays(-7) && paymentStatus == "Open")
+                {
+                    dt.Rows.RemoveAt(i);
+                }
+            }
             GrdMigrationStudent.DataSource = dt;
             GrdMigrationStudent.DataBind();
         }
@@ -192,7 +205,7 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
     public void binddata()
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        string strSQL = "select Case when Gender=1 then 'Male' else 'Female' end as Gender,'20' +RIGHT([Academic Year], 2) AS AcademicYear1, (Select [Exam Course Name] from [TMU$Course - COLLEGE] where [Code]=P.[Course Code]) As CourseName, *  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] as P where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
+        string strSQL = "select Case when Gender=1 then 'Male' else 'Female' end as Gender,'20' +RIGHT([Academic Year], 2) AS AcademicYear1, (Select [Exam Course Name] from [TMU$Course - COLLEGE] where [Code]=P.[Course Code]) As CourseName, *  from [EDUCOLLEGELIVE(TestDatabase)].dbo.[TMU$Student - COLLEGE] as P where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);
@@ -247,7 +260,7 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
         string InternshipStatus = "";
 
         SqlConnection con1 = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        string strSQL1 = "select (select Graduation from [TMU$Course - COLLEGE] where Code=[Course Code]) 'CourseType',[Global Dimension 1 Code] as 'College',(select [Internship Completed] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'Intership' ,(select [PDC Issued] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'PDC',(select [Degree Issued] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'Degree' from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] SC where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
+        string strSQL1 = "select (select Graduation from [TMU$Course - COLLEGE] where Code=[Course Code]) 'CourseType',[Global Dimension 1 Code] as 'College',(select [Internship Completed] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'Intership' ,(select [PDC Issued] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'PDC',(select [Degree Issued] from [TMU$Student Hold_Unhold Marking] where [Enrollment No]=SC.[Enrollment No_]) as 'Degree' from [EDUCOLLEGELIVE(TestDatabase)].dbo.[TMU$Student - COLLEGE] SC where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
         SqlDataAdapter da1 = new SqlDataAdapter(strSQL1, con1);
         DataTable dt1 = new DataTable();
         da1.Fill(dt1);
@@ -336,7 +349,7 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
             {
                 amount = 1000;
             }
-            SqlCommand cmd1 = new SqlCommand("HRMSPortal.dbo.proc_GetMIGRApplicationCount", con);
+            SqlCommand cmd1 = new SqlCommand("HRMSPortal(TestDatabase).dbo.proc_GetMIGRApplicationCount", con);
             cmd1.CommandType = CommandType.StoredProcedure;
             cmd1.Parameters.AddWithValue("@DocType", ddlCertificate.SelectedValue);
             cmd1.Parameters.AddWithValue("@UserID", txtenrollmentno.Text);
@@ -348,14 +361,31 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
             con.Close();
             if (Convert.ToInt32(ds.Tables[0].Rows[0]["C"]) > 0)
             {
+                if (ds.Tables[0].Rows[0]["Create_date"] != DBNull.Value)
+                {
+                    DateTime createDate = Convert.ToDateTime(ds.Tables[0].Rows[0]["Create_date"]);
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", " alert('Your Already applied for this title'); document.location.href='Applycertificate.aspx';", true);
-                return;
+                    int status = Convert.ToInt32(ds.Tables[0].Rows[0]["Payment_Status"]);
 
+                    double days = (DateTime.Now - createDate).TotalDays;
 
+                    if (status == 1 || status == 2 || status == 3 ||
+                        (status == 0 && days <= 7))
+                    {
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "Key",
+                            "alert('You have already applied for this title'); " +
+                            "window.location.href='Applycertificate.aspx';",
+                            true);
+
+                        return;
+                    }
+                }
             }
             string Code = "";
-            SqlCommand cmd = new SqlCommand("HRMSPortal.dbo.MI_InsertApplication", con);
+            SqlCommand cmd = new SqlCommand("HRMSPortal(TestDatabase).dbo.MI_InsertApplication", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@Enrollment_No", txtenrollmentno.Text);
             cmd.Parameters.Add("@Student_Name", txtstudentName.Text);
@@ -504,10 +534,29 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
                     if (Convert.ToInt32(ds.Tables[0].Rows[0]["C"]) > 0)
                     {
 
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", " alert('Your Already applied for this title'); document.location.href='Applycertificate.aspx';", true);
-                        return;
+                        if (ds.Tables[0].Rows[0]["Create_date"] != DBNull.Value)
+                        {
+                            DateTime createDate = Convert.ToDateTime(
+                                ds.Tables[0].Rows[0]["Create_date"]);
 
+                            int status = Convert.ToInt32(ds.Tables[0].Rows[0]["Payment_Status"]);
 
+                            double days = (DateTime.Now - createDate).TotalDays;
+
+                            if (status == 1 || status == 2 || status == 3 ||
+                                (status == 0 && days <= 7))
+                            {
+                                ScriptManager.RegisterStartupScript(
+                                    this,
+                                    this.GetType(),
+                                    "Key",
+                                    "alert('You have already applied for this title'); " +
+                                    "window.location.href='Applycertificate.aspx';",
+                                    true);
+
+                                return;
+                            }
+                        }
                     }
                     string Code = "";
                     SqlCommand cmd = new SqlCommand("HRMSPortal.dbo.MI_InsertApplication", con);
@@ -761,7 +810,7 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
         int temp = 0;
         string orderid = Session["enroll"].ToString() + "MIGR" + DateTime.Now.Ticks.ToString();
         con1.Open();
-        SqlCommand cmd = new SqlCommand("INSERT INTO [OnlinePaymentLog]([Payment Date],[Amount],[Status],[UserID],[GATEWAY],[GatewayStatus],[OrderID],[CLE Entry No],[Semester FEE],[Year FEE],[Temp 1],[Temp 2],[Temp 3],[Orgnized Date])VALUES(GETUTCDATE(),1 ,0 ,'" + Session["uid"].ToString() + "' ,'PAYTM'  ,0 ,'" + orderid + "','','','','" + Complaint + "',0,'', DATEADD(Minute,330,Getdate()))", con1);
+        SqlCommand cmd = new SqlCommand("INSERT INTO [OnlinePaymentLog]([Payment Date],[Amount],[Status],[UserID],[GATEWAY],[GatewayStatus],[OrderID],[CLE Entry No],[Semester FEE],[Year FEE],[Temp 1],[Temp 2],[Temp 3],[Orgnized Date])VALUES(GETUTCDATE(),'"+ Amount.Text + "' ,0 ,'" + Session["uid"].ToString() + "' ,'PAYTM'  ,0 ,'" + orderid + "','','','','" + Complaint + "',0,'', DATEADD(Minute,330,Getdate()))", con1);
         temp = cmd.ExecuteNonQuery();
         con1.Close();
         if (temp == 1)
@@ -780,6 +829,7 @@ public partial class Alumni_Applycertificate : System.Web.UI.Page
             parameters.Add("CUST_ID", Session["uid"].ToString());
             parameters.Add("ORDER_ID", orderid);
             parameters.Add("TXN_AMOUNT", Amount.Text);
+           // parameters.Add("TXN_AMOUNT", "1");
             var baseUrl = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
             var callbackUrl = new Uri(new Uri(baseUrl), "/Alumni/NoDuesResponse.aspx").ToString();
             parameters.Add("CALLBACK_URL", callbackUrl);
