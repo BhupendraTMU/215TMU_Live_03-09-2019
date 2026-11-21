@@ -22,7 +22,15 @@ public partial class Faculty_FellowshipFormApproval : System.Web.UI.Page
             {
                 grdfellowshipdata.Columns[3].Visible = true;
             }
-            getFellowshipdata();
+            try
+
+            {
+                getFellowshipdata();
+            }
+            catch(Exception ex)
+            {
+                Response.Redirect("~/FacultyDetails.aspx");
+            }
         }
 
         //catch
@@ -787,18 +795,18 @@ public partial class Faculty_FellowshipFormApproval : System.Web.UI.Page
         grdfellowshipdata.PageIndex = e.NewPageIndex;
         getFellowshipdata();
     }
-  protected void grdfellowshipdata_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-            HiddenField hiddenfield = (HiddenField)e.Row.FindControl("hfdStatusApproval");
-            if (hiddenfield.Value == "Approved")
-            {
+  //protected void grdfellowshipdata_RowDataBound(object sender, GridViewRowEventArgs e)
+  //  {
+  //      if (e.Row.RowType == DataControlRowType.DataRow)
+  //      {
+  //          HiddenField hiddenfield = (HiddenField)e.Row.FindControl("hfdStatusApproval");
+  //          if (hiddenfield.Value == "Approved")
+  //          {
 
-                e.Row.BackColor = System.Drawing.Color.LightGreen;
-            }
-        }
+  //              e.Row.BackColor = System.Drawing.Color.LightGreen;
+  //          }
+  //      }
 
 
-    }
+  //  }
 }

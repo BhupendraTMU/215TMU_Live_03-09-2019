@@ -453,7 +453,7 @@ public partial class StudentNoDues : System.Web.UI.Page
     public void binddata()
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        string strSQL = "select Case when Gender=1 then 'Male' else 'Female' end as Gender,'20' +RIGHT([Academic Year], 2) AS AcademicYear1, (Select [Exam Course Name] from [TMU$Course - COLLEGE] where [Code]=P.[Course Code]) As CourseName, *  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] as P where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
+        string strSQL = "select Case when Gender=1 then 'Male' else 'Female' end as Gender,(Select top 1 YEAR([Published Date]) from [TMU$Posted Student Ext_Int Header] where [Enrollment No_]=P.[Enrollment No_] order by [Published Date] desc ) AS AcademicYear1, (Select [Exam Course Name] from [TMU$Course - COLLEGE] where [Code]=P.[Course Code]) As CourseName, *  from [EDUCOLLEGELIVE-R2].dbo.[TMU$Student - COLLEGE] as P where [Enrollment No_]='" + Session["enroll"].ToString() + "'";
         SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
         DataTable dt = new DataTable();
         da.Fill(dt);
@@ -891,7 +891,7 @@ public partial class StudentNoDues : System.Web.UI.Page
         try
         {
             var fromEmail = "naverp@tmu.ac.in";
-            var fromPassword = "ghkl eukc gadv filn";
+            var fromPassword = "iojk iegg zyfa nwhc";
 
             // Initialize the SMTP client with the server details
             var smtpClient = new SmtpClient("smtp.gmail.com") // Use your SMTP server here

@@ -1,23 +1,19 @@
-﻿using System;
+﻿using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using paytm;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
-using DL;
-using PL;
-using System.IO;
-using System.Text;
-using paytm;
-using System.Security.Cryptography;
-using System.Web.Mail;
-using paytm;
 using WebReference;
-using System.Net;
-using DotNetIntegrationKit;
 
 public partial class Student_FeeDetails : System.Web.UI.Page
 {
@@ -37,10 +33,7 @@ public partial class Student_FeeDetails : System.Web.UI.Page
     {
         try
         {
-            //Local Process
-            //Response.Redirect("~/Student/Error.aspx", false);
-            //HttpContext.Current.ApplicationInstance.CompleteRequest();
-            //Live
+
             if (Session["College"].ToString() != "TPHD")
             {
                 Response.Redirect("Error.aspx", false);
@@ -48,9 +41,9 @@ public partial class Student_FeeDetails : System.Web.UI.Page
             }
 
             key.Value = ConfigurationManager.AppSettings["MERCHANT_KEY"];
-            // lblName.Text = Session["Name"].ToString() + " (" + Session["AcademicYear"].ToString() + ")";
+
             lblPaidFee.Text = "Paid Fee (" + Session["AcademicYear"].ToString() + " )";
-            //lblUnpaidFee.Text = "Unpaid  Fee";
+
             if (!IsPostBack)
             {
                 string result;
@@ -139,15 +132,19 @@ public partial class Student_FeeDetails : System.Web.UI.Page
 
         int temp = 0;
 
-        // ============================================================
-        // PAYU TEST CONFIGURATION
-        // ============================================================
+
 
         string merchantKey = "bGxnW3";
         string salt = "zssT9zGfAsLwvoFzYLbC0ndS0nVbaIGn";
 
         string baseUrl = "https://secure.payu.in/_payment";
 
+
+        //string successUrl =
+        //    "http://localhost:55941/Student/ResponsePage.aspx";
+
+        //string failureUrl =
+        //    "http://localhost:55941/Student/ResponsePage.aspx";
         string successUrl =
             "https://portal2.tmu.ac.in/Student/ResponsePage.aspx";
 
@@ -160,7 +157,7 @@ public partial class Student_FeeDetails : System.Web.UI.Page
         // ============================================================
 
         string amount = Amt.Value;
-
+        //string amount = "1";
         string firstname = "";
 
         if (Session["Name"] != null)
@@ -177,13 +174,11 @@ public partial class Student_FeeDetails : System.Web.UI.Page
         string udf3 = "";
         string udf4 = "";
         string udf5 = "";
-
-
+        udf1 = Session["uid"].ToString();
+        udf2 = Session["Enroll"].ToString();
         try
         {
-            // ========================================================
-            // INSERT PAYMENT LOG
-            // ========================================================
+
 
             con.Open();
 

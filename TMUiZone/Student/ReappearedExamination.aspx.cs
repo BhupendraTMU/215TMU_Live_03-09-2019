@@ -970,6 +970,7 @@ public partial class ReappearedExamination : System.Web.UI.Page
             decimal dsubmit = 0;
             decimal dtAmount = 0;
             decimal ReAmount = 0;
+            decimal ReAmountDepend = 0;
             fee = Convert.ToDecimal(dt1.Rows[0]["Amount"]);
             dfee = Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]);
             dsubmit = Convert.ToDecimal(dt1.Rows[0]["DTAmount"]);
@@ -1017,29 +1018,36 @@ public partial class ReappearedExamination : System.Web.UI.Page
 
                         else
                         {
-
-
-                            if (Convert.ToString(hdResult.Value) == "2" && Count == 0)
+                            if (hSt.Value == "")
                             {
-                                if (hSt.Value.ToString() != "")
-                                {
-                                    Count = 1;
-                                }
-                                hdtnee = Convert.ToInt32(hdte.Value.ToString());
-                                if (hdtnee > 0 && (dtAmount + Convert.ToDecimal(dt1.Rows[0]["DTAmount"])) < Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]) && Convert.ToDecimal(dt1.Rows[0]["DTAmount"]) < Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]))
-                                {
-                                    dtAmount = dtAmount + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
-
-                                }
-                                else if (hdtnee == 0)
-                                {
-                                    ReAmount = ReAmount + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
-                                }
-                                if (dtAmount > Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]))
-                                {
-                                    dtAmount = Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]);
-                                }
+                                ReAmount = ReAmount + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
                             }
+                            else
+                            {
+                                ReAmountDepend = ReAmountDepend + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
+                            }
+
+                            //if (Convert.ToString(hdResult.Value) == "2" && Count == 0)
+                            //{
+                            //    if (hSt.Value.ToString() != "")
+                            //    {
+                            //        Count = 1;
+                            //    }
+                            //    hdtnee = Convert.ToInt32(hdte.Value.ToString());
+                            //    if (hdtnee > 0 && (dtAmount + Convert.ToDecimal(dt1.Rows[0]["DTAmount"])) < Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]) && Convert.ToDecimal(dt1.Rows[0]["DTAmount"]) < Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]))
+                            //    {
+                            //        dtAmount = dtAmount + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
+
+                            //    }
+                            //    else if (hdtnee == 0)
+                            //    {
+                            //        ReAmount = ReAmount + Convert.ToDecimal(dt1.Rows[0]["Amount"]);
+                            //    }
+                            //    if (dtAmount > Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]))
+                            //    {
+                            //        dtAmount = Convert.ToDecimal(dt1.Rows[0]["Detainee Max_ Amount"]);
+                            //    }
+                            //}
 
                             s++;
                         }
@@ -1059,7 +1067,7 @@ public partial class ReappearedExamination : System.Web.UI.Page
             btnCinvoice.Visible = false;
             btnCinvoice.Enabled = false;
             decimal total = 0;
-            total = dtAmount + ReAmount;
+            total = dtAmount + ReAmount +ReAmountDepend/2;
             //
             //11000;
             //dtAmount + ReAmount;

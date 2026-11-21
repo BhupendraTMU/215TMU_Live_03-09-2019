@@ -25,6 +25,10 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
         {
             if (!IsPostBack)
             {
+
+
+               
+
                 CheckScannerAccess();
 
 
@@ -60,7 +64,7 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
     private void CheckScannerAccess()
     {
         lnkScanner.Visible = false;
-
+        bAttendance.Visible = false;
         string empCode = Session["uid"] != null
             ? Session["uid"].ToString().Trim()
             : "";
@@ -87,6 +91,7 @@ public partial class Faculty_FacultyDetails : System.Web.UI.Page
                 if (count > 0)
                 {
                     lnkScanner.Visible = true;
+                    bAttendance.Visible = true;
                 }
             }
         }

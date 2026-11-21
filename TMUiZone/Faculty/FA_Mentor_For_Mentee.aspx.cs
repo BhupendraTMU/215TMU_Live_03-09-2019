@@ -175,17 +175,11 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
     protected void btn_mentorForMentee_attendanceUndertaking_Click(object sender, EventArgs e)
     {
         GridViewRow parentRow = (GridViewRow)((Control)sender).NamingContainer;
-
-        // Find the Label within the current row
-        //Label lblGrd_menterForMentee_studentName = (Label)parentRow.FindControl("lblGrd_menterForMentee_studentName");
-        //Label lbl_AutoNo = (Label)parentRow.FindControl("lbl_AutoNo");
         Label lblGrd_menterForMentee_studentno = (Label)parentRow.FindControl("lblGrd_menterForMentee_studentno");
-
         SqlCommand cmd = new SqlCommand("[SP_GetSemforUndertaking]", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@ID", lblGrd_menterForMentee_studentno.Text);
         con.Open();
-
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         DataTable dt = new DataTable();
         con.Close();
@@ -200,34 +194,20 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
             DropDownList1.DataTextField = "sem_year";
             DropDownList1.DataValueField = "sem_year";
             DropDownList1.DataBind();
-
-            
-
-
-            bindGrid(lblGrd_menterForMentee_studentno.Text, "25-26", drpSemester.SelectedValue);
-            BindDate(lblGrd_menterForMentee_studentno.Text, "25-26", drpSemester.SelectedValue);
-
         }
 
-
-
-
-
-        
-
-        //Session["MM_StudentName"] = lblGrd_menterForMentee_studentno.Text.Trim();
-        //Session["MM_Academic_Year"] = ddl_mentorFormentee_academicYear.SelectedValue.Trim();
-        //Session["MM_Course"] = ddl_mentorFormentee_course.SelectedValue.ToString();
-        //Session["MM_Program"] = ddl_mentorFormentee_course.SelectedItem.ToString();
-
-        //Session["MM_AutoNo"] = lbl_AutoNo.Text.Trim();
-
-
-
-        //Page.ClientScript.RegisterStartupScript(this.GetType(), "OpenWindow", "window.open('FA_MM_Attendance_Form.aspx','_newtab');", true);
-
+        binddata(lblGrd_menterForMentee_studentno.Text);
+        Session["STNO"] = lblGrd_menterForMentee_studentno.Text;
     }
 
+
+
+    public void binddata(string STNO)
+    {
+        bindGrid(STNO, "25-26", drpSemester.SelectedValue);
+        BindDate(STNO, "25-26", drpSemester.SelectedValue);
+
+    }
 
     public void bindGrid(string StudentNo, string val, string val1)
     {
@@ -282,7 +262,7 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
                 studentEmail.Text = dtCL.Rows[0]["E-Mail Address"].ToString();
                 fatherEmail.Text = dtCL.Rows[0]["FatherEmail"].ToString();
                 fatherMobile.Text = dtCL.Rows[0]["FatherMobileNo"].ToString();
-                Date1.Text= dtCL.Rows[0]["SubmitDate"].ToString();
+                Date1.Text = dtCL.Rows[0]["SubmitDate"].ToString();
                 TextBox1.Text = dtCL.Rows[0]["SubmitDate"].ToString();
                 CheckBox1.Checked = true;
                 CheckBox1.Enabled = false;
@@ -297,7 +277,7 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", "<script>$('#confirmModal1').modal('show');</script>", false);
                 }
 
-               
+
 
 
             }
@@ -412,5 +392,10 @@ public partial class FA_Mentor_For_Mentee : System.Web.UI.Page
 
         Page.ClientScript.RegisterStartupScript(this.GetType(), "OpenWindow", "window.open('FA_MM_View_Attendance.aspx','_newtab');", true);
 
+    }
+
+    protected void drpSemester_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        binddata(Session["STNO"].ToString());
     }
 }

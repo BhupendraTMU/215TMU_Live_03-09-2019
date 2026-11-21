@@ -728,7 +728,7 @@
                                                             <asp:Panel ID="pnlALDocuments"
                                                                 runat="server"
                                                                 Visible="false">
-
+                                                             <p style="color:red;font-size:medium;">  Faculty members shall apply for the in-principle approved Academic Leave (AL) on the ERP portal after completion of the event.</p>
                                                                 <table class="table table-bordered" style="width: 100%;">
 
                                                                     <tr>

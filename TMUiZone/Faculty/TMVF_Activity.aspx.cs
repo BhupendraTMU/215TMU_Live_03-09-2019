@@ -66,12 +66,7 @@ public partial class Faculty_TMVF_Activity : System.Web.UI.Page
     }
     public void ViewAttendance()
     {
-
-
-
         con1.Open();
-
-
         SqlCommand cmd = new SqlCommand("EDUCOLLEGELIVE-R2.dbo.GetActualPunchData_TMVF", con2);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.Add("@ID", Session["uid"].ToString());
@@ -85,10 +80,6 @@ public partial class Faculty_TMVF_Activity : System.Web.UI.Page
         {
             grd_ViewAttendance.DataSource = dt;
             grd_ViewAttendance.DataBind();
-
-
-
-
             con1.Close();
         }
 

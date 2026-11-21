@@ -35,45 +35,46 @@ public partial class Default : System.Web.UI.Page
         }
         if (!IsPostBack)
         {
-            if ((Session["Enroll"] != null || Session["uid"] != null) && (Session["Pass"] != null || Session["Passw"] != null) && (Session["Enroll"] != null || Session["uid"] != null) && (Session["Pass"] != null || Session["Passw"] != null))
+            bool hasUser =
+                !string.IsNullOrEmpty(Convert.ToString(Session["Enroll"])) ||
+                !string.IsNullOrEmpty(Convert.ToString(Session["uid"]));
+
+            bool hasPassword =
+                !string.IsNullOrEmpty(Convert.ToString(Session["Pass"])) ||
+                !string.IsNullOrEmpty(Convert.ToString(Session["Passw"]));
+
+            if (hasUser && hasPassword)
             {
+                txtUserid.Text = !string.IsNullOrEmpty(
+                    Convert.ToString(Session["Enroll"]))
+                    ? Convert.ToString(Session["Enroll"])
+                    : Convert.ToString(Session["uid"]);
 
+                txtpassword.Text = !string.IsNullOrEmpty(
+                    Convert.ToString(Session["Pass"]))
+                    ? Convert.ToString(Session["Pass"])
+                    : Convert.ToString(Session["Passw"]);
 
-                if (Session["Enroll"] != null && Session["Enroll"] != "")
-                {
-                    txtUserid.Text = Session["Enroll"].ToString();
-                }
-                else
-                {
-                    txtUserid.Text = Session["uid"].ToString();
-                }
-                if (Session["Pass"] != null && Session["Pass"] != "")
-                {
-                    txtpassword.Text = Session["Pass"].ToString();
-                }
-                else
-                {
-
-                    txtpassword.Text = Session["Passw"].ToString();
-                }
-                Session["Enroll"] = "";
-                Session["Pass"] = "";
+                // Existing login flow
                 ImgBttn_Login_Click1(sender, e);
+                return;
+            }
 
-            }
-            else
-            {
-                if (Request.Cookies["userid1"] != null)
-                    txtUserid.Attributes.Add("value", Request.Cookies["userid1"].Value);
-                if (Request.Cookies["pwd"] != null)
-                    txtpassword.Attributes.Add("value", Request.Cookies["pwd"].Value);
-                if (Request.Cookies["userid"] != null && Request.Cookies["pwd"] != null)
-                    chkrem.Checked = true;
-            }
+            if (Request.Cookies["userid1"] != null)
+                txtUserid.Text = Request.Cookies["userid1"].Value;
+
+            // Do not restore a password from a persistent cookie.
+            if (Request.Cookies["pwd"] != null)
+                txtpassword.Attributes["value"] = "";
+
+            chkrem.Checked = Request.Cookies["userid1"] != null;
         }
     }
 
     protected void ImgBttn_Login_Click1(object sender, EventArgs e)
+    
+    
+    
     
     {
         string studentNo = txtUserid.Text.Trim().ToUpper();
@@ -141,6 +142,7 @@ public partial class Default : System.Web.UI.Page
                         ? ""
                         : result.ToString();
             con.Close();
+            Session["UserGroup"]= UserGroup;
         }
 
 
@@ -277,45 +279,104 @@ public partial class Default : System.Web.UI.Page
         }
 
     }
-
     public void LoginDetail()
     {
         try
         {
-            //SqlDataAdapter da = new SqlDataAdapter("select * from Company with (NOLOCK) where [Web Portal Access]='1' order by Name desc", Portalcon.Con);
-            SqlDataAdapter da = new SqlDataAdapter("usp_GetPortalAccessCompanies", Portalcon.Con);
-            da.SelectCommand.CommandType = CommandType.StoredProcedure;
+            DataTable companies = new DataTable();
 
-            DataSet ds = new DataSet();
-            da.Fill(ds, "Company");
-           
-            for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+            using (SqlDataAdapter da = new SqlDataAdapter(
+                "usp_GetPortalAccessCompanies", Portalcon.Con))
             {
-                string CompanyName = ds.Tables[0].Rows[i]["Name"].ToString();
-                try
-                {
-                    CompanywiseDetails(CompanyName);
-                }
-                catch (Exception ex)
-                {
+                da.SelectCommand.CommandType =
+                    CommandType.StoredProcedure;
 
-                }
-
+                da.Fill(companies);
             }
-            Portalcon.DisConnect();
+
+            for (int i = 0; i < companies.Rows.Count; i++)
+            {
+                string companyName =
+                    Convert.ToString(companies.Rows[i]["Name"]);
+
+                CompanywiseDetails(companyName);
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Connection couldnot established please contact your system administrator');", true);
+            System.Diagnostics.Trace.WriteLine(
+                "LoginDetail error: " + ex.Message);
+
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "LoginError",
+                "alert('Connection could not be established. Please contact your system administrator.');",
+                true);
         }
     }
+    //public void LoginDetail()
+    //{
+    //    try
+    //    {
+    //        //SqlDataAdapter da = new SqlDataAdapter("select * from Company with (NOLOCK) where [Web Portal Access]='1' order by Name desc", Portalcon.Con);
+    //        SqlDataAdapter da = new SqlDataAdapter("usp_GetPortalAccessCompanies", Portalcon.Con);
+    //        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+    //        DataSet ds = new DataSet();
+    //        da.Fill(ds, "Company");
+
+    //        for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+    //        {
+    //            string CompanyName = ds.Tables[0].Rows[i]["Name"].ToString();
+    //            try
+    //            {
+    //                CompanywiseDetails(CompanyName);
+    //            }
+    //            catch (Exception ex)
+    //            {
+
+    //            }
+
+    //        }
+    //        Portalcon.DisConnect();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Connection couldnot established please contact your system administrator');", true);
+    //    }
+    //}
     public void CompanywiseDetails(string CompanyName)
     {
         string stable = CompanyName;
         string rtable = stable.Replace(".", "_");
-        string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim().ToUpper());
+
+        //string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim().ToUpper());
+
+        string UserGroup = Session["UserGroup"].ToString();
+
+        //string Query = @"SELECT [User Group]  FROM [Portal Users]  WHERE [Login ID] = @LoginID";
+
+        //using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString))
+        //using (SqlCommand cmd = new SqlCommand("dbo.usp_GetPortalUserGroup", con))
+        //{
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+        //    cmd.Parameters.Add("@LoginID", SqlDbType.NVarChar, 50).Value =
+        //        txtUserid.Text.Trim().ToUpper() ?? (object)DBNull.Value;
+
+        //    con.Open();
+
+        //    object result = cmd.ExecuteScalar();
+
+        //    UserGroup = (result == null || result == DBNull.Value)
+        //                ? ""
+        //                : result.ToString();
+        //    con.Close();
+        //}
+
         string comanyname;
-        Session["UserGroup"] = UserGroup;
+       // Session["UserGroup"] = UserGroup;
         Session["FacultyCollege"] = Portalcon.FacultyCollege(txtUserid.Text.Trim());
         if (UserGroup == "FACULTY" || UserGroup == "COUNSELLOR" || UserGroup == "COURSE CO" || UserGroup == "STAFF" || UserGroup == "PRINCIPAL" || UserGroup == "HR"
             || UserGroup == "ADMIN" || UserGroup == "LAB INCHARGE" || UserGroup == "REGISTRAR" || UserGroup == "HOD" || UserGroup == "SECURITY" || UserGroup == "FINE" || UserGroup == "VC" || UserGroup == "DEAN")
@@ -346,9 +407,7 @@ public partial class Default : System.Web.UI.Page
                 Session["EmployeePostingGroupl"] = dr["Employee Posting Group"].ToString();
                 Session["HODLoginPage1"] = dr["HOD 1"].ToString();
                 Session["IndentApproval"] = dr["HOD 1"].ToString();  //08 Nov 2016
-
-
-
+                Session["Gender1"] = dr["Gender"].ToString();
                 Session["HRID"] = dr["HR"].ToString();
                 Session["HRID_leave"] = dr["HR"].ToString();
                 // Session["BandCodereim"] = dr["Occupation Code"].ToString();
@@ -502,6 +561,7 @@ public partial class Default : System.Web.UI.Page
                 Session["College"] = dt.Rows[0]["Global Dimension 1 Code"].ToString();
                 Session["AcademicYear"] = dt.Rows[0]["Academic Year"].ToString();
                 Session["Passw"] = dt.Rows[0]["Password"].ToString();
+                Session["Gender1"] = dt.Rows[0]["Gender"].ToString();
                 if (chkrem.Checked == true)
                 {
                     Response.Cookies["userid1"].Value = txtUserid.Text;
@@ -574,19 +634,63 @@ public partial class Default : System.Web.UI.Page
     }
     public void userrolematrix()
     {
-        SqlDataReader Roledr = Portalcon.CheckRole(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
-        if (Roledr.Read())
+        SqlDataReader reader = null;
+
+        try
         {
-            Session["Princpal"] = Roledr["Principal"].ToString();
-            Session["Hod"] = Roledr["HOD"].ToString();
-            Session["CourseCo-Ordinator"] = Roledr["Course Co-Ordinator"].ToString();
-            Session["ClassCo-Ordinator"] = Roledr["Class Co-Ordinator"].ToString();
-            Session["Proctor"] = Roledr["Proctor"].ToString();
-            Session["LabIncharge"] = Roledr["Lab Incharge"].ToString();
-            Session["EventCo-Ordinator"] = Roledr["Event Co-Ordinator"].ToString();
+            reader = Portalcon.CheckRole(
+                Convert.ToString(Session["uid"]),
+                Convert.ToString(Session["GlobalDimension1Code"]));
+
+            if (reader != null && reader.Read())
+            {
+                Session["Princpal"] =
+                    Convert.ToString(reader["Principal"]);
+
+                Session["Hod"] =
+                    Convert.ToString(reader["HOD"]);
+
+                Session["CourseCo-Ordinator"] =
+                    Convert.ToString(reader["Course Co-Ordinator"]);
+
+                Session["ClassCo-Ordinator"] =
+                    Convert.ToString(reader["Class Co-Ordinator"]);
+
+                Session["Proctor"] =
+                    Convert.ToString(reader["Proctor"]);
+
+                Session["LabIncharge"] =
+                    Convert.ToString(reader["Lab Incharge"]);
+
+                Session["EventCo-Ordinator"] =
+                    Convert.ToString(reader["Event Co-Ordinator"]);
+            }
         }
-        //end code section
+        finally
+        {
+            if (reader != null)
+                reader.Dispose();
+
+            // Close only if CheckRole uses this dedicated connection
+            // and no other operation is using it.
+            // Portalcon.DisConnect();
+        }
     }
+    //public void userrolematrix()
+    //{
+    //    SqlDataReader Roledr = Portalcon.CheckRole(Session["uid"].ToString(), Session["GlobalDimension1Code"].ToString());
+    //    if (Roledr.Read())
+    //    {
+    //        Session["Princpal"] = Roledr["Principal"].ToString();
+    //        Session["Hod"] = Roledr["HOD"].ToString();
+    //        Session["CourseCo-Ordinator"] = Roledr["Course Co-Ordinator"].ToString();
+    //        Session["ClassCo-Ordinator"] = Roledr["Class Co-Ordinator"].ToString();
+    //        Session["Proctor"] = Roledr["Proctor"].ToString();
+    //        Session["LabIncharge"] = Roledr["Lab Incharge"].ToString();
+    //        Session["EventCo-Ordinator"] = Roledr["Event Co-Ordinator"].ToString();
+    //    }
+    //    //end code section
+    //}
     //
     private static string sKey = "UJYHCX783her*&5@$%#(MJCX**38n*#6835ncv56tvbry(&#MX98cn342cn4*&X#&dhirendracorporateserve9877222";
 
@@ -735,8 +839,10 @@ public partial class Default : System.Web.UI.Page
     protected void btnCollege_Click(object sender, EventArgs e)
     {
         Session["GlobalDimension1Code"] = ddlCollege.SelectedValue;
-        string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim(), Session["GlobalDimension1Code"].ToString());
-        Session["UserGroup"] = UserGroup;
+        //string UserGroup = Portalcon.UserGroup(txtUserid.Text.Trim(), Session["GlobalDimension1Code"].ToString());
+      
+        string UserGroup = Session["UserGroup"].ToString();
+       
         Response.Redirect("Faculty/FacultyDetails.aspx");
     }
 

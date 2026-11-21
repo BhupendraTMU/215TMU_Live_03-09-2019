@@ -695,17 +695,276 @@
             background-color: #157347 !important;
         }
     </style>
-        <script type="text/javascript">
-            function confirmApproval() {
-                if (confirm("Are you sure you want to change the mentor for this mentee?")) {
-                    document.getElementById('<%= hdnApprovalConfirm.ClientID %>').value = "Yes";
+    <style type="text/css">
+        /* ===========================
+   Mentee Popup
+   =========================== */
+
+        .mentee-modal {
+            width: 1100px !important;
+            max-width: 95vw !important;
+            height: auto !important;
+            max-height: 85vh !important;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+
+        /* ===========================
+   Popup Header
+   =========================== */
+
+        .mentee-modal-header {
+            width: 100%;
+            height: 45px;
+            background: #f28c00;
+            color: #fff;
+            padding: 10px 15px;
+            box-sizing: border-box;
+        }
+
+        .mentee-modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            float: left;
+        }
+
+        .mentee-modal-close {
+            float: right;
+            color: #fff !important;
+            font-size: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            line-height: 20px;
+        }
+
+
+        /* ===========================
+   Toolbar
+   =========================== */
+
+        .mentee-modal-toolbar {
+            padding: 10px 12px;
+            background: #fff;
+            min-height: 40px;
+            box-sizing: border-box;
+        }
+
+        .mentee-total {
+            float: left;
+            margin-top: 7px;
+        }
+
+
+        /* Buttons */
+
+        .mentee-export {
+            float: right;
+            background: #28a745;
+            color: #fff !important;
+            padding: 7px 14px;
+            margin-left: 8px;
+            border-radius: 3px;
+            text-decoration: none !important;
+            font-size: 12px;
+        }
+
+
+        /* ===========================
+   Grid Wrapper
+   =========================== */
+
+        .mentee-grid-wrapper {
+            width: 100%;
+            max-height: 500px;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 0 10px 12px 10px;
+            box-sizing: border-box;
+        }
+
+
+        /* ===========================
+   Grid
+   =========================== */
+
+        .mentee-grid {
+            width: 100%;
+            min-width: 1150px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+
+
+            /* Header */
+
+            .mentee-grid th {
+                background: #a85a00;
+                color: white;
+                font-weight: bold;
+                text-align: left;
+                padding: 9px 7px;
+                border: 1px solid #ddd;
+                white-space: normal;
+                word-break: break-word;
+                vertical-align: middle;
+            }
+
+
+            /* Rows */
+
+            .mentee-grid td {
+                padding: 8px 7px;
+                border: 1px solid #ddd;
+                white-space: normal;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                vertical-align: middle;
+            }
+
+
+            /* Alternate row */
+
+            .mentee-grid tr:nth-child(even) {
+                background: #f8f8f8;
+            }
+
+
+            /* Hover */
+
+            .mentee-grid tr:hover {
+                background: #f1f1f1;
+            }
+    </style>
+    <style type="text/css">
+        /* =========================
+   Mentor Details Popup
+   ========================= */
+
+        .mentorModalPopup {
+            width: 850px !important;
+            max-width: 90vw !important;
+            background: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+
+        /* Header */
+
+        .mentorModalHeader {
+            height: 48px;
+            line-height: 48px;
+            background: #ed861f;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .mentorModalClose {
+            float: right;
+            color: #fff !important;
+            font-size: 25px;
+            font-weight: bold;
+            text-decoration: none !important;
+        }
+
+
+        /* Body */
+
+        .mentorModalBody {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+
+            /* Search area */
+
+            .mentorModalBody .form-control {
+                display: inline-block;
+                width: 220px !important;
+                height: 34px;
+                vertical-align: middle;
+            }
+
+
+            /* =========================
+   Grid Wrapper
+   ========================= */
+
+            .mentorModalBody > div[style*="max-height"] {
+                width: 100% !important;
+                max-height: 420px !important;
+                overflow-x: auto !important;
+                overflow-y: auto !important;
+            }
+
+
+        /* =========================
+   Mentor Grid
+   ========================= */
+
+        .mentorGrid {
+            width: 100% !important;
+            min-width: 800px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+
+
+            /* Header */
+
+            .mentorGrid th {
+                background-color: #ed861f !important;
+                color: #fff !important;
+                font-weight: bold;
+                padding: 9px 8px !important;
+                border: 1px solid #ddd;
+                text-align: left;
+                white-space: normal;
+                word-break: break-word;
+            }
+
+
+            /* Rows */
+
+            .mentorGrid td {
+                padding: 9px 8px !important;
+                border: 1px solid #ddd;
+                vertical-align: middle;
+                white-space: normal;
+                word-break: break-word;
+            }
+
+
+            /* Hover */
+
+            .mentorGrid tr:hover {
+                background-color: #f1f1f1;
+            }
+            .filter-control {
+    text-transform: uppercase;
+}
+    </style>
+    <script type="text/javascript">
+        function confirmApproval() {
+            if (confirm("Are you sure you want to change the mentor for this mentee?")) {
+                document.getElementById('<%= hdnApprovalConfirm.ClientID %>').value = "Yes";
                 return true;
             }
 
             document.getElementById('<%= hdnApprovalConfirm.ClientID %>').value = "No";
-                return false;
-            }
-        </script>
+            return false;
+        }
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
@@ -850,19 +1109,20 @@
 
                     </asp:UpdatePanel>
 
-
-
-
+        <tr> <td colspan="7">  
+            <br />
+                         Total No. Of Mentee:<asp:LinkButton ID="lnk_TotalMentee" runat="server" OnClick="lnk_TotalMentee_Click">
                     <asp:Panel ID="pnl_Mentee" runat="server">
                         <div class="student-filter">
                             <span class="filter-label">Filter by Student No / Enrollment No / Name
                             </span>
-                            <asp:TextBox ID="txt_Studentfilterby_name"
+                            <asp:TextBox
+                                ID="txt_Studentfilterby_name"
                                 runat="server"
                                 CssClass="filter-control"
-                                placeholder="Student No / Name">
+                                placeholder="Student No / Name"
+                                Style="text-transform: uppercase;">
                             </asp:TextBox>
-
 
                             <asp:Button
                                 ID="btn_Studentfilter"
@@ -870,17 +1130,17 @@
                                 CssClass="btn btn-danger"
                                 Text="Get Record"
                                 OnClick="btn_Studentfilter_Click" />
-                        </div>
-
-                        <asp:UpdatePanel
-                            ID="up_Mentee"
-                            runat="server"
-                            UpdateMode="Conditional">
-
-                            <ContentTemplate>
-
-                                <div class="mentee-grid-container">
-
+                <asp:Image ID="img_Mentee_Details" ImageAlign="Right" runat="server" Style="cursor: pointer" src="PMS%20Img/plus.png" />
+                <asp:Panel ID="pnl_Mentee" runat="server" Style="display: none">
+                        <div style="padding-bottom: 20px; font-weight:bold">
+                            <span>Filter by Student No/Enrollment No/Name</span>
+                            <asp:TextBox ID="txt_Studentfilterby_name" runat="server"></asp:TextBox>
+                       
+                            <asp:Button ID="btn_Studentfilter" runat="server" CssClass="btn-danger" Text="Get Record" OnClick="btn_Studentfilter_Click" />
+                <asp:Image ID="img_Mentee_Details" ImageAlign="Right" runat="server" Style="cursor: pointer" src="PMS%20Img/plus.png" />
+                <asp:Panel ID="pnl_Mentee" runat="server" Style="display: none">
+                        <div style="padding-bottom: 20px; font-weight:bold">
+                            <span>Filter by Student No/Enrollment No/Name</span>
                                     <asp:GridView
                                         ID="gv_Mentee"
                                         runat="server"
@@ -929,6 +1189,17 @@
                                                     <asp:Label ID="lbl_St_Code_grid" runat="server" Text='<%# Bind("No_") %>'></asp:Label>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
+
+                                            <asp:TemplateField HeaderText="Enrollment No">
+                                                <ItemTemplate>
+                                                    <asp:Label
+                                                        ID="lbl_St_EnrollmentNo"
+                                                        runat="server"
+                                                        Text='<%# Bind("[EnrollmentNo]") %>'>
+                                                    </asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+
 
                                             <asp:TemplateField HeaderText="Student Name">
                                                 <ItemTemplate>
@@ -1017,7 +1288,7 @@
                 </div>
 
             </div>
-
+                        </Columns>
         </asp:Panel>
 
         <asp:UpdatePanel
@@ -1062,7 +1333,7 @@
                             runat="server"
                             CssClass="mentee-modal-close"
                             ToolTip="Close">
-            ×
+                             ×
                         </asp:LinkButton>
                         <div style="clear: both;"></div>
                     </div>
@@ -1085,7 +1356,7 @@
                             OnClientClick="return confirmApproval();">
                          ReAssign
                         </asp:LinkButton>
-                          <asp:HiddenField ID="hdnApprovalConfirm" runat="server" Value="No" />
+                        <asp:HiddenField ID="hdnApprovalConfirm" runat="server" Value="No" />
 
 
 
@@ -1117,6 +1388,21 @@
                                             ID="lbl_St_Code_grid"
                                             runat="server"
                                             Text='<%# Bind("No_") %>'>
+                                        </asp:Label>
+                                    </ItemTemplate>
+
+                                </asp:TemplateField>
+
+                                <asp:TemplateField
+                                    HeaderText="Enrollment No"
+                                    ItemStyle-Width="19%"
+                                    HeaderStyle-Width="19%">
+
+                                    <ItemTemplate>
+                                        <asp:Label
+                                            ID="lbl_St_EnrollmentNo1"
+                                            runat="server"
+                                            Text='<%# Bind("[EnrollmentNo]") %>'>
                                         </asp:Label>
                                     </ItemTemplate>
 
@@ -1200,11 +1486,54 @@
                                         </asp:Label>
                                     </ItemTemplate>
                                 </asp:TemplateField>
+
+                                <asp:TemplateField
+                                    HeaderText="Mentor ID"
+                                    ItemStyle-Width="18%"
+                                    HeaderStyle-Width="18%">
+
+                                    <ItemTemplate>
+                                        <asp:Label
+                                            ID="lbl_St_Mentor_ID"
+                                            runat="server"
+                                            Text='<%# Bind("[Mentor_ID]") %>'>
+                                        </asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField
+                                    HeaderText="Mentor Name"
+                                    ItemStyle-Width="18%"
+                                    HeaderStyle-Width="18%">
+
+                                    <ItemTemplate>
+                                        <asp:Label
+                                            ID="lbl_St_Mentor_Name"
+                                            runat="server"
+                                            Text='<%# Bind("[Mentor_Name]") %>'>
+                                        </asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
                             </Columns>
                             <EmptyDataTemplate>
                                 <div style="color: red;">No Records Found !!!</div>
                             </EmptyDataTemplate>
                         </asp:GridView>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+    <EmptyDataTemplate>
+        There are no records found!
+    </EmptyDataTemplate>
+</asp:GridView>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+    <EmptyDataTemplate>
+        There are no records found!
+    </EmptyDataTemplate>
+</asp:GridView>
 
                     </div>
 

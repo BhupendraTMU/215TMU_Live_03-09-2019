@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;//ashuss
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-using System.Net;
-using System.Net.Mail;
-using System.IO;
-using System.Configuration;//ashuss
 public partial class LeaveApproval : System.Web.UI.Page
 {
     Connection Portalcon;
@@ -17,6 +17,7 @@ public partial class LeaveApproval : System.Web.UI.Page
     string HRHODsame = "";
     string forHRisHOD = "";
     SqlConnection con1 = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ConnectionString);
+    SqlConnection Conn = new SqlConnection(ConfigurationManager.AppSettings["strPortal"]);
     protected void Page_Load(object sender, EventArgs e)
     {
         try
@@ -708,7 +709,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                         else
                         {
 
-                            SqlDataReader odr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                            SqlDataReader odr = Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
                             DataTable Dt = new DataTable();
                             Dt.Load(odr);
                             grdViewApproval.DataSource = Dt;
@@ -716,10 +717,10 @@ public partial class LeaveApproval : System.Web.UI.Page
                             odr.Close();
                             con.DisConnect();
 
-                            SqlDataReader dr = con.Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
-                            dr.Read();
+                            //SqlDataReader dr = Leave_Approval_Detail_withHODALLPending(Session["uid"].ToString(), Session["Company"].ToString());
+                            //dr.Read();
 
-                            if (dr.HasRows)
+                            if (Dt.Rows.Count>0)
                             {
                                 btnApprove.Visible = true;
                                 btnreject.Visible = true;
@@ -736,7 +737,7 @@ public partial class LeaveApproval : System.Web.UI.Page
 
                             }
 
-                            dr.Close();
+                            
                             con.DisConnect();
                         }
                     }
@@ -745,6 +746,31 @@ public partial class LeaveApproval : System.Web.UI.Page
             }
 
         }
+    }
+
+    public SqlDataReader Leave_Approval_Detail_withHODALLPending(string HODuserid, string companyName)
+    {
+       
+
+
+        string sql = @"SELECT     CONVERT(varchar(11), CONVERT(date, From_Date), 113) AS F_Date,    CONVERT(varchar(11), CONVERT(date, To_Date), 113) AS T_Date,   *,    CASE         WHEN ISNULL(AttachmentName, '') = '' THEN 'No'        ELSE 'Download'    END AS Upload,    CONCAT(HODName, '(', HODUserid, ')') AS HOD,    (        SELECT [Department Name]        FROM [EDUCOLLEGELIVE-R2].dbo.[TMU$Employee]        WHERE No_ COLLATE Latin1_General_100_CS_AS = UserId    ) AS Department FROM tble_Leave_Approval WHERE    Company_Name = '"+companyName+"'    AND [Rejected Approval] = 'No'    AND    (        (    (  HODUserid = '"+ HODuserid + "' OR HODUserid1 = '"+ HODuserid + "'   )  AND Status = 'Pending' )  OR   (  FinalApprovalId = '"+ HODuserid + "'   AND Status = 'Approved' AND Leave_Type = 'CO' and FinalApprovalStatus=0   )  ) ORDER BY AutoNo DESC;";
+
+        using (SqlCommand cmd = new SqlCommand(sql, Conn))
+        {
+            cmd.Parameters.AddWithValue("@Userid", HODuserid);
+            cmd.Parameters.AddWithValue("@CompanyName", companyName);
+
+            if (Conn.State != ConnectionState.Open)
+                Conn.Open();
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            return dr;
+        }
+
+
+
+
     }
     public void showoffLeavesetup(string LeaveType)
     {

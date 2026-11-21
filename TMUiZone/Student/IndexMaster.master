@@ -7,6 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>TMU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../CSS/Amizone.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/Style.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/maincss.css" rel="stylesheet" type="text/css" />
@@ -23,7 +24,6 @@
     <script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
     <link href="../dropdown_one.css" rel="stylesheet" />
     <link href="../CSS/mainpage.css" rel="stylesheet" type="text/css" />
-    <%-- <link href="dropdown_one.css" rel="stylesheet" type="text/css" />--%>
     <link href="../CSS/reset.css" rel="stylesheet" type="text/css" />
     <link href="../CSS/structure.css" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" type="image/x-icon" href="../logo/Bg.jpg" />
@@ -36,39 +36,710 @@
     <link href="../Content/alertify/alertify.default.css" rel="stylesheet" />
     <link href="../CSS/responsive.css" rel="stylesheet" />
     <link href="../CSS/font-awesome.css" rel="stylesheet" />
+    <!-- Font Awesome 4.7 (naye icons ke liye) -->
+    <link href="css/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <link href="menucss/styles.css" rel="stylesheet" />
-    <%--<link href="menucss/styles.css" rel="stylesheet" />--%>
+
+    <!-- ===== New design (Faculty portal style) ===== -->
+    <style type="text/css">
+        :root {
+            --tmu-orange: #f08a00;
+            --tmu-orange-dark: #d86f00;
+            --tmu-maroon: #7a1212;
+            --tmu-navy: #093A62;
+            --tmu-bg: #e9f1b8;
+            --tmu-cream: #fff6e8;
+            --tmu-border: #e6d9c6;
+        }
+
+        html, body.tmu-body {
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            color: #333;
+        }
+
+        /* ===== Autumn background image (poori screen par fit) ===== */
+        html {
+            background: #fbeedd !important; /* image load na ho to bhi cream rahe */
+        }
+
+        body.tmu-body {
+            background: transparent !important;
+        }
+
+            body.tmu-body::before {
+                content: "";
+                position: fixed; /* scroll par bhi image apni jagah rahe */
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: -1;
+                pointer-events: none;
+                background: #fbeedd url('../logo/bg_autumn3.png') no-repeat center bottom;
+                -webkit-background-size: cover;
+                background-size: cover; /* kheeche/stretch nahi hoti, poori screen bharti hai */
+            }
+
+        @media (max-width: 900px) {
+            body.tmu-body::before {
+                background-position: 20% bottom; /* mobile par cycle wala hissa dikhe */
+            }
+        }
+
+        .tmu-wrap {
+            width: 100%;
+        }
+
+        /* top strip */
+        .tmu-topstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 24px;
+            background: #fff;
+            border-top: 3px solid var(--tmu-orange);
+            border-bottom: 1px solid var(--tmu-border);
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--tmu-maroon);
+        }
+
+        /* header */
+        .tmu-header {
+            background: linear-gradient(90deg, #fffaf2 0%, #fff1dc 100%);
+            border-bottom: 1px solid var(--tmu-border);
+        }
+
+        .tmu-header-in {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .tmu-logo img {
+            max-width: 100%;
+            height: 70px;
+            width: auto !important;
+            display: block;
+        }
+
+        .tmu-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tmu-userinfo {
+            text-align: left;
+            line-height: 1.3;
+        }
+
+            .tmu-userinfo .tmu-name {
+                font-size: 14px;
+                font-weight: bold;
+                color: #222;
+                text-transform: uppercase;
+                display: block;
+            }
+
+        .tmu-badge {
+            display: inline-block;
+            margin-top: 3px;
+            padding: 2px 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #5a4a00;
+            background: #fff3c4;
+            border: 1px solid #e8d48a;
+            border-radius: 12px;
+        }
+
+        .tmu-profile {
+            position: relative;
+        }
+
+        .tmu-avatar {
+            width: 60px !important;
+            height: 60px !important;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff !important; /* white background */
+            border: 3px solid #ffc266 !important; /* light orange border */
+            box-shadow: 0 2px 8px rgba(0,0,0,.18);
+            cursor: pointer;
+            display: block;
+            padding: 2px; /* photo aur border ke beech white gap */
+            box-sizing: border-box;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+            /* click (dabate hi) halki badi */
+            .tmu-avatar:active {
+                transform: scale(1.12);
+                box-shadow: 0 4px 14px rgba(240,138,0,.45);
+            }
+
+        .tmu-profile-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            min-width: 190px;
+            margin: 6px 0 0;
+            padding: 6px 0;
+            list-style: none;
+            background: #fff;
+            border-radius: 8px;
+            border-top: 3px solid var(--tmu-maroon);
+            box-shadow: 0 8px 24px rgba(0,0,0,.2);
+            z-index: 3000;
+        }
+
+        .tmu-profile:hover .tmu-profile-menu {
+            display: block;
+        }
+
+        .tmu-profile-menu li a {
+            display: block;
+            padding: 9px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+
+            .tmu-profile-menu li a:hover {
+                background: #fff3e0;
+                color: var(--tmu-orange-dark);
+            }
+
+        .tmu-profile-menu li.divider {
+            height: 1px;
+            margin: 4px 0;
+            background: #eee;
+        }
+
+        /* nav */
+        .tmu-nav {
+            background: linear-gradient(180deg, #f79a1a 0%, #e57a00 100%);
+            box-shadow: 0 2px 6px rgba(0,0,0,.25);
+            position: relative;
+            z-index: 2000;
+        }
+
+        .tmu-nav-toggle {
+            display: none;
+            width: 100%;
+            padding: 10px 16px;
+            background: transparent;
+            border: 0;
+            color: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .tmu-menu {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0 10px;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+            .tmu-menu > li {
+                position: relative;
+                margin: 0;
+            }
+
+                .tmu-menu > li > a {
+                    display: flex !important;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 12px 11px;
+                    color: #fff;
+                    font-size: 12.5px;
+                    font-weight: bold;
+                    line-height: 1.2;
+                    text-transform: uppercase;
+                    text-decoration: none;
+                    white-space: nowrap;
+                    font-family: "Trebuchet MS", Verdana, sans-serif;
+                }
+            /* icon text ke bilkul beech me (aadha upar, aadha niche) */
+            .tmu-menu i.fa {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                font-size: 14px;
+                text-align: center;
+                vertical-align: middle;
+                flex: 0 0 18px;
+                margin: 0;
+            }
+
+            .tmu-menu > li:hover > a,
+            .tmu-menu > li.open > a {
+                background: rgba(255,255,255,.22);
+                border-radius: 6px 6px 0 0;
+            }
+
+            .tmu-menu .tmu-ind {
+                font-size: 13px;
+                margin-left: 4px;
+            }
+
+        .tmu-sub {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            min-width: 230px;
+            padding: 6px 0;
+            margin: 0;
+            list-style: none;
+            background: #fff;
+            border-top: 3px solid var(--tmu-maroon);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 28px rgba(0,0,0,.25);
+        }
+
+        .tmu-menu > li:hover > .tmu-sub,
+        .tmu-menu > li.open > .tmu-sub {
+            display: block;
+        }
+
+        .tmu-menu .tmu-sub,
+        .tmu-menu .tmu-sub li {
+            background: #fff !important;
+            float: none !important;
+            margin: 0 !important;
+            width: auto;
+        }
+
+            .tmu-menu .tmu-sub li a {
+                display: flex !important;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 18px;
+                background: #fff !important;
+                color: #333 !important;
+                font-size: 13px;
+                font-weight: bold;
+                line-height: 1.2;
+                text-transform: none;
+                text-decoration: none;
+                white-space: nowrap;
+                border-bottom: 1px solid #f1ebe2;
+                font-family: "Trebuchet MS", Verdana, sans-serif;
+            }
+
+            .tmu-menu .tmu-sub li:last-child a {
+                border-bottom: 0;
+            }
+        /* second row: right wale items ka submenu screen ke andar khule */
+        .tmu-menu2 > li:nth-last-child(-n+3) > .tmu-sub {
+            left: auto;
+            right: 0;
+        }
+
+        .tmu-menu2 {
+            padding-top: 0;
+        }
+
+        .tmu-menu .tmu-sub li a i.fa {
+            color: var(--tmu-orange) !important;
+        }
+
+        .tmu-menu .tmu-sub li a:hover {
+            background: #fff3e0 !important;
+            color: var(--tmu-orange-dark) !important;
+        }
+
+        .tmu-count {
+            display: inline-block;
+            min-width: 18px;
+            padding: 1px 5px;
+            margin-left: 2px;
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+            color: #fff;
+            background: #c8102e;
+            border-radius: 9px;
+            vertical-align: top;
+        }
+
+        /* ===== Fixes: menu vertical balance + solid white submenu ===== */
+        .tmu-menu {
+            align-items: stretch;
+        }
+
+            .tmu-menu > li {
+                display: flex !important;
+                align-items: center;
+                float: none !important;
+                height: 44px;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+                opacity: 1 !important;
+            }
+
+                .tmu-menu > li > a {
+                    height: 44px;
+                    margin: 0 !important;
+                    padding: 0 11px !important; /* upar-niche barabar */
+                    line-height: 1 !important;
+                    box-sizing: border-box;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                    .tmu-menu > li > a > span,
+                    .tmu-menu > li > a > i,
+                    .tmu-menu > li > a > .tmu-count {
+                        position: static !important;
+                        top: auto !important;
+                        vertical-align: middle;
+                        line-height: 1;
+                    }
+
+                .tmu-menu > li:hover > a,
+                .tmu-menu > li.open > a {
+                    border-radius: 6px 6px 0 0;
+                }
+
+            .tmu-menu .tmu-sub {
+                top: 100% !important;
+                background: #fff !important;
+                background-image: none !important;
+                opacity: 1 !important;
+                filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+                visibility: visible;
+                z-index: 5000 !important;
+                overflow: hidden;
+                height: auto;
+            }
+
+                .tmu-menu .tmu-sub li,
+                .tmu-menu .tmu-sub li a {
+                    opacity: 1 !important;
+                    filter: none !important;
+                    text-shadow: none !important;
+                    height: auto !important;
+                    background-color: #fff !important;
+                }
+
+                    .tmu-menu .tmu-sub li a:hover {
+                        background-color: #fff3e0 !important;
+                    }
+
+        /* profile dropdown (photo ke niche) */
+        .tmu-profile-menu {
+            width: 200px;
+            min-width: 200px !important;
+            padding: 6px 0 !important;
+            margin: 0 !important;
+            background: #fff !important;
+            float: none !important;
+            z-index: 6000 !important;
+        }
+
+            .tmu-profile-menu li {
+                display: block !important;
+                float: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                list-style: none;
+            }
+
+                .tmu-profile-menu li a {
+                    display: flex !important;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px 16px !important;
+                    margin: 0 !important;
+                    background: #fff !important;
+                    color: #333 !important;
+                    font-family: "Trebuchet MS", Verdana, sans-serif !important;
+                    font-size: 13px !important;
+                    font-weight: bold !important;
+                    line-height: 1.2 !important;
+                    text-decoration: none !important;
+                    border: 0 !important;
+                }
+
+                    .tmu-profile-menu li a i.fa {
+                        width: 18px;
+                        text-align: center;
+                        font-size: 15px;
+                        color: var(--tmu-orange);
+                    }
+
+                    .tmu-profile-menu li a:hover,
+                    .tmu-profile-menu li a:focus {
+                        background: #fff3e0 !important;
+                        color: var(--tmu-orange-dark) !important;
+                    }
+
+                .tmu-profile-menu li.divider {
+                    height: 1px !important;
+                    margin: 4px 0 !important;
+                    padding: 0 !important;
+                    background: #eee !important;
+                }
+        /* photo aur dropdown ke beech gap na rahe (hover na toote) */
+        .tmu-profile {
+            padding-bottom: 6px;
+            margin-bottom: -6px;
+        }
+
+        .tmu-profile-menu {
+            top: 100% !important;
+        }
+
+        /* popups menu ke upar dikhe */
+        .modal {
+            z-index: 10050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 10040 !important;
+        }
+
+        /* footer hamesha neeche fix: page chhota ho to bhi screen ke bottom par */
+        html, body.tmu-body {
+            height: 100%;
+        }
+
+        form#form1 {
+            min-height: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .tmu-wrap {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tmu-main {
+            flex: 1 0 auto;
+        }
+
+        .tmu-footer {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        /* content */
+        .tmu-main {
+            padding: 18px 12px 30px;
+            min-height: 0;
+        }
+
+        .tmu-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 16px 22px 24px;
+            background: #fff;
+            border: 1px solid #e3e3e3;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        }
+
+        /* footer */
+        .tmu-footer {
+            background: linear-gradient(180deg, #f79a1a 0%, #e57a00 100%);
+            color: #fff;
+            padding: 12px 24px;
+            font-size: 13px;
+            min-height: 44px;
+            line-height: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+            .tmu-footer, .tmu-footer * {
+                color: #fff;
+            }
+
+        .tmu-footer-in {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 6px 24px;
+        }
+
+        .tmu-footer a {
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        /* modals */
+        .tmu-modal .modal-content {
+            border: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,.35);
+        }
+
+        .tmu-modal .modal-header {
+            background: linear-gradient(90deg, #f79a1a, #e57a00);
+            color: #fff;
+            border-bottom: 0;
+            padding: 12px 18px;
+        }
+
+            .tmu-modal .modal-header .close {
+                color: #fff;
+                opacity: .9;
+                text-shadow: none;
+            }
+
+        .tmu-modal .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .tmu-modal .modal-body {
+            padding: 20px 22px;
+        }
+
+        .tmu-modal .tmu-lbl {
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .tmu-header-in {
+                flex-direction: row; /* column ki jagah row: side-by-side */
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 10px;
+                gap: 8px;
+            }
+
+            .tmu-logo {
+                flex: 1 1 auto;
+                min-width: 0; /* logo chhota ho sake */
+            }
+
+                .tmu-logo img {
+                    height: auto;
+                    max-height: 55px;
+                    max-width: 100%;
+                }
+
+            .tmu-user {
+                flex: 0 0 auto;
+                gap: 8px;
+            }
+
+            .tmu-avatar {
+                width: 46px !important;
+                height: 46px !important;
+            }
+
+            .tmu-userinfo .tmu-name {
+                font-size: 11px;
+            }
+
+            .tmu-badge {
+                font-size: 10px;
+                padding: 1px 8px;
+            }
+
+            .tmu-userinfo {
+                text-align: left;
+            }
+
+            .tmu-nav-toggle {
+                display: block;
+            }
+
+            .tmu-menu {
+                display: none;
+                flex-direction: column;
+                padding: 0;
+            }
+
+                .tmu-menu.show {
+                    display: flex;
+                }
+
+                .tmu-menu > li > a {
+                    padding: 11px 18px;
+                    border-top: 1px solid rgba(255,255,255,.2);
+                }
+
+            .tmu-sub {
+                position: static;
+                box-shadow: none;
+                border-radius: 0;
+                border-top: 0;
+                background: #fff8ee;
+            }
+
+            .tmu-menu > li:hover > .tmu-sub {
+                display: none;
+            }
+
+            .tmu-menu > li.open > .tmu-sub {
+                display: block;
+            }
+
+            .tmu-content {
+                padding: 12px;
+            }
+
+            .tmu-footer-in {
+                flex-direction: column;
+            }
+        }
+    </style>
 
     <script type="text/javascript">
         if (document.layers) {
-            //Capture the MouseDown event.// writ click disable
             document.captureEvents(Event.MOUSEDOWN);
-
-            //Disable the OnMouseDown event handler.
             document.onmousedown = function () {
                 return false;
             };
         }
         else {
-            //Disable the OnMouseUp event handler.
             document.onmouseup = function (e) {
                 if (e != null && e.type == "mouseup") {
-                    //Check the Mouse Button which is clicked.
                     if (e.which == 2 || e.which == 3) {
-                        //If the Button is middle or right then disable.
                         return false;
                     }
                 }
             };
         }
-
-        //Disable the Context Menu event.
-        //document.oncontextmenu = function () {
-        //    return false;
-        //};
     </script>
-
-
 
     <script>
         function callFeedbackMessage(inputType, inputText) {
@@ -85,6 +756,15 @@
                 alertify.log(inputText, "", 10000);
                 return false;
             }
+        }
+    </script>
+    <script type="text/javascript">
+        var av = document.querySelector('.tmu-avatar');
+        if (av) {
+            av.addEventListener('click', function () {
+                av.style.transform = 'scale(1.12)';
+                setTimeout(function () { av.style.transform = ''; }, 250);
+            });
         }
     </script>
     <script type="text/javascript">
@@ -159,366 +839,265 @@
             }
         }
     </script>
+
+
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body>
+<body class="tmu-body">
     <form id="form1" runat="server">
-        <div>
-            <table cellpadding="0px" cellspacing="0px" style="width: 100%">
-                <tr style="width: 100%" align="right">
-                    <asp:Label ID="ind" runat="server" Text="Label" Font-Bold="True" Font-Italic="False" ForeColor="RED" Width="400px"></asp:Label>
+        <div class="tmu-wrap">
 
+            <!-- Top strip -->
+            <div class="tmu-topstrip">
+                <asp:Label ID="ind" runat="server" Text="Label" Font-Bold="True" Font-Italic="False" ForeColor="RED" Style="display: none"></asp:Label>
+                <span style="margin-left: auto">Teerthanker Mahaveer University</span>
+            </div>
 
-                </tr>
-                <tr>
+            <!-- Header -->
+            <div class="tmu-header">
+                <div class="tmu-header-in">
+                    <div class="tmu-logo">
+                        <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" />
+                        <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
+                    </div>
 
-                    <td>
+                    <div class="tmu-user">
+                        <div class="tmu-profile">
+                            <asp:Image ID="imgProfile" runat="server" CssClass="tmu-avatar" />
+                            <ul class="tmu-profile-menu">
+                                <li>
+                                    <asp:LinkButton ID="lnkImageUpload" runat="server" data-toggle="modal" data-target="#myModal1"><i class="fa fa-camera"></i><span>Change Photo</span></asp:LinkButton></li>
+                                <li>
+                                    <asp:LinkButton ID="lnkChangePassword1" runat="server" data-toggle="modal" data-target="#myModal"><i class="fa fa-lock"></i><span>Change Password</span></asp:LinkButton></li>
+                                <li class="divider"></li>
+                                <li>
+                                    <asp:LinkButton ID="lnkLogOut" runat="server" OnClick="lnkLogOut_Click"><i class="fa fa-sign-out"></i><span>Logout</span></asp:LinkButton></li>
+                            </ul>
+                        </div>
+                        <div class="tmu-userinfo">
+                            <asp:Label ID="lblName" runat="server" CssClass="tmu-name"></asp:Label>
+                            <span class="tmu-badge"><i class="fa fa-graduation-cap"></i>&nbsp;STUDENT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <table cellpadding="0px" cellspacing="0px" style="width: 100%">
+            <!-- Menu -->
+            <div class="tmu-nav">
+                <button type="button" class="tmu-nav-toggle" id="tmuNavToggle"><i class="fa fa-bars"></i>&nbsp; MENU</button>
+                <ul class="tmu-menu" id="tmuMenu">
 
-                            <tr>
-                                <td style="height: 2px; background-color: #ed7600"></td>
-                            </tr>
+                    <li><a href="StudentDetailsView1.aspx"><i class="fa fa-user"></i>Profile</a></li>
+                    <li>
+                        <a href="ViewAttendance.aspx"><i class="fa fa-calendar-check-o"></i>View Attendance<span class="tmu-ind">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="ViewAttendance.aspx"><i class="fa fa-calendar-check-o"></i>View Attendance</a></li>
+                            <li><a href="JainStudentAttendance.aspx" id="JinalayaAttendance"><i class="fa fa-calendar-check-o"></i>Jinalaya Attendance</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="FeeDetails.aspx"><i class="fa fa-inr"></i>Fee Details</a></li>
+                    <li><a href="EventList.aspx"><i class="fa fa-calendar"></i>Events</a></li>
+                    <li><a href="StudentTimeSheet.aspx"><i class="fa fa-clock-o"></i>Time Sheet</a></li>
+                    <li><a href="StudentAssignment.aspx"><i class="fa fa-pencil-square-o"></i>Assignment</a></li>
 
-                            <tr>
-                                <td style="height: 8px; background-color: White"></td>
-                            </tr>
+                    <li>
+                        <a href="#" runat="server" id="Assessment"><i class="fa fa-star"></i>Faculty Assessment<span class="tmu-ind" runat="server" id="span7">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="FacultyAssessment1.aspx"><i class="fa fa-check-square-o"></i>Current</a></li>
+                            <li><a href="NAACForm.aspx"><i class="fa fa-list-alt"></i>Student Sat. Survey</a></li>
+                            <li><a href="StudentFeedbackSyllabus.aspx"><i class="fa fa-book"></i>Syllabus Feedback</a></li>
+                        </ul>
+                    </li>
 
-                            <tr>
-                                <td style="background-color: White">
-                                    <div id="wrapHeader">
-                                        <table cellpadding="0px" cellspacing="0px">
-                                            <tr>
-                                                <td>
-                                                    <asp:Image ID="Image1" runat="server" ImageUrl="~/logo/logo123.png" Height="80px" Width="350px" /></td>
-                                                <td style="width: 30px">
-                                                    <asp:Label ID="lblLeaveCount" runat="server" ForeColor="White" Visible="false"></asp:Label>
-                                                </td>
-                                                <%-- <td style="width: 700px; vertical-align: bottom" align="center">
-                                                    <asp:LinkButton ID="lblPayTM" runat="server" OnClick="lblPayTM_Click"  Font-Size="X-Large" Font-Bold="true" Text="Sports Screening(Register Now)"></asp:LinkButton>
-                                                    <br />
-                                                </td>--%>
-                                                <td style="width: 684px" align="center">
-                                                    <br />
+                    <li runat="server" id="NEPUndertaking"><a href="Undertaking_NEP_Option.aspx"><i class="fa fa-file-text-o"></i>NEP Undertaking</a></li>
 
-                                                    <%--<asp:Label ID="Label1" runat="server" Text="Human Resource Management" 
-            Font-Size="17pt" 
-            Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;" 
-            ForeColor="#093A62"></asp:Label>--%>   </td>
-                                                <td align="right">
-                                                    <%--   <table cellpadding="0px" cellspacing="0px" style="width:100%"> 
-            <tr> <td> 
-        <asp:Image ID="imgProfile" runat="server" Width="100px"  Height="100px" ImageUrl="~/images/stu.jpg" CssClass="imgcircle"/> </td> <td>&nbsp;&nbsp; Welcome:&nbsp;
-                 </td><td style="width:10px"></td>
-                 <td>&nbsp;&nbsp;
-                     <asp:Label ID="lblName" runat="server" Text=""></asp:Label>
-                 </td>  </tr></table> --%>
+                    <li>
+                        <a href="#" runat="server" id="A1"><i class="fa fa-briefcase"></i>Placement<span class="tmu-ind" runat="server" id="span2">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="PlacementForm.aspx"><i class="fa fa-file-text"></i>CRC Form</a></li>
+                        </ul>
+                    </li>
 
-                                                    <table>
-                                                        <tr>
-                                                            <td align="left">
-                                                                <ul style="list-style-type: none;">
-                                                                    <li class="dropdown" style=""><a href="#">
-                                                                        <asp:Image ID="imgProfile" runat="server" Width="100px" Height="80px" CssClass="imgcircle" /></a>
-                                                                        <ul class="dropdown-menu" style="padding-left: 0px; margin-top: -5px">
-                                                                            <li>
-                                                                                <asp:LinkButton ID="lnkImageUpload" runat="server" data-toggle="modal" data-target="#myModal1" Text="Change Photo"></asp:LinkButton></li>
-                                                                            <li>
-                                                                                <asp:LinkButton ID="lnkChangePassword1" runat="server" data-toggle="modal" data-target="#myModal" Text="ChangePassword"></asp:LinkButton></li>
-                                                                            <li class="divider"></li>
-                                                                            <li>
-                                                                                <asp:LinkButton ID="lnkLogOut" runat="server" Text="Logout" OnClick="lnkLogOut_Click">
-                                                        <span class="glyphicon glyphicon-off">Logout</span>
-                                                                                </asp:LinkButton></li>
-                                                                        </ul>
-                                                                    </li>
-                                                                </ul>
-                                                            </td>
-                                                            <td style="width: 15px">
-                                                                <label style="width: 15px"></label>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="2" style="text-align: center">
-                                                                <asp:Label ID="lblName" runat="server" Font-Bold="true"></asp:Label>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                            </tr>
-                                        </table>
+                    <li>
+                        <a href="#" runat="server" id="lnkmentormentee"><i class="fa fa-users"></i>Mentor-Mentee<span class="tmu-ind" runat="server" id="lnkmentermenteespan1">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="FA_MM_Introduction_Report_Code.aspx" id="lnk_mentor_introduction" runat="server"><i class="fa fa-info-circle"></i>Introduction</a></li>
+                            <li><a href="FA_MM_ST_Records.aspx"><i class="fa fa-file-o"></i>Meeting Record</a></li>
+                            <li><a href="FA_MM_ST_Attendance_Form.aspx"><i class="fa fa-pencil"></i>Attendance Undertaking</a></li>
+                        </ul>
+                    </li>
 
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="height: 10px; background-color: White"></td>
-                            </tr>
-                            <tr>
-                                <td style="background-color: #ed7600">
-                                    <div id="wrapMenu">
+                    <li>
+                        <a href="#" runat="server" id="Timesheet"><i class="fa fa-edit"></i>Examination<span class="tmu-ind" runat="server" id="span12">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="StudentExamdatesheetInternal.aspx"><i class="fa fa-calendar-o"></i>Internal Date Sheet</a></li>
+                            <li><a href="StudentExamdatesheetExternal.aspx"><i class="fa fa-calendar"></i>External Date Sheet</a></li>
+                            <li><a href="ExaminationForm.aspx"><i class="fa fa-file-text-o"></i>Exam Form Main</a></li>
+                            <li><a href="ReappearedExamination.aspx"><i class="fa fa-repeat"></i>Exam Form Reappear</a></li>
+                            <li><a href="StudentAdmitCard.aspx"><i class="fa fa-id-card-o"></i>Admitcard</a></li>
+                            <li><a href="CRACMeetingPHD.aspx" runat="server" id="cracmeeting" visible="false"><i class="fa fa-handshake-o"></i>CRAC Meeting</a></li>
+                        </ul>
+                    </li>
 
-                                        <ul id="menu" style="text-transform: uppercase;">
+                    <li>
+                        <a href="#" runat="server" id="Result"><i class="fa fa-trophy"></i>Result<span class="tmu-ind" runat="server" id="span1">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li><a href="ExamResultDisplay.aspx" runat="server" visible="false"><i class="fa fa-table"></i>Internal Result</a></li>
+                            <li><a href="OnlineResultshow.aspx"><i class="fa fa-globe"></i>Online Result</a></li>
+                        </ul>
+                    </li>
 
-                                            <%--    <li> <asp:LinkButton ID="lnkAttendancedetail" runat="server" PostBackUrl="~/AttendenceDetail.aspx" Visible="false"> View Attendance</asp:LinkButton>
-	
-	</li>--%>
-                                            <li style="margin-left: 0px"><a href="StudentDetailsView1.aspx"><b>Profile</b></a> </li>
-                                            <li style="margin-left: 0px"><a href="ViewAttendance.aspx"><b>View Attendance</b></a> </li>
-                                            <li style="margin-left: 0px"><a href="FeeDetails.aspx"><b>Fee Details</b></a> </li>
-                                            <%--<li style="margin-left:0px"><a href="Events.aspx"><b>Events</b></a> </li>--%>
-                                            <li style="margin-left: 0px"><a href="EventList.aspx"><b>Events</b></a> </li>
-                                            <li style="margin-left: 0px"><a href="StudentTimeSheet.aspx"><b>Time Sheet</b></a> </li>
-                                            <li style="margin-left: 0px"><a href="StudentAssignment.aspx"><b>Assignment</b></a> </li>
-                                            <%--<li style="margin-left:0px"><a href="FacultyAssessment1.aspx"><b>Faculty Assessment</b></a> </li> --%>
+                    <li>
+                        <a href="#" runat="server" id="A2"><i class="fa fa-book"></i>Library<span class="tmu-ind" runat="server" id="span3">&raquo;</span></a>
+                        <ul class="tmu-sub">
+                            <li id="Lib" runat="server"><a href="http://172.18.0.200/"><i class="fa fa-sign-in"></i>Library Login</a></li>
+                            <li><a href="https://idp.tmu.ac.in/#res" id="A3" runat="server" target="_blank" visible="true"><i class="fa fa-wifi"></i>Remote Access</a></li>
+                        </ul>
+                    </li>
 
-                                            <li class="dropdown" style="">
-                                                <a href="#" class="sf-with-ul" runat="server" id="Assessment"><b>Faculty Assessment</b><span class="sf-sub-indicator" runat="server" id="span7"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li style="margin-left: 0px"><a href="FacultyAssessment1.aspx"><b>Current</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="NAACForm.aspx"><b>Student Sat. Survey</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="StudentFeedbackSyllabus.aspx"><b>Syllabus Feedback</b></a> </li>
-                                                    <%-- <li style="margin-left:0px"  ><a href="AssessmentTemp.aspx" ><b>Previous</b></a> </li>--%>
-                                                </ul>
-                                            </li>
+                    <li><a href="StudentScholarship.aspx" runat="server" id="StudentScholarship" visible="false"><i class="fa fa-graduation-cap"></i>Scholarship Form</a></li>
+                    <li id="SemReg" runat="server"><a href="SemRegistration.aspx"><i class="fa fa-check"></i>Sem Registration</a></li>
+                    <li id="liJobWork" runat="server"><a href="JobWork.aspx"><i class="fa fa-wrench"></i>Maintenance</a></li>
+                    <li><a href="StudentNoDues.aspx" runat="server" id="StudentNoDues" visible="false"><i class="fa fa-check-square-o"></i>No Dues</a></li>
+                    <li><a href="StudentGatePass.aspx" id="OutPass" runat="server" visible="true"><i class="fa fa-sign-out"></i>Out Pass</a></li>
+                    <li>
+                        <a href="StudentAnnouncements.aspx"><i class="fa fa-bell"></i>Announcements
+                           
+                            <asp:Label ID="lblNotificationCount" runat="server" CssClass="tmu-count" Text="0"></asp:Label>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
+            <!-- Content -->
+            <div class="tmu-main">
+                <div class="tmu-content">
+                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+            </div>
 
-                                            <li style="margin-left: 0px" runat="server" id="NEPUndertaking"><a href="Undertaking_NEP_Option.aspx"><b>NEP Undertaking</b></a> </li>
-                                            <li class="dropdown" style="">
-                                                <a href="#" class="sf-with-ul" runat="server" id="A1">Placement<span class="sf-sub-indicator" runat="server" id="span2"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <%--  <li style="margin-left: 0px"><a href="PlacementRegistration.aspx" ><b>Registration</b></a></li>--%>
-                                                    <li style="margin-left: 0px"><a href="PlacementForm.aspx"><b>CRC Form</b></a></li>
+            <!-- Footer -->
+            <div class="tmu-footer">
+                <div class="tmu-footer-in">
+                    <div>
+                        <asp:Label ID="lbluserid666" runat="server" Text=""></asp:Label>
+                        <asp:LinkButton ID="lnkChangePassword" runat="server" PostBackUrl="change_password.aspx" Visible="false">Change Password</asp:LinkButton>
+                    </div>
+                    <div>All right reserved By : <a href="https://www.tmu.ac.in/" target="_blank">Teerthanker Mahaveer University.</a></div>
+                </div>
+            </div>
 
-                                                </ul>
-                                            </li>
-
-
-
-                                            <li class="dropdown" style="">
-                                                <a href="#" class="sf-with-ul" runat="server" id="lnkmentormentee">Mentor-Mentee<span class="sf-sub-indicator" runat="server" id="lnkmentermenteespan1"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li><a href="FA_MM_Introduction_Report_Code.aspx" id="lnk_mentor_introduction" runat="server"><b>Introduction</b></a></li>
-                                                    <li style="margin-left: 0px"><a href="FA_MM_ST_Records.aspx"><b>Meeting Record</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="FA_MM_ST_Attendance_Form.aspx"><b>Attendance Undertaking</b></a> </li>
-
-                                                </ul>
-                                            </li>
-
-
-                                            <li class="dropdown" style="">
-                                                <a href="#" class="sf-with-ul" runat="server" id="Timesheet">Examination<span class="sf-sub-indicator" runat="server" id="span12"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li style="margin-left: 0px"><a href="StudentExamdatesheetInternal.aspx"><b>Internal Date Sheet</b></a></li>
-                                                    <li style="margin-left: 0px"><a href="StudentExamdatesheetExternal.aspx"><b>External Date Sheet</b></a></li>
-                                                    <li style="margin-left: 0px"><a href="ExaminationForm.aspx"><b>Exam Form Main</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="ReappearedExamination.aspx"><b>Exam Form Reappear</b></a></li>
-                                                    <li style="margin-left: 0px"><a href="CRACMeetingPHD.aspx" runat="server" id="cracmeeting" visible="false"><b>CRAC Meeting</b></a></li>
-                                                    <%--  <li style="margin-left: 0px"><a href="ExamFormStatus.aspx"><b>Exam Form Status</b></a></li> --%>
-                                                </ul>
-                                            </li>
-                                            <li style="margin-left: 0px"><a href="StudentAdmitCard.aspx"><b>Admitcard</b></a> </li>
-                                            <li class="dropdown" style="">
-                                                <a href="#" class="sf-with-ul" runat="server" id="Result">Result<span class="sf-sub-indicator" runat="server" id="span1"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li style="margin-left: 0px"><a href="ExamResultDisplay.aspx" runat="server" visible="false"><b>Internal Result</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="OnlineResultshow.aspx"><b>Online Result</b></a> </li>
-                                                    <%--<li style="margin-left:0px" ><a href="ConsolidatemarkSheetFinal.aspx" ><b>Final Marksheet</b></a> </li>
-                                                    <li style="margin-left: 0px"><a href="ConsolidatemarkSheet.aspx"><b>Final Status</b></a> </li>--%>
-                                                </ul>
-                                            </li>
-                                            <%--  <li style="margin-left:0px"><a href="Applycertificate.aspx"><b>Apply Certificate</b></a></li>--%>
-                                            <li class="dropdown">
-                                                <a href="#" class="sf-with-ul" runat="server" id="A2">LIBRARY<span class="sf-sub-indicator" runat="server" id="span3"></span></a>
-
-                                                <ul class="dropdown-menu">
-                                                    <li style="margin-left: 0px" id="Lib" runat="server"><a href="http://172.18.0.200/"><b>Library Login</b></a></li>
-                                                    <li><a href="https://idp.tmu.ac.in/#res" id="A3" runat="server" target="_blank" visible="true"><b>Remote Access</b></a></li>
-
-                                                </ul>
-
-                                            </li>
-                                            <li style="margin-left: 0px"><a href="StudentScholarship.aspx" runat="server" id="StudentScholarship" visible="false"><b>scholarship Form</b></a></li>
-                                            <li style="margin-left: 0px" id="SemReg" runat="server"><a href="SemRegistration.aspx"><b>Sem Registration</b></a></li>
-                                            <li style="margin-left: 0px" id="liJobWork" runat="server"><a href="JobWork.aspx"><b>Maintenance</b></a></li>
-                                            <li style="margin-left: 0px"><a href="StudentNoDues.aspx" runat="server" id="StudentNoDues" visible="false"><b>No Dues</b></a></li>
-                                            <li style="margin-left: 0px"><a href="JainStudentAttendance.aspx" id="JinalayaAttendance" visible="true"><b>Jinalaya Attendance</b></a></li>
-                                            <li style="margin-left: 0px"><a href="StudentGatePass.aspx" id="OutPass" runat="server" visible="true"><b>Out Pass</b></a></li>
-                                            <li class="menu-announcement">
-                                                <a href="StudentAnnouncements.aspx">
-                                                    <b>Announcements</b>
-
-                                                    <span class="notification-wrapper">
-                                                        <i class="fa fa-bell bell-icon "></i>
-                                                        <asp:Label ID="lblNotificationCount"
-                                                            runat="server"
-                                                            CssClass="notification-count"
-                                                            Text="0">
-                                                        </asp:Label>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                        </ul>
-
-
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="leftBackground" style="min-height: 800px; background-color: #eaf3b0">
-                                    <div id="wrap">
-                                        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                                        </asp:ContentPlaceHolder>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td style="height: 40px"></td>
-                            </tr>
-
-                            <tr>
-                                <td class="ffooterInner">
-                                    <div id="wrapFooter">
-
-                                        <table cellpadding="0px" cellspacing="0px" style="width: 100%">
-                                            <tr>
-                                                <td style="height: 19px"></td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div id="Div1">
-
-                                                        <table cellpadding="0px" cellspacing="0px" style="width: 100%">
-                                                            <tr>
-                                                                <td>
-                                                                    <table cellpadding="0px" cellspacing="0px">
-                                                                        <tr>
-                                                                            <td>
-                                                                                <label></label>
-                                                                            </td>
-                                                                            <td style="width: 20px"></td>
-                                                                            <td>
-                                                                                <asp:Label ID="lbluserid666" runat="server" Text=""></asp:Label></td>
-                                                                            <td style="width: 10px"></td>
-                                                                            <td>
-                                                                                <asp:LinkButton ID="lnkChangePassword" runat="server" PostBackUrl="change_password.aspx" Visible="false">Change Password</asp:LinkButton>
-                                                                            </td>
-                                                                            <td style="width: 10px"></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                    </table>
-
-                                                                </td>
-                                                                <td align="right">All right reserved By  : <a href="https://www.tmu.ac.in/" style="color: white; text-decoration: none" target="_blank">Teerthanker Mahaveer University.</a> </td>
-                                                            </tr>
-                                                        </table>
-
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-
-                                    </div>
-
-                                </td>
-                            </tr>
-
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            <div class="modal fade" id="myModal" role="dialog">
+            <!-- Change Password modal -->
+            <div class="modal fade tmu-modal" id="myModal" role="dialog">
                 <div class="modal-dialog">
-
-                    <!-- Modal content-->
                     <div class="modal-content">
-                        <div class="modal-header" style="background-color: #88CCFF;">
-                            <div>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title"><b style="font-family: 'SketchFlow Print'; font-size: 15px">Change Password</b></h4>
-                            </div>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title"><i class="fa fa-lock"></i>&nbsp; Change Password</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="col-lg-3" style="padding-right: 0px; font-size: 12px;">
-                                <asp:Label ID="Label28" Style="line-height: 30px" runat="server" Font-Bold="true" Text="Label"><b>Old Password:</b></asp:Label>
-                            </div>
-                            <div class="col-lg-8" style="padding-right: 0px;">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
-                                        <asp:TextBox runat="server" TextMode="Password" ID="txtOldPassword" CssClass="form-control input-sm" Height="30px"></asp:TextBox>
-                                    </div>
+                            <div class="form-group">
+                                <asp:Label ID="Label28" runat="server" CssClass="tmu-lbl" Text="Old Password:"></asp:Label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                    <asp:TextBox runat="server" TextMode="Password" ID="txtOldPassword" CssClass="form-control input-sm" Height="34px"></asp:TextBox>
                                 </div>
                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="Please input the old password!" ControlToValidate="txtOldPassword" ValidationGroup="g3"></asp:RequiredFieldValidator>
                             </div>
-                            <div class="clearfix"></div>
-                            <div class="col-lg-3" style="padding-right: 0px; font-size: 12px;">
-                                <asp:Label ID="Label2" Style="line-height: 30px" runat="server" Font-Bold="true" Text="Label"><b>New Password:</b></asp:Label>
-                            </div>
-                            <div class="col-lg-8" style="padding-right: 0px;">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
-                                        <asp:TextBox runat="server" TextMode="Password" ID="txtNewPassword" CssClass="form-control input-sm" Height="30px"></asp:TextBox>
-                                    </div>
+                            <div class="form-group">
+                                <asp:Label ID="Label2" runat="server" CssClass="tmu-lbl" Text="New Password:"></asp:Label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                    <asp:TextBox runat="server" TextMode="Password" ID="txtNewPassword" CssClass="form-control input-sm" Height="34px"></asp:TextBox>
                                 </div>
                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="Please input the new password!" ControlToValidate="txtNewPassword" ValidationGroup="g3"></asp:RequiredFieldValidator>
                             </div>
-                            <div class="clearfix"></div>
-                            <div class="col-lg-3" style="padding-right: 0px; font-size: 12px;">
-                                <asp:Label ID="Label3" Style="line-height: 30px" runat="server" Font-Bold="true" Text="Label"><b>Confirm Password:</b></asp:Label>
-                            </div>
-                            <div class="col-lg-8" style="padding-right: 0px;">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
-                                        <asp:TextBox runat="server" TextMode="Password" ID="txtConfirmPassword" CssClass="form-control input-lg" Height="30px"></asp:TextBox>
-                                    </div>
+                            <div class="form-group">
+                                <asp:Label ID="Label3" runat="server" CssClass="tmu-lbl" Text="Confirm Password:"></asp:Label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-education"></span></span>
+                                    <asp:TextBox runat="server" TextMode="Password" ID="txtConfirmPassword" CssClass="form-control input-sm" Height="34px"></asp:TextBox>
                                 </div>
                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="Please input the confirm password!" ControlToValidate="txtConfirmPassword" ValidationGroup="g3"></asp:RequiredFieldValidator>
-                                <asp:CompareValidator ID="CompareValidator1" runat="server" ControlToCompare="txtNewPassword" ControlToValidate="txtConfirmPassword" ErrorMessage="The password does not match!" ValidationGroup="g3"></asp:CompareValidator>
+                                <asp:CompareValidator ID="CompareValidator1" runat="server" ControlToCompare="txtNewPassword" ControlToValidate="txtConfirmPassword" ErrorMessage="The password does not match!" ForeColor="Red" ValidationGroup="g3"></asp:CompareValidator>
                             </div>
                         </div>
                         <div class="modal-footer" style="border-top-width: 0px">
-                            <asp:Button runat="server" ID="btnChangePassword" CssClass="btn-sm btn-primary" Width="20%" OnClick="btnChangePassword_Click" ValidationGroup="g3" Text="Change"></asp:Button>
+                            <asp:Button runat="server" ID="btnChangePassword" CssClass="btn btn-primary" OnClick="btnChangePassword_Click" ValidationGroup="g3" Text="Change"></asp:Button>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </div>
-        <div class="modal fade" id="myModal1" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: #88CCFF;">
-                        <div>
+
+            <!-- Upload Image modal -->
+            <div class="modal fade tmu-modal" id="myModal1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title"><b style="font-family: 'SketchFlow Print'; font-size: 15px; font-weight: bold">Upload Image  (Min Size 40KB Max Size 50KB )</b></h4>
+                            <h4 class="modal-title"><i class="fa fa-camera"></i>&nbsp; Upload Image (Min Size 40KB Max Size 50KB)</h4>
                         </div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="col-lg-3" style="padding-right: 0px; font-size: 12px;">
-                            <asp:Label ID="Label4" Style="line-height: 30px" runat="server" Font-Bold="true" Text="Label"><b>Choose Image:</b></asp:Label>
-                        </div>
-                        <div class="col-lg-8" style="padding-right: 0px;">
+                        <div class="modal-body">
                             <div class="form-group">
+                                <asp:Label ID="Label4" runat="server" CssClass="tmu-lbl" Text="Choose Image:"></asp:Label>
                                 <asp:FileUpload runat="server" ID="imgUpload" />
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="First choose the file!" ControlToValidate="imgUpload" ValidationGroup="g4"></asp:RequiredFieldValidator>
                             </div>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" Display="Dynamic" ForeColor="Red" ErrorMessage="First choose the file!" ControlToValidate="imgUpload" ValidationGroup="g4"></asp:RequiredFieldValidator>
                         </div>
-
-                    </div>
-                    <div class="modal-footer" style="border-top-width: 0px">
-                        <asp:Button runat="server" ID="btnChangeImage" OnClientClick="return ValidateFile()" OnClick="btnChangeImage_Click" CssClass="btn-sm btn-primary" Width="20%" ValidationGroup="g4" Text="Change Image"></asp:Button>
+                        <div class="modal-footer" style="border-top-width: 0px">
+                            <asp:Button runat="server" ID="btnChangeImage" OnClientClick="return ValidateFile()" OnClick="btnChangeImage_Click" CssClass="btn btn-primary" ValidationGroup="g4" Text="Change Image"></asp:Button>
+                        </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </form>
+
+    <script type="text/javascript">
+        (function () {
+            var toggle = document.getElementById('tmuNavToggle');
+            var menu = document.getElementById('tmuMenu');
+            if (toggle && menu) {
+                // Menu 2 rows me: upar 8 items, baaki niche
+                var ROW1 = 8;
+                var menu2 = document.createElement('ul');
+                menu2.className = 'tmu-menu tmu-menu2';
+                menu2.id = 'tmuMenu2';
+                var top = [];
+                for (var k = 0; k < menu.children.length; k++) top.push(menu.children[k]);
+                for (var j = ROW1; j < top.length; j++) menu2.appendChild(top[j]);
+                if (menu2.children.length > 0) menu.parentNode.appendChild(menu2);
+
+                toggle.onclick = function () {
+                    var open = menu.className.indexOf('show') > -1;
+                    menu.className = open ? 'tmu-menu' : 'tmu-menu show';
+                    menu2.className = open ? 'tmu-menu tmu-menu2' : 'tmu-menu tmu-menu2 show';
+                };
+                var items = [];
+                var l1 = menu.getElementsByTagName('li'), l2 = menu2.getElementsByTagName('li');
+                for (var m = 0; m < l1.length; m++) items.push(l1[m]);
+                for (var n = 0; n < l2.length; n++) items.push(l2[n]);
+                for (var i = 0; i < items.length; i++) {
+                    (function (li) {
+                        var a = li.children[0];
+                        var sub = li.children[1];
+                        if (a && sub && sub.className.indexOf('tmu-sub') > -1) {
+                            a.onclick = function (e) {
+                                if (window.innerWidth <= 900) {
+                                    e = e || window.event;
+                                    if (e.preventDefault) e.preventDefault();
+                                    li.className = (li.className.indexOf('open') > -1) ? '' : 'open';
+                                    return false;
+                                }
+                            };
+                        }
+                    })(items[i]);
+                }
+            }
+        })();
+    </script>
 </body>
 </html>

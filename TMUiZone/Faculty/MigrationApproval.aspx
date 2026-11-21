@@ -1,7 +1,600 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" CodeFile="MigrationApproval.aspx.cs" Inherits="Faculty_MigrationApproval" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Faculty/IndexMaster.master" AutoEventWireup="true" EnableEventValidation="false" CodeFile="MigrationApproval.aspx.cs" Inherits="Faculty_MigrationApproval" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+
+
+    <style type="text/css">
+        /* ============================================================
+   MIGRATION APPROVAL
+   COMPLETE SEARCH + GRID DESIGN
+   TMU ORANGE THEME
+   ============================================================ */
+
+
+        /* ============================================================
+   MAIN PAGE HEADING
+   ============================================================ */
+
+        .migration-page-heading {
+            width: 96%;
+            margin: 12px auto 0 auto;
+            padding: 13px 18px;
+            background: #ffffff;
+            border-left: 5px solid #f28c00;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+
+        .migration-heading-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .migration-heading-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #fff2df;
+            color: #e87500;
+            font-size: 20px;
+        }
+
+
+        .migration-heading-title {
+            color: #173f5f;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+
+        .migration-heading-subtitle {
+            margin-top: 2px;
+            color: #8a969f;
+            font-size: 11px;
+        }
+
+
+        .migration-total-info {
+            color: #8a969f;
+            font-size: 11px;
+            padding-right: 5px;
+        }
+
+
+        /* ============================================================
+   SEARCH CARD
+   ============================================================ */
+
+        .migration-search-card {
+            width: 96%;
+            margin: 12px auto 18px auto;
+            background: #ffffff;
+            border: 1px solid #e0e6eb;
+            border-radius: 10px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+
+        /* ============================================================
+   SEARCH HEADER
+   ============================================================ */
+
+        .migration-search-header {
+            padding: 13px 18px;
+            background: linear-gradient( to right, #fff8ee, #ffffff );
+            border-bottom: 1px solid #eceff2;
+        }
+
+
+        .migration-search-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .migration-search-icon {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f28c00;
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 15px;
+            box-shadow: 0 2px 5px rgba(242,140,0,.25);
+        }
+
+
+        .migration-search-title {
+            color: #244c69;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+
+        .migration-search-description {
+            margin-top: 2px;
+            color: #8997a3;
+            font-size: 11px;
+        }
+
+
+        /* ============================================================
+   SEARCH BODY
+   ============================================================ */
+
+        .migration-search-body {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            padding: 17px 18px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* ============================================================
+   FIELD
+   ============================================================ */
+
+        .migration-field {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+
+        .migration-filter-field {
+            width: 210px;
+        }
+
+
+        .migration-search-field {
+            flex: 1;
+            min-width: 300px;
+        }
+
+
+        .migration-label {
+            display: block;
+            margin-bottom: 6px;
+            color: #526575;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+
+        /* ============================================================
+   DROPDOWN
+   ============================================================ */
+
+        .migration-select {
+            width: 100%;
+            height: 38px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccd6df;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #34495e;
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+
+            .migration-select:hover {
+                border-color: #e8a04b;
+            }
+
+
+            .migration-select:focus {
+                border-color: #f28c00;
+                box-shadow: 0 0 0 3px rgba(242,140,0,.12);
+            }
+
+
+
+
+        .migration-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+
+        .migration-input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0abb4;
+            font-size: 15px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+
+        .migration-textbox {
+            width: 100%;
+            height: 38px;
+            padding: 0 12px 0 35px;
+            box-sizing: border-box;
+            border: 1px solid #ccd6df;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #34495e;
+            font-size: 12px;
+            outline: none;
+            transition: all .2s ease;
+        }
+
+
+            .migration-textbox::placeholder {
+                color: #a5afb8;
+            }
+
+
+            .migration-textbox:hover {
+                border-color: #e8a04b;
+            }
+
+
+            .migration-textbox:focus {
+                border-color: #f28c00;
+                box-shadow: 0 0 0 3px rgba(242,140,0,.12);
+            }
+
+
+
+        .migration-action {
+            flex-shrink: 0;
+        }
+
+
+        .migration-search-btn,
+        .migration-export-btn {
+            height: 38px;
+            border: none;
+            border-radius: 6px;
+            padding: 0 17px;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s ease;
+        }
+
+
+        /* SEARCH */
+
+        .migration-search-btn {
+            min-width: 105px;
+            background: #f28c00;
+        }
+
+
+            .migration-search-btn:hover {
+                background: #df7900;
+                box-shadow: 0 3px 8px rgba(242,140,0,.25);
+                transform: translateY(-1px);
+            }
+
+
+
+
+        .migration-export-action {
+            margin-left: auto;
+        }
+
+
+        .migration-export-btn {
+            min-width: 150px;
+            background: #2d9848;
+        }
+
+
+            .migration-export-btn:hover {
+                background: #237b39;
+                box-shadow: 0 3px 8px rgba(45,152,72,.25);
+                transform: translateY(-1px);
+            }
+
+
+
+
+        .migration-grid-card {
+            width: 96%;
+            margin: 0 auto 20px auto;
+            background: #ffffff;
+            border: 1px solid #dfe5ea;
+            border-radius: 9px;
+            overflow: hidden;
+            box-shadow: 0 3px 14px rgba(0,0,0,.07);
+        }
+
+
+
+        .migration-grid-header {
+            height: 42px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e9ed;
+        }
+
+
+        .migration-grid-title {
+            color: #274e68;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+
+            .migration-grid-title span {
+                margin-right: 6px;
+                color: #f28c00;
+            }
+
+
+        .migration-grid-hint {
+            color: #9aa5ad;
+            font-size: 10px;
+        }
+
+
+
+        .migration-grid-wrapper {
+            width: 100%;
+            height: 500px;
+            overflow-x: auto;
+            overflow-y: auto;
+            position: relative;
+            background: #ffffff;
+        }
+
+
+
+            .migration-grid-wrapper::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+
+
+            .migration-grid-wrapper::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+
+            .migration-grid-wrapper::-webkit-scrollbar-thumb {
+                background: #f28c00;
+                border-radius: 10px;
+                border: 2px solid #f1f1f1;
+            }
+
+
+                .migration-grid-wrapper::-webkit-scrollbar-thumb:hover {
+                    background: #d87500;
+                }
+
+
+
+        .migration-grid {
+            width: max-content !important;
+            min-width: 100%;
+            border-collapse: separate !important;
+            border-spacing: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #34495e;
+            background: #ffffff;
+        }
+
+
+
+            .migration-grid th {
+                position: sticky;
+                top: 0;
+                z-index: 30;
+                height: 42px;
+                padding: 7px 9px !important;
+                background: #f28c00 !important;
+                color: #ffffff !important;
+                border: none !important;
+                border-right: 1px solid rgba(255,255,255,.30) !important;
+                font-size: 10px;
+                font-weight: 600;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                box-sizing: border-box;
+            }
+
+
+
+            .migration-grid td {
+                padding: 8px 9px !important;
+                height: 35px;
+                background: #ffffff;
+                color: #34495e;
+                border: none !important;
+                border-right: 1px solid #edf0f2 !important;
+                border-bottom: 1px solid #e3e7ea !important;
+                vertical-align: middle;
+                line-height: 15px;
+                white-space: normal;
+            }
+
+
+
+
+            .migration-grid tr:nth-child(even) td {
+                background: #fffaf4;
+            }
+
+
+
+
+            .migration-grid tr:hover td {
+                background: #fff0dc !important;
+                transition: background .15s ease;
+            }
+
+
+
+
+            .migration-grid td:first-child {
+                text-align: center;
+                font-weight: 600;
+                color: #687983;
+            }
+
+
+
+
+            .migration-grid td span {
+                font-size: 11px;
+            }
+
+
+
+            .migration-grid .grid-view-btn {
+                display: inline-block;
+                min-width: 42px;
+                padding: 4px 9px;
+                text-align: center;
+                box-sizing: border-box;
+                background: #fff7eb;
+                color: #d87500 !important;
+                border: 1px solid #f0b35d;
+                border-radius: 5px;
+                text-decoration: none !important;
+                font-size: 10px;
+                font-weight: 600;
+                white-space: nowrap;
+                transition: all .2s ease;
+            }
+
+
+                .migration-grid .grid-view-btn:hover {
+                    background: #f28c00;
+                    color: #ffffff !important;
+                    border-color: #f28c00;
+                    box-shadow: 0 2px 6px rgba(242,140,0,.25);
+                }
+
+
+
+
+            .migration-grid tr td[colspan] {
+                padding: 35px !important;
+                text-align: center;
+                color: #8997a3;
+                font-size: 13px;
+                background: #ffffff !important;
+            }
+
+
+
+
+        @media screen and (max-width: 1000px) {
+
+            .migration-search-body {
+                flex-wrap: wrap;
+            }
+
+            .migration-filter-field {
+                width: 210px;
+            }
+
+            .migration-search-field {
+                min-width: 300px;
+                flex: 1;
+            }
+
+            .migration-export-action {
+                margin-left: 0;
+            }
+        }
+
+
+        @media screen and (max-width: 700px) {
+
+            .migration-page-heading {
+                width: 94%;
+            }
+
+            .migration-search-card {
+                width: 94%;
+            }
+
+            .migration-grid-card {
+                width: 94%;
+            }
+
+            .migration-search-body {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .migration-filter-field,
+            .migration-search-field,
+            .migration-action {
+                width: 100%;
+            }
+
+            .migration-select,
+            .migration-textbox,
+            .migration-search-btn,
+            .migration-export-btn {
+                width: 100%;
+            }
+
+            .migration-export-action {
+                margin-left: 0;
+            }
+
+            .migration-grid-hint {
+                display: none;
+            }
+        }
+    </style>
+    <style type="text/css">
+        .course-code-cell {
+            display: -webkit-box;
+            width: 140px;
+            max-width: 140px;
+            height: 32px;
+            max-height: 32px;
+            line-height: 16px;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            white-space: normal;
+            word-break: break-word;
+            color: #34495e !important;
+            text-decoration: none !important;
+            cursor: pointer;
+        }
+    </style>
+
     <script type="text/javascript">
         function HidePopup1() {
 
@@ -46,97 +639,588 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
-    <fieldset class="boxBody">
-        <asp:Label ID="Label1" runat="server"
-            Text="Migration Approval" Font-Size="15pt" ForeColor="#093A62" Font-Names="&quot;Georgia&quot;,&quot;Times new roman&quot;,&quot;Helvetica Neue&quot;"></asp:Label>
-    </fieldset>
-
     <fieldset class="boxBodyInner">
-        <div>
-            <asp:Button ID="btnExport" runat="server" Text="Export to Excel" 
-    CssClass="btn btn-success" OnClick="btnExport_Click" />
+
+        <!-- =========================================
+         PAGE HEADER
+         ========================================= -->
+
+        <div class="migration-page-heading">
+
+            <div class="migration-heading-left">
+                <span class="migration-heading-icon">📋</span>
+
+                <div>
+                    <div class="migration-heading-title">
+                        Migration Approval
+                    </div>
+
+                    <div class="migration-heading-subtitle">
+                        Manage and process student migration details
+                    </div>
+                </div>
+            </div>
+
+            <div class="migration-total-info">
+                Migration Details
+            </div>
+
         </div>
-        <div class="row">
-            <asp:Panel ID="pnlMigration" runat="server">
-                <asp:GridView ID="GrdMigrationStudent" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered table-hover" CellPadding="20" Width="100%" EmptyDataText="No Data to display">
-                    <Columns>
-                        <asp:TemplateField HeaderText="S.No.">
-                            <ItemTemplate>
-                                <%# Container.DataItemIndex +1 %>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Application No." HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="AppNo_" runat="server" Text='<%# Bind("[App_No]") %>'></asp:Label>
 
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Enrollment No" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblEnrollment_No" runat="server" Text='<%# Bind("[Enrollment_No]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Student Name" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblStudent_Name" runat="server" Text='<%# Bind("[Student_Name]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Father Name" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblFather_Name" runat="server" Text='<%# Bind("[Father_Name]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Certificate Type" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblCertificate_Type" runat="server" Text='<%# Bind("[Certificate_Type]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Certificate" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblCertificate" runat="server" Text='<%# Bind("Certificate") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Create date" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblCreatedate" Width="100%" runat="server" Text='<%# Bind("Create_date") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Paymnet Amount" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblPay_amount" runat="server" Text='<%# Bind("[pay_amount]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Paymnet Status" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblPayment_Status" runat="server" Text='<%# Bind("[Payment_Status]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="lblApp_Status" runat="server" Text='<%# Bind("[App_Status]") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="View Details" HeaderStyle-HorizontalAlign="Center" >
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lblView" runat="server" CommandArgument='<%# Eval("App_No") %>'  Text="View" OnClick="lblView_Click"></asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:TemplateField>
 
-                        <asp:TemplateField HeaderText="Application Form" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lblApplication" Visible='<%# Eval("FacultyCode").ToString() == "TMU00865" ? false : true %>' runat="server" CommandArgument='<%# Eval("App_No") %>' Text="View" OnClick="lblApplication_Click"></asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Certificate" HeaderStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkCertificate" runat="server"  Visible='<%# Eval("FacultyCode").ToString() == "TMU00865" ? false : true %>' CommandArgument='<%# Eval("App_No") %>' Text="View" OnClick="lblCertificate_Click"></asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
+        <!-- =========================================
+         SEARCH CARD
+         ========================================= -->
+
+        <div class="migration-search-card">
+
+            <%--    <div class="migration-search-header">
+            <div class="migration-search-heading">
+                <span class="migration-search-icon">🔍</span>
+                <div>
+                    <div class="migration-search-title">
+                        Search Migration Applications
+                    </div>
+                    <div class="migration-search-description">
+                        Search, filter and export migration applications
+                    </div>
+                </div>
+            </div>
+        </div>--%>
+
+
+            <div class="migration-search-body">
+
+                <!-- FILTER -->
+                <div class="migration-field migration-filter-field">
+
+                    <label class="migration-label">
+                        Select Filter
+                    </label>
+
+                    <asp:DropDownList
+                        ID="ddStatus"
+                        runat="server"
+                        CssClass="migration-select"
+                        OnSelectedIndexChanged="ddStatus_SelectedIndexChanged"
+                        AutoPostBack="true">
+
+                        <asp:ListItem Value="6">-- Select --</asp:ListItem>
+
+                        <asp:ListItem Value="0">
+                        ALL
+                        </asp:ListItem>
+
+                        <asp:ListItem Value="1">
+                        Enrollment Number
+                        </asp:ListItem>
+
+                        <asp:ListItem Value="2">
+                        Student Name
+                        </asp:ListItem>
+
+                        <asp:ListItem Value="3">
+                        Student ID
+                        </asp:ListItem>
+
+                        <asp:ListItem Value="4">
+                        Pending List
+                        </asp:ListItem>
+
+                        <asp:ListItem Value="5">
+                        Approved List
+                        </asp:ListItem>
+
+                    </asp:DropDownList>
+
+                </div>
+
+
+
+                <div class="migration-field migration-search-field">
+
+                    <label id="lblSearchVal" runat="server" class="migration-label">
+                        Search Value
+                    </label>
+
+                    <div class="migration-input-wrapper">
+
+                        <span class="migration-input-icon"></span>
+
+                        <asp:TextBox
+                            ID="txtSearch"
+                            runat="server"
+                            CssClass="migration-textbox"
+                            placeholder="Enter enrollment no, student name, student ID...">
+                        </asp:TextBox>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH BUTTON -->
+                <div class="migration-action">
+
+                    <label class="migration-label">
+                        &nbsp;
+                    </label>
+
+                    <asp:Button
+                        ID="btnSearch"
+                        runat="server"
+                        Text="🔍  Search"
+                        CssClass="migration-search-btn"
+                        OnClick="btnSearch_Click"
+                        ValidationGroup="get" />
+
+                </div>
+
+
+                <!-- EXPORT BUTTON -->
+                <div class="migration-action migration-export-action">
+
+                    <label class="migration-label">
+                        &nbsp;
+                    </label>
+
+                    <asp:Button
+                        ID="btnExport"
+                        runat="server"
+                        Text="📊  Export to Excel"
+                        CssClass="migration-export-btn"
+                        OnClick="btnExport_Click" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+         GRID CARD
+         ========================================= -->
+
+        <div class="migration-grid-card">
+
+            <div class="migration-grid-header">
+
+                <div class="migration-grid-title">
+                    <span>📑</span>
+                    Migration Details
+                </div>
+
+                <div class="migration-grid-hint">
+                    ↔ Scroll horizontally to view all columns
+                </div>
+
+            </div>
+
+
+            <asp:Panel
+                ID="pnlMigration"
+                runat="server">
+
+                <div class="migration-grid-wrapper">
+
+                    <asp:GridView
+                        ID="GrdMigrationStudent"
+                        runat="server"
+                        AutoGenerateColumns="false"
+                        CssClass="migration-grid"
+                        CellPadding="0"
+                        Width="100%"
+                        EmptyDataText="No Data to display">
+
+                        <Columns>
+
+
+
+                            <asp:TemplateField HeaderText="S.No.">
+
+                                <ItemTemplate>
+
+                                    <%# Container.DataItemIndex + 1 %>
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField
+                                HeaderText="View Details"
+                                HeaderStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+                                    <asp:LinkButton
+                                        ID="lblView"
+                                        runat="server"
+                                        CommandArgument='<%# Eval("App_No") %>'
+                                        Text="View"
+                                        CssClass="grid-view-btn"
+                                        OnClick="lblView_Click">
+                                    </asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Application Form"
+                                HeaderStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+                                    <asp:LinkButton
+                                        ID="lblApplication"
+                                        runat="server"
+                                        Visible='<%# Eval("FacultyCode").ToString() == "TMU00865" ? false : true %>'
+                                        CommandArgument='<%# Eval("App_No") %>'
+                                        Text="View"
+                                        CssClass="grid-view-btn"
+                                        OnClick="lblApplication_Click">
+                                    </asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField
+                                HeaderText="Certificate"
+                                HeaderStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+                                    <asp:LinkButton
+                                        ID="lnkCertificate"
+                                        runat="server"
+                                        Visible='<%# Eval("FacultyCode").ToString() == "TMU00865" ? false : true %>'
+                                        CommandArgument='<%# Eval("App_No") %>'
+                                        Text="View"
+                                        CssClass="grid-view-btn"
+                                        OnClick="lblCertificate_Click">
+                                    </asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Migration No."
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="AppNo_"
+                                        runat="server"
+                                        Text='<%# Bind("[App_No]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Enrollment No"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblEnrollment_No"
+                                        runat="server"
+                                        Text='<%# Bind("[Enrollment_No]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Student Name"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblStudent_Name"
+                                        runat="server"
+                                        Text='<%# Bind("[Student_Name]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Father Name"
+                                HeaderStyle-HorizontalAlign="Center"
+                                Visible="false">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblFather_Name"
+                                        runat="server"
+                                        Text='<%# Bind("[Father_Name]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Certificate Type"
+                                HeaderStyle-HorizontalAlign="Center"
+                                Visible="false">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblCertificate_Type"
+                                        runat="server"
+                                        Text='<%# Bind("[Certificate_Type]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Certificate"
+                                HeaderStyle-HorizontalAlign="Center"
+                                Visible="false">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblCertificate"
+                                        runat="server"
+                                        Text='<%# Bind("Certificate") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="College Code"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblCollegeCode"
+                                        runat="server"
+                                        Text='<%# Bind("College") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Student ID"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblStudentID"
+                                        runat="server"
+                                        Text='<%# Bind("StudentID") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField HeaderText="Course Code" HeaderStyle-HorizontalAlign="Center">
+                                <ItemTemplate>
+
+                                    <asp:LinkButton
+                                        ID="lnkCourseCode"
+                                        runat="server"
+                                        Text='<%# Bind("Program") %>'
+                                        ToolTip='<%# Bind("Program") %>'
+                                        CssClass="course-code-cell"
+                                        OnClientClick="showCourseName(this); return false;">
+                                    </asp:LinkButton>
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField
+                                HeaderText="Application Date"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblCreatedate"
+                                        Width="100%"
+                                        runat="server"
+                                        Text='<%# Eval("Create_date", "{0:dd-MM-yyyy}") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField
+                                HeaderText="Payment Date"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblPaymentDate"
+                                        Width="100%"
+                                        runat="server"
+                                        Text='<%# Eval("paymentDate", "{0:dd-MM-yyyy}") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Approval Date"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblApprovalDate"
+                                        Width="100%"
+                                        runat="server"
+                                        Text='<%# Eval("Ac_AppDate", "{0:dd-MM-yyyy}") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Migration Date"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblMigrationlDate"
+                                        Width="100%"
+                                        runat="server"
+                                        Text='<%# Eval("Dept_ApprovalDate", "{0:dd-MM-yyyy}") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Paid Amount"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblPay_amount"
+                                        runat="server"
+                                        Text='<%# Bind("[pay_amount]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="UTR Number"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblUTRNo"
+                                        runat="server"
+                                        Text='<%# Bind("[UTR_No]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+                            <asp:TemplateField
+                                HeaderText="Payment Status"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblPayment_Status"
+                                        runat="server"
+                                        Text='<%# Bind("[Payment_Status]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+                            <asp:TemplateField
+                                HeaderText="Migration Status"
+                                HeaderStyle-HorizontalAlign="Center">
+
+                                <ItemTemplate>
+
+                                    <asp:Label
+                                        ID="lblApp_Status"
+                                        runat="server"
+                                        Text='<%# Bind("[App_Status]") %>'>
+                                    </asp:Label>
+
+                                </ItemTemplate>
+
+                            </asp:TemplateField>
+
+
+
+
+
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                </div>
 
             </asp:Panel>
+
         </div>
+
     </fieldset>
 
     <div id="confirmModal1" class="modal fade confirm-modal" role="dialog">
@@ -316,23 +1400,23 @@
                                 </div>
                             </div>
                         </div>
-                         <div class="col-sm-3 p-0">
+                        <div class="col-sm-3 p-0">
 
                             <div class="form-group clearfix">
 
                                 <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp Payment Order No </label>
-                               
+
                                 <div class="col-sm-8">
                                     <asp:Label ID="txtPayOrderNo" runat="server" TextMode="MultiLine" ValidationGroup="R1" OnClick="txtRemark_Click"></asp:Label>
                                 </div>
                             </div>
                         </div>
-                         <div class="col-sm-3 p-0">
+                        <div class="col-sm-3 p-0">
 
                             <div class="form-group clearfix">
 
                                 <label for="inputEmail3" class="col-form-label" style="font-size: small; width: 200px">&nbsp&nbsp&nbsp  Payment Date </label>
-                               
+
                                 <div class="col-sm-8">
                                     <asp:Label ID="txtPaymentDate" runat="server" TextMode="MultiLine" ValidationGroup="R1" OnClick="txtRemark_Click"></asp:Label>
                                 </div>
@@ -349,8 +1433,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                       
+
+
 
 
                         <div class="col-sm-2 p-0">
@@ -605,7 +1689,7 @@
                                                 <asp:Label ID="Label62" runat="server" Text="Name of College/Department, if still on rolls :" Font-Size="Small"></asp:Label>
                                             </td>
                                             <td style="text-align: left; padding-right: 20px; width: 1000px">
-                                                <asp:Label ID="Label63" runat="server"  Font-Size="Small" AutoPostBack="false"></asp:Label>
+                                                <asp:Label ID="Label63" runat="server" Font-Size="Small" AutoPostBack="false"></asp:Label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -817,7 +1901,7 @@
                                 </div>
                             </div>
 
-                           <%-- <div style="text-align: center;">
+                            <%-- <div style="text-align: center;">
 
                                 <p style="margin-bottom: -15px">
                                     <strong>
@@ -827,7 +1911,7 @@
                             </div>--%>
 
 
-                           <%-- <div class="col-md-12" style="margin-top: 20px;">
+                            <%-- <div class="col-md-12" style="margin-top: 20px;">
                                 <table style="width: 100%">
                                     <tr>
                                         <td style="text-align: left; width: 50%">
@@ -860,7 +1944,6 @@
 
                                 </table>
                             </div>--%>
-
                         </div>
                     </div>
                 </fieldset>
@@ -924,8 +2007,8 @@
 
                                 </td>
 
-                                <td style="width: 20%; text-align: center">
-                                   Sl. No.: <asp:Label ID="slNo" runat="server"></asp:Label></td>
+                                <td style="width: 20%; text-align: center">Sl. No.:
+                                    <asp:Label ID="slNo" runat="server"></asp:Label></td>
                             </tr>
                         </table>
 
@@ -938,9 +2021,9 @@
                             <br />
 
                             <div style="text-align: justify; font-size: x-large">
-                                <p class="custom-paragraph" style="line-height:40px" >
+                                <p class="custom-paragraph" style="line-height: 40px">
                                     Certified that Mr./Ms. 
-                            <asp:Label ID="lblStudent" Font-Bold="true"  runat="server"></asp:Label>
+                            <asp:Label ID="lblStudent" Font-Bold="true" runat="server"></asp:Label>
 
                                     son/daugter of 
                                 <asp:Label ID="lblGaurdiation" Font-Bold="true" runat="server"></asp:Label>

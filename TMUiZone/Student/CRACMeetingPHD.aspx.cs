@@ -1,8 +1,9 @@
-﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -18,7 +19,7 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                 {
                     DateTime today = DateTime.Today;
                     bool isAllowed = (today.Month == 1 && today.Day >= 1 && today.Day <= 10) || (today.Month == 7 && today.Day >= 1 && today.Day <= 10);
-                    if (isAllowed)
+                    if (isAllowed || 1==1)
                     {
                         divPhd.Visible = true;
                         bindPhdData();
@@ -88,41 +89,12 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                     if (ctlCourseCode != null) ctlCourseCode.Value = courseCode;
                     else if (Session["CourseCode"] == null) Session["CourseCode"] = courseCode;
 
+                    // Page load pr sara data aaega but save button hide rhega
                     try
                     {
-                        bool IsCRACMeetingExist = false;
-
-                        // If SP returns CRACMeetingName and numeric CRACMeetingNo, prefer numeric selection
-                        if (dt.Columns.Contains("CRACMeetingNo") && dr["CRACMeetingNo"] != DBNull.Value)
-                        {
-                            int cracNo;
-                            if (int.TryParse(dr["CRACMeetingNo"].ToString(), out cracNo))
-                            {
-                                ddlCRACMeeting.SelectedValue = cracNo.ToString();
-                                IsCRACMeetingExist = true;
-                            }
-                        }
-
-                        // Fallback: if only name is returned, set text (best-effort)
-                        if (!IsCRACMeetingExist && dt.Columns.Contains("CRACMeetingName") && dr["CRACMeetingName"] != DBNull.Value)
-                        {
-                            var name = dr["CRACMeetingName"].ToString();
-                            // try to map name to ddl value
-                            foreach (var item in ddlCRACMeeting.Items)
-                            {
-                                ListItem li = item as ListItem;
-                                if (li != null && li.Text.Equals(name, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    ddlCRACMeeting.SelectedValue = li.Value;
-                                    IsCRACMeetingExist = true;                                
-                                    break;
-                                }
-                            }
-                        }
-                        if (!string.IsNullOrEmpty(ddlCRACMeeting.SelectedValue))
-                        {
-                            bindPhdFees(Convert.ToInt32(ddlCRACMeeting.SelectedValue), IsCRACMeetingExist);
-                        }
+                        ddlCRACMeeting.SelectedIndex = 0;
+                        bindPhdFees(0, false);
+                        btnPhdSave.Visible = false;
                     }
                     catch { }
                 }
@@ -139,19 +111,16 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
         try
         {
             int cracNo;
-            if (int.TryParse(ddlCRACMeeting.SelectedValue, out cracNo))
+            if (int.TryParse(ddlCRACMeeting.SelectedValue, out cracNo) && cracNo > 0)
             {
-                bool existFlag = false;
-                 existFlag = IsCRACMeetingAlreadySaved(cracNo); 
+                bool existFlag = IsCRACMeetingAlreadySaved(cracNo); 
                 bindPhdFees(cracNo, existFlag);
             }
             else
             {
-                gvPhdFees.DataSource = new DataTable();
-                gvPhdFees.EmptyDataText = "Please select a CRAC Meeting.";
-                gvPhdFees.DataBind();
+                // When 'Select' chosen, show all fees and keep Save button hidden
+                bindPhdFees(0, false);
                 btnPhdSave.Visible = false;
-                
             }
         }
         catch { }
@@ -216,25 +185,57 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
                     gvPhdFees.DataSource = mappedDt;
                     gvPhdFees.DataBind();
 
-                    decimal pendingAmount = Convert.ToDecimal(mappedDt.Rows[0]["PendingAmount"]);
-                    string status = mappedDt.Rows[0]["Status"].ToString();
-                    if (!IsCRACMeetingExist)
-                    {
-                        btnPhdSave.Visible = (pendingAmount == 0 && status.Equals("Paid", StringComparison.OrdinalIgnoreCase));
-                    }
-                        
+
+                    //below code single row aae to
+                    //decimal pendingAmount = Convert.ToDecimal(mappedDt.Rows[0]["PendingAmount"]);
+                    //string status = mappedDt.Rows[0]["Status"].ToString();
+                    //if (!IsCRACMeetingExist)
+                    //{
+
+                    //    btnPhdSave.Visible = (pendingAmount == 0 && status.Equals("Paid", StringComparison.OrdinalIgnoreCase));
+                    //}
+
+                     if (CreacMeentinNo == 0)
+ {
+     btnPhdSave.Visible = false;
+ }
+ else if (!IsCRACMeetingExist)
+ {
+     bool allFeesClear = mappedDt.AsEnumerable().All(row =>
+     {
+         decimal pendingAmount = 0m;
+         decimal.TryParse(row["PendingAmount"].ToString(), out pendingAmount);
+         string status = row["Status"] != null ? row["Status"].ToString().Trim() : string.Empty;
+         return pendingAmount == 0m && status.Equals("Paid", StringComparison.OrdinalIgnoreCase);
+     });
+
+     btnPhdSave.Visible = allFeesClear;
+     btnPhdSave.Text = "Save";
+     btnPhdSave.Enabled = true;
+ }
+ else
+ {
+
+     btnPhdSave.Visible = true;
+     btnPhdSave.Text = "Submitted";
+     btnPhdSave.Enabled = false;
+     btnPhdSave.BackColor = System.Drawing.Color.Green;
+ }
                 }
                 else
                 {
+                    // Fee setup data not found
+                    gvPhdFees.EmptyDataText = "Fee setup is pending. Please contact the Accounts Department.";
+
                     // ensure grid cleared when no fees
                     gvPhdFees.DataSource = new DataTable(); 
                     gvPhdFees.DataBind();
                     btnPhdSave.Visible = false;
 
-                    if (gvPhdFees.Rows.Count == 0)
-                    {
-                        gvPhdFees.EmptyDataText = "Fee setup is pending. Please contact the Accounts Department.";
-                    }
+                    //if (gvPhdFees.Rows.Count == 0)
+                    //{
+                    //    gvPhdFees.EmptyDataText = "Fee setup is pending. Please contact the Accounts Department.";
+                    //}
                 }
             }
         }
@@ -352,6 +353,12 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
     {
         try
         {
+            if (string.IsNullOrEmpty(ddlCRACMeeting.SelectedValue))
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "valError", "alert('Please select a CRAC Meeting.');", true);
+                return;
+            }
+
             // Validate pending fees before saving
             if (!ValidatePendingFees())
             {
@@ -486,11 +493,18 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
             bool hasPendingFees = false;
             foreach (GridViewRow row in gvPhdFees.Rows)
             {
-                // Status is at index 4 in the mapped grid (FeeDescription=0, FeeAmount=1, PaidAmount=2, PendingAmount=3, Status=4)
-                if (row.Cells.Count > 4)
+                if (row.RowType != DataControlRowType.DataRow) continue;
+
+                // GridView Columns:
+                // S.No.=0, FeeDescription=1, FeeAmount=2, PaidAmount=3, PendingAmount=4, Status=5
+                if (row.Cells.Count > 5)
                 {
-                    string status = row.Cells[4].Text.Trim();
-                    if (status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                    decimal pendingAmount = 0m;
+                    string pendingText = row.Cells[4].Text.Trim().Replace("₹", "").Replace(",", "");
+                    decimal.TryParse(pendingText, out pendingAmount);
+                    string status = row.Cells[5].Text.Trim();
+
+                    if (pendingAmount > 0m || !status.Equals("Paid", StringComparison.OrdinalIgnoreCase))
                     {
                         hasPendingFees = true;
                         break;
@@ -501,7 +515,7 @@ public partial class Student_CRACMeeting : System.Web.UI.Page
             if (hasPendingFees)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "pendingFees",
-                    "alert('You have pending fees. Please clear all dues before submitting CRAC form. Use Pay Now button to pay fees.');", true);
+                    "alert('You have pending fees. Please clear all dues before submitting CRAC form.');", true);
                 return false;
             }
 

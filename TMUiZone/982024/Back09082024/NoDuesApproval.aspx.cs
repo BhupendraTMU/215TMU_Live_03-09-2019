@@ -9,8 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Net;
 using System.Net.Mail;
-using System.IO;
-using System.Net.Configuration;
+
 
 
 
@@ -3461,49 +3460,171 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
         }
     }
 
-
-  public void sendmail()
+    public void sendmail()
     {
-        SmtpSection smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
-        using (MailMessage mm = new MailMessage("naverp@tmu.ac.in", "dy.registrar.hr@tmu.ac.in,jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,hr@tmu.ac.in"))
+        try
         {
-        //using (MailMessage mm = new MailMessage("bhupendras.erp@tmu.ac.in", "bhupendras.erp@tmu.ac.in")) jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,,hr@tmu.ac.in
-        //{
-            mm.Subject = "No Dues Form Status: Active,Employee Code:" + txtemployeecode.Text + ",Employee Name: " + txtnameofemployee.Text + "";
-              mm.Body = "<HTML><div>Sir/ Madam,</div>";
-            mm.Body += "<div>&nbsp;</div>";
-            mm.Body += "<div>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>No&nbsp;Dues&nbsp;Form Status is now active for the following employee:</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>1. Employee Code: "+ txtemployeecode.Text + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>2. Employee Name: " + txtnameofemployee.Text + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>3. Designation:" + hdfDesignation.Value + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>4. Department: " + txtcollegedeptsection.Text + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>5. Date of Joining: " + txtdateofjoining.Text + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>6. Date of Leaving: " + txtdateofleaving.Text + "</span></p>";
-            mm.Body += "<p><span style='font-family: verdana, sans-serif;'>&nbsp;</span></p>";
-            mm.Body += "<p>Kindly verify that nothing is Outstanding (No Dues Granted/ Pending/ Contact to concerned department from which No Dues Status is pending).</p>";
-            mm.Body += "<p>&nbsp;</p>";
-            mm.Body += "<p>**** This is a system generated mail, please do not reply****</p>";
-            mm.Body += "<p>&nbsp;</p>";
-            mm.Body += "<p>By User ID: TMUNAVERP/PRASHANT</p>";
-            mm.Body += "<p>Regards,</p>";
-            mm.Body += "<p>TEAM- HR</p>";
-            mm.Body += "</div></HTML>";
+            var fromEmail = "naverp@tmu.ac.in";
+            var fromPassword = "YOUR_NEW_APP_PASSWORD";
 
-            mm.IsBodyHtml = true;
-            using (SmtpClient smtp = new SmtpClient())
+            using (MailMessage mm = new MailMessage())
             {
-                smtp.Host = smtpSection.Network.Host;
-                smtp.EnableSsl = smtpSection.Network.EnableSsl;
-                NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "ghkl eukc gadv filn");
-                smtp.UseDefaultCredentials = smtpSection.Network.DefaultCredentials;
-                smtp.Credentials = networkCred;
-                smtp.Port = smtpSection.Network.Port;
-                smtp.Send(mm);
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Email sent.');", true);
+                mm.From = new MailAddress(fromEmail);
+
+                // Multiple Recipients
+                string[] recipients = {
+                "dy.registrar.hr@tmu.ac.in",
+                "jt.registrar@tmu.ac.in",
+                "university.librarian@tmu.ac.in",
+                "joint.registrar@tmu.ac.in",
+                "anshulj.erp@tmu.ac.in",
+                "incharge.store@tmu.ac.in",
+                "dharmikjain38@gmail.com",
+                "chiefwarden@tmu.ac.in",
+                "transport@tmu.ac.in",
+                "asstt.registrar@tmu.ac.in",
+                "hospitality@tmu.ac.in",
+                "principal.physicaleducation@tmu.ac.in",
+                "dy.directorfinance.hospital@tmu.ac.in",
+                "er.maintenance@tmu.ac.in",
+                "head.it@tmu.ac.in",
+                "nitinjindel@gmail.com",
+                "dy.dir.ssw@tmu.ac.in",
+                "payroll@tmu.ac.in",
+                "hr@tmu.ac.in"
+            };
+
+                foreach (string email in recipients)
+                {
+                    mm.To.Add(email.Trim());
+                }
+
+                mm.Subject = "No Dues Form Status: Active, Employee Code: "
+                    + txtemployeecode.Text
+                    + ", Employee Name: "
+                    + txtnameofemployee.Text;
+
+                mm.Body = "<HTML><div>Sir/ Madam,</div>";
+                mm.Body += "<div>&nbsp;</div>";
+                mm.Body += "<div>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>No Dues Form Status is now active for the following employee:</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>1. Employee Code: "
+                    + txtemployeecode.Text + "</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>2. Employee Name: "
+                    + txtnameofemployee.Text + "</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>3. Designation: "
+                    + hdfDesignation.Value + "</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>4. Department: "
+                    + txtcollegedeptsection.Text + "</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>5. Date of Joining: "
+                    + txtdateofjoining.Text + "</span></p>";
+
+                mm.Body += "<p><span style='font-family: verdana, sans-serif;'>6. Date of Leaving: "
+                    + txtdateofleaving.Text + "</span></p>";
+
+                mm.Body += "<p>&nbsp;</p>";
+
+                mm.Body += "<p>Kindly verify that nothing is Outstanding (No Dues Granted/ Pending/ Contact to concerned department from which No Dues Status is pending).</p>";
+
+                mm.Body += "<p>&nbsp;</p>";
+                mm.Body += "<p>**** This is a system generated mail, please do not reply ****</p>";
+                mm.Body += "<p>&nbsp;</p>";
+                mm.Body += "<p>By User ID: TMUNAVERP/PRASHANT</p>";
+                mm.Body += "<p>Regards,</p>";
+                mm.Body += "<p>TEAM- HR</p>";
+
+                mm.Body += "</div></HTML>";
+
+                mm.IsBodyHtml = true;
+
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com"))
+                {
+                    smtp.Port = 587;
+                    smtp.EnableSsl = true;
+
+                    smtp.UseDefaultCredentials = false;
+
+                    smtp.Credentials = new NetworkCredential(
+                        fromEmail,
+                        fromPassword
+                    );
+
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtp.Timeout = 60000;
+
+                    smtp.Send(mm);
+                }
             }
+
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "alert",
+                "alert('Email sent successfully.');",
+                true
+            );
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message.Replace("'", "");
+
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "alert",
+                "alert('Email sending failed: " + error + "');",
+                true
+            );
         }
     }
 
-  
+
+    //public void sendmail()
+    //  {
+    //      SmtpSection smtpSection = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
+    //      using (MailMessage mm = new MailMessage("naverp@tmu.ac.in", "dy.registrar.hr@tmu.ac.in,jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,hr@tmu.ac.in"))
+    //      {
+    //      //using (MailMessage mm = new MailMessage("bhupendras.erp@tmu.ac.in", "bhupendras.erp@tmu.ac.in")) jt.registrar@tmu.ac.in, university.librarian@tmu.ac.in  ,joint.registrar@tmu.ac.in ,anshulj.erp@tmu.ac.in ,incharge.store@tmu.ac.in,dharmikjain38@gmail.com ,chiefwarden@tmu.ac.in ,transport@tmu.ac.in ,asstt.registrar@tmu.ac.in ,hospitality@tmu.ac.in ,principal.physicaleducation@tmu.ac.in ,dy.directorfinance.hospital@tmu.ac.in ,er.maintenance@tmu.ac.in,asstt.registrar@tmu.ac.in,head.it@tmu.ac.in ,nitinjindel@gmail.com,dy.dir.ssw@tmu.ac.in,payroll@tmu.ac.in,joint.registrar@tmu.ac.in,,hr@tmu.ac.in
+    //      //{
+    //          mm.Subject = "No Dues Form Status: Active,Employee Code:" + txtemployeecode.Text + ",Employee Name: " + txtnameofemployee.Text + "";
+    //            mm.Body = "<HTML><div>Sir/ Madam,</div>";
+    //          mm.Body += "<div>&nbsp;</div>";
+    //          mm.Body += "<div>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>No&nbsp;Dues&nbsp;Form Status is now active for the following employee:</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>1. Employee Code: "+ txtemployeecode.Text + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>2. Employee Name: " + txtnameofemployee.Text + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>3. Designation:" + hdfDesignation.Value + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>4. Department: " + txtcollegedeptsection.Text + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>5. Date of Joining: " + txtdateofjoining.Text + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>6. Date of Leaving: " + txtdateofleaving.Text + "</span></p>";
+    //          mm.Body += "<p><span style='font-family: verdana, sans-serif;'>&nbsp;</span></p>";
+    //          mm.Body += "<p>Kindly verify that nothing is Outstanding (No Dues Granted/ Pending/ Contact to concerned department from which No Dues Status is pending).</p>";
+    //          mm.Body += "<p>&nbsp;</p>";
+    //          mm.Body += "<p>**** This is a system generated mail, please do not reply****</p>";
+    //          mm.Body += "<p>&nbsp;</p>";
+    //          mm.Body += "<p>By User ID: TMUNAVERP/PRASHANT</p>";
+    //          mm.Body += "<p>Regards,</p>";
+    //          mm.Body += "<p>TEAM- HR</p>";
+    //          mm.Body += "</div></HTML>";
+
+    //          mm.IsBodyHtml = true;
+    //          using (SmtpClient smtp = new SmtpClient())
+    //          {
+    //              smtp.Host = smtpSection.Network.Host;
+    //              smtp.EnableSsl = smtpSection.Network.EnableSsl;
+    //              NetworkCredential networkCred = new NetworkCredential("naverp@tmu.ac.in", "iojk iegg zyfa nwhc");
+    //              smtp.UseDefaultCredentials = smtpSection.Network.DefaultCredentials;
+    //              smtp.Credentials = networkCred;
+    //              smtp.Port = smtpSection.Network.Port;
+    //              smtp.Send(mm);
+    //              ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Email sent.');", true);
+    //          }
+    //      }
+    //  }
+
+
 }

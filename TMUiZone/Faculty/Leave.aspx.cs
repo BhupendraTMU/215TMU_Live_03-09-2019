@@ -340,26 +340,61 @@ public partial class LeaveApproval : System.Web.UI.Page
         else
         {
 
-            SqlDataReader dr = con.Leave_Approval_Count_Current(Session["Company"].ToString(), Session["uid"].ToString());
-            dr.Read();
-            if (dr.HasRows)
-            {
+            int leaveCount = Leave_Approval_Count_Current(Session["Company"].ToString(), Session["uid"].ToString());
 
-                string countprofile = dr["HODUserid"].ToString();
-                if (countprofile == "0")
-                {
-                    lblLeaveCount.Text = "";
-                }
-                else
-                {
-                    lblLeaveCount.Text = dr["HODUserid"].ToString();
-                }
-            }
-            dr.Close();
-            con.DisConnect();
+
+            lblLeaveCount.Text = leaveCount.ToString();
+
         }
     }
+    public int Leave_Approval_Count_Current(string companyName, string Userid)
+    {
+        string sql = @"
+        SELECT COUNT(*)
+        FROM
+        (
+            SELECT AutoNo
+            FROM tble_Leave_Approval
+            WHERE Company_Name = 'TMU'
+              AND (
+                    HODUserid = @Userid
+                    OR HODUserid1 = @Userid
+                    OR (
+                        FinalApprovalId = @Userid
+                        AND Status = 'Approved'
+                        and FinalApprovalStatus=0
+                    )
+                  )
+              AND CountStatusHOD = 'Pending'
+              AND [Rejected Approval] = 'No'
+              AND Status = 'Pending'
 
+            UNION
+
+            SELECT AutoNo
+            FROM tble_Leave_Approval
+            WHERE Company_Name = @CompanyName
+              AND FinalApprovalId = @Userid
+              AND Status = 'Approved'
+              and FinalApprovalStatus=0
+              AND [Rejected Approval] = 'No'
+        ) T";
+
+        using (SqlCommand cmd = new SqlCommand(sql, Conn))
+        {
+            cmd.Parameters.AddWithValue("@Userid", Userid);
+            cmd.Parameters.AddWithValue("@CompanyName", companyName);
+
+            if (Conn.State != ConnectionState.Open)
+                Conn.Open();
+
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+            Conn.Close();
+
+            return count;
+        }
+    }
     public void Leave_Pending_ApprovalHR_Count()
     {
         SqlDataReader dr = con.Leave_Approval_Count_CurrentHR(Session["Company"].ToString(), Session["uid"].ToString());
@@ -1380,6 +1415,19 @@ public partial class LeaveApproval : System.Web.UI.Page
                 true
             );
 
+        // ashu on 19/09/2017--start
+
+        if (ddLeavePeriod.SelectedValue == "(Full-Day)" &&
+            ddShiftType.SelectedValue != "0".ToString())
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "Key",
+                "alert('In Case of Full-Day, Day Mode should not be 1st Half/2nd Half !!');",
+                true
+            );
+
             return;
         }
 
@@ -1423,6 +1471,10 @@ public partial class LeaveApproval : System.Web.UI.Page
                         Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
 
 
+                    decimal lblNonof_Cl_leaveCL =
+                        Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
+
+
                     if (txtNoOfLeavePriodCL <= lblNonof_Cl_leaveCL)
                     {
                         LeaveApplicationDetails();
@@ -1431,6 +1483,19 @@ public partial class LeaveApproval : System.Web.UI.Page
                     }
                     else
                     {
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "Key",
+                            "alert('Can not applied more than CL leave ');",
+                            true
+                        );
+                    }
+                }
+
+                // ============================
+                // OTHER LEAVE TYPES
+                // ============================
                         ScriptManager.RegisterStartupScript(
                             this,
                             this.GetType(),
@@ -1690,8 +1755,47 @@ public partial class LeaveApproval : System.Web.UI.Page
             args.IsValid = true;
             return;
         }
+    protected void ValidateALDocument(
+        object source,
+        ServerValidateEventArgs args)
+    {
+        if (ddLeaveTypen.SelectedItem.Text.Trim() != "AL")
+        {
+            args.IsValid = true;
+            return;
+        }
 
         CustomValidator validator = source as CustomValidator;
+
+        CustomValidator validator = source as CustomValidator;
+
+        if (validator == null)
+        {
+            args.IsValid = true;
+            return;
+        }
+
+        if (validator.ID == "cvInPrinciple")
+        {
+            args.IsValid = fuInPrinciple.HasFile;
+        }
+        else if (validator.ID == "cvEventBrochure")
+        {
+            args.IsValid = fuEventBrochure.HasFile;
+        }
+        else if (validator.ID == "cvCertificate")
+        {
+            args.IsValid = fuCertificate.HasFile;
+        }
+        else if (validator.ID == "cvEventReport")
+        {
+            args.IsValid = fuEventReport.HasFile;
+        }
+        else if (validator.ID == "cvGeotaggedPhotos")
+        {
+            args.IsValid = fuGeotaggedPhotos.HasFiles;
+        }
+    }
 
         if (validator == null)
         {
@@ -2065,6 +2169,7 @@ public partial class LeaveApproval : System.Web.UI.Page
         {
             Arrangement = "NO";
         }
+
 
         if (lblerrorMessage.Text != "")
         {
@@ -3417,8 +3522,7 @@ public partial class LeaveApproval : System.Web.UI.Page
 
             // AL uploader show
             pnlALDocuments.Visible = true;
-            CalendarExtender1.StartDate = DateTime.Today.AddDays(1);
-            CalendarExtender2.StartDate = DateTime.Today.AddDays(1);
+
         }
         else
         {
@@ -3433,29 +3537,7 @@ public partial class LeaveApproval : System.Web.UI.Page
             int day = datevalue.Day;
             int mn = datevalue.Month;
             int yy = datevalue.Year;
-            if (day > 3)
-            {
-                CalendarExtender1.StartDate = new DateTime(yy, mn, 1);
-                CalendarExtender2.StartDate = new DateTime(yy, mn, 1);
 
-            }
-            else
-            {
-                if (mn == 1)
-                {
-                    CalendarExtender1.StartDate = new DateTime(2025, 12, 1);
-                    CalendarExtender1.EndDate = new DateTime(2026, mn, 31);
-                    CalendarExtender2.StartDate = new DateTime(2025, 12, 1);
-                    CalendarExtender2.EndDate = new DateTime(2026, mn, 31);
-                }
-                else
-                {
-                    CalendarExtender1.StartDate = new DateTime(yy, mn - 1, 1);
-                    CalendarExtender1.EndDate = new DateTime(yy, mn, 3);
-                    CalendarExtender2.StartDate = new DateTime(yy, mn - 1, 1);
-                    CalendarExtender2.EndDate = new DateTime(yy, mn, 3);
-                }
-            }
         }
         txtNoOfLeavePriod.Text = "0";
         lblerror.Text = "";
@@ -4324,6 +4406,43 @@ public partial class LeaveApproval : System.Web.UI.Page
                 -1
             ).Value = FileData;
 
+        string query = @"
+        INSERT INTO tbl_Leave_AL_Documents
+        (
+            AutoNo,
+            UserID,
+            DocumentType,
+            FileName,
+            FileType,
+            FileData,
+            CreatedDate
+        )
+        VALUES
+        (
+            @AutoNo,
+            @UserID,
+            @DocumentType,
+            @FileName,
+            @FileType,
+            @FileData,
+            GETDATE()
+        )";
+
+
+        using (SqlCommand cmd = new SqlCommand(query, Conn))
+        {
+            cmd.Parameters.AddWithValue("@AutoNo", AutoNo);
+            cmd.Parameters.AddWithValue("@UserID", UserID);
+            cmd.Parameters.AddWithValue("@DocumentType", DocumentType);
+            cmd.Parameters.AddWithValue("@FileName", FileName);
+            cmd.Parameters.AddWithValue("@FileType", FileType);
+
+            cmd.Parameters.Add(
+                "@FileData",
+                SqlDbType.VarBinary,
+                -1
+            ).Value = FileData;
+
             cmd.ExecuteNonQuery();
         }
     }
@@ -4425,6 +4544,59 @@ public partial class LeaveApproval : System.Web.UI.Page
 
         DataTable dt = new DataTable();
 
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            string query = @"
+            Select * from (
+
+SELECT 
+                ID,
+                DocumentType AttachmentFilename
+            FROM tbl_Leave_AL_Documents
+            WHERE AutoNo = @AutoNo
+          
+		  union
+		  SELECT 
+               AutoNo ID,
+                AttachmentFilename AttachmentFilename
+          FROM tble_Leave_Approval
+            WHERE AutoNo = @AutoNo) T where isnull(T.AttachmentFilename,'')!=''
+		  
+		  
+		  ORDER BY ID DESC";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+        }
+    }
+    protected void lnkAttachment_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+
+        string autoNo = btn.CommandArgument;
+
+        DataTable dt = new DataTable();
+
+        gvAttachments.DataSource = dt;
+        gvAttachments.DataBind();
+
+        ScriptManager.RegisterStartupScript(
+            this,
+            this.GetType(),
+            "OpenAttachmentModal",
+            "$('#attachmentModal').modal('show');",
+            true
+        );
+    }
         using (SqlConnection con = new SqlConnection(
             ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
         {

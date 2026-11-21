@@ -138,10 +138,10 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
     public void bindReport()
     {
         string Link = "";
-        SqlDataAdapter da1 = new SqlDataAdapter("select Count(*) as C from [TMU$Updated Result Students Ledger] with(nolock) where  [Course Code]=(select [Course Code] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "') and (Semester='" + ddlSem.SelectedValue + "' or [Year]='" + ddlSem.SelectedValue + "') and [Enrollment No_]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "')     select case when Count(*)>0 then 1 else 0 end as A from [TMU$Updated Result Students Ledger] where  [Course Code]=(select [Course Code] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "') and (Semester='" + ddlSem.SelectedValue + "' or [Year]='" + ddlSem.SelectedValue + "') and [Enrollment No_]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "')  and Approved=1", con);
+        SqlDataAdapter da1 = new SqlDataAdapter("select Count(*) as C from [TMU$Updated Result Students Ledger] with(nolock) where  [Course Code]=(select [Course Code] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "') and (Semester='" + ddlSem.SelectedValue + "' or [Year]='" + ddlSem.SelectedValue + "') and [Enrollment No_]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "' and [Exam Type]='MAIN')     select case when Count(*)>0 then 1 else 0 end as A from [TMU$Updated Result Students Ledger] where  [Course Code]=(select [Course Code] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "') and (Semester='" + ddlSem.SelectedValue + "' or [Year]='" + ddlSem.SelectedValue + "') and [Enrollment No_]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where [No_]='" + Session["uid"].ToString() + "')  and Approved=1", con);
         DataSet ds = new DataSet();
         da1.Fill(ds);
-        if (ds.Tables[0].Rows[0]["C"].ToString() == "0" || Session["AcademicYear"].ToString() == "25-26")
+        if (ds.Tables[0].Rows[0]["C"].ToString() == "0" || Session["AcademicYear"].ToString() == "25-26" || drpExam.SelectedValue == "1")
         {
 
             SqlCommand cmd = new SqlCommand("[Pro_OnlineresultIndivisual]", con);
@@ -220,13 +220,27 @@ public partial class Student_OnlineResultshow : System.Web.UI.Page
                                 }
                             }
 
-                            FileStream fs = new FileStream(Server.MapPath(@"Result\" + Session["uid"].ToString().Replace(@"/", "") + ".pdf"), FileMode.Create);
+                            string fileName = Session["uid"].ToString()
+                                     .Replace("/", "")
+                                     .Replace("\\", "") + ".pdf";
 
-                            fs.Write(bytes, 0, bytes.Length);
+                            string filePath = Server.MapPath("~/Student/Result/" + fileName);
 
-                            fs.Close();
+                            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                            {
+                                fs.Write(bytes, 0, bytes.Length);
+                            }
 
+
+
+                            pdfViewer.Visible = true;
+                            ReportViewer1.Visible = false;
+
+                            pdfViewer.Attributes["src"] =
+                                ResolveUrl("~/Student/Result/" + fileName);
                         }
+
+                    
                     }
                     else
                     {
