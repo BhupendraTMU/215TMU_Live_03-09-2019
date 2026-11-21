@@ -1415,6 +1415,19 @@ public partial class LeaveApproval : System.Web.UI.Page
                 true
             );
 
+        // ashu on 19/09/2017--start
+
+        if (ddLeavePeriod.SelectedValue == "(Full-Day)" &&
+            ddShiftType.SelectedValue != "0".ToString())
+        {
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                "Key",
+                "alert('In Case of Full-Day, Day Mode should not be 1st Half/2nd Half !!');",
+                true
+            );
+
             return;
         }
 
@@ -1458,6 +1471,10 @@ public partial class LeaveApproval : System.Web.UI.Page
                         Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
 
 
+                    decimal lblNonof_Cl_leaveCL =
+                        Convert.ToDecimal(lblNonof_Cl_leave.Text.Trim());
+
+
                     if (txtNoOfLeavePriodCL <= lblNonof_Cl_leaveCL)
                     {
                         LeaveApplicationDetails();
@@ -1466,6 +1483,19 @@ public partial class LeaveApproval : System.Web.UI.Page
                     }
                     else
                     {
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "Key",
+                            "alert('Can not applied more than CL leave ');",
+                            true
+                        );
+                    }
+                }
+
+                // ============================
+                // OTHER LEAVE TYPES
+                // ============================
                         ScriptManager.RegisterStartupScript(
                             this,
                             this.GetType(),
@@ -1725,8 +1755,47 @@ public partial class LeaveApproval : System.Web.UI.Page
             args.IsValid = true;
             return;
         }
+    protected void ValidateALDocument(
+        object source,
+        ServerValidateEventArgs args)
+    {
+        if (ddLeaveTypen.SelectedItem.Text.Trim() != "AL")
+        {
+            args.IsValid = true;
+            return;
+        }
 
         CustomValidator validator = source as CustomValidator;
+
+        CustomValidator validator = source as CustomValidator;
+
+        if (validator == null)
+        {
+            args.IsValid = true;
+            return;
+        }
+
+        if (validator.ID == "cvInPrinciple")
+        {
+            args.IsValid = fuInPrinciple.HasFile;
+        }
+        else if (validator.ID == "cvEventBrochure")
+        {
+            args.IsValid = fuEventBrochure.HasFile;
+        }
+        else if (validator.ID == "cvCertificate")
+        {
+            args.IsValid = fuCertificate.HasFile;
+        }
+        else if (validator.ID == "cvEventReport")
+        {
+            args.IsValid = fuEventReport.HasFile;
+        }
+        else if (validator.ID == "cvGeotaggedPhotos")
+        {
+            args.IsValid = fuGeotaggedPhotos.HasFiles;
+        }
+    }
 
         if (validator == null)
         {
@@ -2100,6 +2169,7 @@ public partial class LeaveApproval : System.Web.UI.Page
         {
             Arrangement = "NO";
         }
+
 
         if (lblerrorMessage.Text != "")
         {
@@ -3594,7 +3664,7 @@ public partial class LeaveApproval : System.Web.UI.Page
                 lnkDownloadgrid.Visible = false;
             }
 
-            if (lblleaveAttachmentFilename.Text.Trim() != "")
+            if (lblleaveAttachmentFilename.Text.Trim() != "" )
             {
                 lnkDownloadgrid.Visible = true;
             }
@@ -4336,6 +4406,43 @@ public partial class LeaveApproval : System.Web.UI.Page
                 -1
             ).Value = FileData;
 
+        string query = @"
+        INSERT INTO tbl_Leave_AL_Documents
+        (
+            AutoNo,
+            UserID,
+            DocumentType,
+            FileName,
+            FileType,
+            FileData,
+            CreatedDate
+        )
+        VALUES
+        (
+            @AutoNo,
+            @UserID,
+            @DocumentType,
+            @FileName,
+            @FileType,
+            @FileData,
+            GETDATE()
+        )";
+
+
+        using (SqlCommand cmd = new SqlCommand(query, Conn))
+        {
+            cmd.Parameters.AddWithValue("@AutoNo", AutoNo);
+            cmd.Parameters.AddWithValue("@UserID", UserID);
+            cmd.Parameters.AddWithValue("@DocumentType", DocumentType);
+            cmd.Parameters.AddWithValue("@FileName", FileName);
+            cmd.Parameters.AddWithValue("@FileType", FileType);
+
+            cmd.Parameters.Add(
+                "@FileData",
+                SqlDbType.VarBinary,
+                -1
+            ).Value = FileData;
+
             cmd.ExecuteNonQuery();
         }
     }
@@ -4437,6 +4544,59 @@ public partial class LeaveApproval : System.Web.UI.Page
 
         DataTable dt = new DataTable();
 
+        using (SqlConnection con = new SqlConnection(
+            ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
+        {
+            string query = @"
+            Select * from (
+
+SELECT 
+                ID,
+                DocumentType AttachmentFilename
+            FROM tbl_Leave_AL_Documents
+            WHERE AutoNo = @AutoNo
+          
+		  union
+		  SELECT 
+               AutoNo ID,
+                AttachmentFilename AttachmentFilename
+          FROM tble_Leave_Approval
+            WHERE AutoNo = @AutoNo) T where isnull(T.AttachmentFilename,'')!=''
+		  
+		  
+		  ORDER BY ID DESC";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@AutoNo", autoNo);
+
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+        }
+        }
+    }
+    protected void lnkAttachment_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+
+        string autoNo = btn.CommandArgument;
+
+        DataTable dt = new DataTable();
+
+        gvAttachments.DataSource = dt;
+        gvAttachments.DataBind();
+
+        ScriptManager.RegisterStartupScript(
+            this,
+            this.GetType(),
+            "OpenAttachmentModal",
+            "$('#attachmentModal').modal('show');",
+            true
+        );
+    }
         using (SqlConnection con = new SqlConnection(
             ConfigurationManager.ConnectionStrings["HRMSPortalConnectionString"].ConnectionString))
         {

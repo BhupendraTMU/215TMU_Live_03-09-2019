@@ -246,6 +246,18 @@ public partial class Faculty_NoDuesApproval : System.Web.UI.Page
             }
 
                 
+            if(dt.Rows[0]["ActdateofLeaving"].ToString()=="01-01-1753 00:00:00")
+            {
+                txtActdateofLeaving.Text = "";
+                btnupdate.Visible = true;
+            }
+            else
+            {
+                txtActdateofLeaving.Text = dt.Rows[0]["ActdateofLeaving"].ToString();
+                btnupdate.Visible = false;
+            }
+
+                
         }
         else
 

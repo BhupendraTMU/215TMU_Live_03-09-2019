@@ -3837,7 +3837,7 @@
 							<span style="text-align: center; display: block; padding-bottom:20px"><strong>(Maximum API Score: 750)</strong></span>
 						</td></tr>
 							
-	<tr> <td>  
+	                  <tr> <td>  
 
 							<table>
 								<tr>

@@ -78,11 +78,12 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     //}
 
 
+
                     //Live Process
                     if (dt.Rows[0]["Semester Registration"].ToString() == "0" && s != "/Student/SemRegistration.aspx")
                     {
                         Response.Redirect("/Student/SemRegistration.aspx", false);
-                        HttpContext.Current.ApplicationInstance.CompleteRequest();
+                       HttpContext.Current.ApplicationInstance.CompleteRequest();
 
                     }
                 }
@@ -91,7 +92,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     SemReg.Visible = false;
                 }
             }
-
+            
             con.Close();
 
             con.Open();
@@ -143,27 +144,27 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     }
 
     public void hidepageschoal()
-    {
-        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
-        {
-            string strSQL = ("Select *,(select [Global Dimension 1 Code] from [TMU$Student - COLLEGE] where [Enrollment No_]=ML.[Enrollment No_]) as 'College' from [TMU$Cons_ Marksheet Ledger] ML where   [Enrollment No_]='" + Session["enroll"].ToString() + "' and Status=1");
-            {
-                SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                if (dt.Rows.Count > 0 && dt.Rows[0]["College"].ToString() != "TMMC")
-                {
-                    StudentNoDues.Visible = true;
-                }
-                else
-                {
-                    StudentNoDues.Visible = false;
-                }
-                if (Session["College"].ToString() == "TPHD")
-                {
-                    cracmeeting.Visible = true;
-                }
-            }
+ {
+     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TMUCON"].ToString());
+     {
+         string strSQL = ("Select *,(select [Global Dimension 1 Code] from [TMU$Student - COLLEGE] where [Enrollment No_]=ML.[Enrollment No_]) as 'College' from [TMU$Cons_ Marksheet Ledger] ML where   [Enrollment No_]='" + Session["enroll"].ToString() + "' and Status=1");
+         {
+             SqlDataAdapter da = new SqlDataAdapter(strSQL, con);
+             DataTable dt = new DataTable();
+             da.Fill(dt);
+             if (dt.Rows.Count > 0 && dt.Rows[0]["College"].ToString() != "TMMC")
+             {
+                 StudentNoDues.Visible = true;
+             }
+             else
+             {
+                 StudentNoDues.Visible = false;
+             }
+             if (Session["College"].ToString() == "TPHD")
+ {
+     cracmeeting.Visible = true;
+ }
+         }
 
         }
 

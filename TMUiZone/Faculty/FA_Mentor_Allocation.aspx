@@ -1109,9 +1109,9 @@
 
                     </asp:UpdatePanel>
 
-
-
-
+        <tr> <td colspan="7">  
+            <br />
+                         Total No. Of Mentee:<asp:LinkButton ID="lnk_TotalMentee" runat="server" OnClick="lnk_TotalMentee_Click">
                     <asp:Panel ID="pnl_Mentee" runat="server">
                         <div class="student-filter">
                             <span class="filter-label">Filter by Student No / Enrollment No / Name
@@ -1130,17 +1130,17 @@
                                 CssClass="btn btn-danger"
                                 Text="Get Record"
                                 OnClick="btn_Studentfilter_Click" />
-                        </div>
-
-                        <asp:UpdatePanel
-                            ID="up_Mentee"
-                            runat="server"
-                            UpdateMode="Conditional">
-
-                            <ContentTemplate>
-
-                                <div class="mentee-grid-container">
-
+                <asp:Image ID="img_Mentee_Details" ImageAlign="Right" runat="server" Style="cursor: pointer" src="PMS%20Img/plus.png" />
+                <asp:Panel ID="pnl_Mentee" runat="server" Style="display: none">
+                        <div style="padding-bottom: 20px; font-weight:bold">
+                            <span>Filter by Student No/Enrollment No/Name</span>
+                            <asp:TextBox ID="txt_Studentfilterby_name" runat="server"></asp:TextBox>
+                       
+                            <asp:Button ID="btn_Studentfilter" runat="server" CssClass="btn-danger" Text="Get Record" OnClick="btn_Studentfilter_Click" />
+                <asp:Image ID="img_Mentee_Details" ImageAlign="Right" runat="server" Style="cursor: pointer" src="PMS%20Img/plus.png" />
+                <asp:Panel ID="pnl_Mentee" runat="server" Style="display: none">
+                        <div style="padding-bottom: 20px; font-weight:bold">
+                            <span>Filter by Student No/Enrollment No/Name</span>
                                     <asp:GridView
                                         ID="gv_Mentee"
                                         runat="server"
@@ -1288,7 +1288,7 @@
                 </div>
 
             </div>
-
+                        </Columns>
         </asp:Panel>
 
         <asp:UpdatePanel
@@ -1520,6 +1520,20 @@
                                 <div style="color: red;">No Records Found !!!</div>
                             </EmptyDataTemplate>
                         </asp:GridView>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+    <EmptyDataTemplate>
+        There are no records found!
+    </EmptyDataTemplate>
+</asp:GridView>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+    <EmptyDataTemplate>
+        There are no records found!
+    </EmptyDataTemplate>
+</asp:GridView>
 
                     </div>
 

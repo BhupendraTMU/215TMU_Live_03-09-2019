@@ -30,13 +30,9 @@
         }
     </script>
     <link href="pms.css" rel="stylesheet" />
-    <style>
+    <style type="text/css">
         :root {
-            /*--max-width:900px;
-    --muted:#555;
-    --accent:#111;
-    --gap:14px;
-    --signature-height:70px;*/
+            
         }
 
         body {
