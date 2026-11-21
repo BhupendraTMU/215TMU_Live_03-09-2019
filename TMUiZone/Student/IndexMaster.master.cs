@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 using System.IO;
-using paytm;
+using System.Web;
+using System.Web.UI;
 
 
 public partial class IndexMaster : System.Web.UI.MasterPage
@@ -23,6 +19,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         try
         {
 
+            
+            
             string s1 = this.Page.Request.FilePath;
             con.Open();
             SqlCommand cmd1 = new SqlCommand("select count(*) 'C' from [tbl_StudentUpdatedRecord]  where studentno='" + Session["uid"].ToString() + "'", con);
@@ -74,10 +72,11 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     //Local Process
                     //if (dt.Rows[0]["Semester Registration"].ToString() == "0" && s != "/TMUiZone/Student/SemRegistration.aspx")
                     //{
-                     //   Response.Redirect("~/Student/SemRegistration.aspx", false);
-                      //  HttpContext.Current.ApplicationInstance.CompleteRequest();
+                    //    Response.Redirect("~/Student/SemRegistration.aspx", false);
+                    //    HttpContext.Current.ApplicationInstance.CompleteRequest();
 
-                   // }
+                    //}
+
 
 
                     //Live Process
@@ -167,16 +166,16 @@ public partial class IndexMaster : System.Web.UI.MasterPage
  }
          }
 
-     }
- 
+        }
 
-     if ((Session["CourseCode"].ToString() == "BCA-001" || Session["CourseCode"].ToString() == "BCA-002" || Session["CourseCode"].ToString() == "BCA-004" || Session["CourseCode"].ToString() == "BSC-001" || Session["CourseCode"].ToString() == "BBA-001" || Session["CourseCode"].ToString() == "BCOM-001" || Session["CourseCode"].ToString() == "BPES-001") && Session["Semester"].ToString() == "VI")
-     {
-         NEPUndertaking.Visible = true;
-     }
-    
-    
- }
+
+        if ((Session["CourseCode"].ToString() == "BCA-001" || Session["CourseCode"].ToString() == "BCA-002" || Session["CourseCode"].ToString() == "BCA-004" || Session["CourseCode"].ToString() == "BSC-001" || Session["CourseCode"].ToString() == "BBA-001" || Session["CourseCode"].ToString() == "BCOM-001" || Session["CourseCode"].ToString() == "BPES-001") && Session["Semester"].ToString() == "VI")
+        {
+            NEPUndertaking.Visible = true;
+        }
+
+
+    }
     protected void btnChangePassword_Click(object sender, EventArgs e)
     {
         if (Session["Passw"].ToString() == txtOldPassword.Text)
@@ -203,12 +202,20 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         string id = Session["uid"].ToString();
 
+        if (Convert.ToInt32(Session["Gender1"].ToString()) == 1)
+        {
+            imgProfile.ImageUrl = "~/images/boy.png";
+        }
+        else
+        {
+            imgProfile.ImageUrl = "~/images/girl.png";
+        }
+
         byte[] bytes = GetData("select  top 1 [Student Image]  from [Portal Users] where [Login ID]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where No_='" + id + "')").Rows[0]["Student Image"].ToString() == "" ? null : (byte[])GetData("select  top 1 [Student Image]  from [Portal Users] where [Login ID]=(select [Enrollment No_] from [TMU$Student - COLLEGE] where No_='" + id + "')").Rows[0]["Student Image"];
         if (bytes != null)
         {
             string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
             imgProfile.ImageUrl = "data:image/png;base64," + base64String;
-
         }
     }
     private DataTable GetData(string query)
@@ -231,7 +238,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     }
     protected void btnChangeImage_Click(object sender, EventArgs e)
     {
-       if (imgUpload.HasFile)
+        if (imgUpload.HasFile)
         {
             try
             {

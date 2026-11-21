@@ -20,7 +20,7 @@ public partial class FA_Mentor_Allocation : System.Web.UI.Page
     {
         try
         {
-            if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D003" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376")
+            if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376" || Session["DesignationCode"].ToString() == "D261")
             {
                 if (!IsPostBack)
                 {
@@ -341,7 +341,7 @@ public partial class FA_Mentor_Allocation : System.Web.UI.Page
         //   GridView gv_Mentee = (GridView)mentorRow.FindControl("gv_Mentee");
 
         //  TextBox txt_Studentfilterby_name = (TextBox)mentorRow.FindControl("txt_Studentfilterby_name");
-        txt_Studentfilterby_name.Text = txt_Studentfilterby_name.Text.Replace(",", "");
+        txt_Studentfilterby_name.Text = txt_Studentfilterby_name.Text.Replace(",", "").Trim().ToUpper();
         pms_connection con = new pms_connection();
         SqlDataReader dr = con.SP_FA_MM_Get_Mentnee_Record(txt_Studentfilterby_name.Text.Trim(), dd_AcademicYear.SelectedValue.Trim(), ddl_course.SelectedValue.Trim(), dd_Semester.SelectedValue.Trim(), dd_Section.SelectedValue.Trim());
         DataTable dt = new DataTable();
@@ -646,7 +646,7 @@ public partial class FA_Mentor_Allocation : System.Web.UI.Page
             pms_connection con = new pms_connection();
 
             SqlDataReader dr = con.SP_FA_MM_Get_Menters_Record(
-                txt_SearchMentee.Text.Trim(),
+                txt_SearchMentee.Text.Trim().ToUpper(),
                 "",
                 "",
                 Session["uid"].ToString().Trim()

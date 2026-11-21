@@ -153,6 +153,25 @@
                 opacity: 0.2;
             }
         }
+
+        .email-input {
+            width: 100% !important;
+            min-height: 40px;
+            display: block;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            position: relative;
+            z-index: 9999;
+            pointer-events: auto;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+            .email-input:focus {
+                outline: none;
+                border: 1px solid #062b61 !important;
+                box-shadow: 0 0 5px rgba(6,43,97,0.3);
+            }
     </style>
     <script type="text/javascript">
         function printDiv() {
@@ -333,8 +352,29 @@
 
                                         </div>
                                         <div class="col-md-3">
-                                            <asp:TextBox ID="txtemailid" runat="server" BorderColor="Black" CssClass="form-control"></asp:TextBox>
-                                            <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="txtemailid" ErrorMessage="Invalid Email Format"></asp:RegularExpressionValidator>
+                                            <asp:TextBox
+                                                ID="txtemailid"
+                                                runat="server"
+                                                BorderColor="Black"
+                                                CssClass="form-control email-input"
+                                                TextMode="Email"
+                                                MaxLength="100"
+                                                autocomplete="email"
+                                                inputmode="email"
+                                                autocapitalize="none"
+                                                spellcheck="false"
+                                                placeholder="Enter your email address">
+</asp:TextBox>
+
+                                            <asp:RegularExpressionValidator
+                                                ID="regexEmailValid"
+                                                runat="server"
+                                                ControlToValidate="txtemailid"
+                                                ValidationExpression="^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
+                                                ErrorMessage="Invalid Email Format"
+                                                ForeColor="Red"
+                                                Display="Dynamic">
+</asp:RegularExpressionValidator>
                                         </div>
                                         <div class="col-md-1">
                                             <asp:Button ID="Button2" runat="server" CssClass="form-control" Visible="false" Height="35px" OnClick="Button2_Click" Text="Send Email Id OTP" />

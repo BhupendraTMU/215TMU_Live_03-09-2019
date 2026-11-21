@@ -317,7 +317,7 @@ public partial class Faculty_ViewStudentCRACFormDetails : System.Web.UI.Page
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("usp_GetPhdStudentFeesDetailsForPHDCRACMeeting", con);
+            SqlCommand cmd = new SqlCommand("usp_GetPhdStudentFeesDetailsForPHDCRACMeeting_Dhar", con);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@EnrollmentNo", enrollmentNo);
             cmd.Parameters.AddWithValue("@CollegeCode", collegeCode);

@@ -736,6 +736,9 @@
                 Student Scanner
 
                 </asp:HyperLink>
+                <a href="LivePunchRecord.aspx" id="bAttendance" runat="server" visible="false"
+                    class="btn btn-info profile-btn">Biometric Attendance
+                </a>
 
             </div>
 

@@ -1,18 +1,11 @@
 ﻿using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using paytm;
 using System;
-using System.Activities.Statements;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Windows.Forms;
 
 
 public partial class IndexMaster : System.Web.UI.MasterPage
@@ -25,18 +18,22 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         try
         {
 
-
-            if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D003" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376")
+            Page.MaintainScrollPositionOnPostBack = false;
+            if (Session["DesignationCode"] != null)
             {
-                lnk_mentor_allocation.Visible = true;
+                if (Session["DesignationCode"].ToString() == "D0375" || Session["DesignationCode"].ToString() == "D045" || Session["DesignationCode"].ToString() == "D016" || Session["DesignationCode"].ToString() == "D0376" || Session["DesignationCode"].ToString() == "D261")
+                {
+                    lnk_mentor_allocation.Visible = true;
+                }
+
             }
-
-
-            //else
-            //{
-            //    IdPHDStudentNoDuesApproval.Visible = false;
-            //}
-
+            if (Session["uid"] == null || string.IsNullOrEmpty(Session["uid"].ToString()))
+            {
+                // Session expire ya user login nahi hai
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
+            
             con1.Open();
 
             SqlCommand cmdT = new SqlCommand("select count(*) as c from [HRMSPortal].dbo.[tble_Exit_Interview_Form] where [Employee Code]='" + Session["uid"].ToString() + "' AND Status='Submit' and (Hod_Status!='Rejected By HOD' and Hr_Status!='Rejected By HR')", con1);
@@ -797,6 +794,15 @@ public partial class IndexMaster : System.Web.UI.MasterPage
     {
         try
         {
+            if (Convert.ToInt32(Session["Gender1"].ToString()) == 2)
+            {
+                imgProfile.ImageUrl = "~/images/Men.png";
+            }
+            else
+            {
+                imgProfile.ImageUrl = "~/images/Women.jpg";
+            }
+
             string id = Session["uid"].ToString();
             byte[] bytes = GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"].ToString() == "" ? null : (byte[])GetData("select Picture as FacultyImage from [TMU$Employee] where [No_]='" + id + "'").Rows[0]["FacultyImage"];
             if (bytes != null)
@@ -804,6 +810,8 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                 string base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
                 imgProfile.ImageUrl = "data:image/png;base64," + base64String;
             }
+
+
         }
         catch (Exception ex)
         {
@@ -1038,10 +1046,10 @@ public partial class IndexMaster : System.Web.UI.MasterPage
                     Session["uid"].ToString()
                 );
 
-               
+
                 da.Fill(dt1);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
@@ -1260,7 +1268,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
 
 
             }
-            if (Session["uid"].ToString() == "TMU04426" || Session["uid"].ToString() == "TMU00478")
+            if (Session["uid"].ToString() == "TMU10115")
             {
                 MembershipAprrovalForm.Visible = true;
 
@@ -1414,7 +1422,7 @@ public partial class IndexMaster : System.Web.UI.MasterPage
         {
             migration.Visible = true;
         }
-        if (Session["uid"].ToString() == "TMU08719")
+        if (Session["uid"].ToString() == "TMU08719" || Session["uid"].ToString() == "TMU07987")
         {
             TDSApproval.Visible = true;
         }
@@ -1525,9 +1533,13 @@ public partial class IndexMaster : System.Web.UI.MasterPage
             IdPHDStudentNoDuesApproval.Visible = true;
         }
 
-        if (Session["College"].ToString() == "TPHD")
+        if (Session["College"] != null)
         {
-            IdViewPHDStudentCRACForm.Visible = true;
+            if (Session["College"].ToString() == "TPHD")
+            {
+                //SHow only for PHD faculty
+                IdViewPHDStudentCRACForm.Visible = true;
+            }
         }
 
     }

@@ -82,8 +82,6 @@ public partial class Faculty_SyudentNoDuesApproval : System.Web.UI.Page
         {         
             getnodueslistTMMC();
         }
-       
-
     }
 
     public void alldept()

@@ -1145,7 +1145,7 @@
                                 <div class="col-sm-12" style="text-align: center">
                                     <asp:Label ID="lblSem" runat="server" Text="Sem/Year :"></asp:Label>
                                     &nbsp&nbsp&nbsp&nbsp
-                                    <asp:DropDownList ID="drpSemester" runat="server" Font-Bold="true" Height="32px" Font-Size="small" Width="220px">
+                                    <asp:DropDownList ID="drpSemester" runat="server" Font-Bold="true" Height="32px" AutoPostBack="true" Font-Size="small" OnSelectedIndexChanged="drpSemester_SelectedIndexChanged" Width="220px"> 
                                     </asp:DropDownList>
                                     <br />
                                     <br />

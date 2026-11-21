@@ -30,6 +30,14 @@ public partial class PMS : System.Web.UI.Page
                 //    Context.ApplicationInstance.CompleteRequest(); // end response
 
                 //}
+                if (Convert.ToString(Session["uid"]) == "TMU08026")
+                {
+                    txtRemarks1.Enabled = true;
+                }
+                else
+                {
+                    txtRemarks1.Enabled = false;
+                }
                 drpMonth.SelectedValue = DateTime.Now.Month.ToString();
                 BindFinancialYears_For_Filter();
                 SP_PMS_Get_Department_Bind();
@@ -52,14 +60,14 @@ public partial class PMS : System.Web.UI.Page
             Response.Redirect("~/Default.aspx");
         }
     }
-    public void GetNoActivity()
+    public void GetNoActivity(string userid)
     {
         try
         {
 
             SqlCommand cmd = new SqlCommand("proc_GetNoActivity", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@ID", Session["uid"].ToString());
+            cmd.Parameters.Add("@ID", userid);
             cmd.Parameters.Add("@month", hfmonth.Value);
             cmd.Parameters.Add("@academicyear", dd_AcademicYear.SelectedValue.Trim());
 
@@ -8835,7 +8843,7 @@ lbl_CriteriaB_ResearchAndDevelopment_TotalAPIScorethroughSelfAssessment_f3_2.Tex
 , txt_CriteriaB_ResearchAndDevelopment_AssessmentbyReportingAuthority_f3_2.Text.Trim(), lbl_faculty_name.Text.Trim(), lbl_designation.Text.Trim(), lbl_emp_code.Text.Trim(), lbl_college_department.Text.Trim(),
 UserType.Trim(), ApplicableFor.Trim(), ID_For_Updated.Trim(), lbl_New_College.Text.Trim(), lbl_New_Department.Text.Trim(),
 lbl_ff_odd_sem.Text.Trim(),
-lbl_ff_even_sem.Text.Trim()
+lbl_ff_even_sem.Text.Trim(), txtRemarks1.Text.Trim() 
 );
         PMS.DisConnect();
     }
@@ -8847,6 +8855,8 @@ lbl_ff_even_sem.Text.Trim()
         pnlcreate.Visible = false;
         pnl_Dashboard.Visible = true;
         btnCreateNew.Visible = false;
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('PMS details have been saved successfully.');", true);
+
     }
     public SqlDataReader sp_Get_PMS_DataWithID(string ID)
     {
@@ -9357,9 +9367,11 @@ lbl_ff_even_sem.Text.Trim()
             //Status = dr["Status"].ToString().Trim();
             lbl_ff_even_sem.Text = dr["Feed_Even_Sem"].ToString().Trim();
             lbl_ff_odd_sem.Text = dr["Feed_Odd_Sem"].ToString().Trim();
+            txtRemarks1.Text = dr["Remarks"].ToString().Trim();
 
-           
-            GetNoActivity();
+
+
+            GetNoActivity(lbl_emp_code.Text);
 
 
 
@@ -12369,6 +12381,7 @@ lbl_ff_even_sem.Text.Trim()
     {
         Save_InDraft();
         Send_For_Approval();
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('PMS data has been Send to the authorized person. Please wait for the approval.');", true);
 
     }
 
